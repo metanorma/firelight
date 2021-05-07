@@ -1,0 +1,39 @@
+= British Standards UX design and development
+
+== Purpose
+
+This repository is for the user experience (UX) development of
+Level 3 British Standards.
+
+
+== Contents
+
+* `bs-202000.html` is the original BS 202000 standard
+
+* `bs-202000-l3.html` is the BS 202000 standard with the enriched process models,
+  which provides a dynamic hierarchical checklist
+
+
+== Near-term goals
+
+. Redesign the whole layout into a web application
+
+** Content in this HTML file originated from print layout (PDF), and
+  hence retains a linear flow
+
+** We need to make this into more like a web application (an SPA) where
+  the user can easily navigate around with a better information architecture
+  that supports interaction/discoverability
+
+. Make the checklist interactive
+
+** Expandable and collapsable
+
+** The checklist is too long and deep, need to hide complexity from the user
+
+** Inner lists/content should only show when the reader wants to view the inner content
+
+
+== Copyright and licensing
+
+Trade secret material. Ribose.
