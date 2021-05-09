@@ -1,13 +1,9 @@
 # README
 
-TODO
+Work in progress.
 
 ## Running locallly
 
-TODO
-
 ### macOS
-
-TODO
 
 - `python -m SimpleHTTPServer 8000`
