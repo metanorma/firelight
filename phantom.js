@@ -34,6 +34,28 @@ $(document).ready(function () {
             );
     });
 
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    $('.phantom__form td').map(function () {
+        const $td = $(this);
+        const $phantomWrapper = $td.find('.phantom__wrapper').first();
+        if ($phantomWrapper) {
+            const $phantomToggle = $phantomWrapper
+                .children('.phantom__toggle')
+                .first();
+            const $phantom = $phantomWrapper.children('.phantom').first();
+            if ($phantomToggle && $phantom) {
+                $phantomToggle
+                    .html($phantom.is(':hidden') ? hideAction : showAction)
+                    .toggleClass('phantom__toggle--closed')
+                    .toggleClass('phantom__toggle--open');
+                $phantom.toggle();
+            }
+        }
+    });
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     $('input[type="checkbox"]').each(function () {
         const $checkbox = $(this);
         $checkbox
@@ -62,6 +84,8 @@ $(document).ready(function () {
                 .toggleClass('fa fa-check-square');
         }
     });
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // Toggle
     $('.phantom__toggle').on('click', function () {
