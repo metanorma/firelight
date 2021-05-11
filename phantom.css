@@ -4,16 +4,21 @@ dl {
 
 .phantom__toggle {
     display: inline-block;
-    padding: 0.1em;
+    padding: 0.382em;
     cursor: pointer;
+    font-size: smaller;
+    text-transform: lowercase;
+    border-radius: 0.382em;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.382em;
 }
 
 .phantom__toggle--open {
-    background: rebeccapurple;
-    color: yellow;
+    background: #000;
+    color: #fff;
 }
 
 .phantom__toggle--closed {
-    background: yellow;
-    color: rebeccapurple;
+    background: #ff2b1f;
+    color: #fff;
 }
