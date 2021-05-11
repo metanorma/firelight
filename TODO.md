@@ -3,6 +3,8 @@
 - [x] nicer/bigger checkboxes
 - [x] remove debug text
 - [x] make purple/yellow toggle nicer
+- [] collapsed checkbox in Safari (parked for now)
+- [x] remove unnecessary columns and table data
 - [] basic wizard
 - [] "if - then - show checklist" condition
 
