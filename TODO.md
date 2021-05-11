@@ -1,5 +1,11 @@
 # TODO
 
+- nicer/bigger checkboxes
+- remove debug text
+- make purple/yellow toggle nicer
+- basic wizard
+- "if - then - show checklist" condition
+
 ## Design
 
 - TODO
