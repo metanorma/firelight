@@ -17,7 +17,7 @@ $(document).ready(function () {
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    const showAction = 'Show &#x25B6;';
+    const showAction = 'Show More &#x25B6;';
     const hideAction = 'Hide &#x25B2;';
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -34,7 +34,34 @@ $(document).ready(function () {
             );
     });
 
+    $('input[type="checkbox"]').each(function () {
+        const $checkbox = $(this);
+        $checkbox
+            .wrap('<div class="phantom__checkbox__wrapper"></div>')
+            .hide()
+            .parent()
+            .prepend(
+                '<i class="phantom__checkbox phantom__checkbox--unchecked far fa-square"></i>'
+            );
+    });
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Checkbox
+    $('.phantom__checkbox').on('click', function () {
+        const $phantomCheckbox = $(this);
+        const $checkbox = $phantomCheckbox
+            .parent()
+            .children('input[type=checkbox]');
+        if ($checkbox) {
+            $checkbox.prop('checked', !$checkbox.is(':checked'));
+            $phantomCheckbox
+                .toggleClass('phantom__checkbox--unchecked')
+                .toggleClass('phantom__checkbox--checked')
+                .toggleClass('far fa-square')
+                .toggleClass('fa fa-check-square');
+        }
+    });
 
     // Toggle
     $('.phantom__toggle').on('click', function () {

@@ -1,11 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-dl {
-    background: rgba(0, 0, 0, 0.15);
-}
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
 .phantom__toggle {
     display: inline-block;
     padding: 0.382em;
@@ -23,7 +17,7 @@ dl {
 }
 
 .phantom__toggle--closed {
-    background: #ff2b1f;
+    background: #000;
     color: #fff;
 }
 
@@ -31,6 +25,20 @@ dl {
 
 .phantom__utility--hidden {
     display: none;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.phantom__checkbox {
+    font-size: 1.618em;
+}
+
+.phantom__checkbox--checked {
+    color: #f00;
+}
+
+.phantom__checkbox--unchecked {
+    color: #000;    
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
