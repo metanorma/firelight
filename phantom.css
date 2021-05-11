@@ -1,0 +1,19 @@
+dl {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.phantom__toggle {
+    display: inline-block;
+    padding: 0.1em;
+    cursor: pointer;
+}
+
+.phantom__toggle--open {
+    background: rebeccapurple;
+    color: yellow;
+}
+
+.phantom__toggle--closed {
+    background: yellow;
+    color: rebeccapurple;
+}
