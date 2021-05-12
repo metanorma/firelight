@@ -5,7 +5,7 @@
 - [x] make purple/yellow toggle nicer
 - [] collapsed checkbox in Safari (parked for now)
 - [x] remove unnecessary columns and table data
-- [] first level *show more* open by default
+- [x] first level *show more* open by default
 - [] basic wizard
 - [] "if - then - show checklist" condition
 
