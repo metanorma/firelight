@@ -7,6 +7,7 @@
 - [x] remove unnecessary columns and table data
 - [x] first level *show more* open by default
 - [] basic wizard
+- [] update styling of the document
 - [] "if - then - show checklist" condition
 
 ## Design
