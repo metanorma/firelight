@@ -72,7 +72,6 @@ $(document).ready(function () {
     var phantomWizardStepLength = $('.phantom__wizard--step').length;
 
     $('.phantom__wizard--step').each(function (i, step) {
-        console.log(i);
         const $step = $(step);
         const tFoot = `<tfoot><th colspan="3" class="phantom-step__nav">
             <button${
