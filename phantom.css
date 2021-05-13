@@ -42,3 +42,15 @@
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.phantom-step__nav {
+    display: flex;
+    justify-content: space-around;
+    background: #000;
+}
+
+.phantom-step__nav__button {
+    font-size: 1em;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

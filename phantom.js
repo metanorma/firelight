@@ -69,6 +69,56 @@ $(document).ready(function () {
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    var phantomWizardStepLength = $('.phantom__wizard--step').length;
+
+    $('.phantom__wizard--step').each(function (i, step) {
+        console.log(i);
+        const $step = $(step);
+        const tFoot = `<tfoot><th colspan="3" class="phantom-step__nav">
+            <button${
+                i === 0 ? ' disabled' : ''
+            } class="phantom-step__nav__button phantom-step__nav__button--previous">Previous</button>
+            <button${
+                i === phantomWizardStepLength - 1 ? ' disabled' : ''
+            } class="phantom-step__nav__button phantom-step__nav__button--next">Next</button>
+        </th></tfoot>`;
+        if (i === 0) {
+            $step.append(tFoot);
+        } else {
+            $step.hide().append(tFoot);
+        }
+    });
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Next button
+    
+    $('.phantom-step__nav__button--next').on('click', function () {
+        const $button = $(this);
+        const $step = $button.closest('.phantom__wizard--step');
+        const $nextStep = $step.next('.phantom__wizard--step');
+        if ($step && $nextStep) {
+            $step.hide();
+            $nextStep.show();
+        }
+    });
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Previous button
+
+    $('.phantom-step__nav__button--previous').on('click', function () {
+        const $button = $(this);
+        const $step = $button.closest('.phantom__wizard--step');
+        const previousStep = $step.prev('.phantom__wizard--step');
+        if ($step && previousStep) {
+            $step.hide();
+            previousStep.show();
+        }
+    });
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     // Checkbox
     $('.phantom__checkbox').on('click', function () {
         const $phantomCheckbox = $(this);
