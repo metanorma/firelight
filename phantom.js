@@ -69,11 +69,11 @@ $(document).ready(function () {
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    var phantomWizardStepLength = $('.phantom__wizard--step').length;
+    var phantomWizardStepLength = $('.phantom__wizard__step').length;
 
-    $('.phantom__wizard--step').each(function (i, step) {
+    $('.phantom__wizard__step').each(function (i, step) {
         const $step = $(step);
-        const tFoot = `<tfoot><th colspan="3" class="phantom-step__nav">
+        const tFoot = `<tfoot><th colspan="3" class="phantom__wizard__step__nav">
             <button${
                 i === 0 ? ' disabled' : ''
             } class="phantom-step__nav__button phantom-step__nav__button--previous">Previous</button>
@@ -94,11 +94,13 @@ $(document).ready(function () {
     
     $('.phantom-step__nav__button--next').on('click', function () {
         const $button = $(this);
-        const $step = $button.closest('.phantom__wizard--step');
-        const $nextStep = $step.next('.phantom__wizard--step');
-        if ($step && $nextStep) {
+        const $step = $button.closest('.phantom__wizard__step');
+        const $nextStep = $step.next('.phantom__wizard__step');
+        const $panel = $('#js-phantom__wizard__panel');
+        if ($step && $nextStep && $panel) {
             $step.hide();
             $nextStep.show();
+            $panel.scrollTop(0);
         }
     });
 
@@ -108,11 +110,13 @@ $(document).ready(function () {
 
     $('.phantom-step__nav__button--previous').on('click', function () {
         const $button = $(this);
-        const $step = $button.closest('.phantom__wizard--step');
-        const previousStep = $step.prev('.phantom__wizard--step');
-        if ($step && previousStep) {
+        const $step = $button.closest('.phantom__wizard__step');
+        const $previousStep = $step.prev('.phantom__wizard__step');
+        const $panel = $('#js-phantom__wizard__panel');
+        if ($step && $previousStep && $panel) {
             $step.hide();
-            previousStep.show();
+            $previousStep.show();
+            $panel.scrollTop(0);
         }
     });
 

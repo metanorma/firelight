@@ -43,7 +43,7 @@
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-.phantom-step__nav {
+.phantom__wizard__step__nav {
     display: flex;
     justify-content: space-around;
     background: #000;
@@ -51,6 +51,19 @@
 
 .phantom-step__nav__button {
     font-size: 1em;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.phantom__wizard__step {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.phantom__wizard__panel {
+    height: 61.8vh;
+    overflow: auto;
+    border: 1px solid #000;
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
