@@ -32,7 +32,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #fireball__header {
-    grid-area: fireball__sidebar-start / fireball__sidebar-start / fireball__header-end / fireball__header-end;
+    grid-area: fireball__sidebar-start / fireball__sidebar-start /
+        fireball__header-end / fireball__header-end;
     background-color: cyan;
     padding: 1em;
 }
@@ -46,7 +47,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #fireball__mainbar {
-    grid-area: fireball__mainbar-start / fireball__sidebar-start / fireball__mainbar-end / fireball__mainbar-end;
+    grid-area: fireball__mainbar-start / fireball__sidebar-start /
+        fireball__mainbar-end / fireball__mainbar-end;
     background-color: yellow;
     overflow-y: scroll;
     padding: 1em;
@@ -178,6 +180,21 @@
 
 .fireball__content + .fireball__content {
     margin-top: 2em;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.fireball__target__reveal {
+    background: white;
+    transition: 0.5s ease-out;
+}
+
+.fireball__target__reveal.cloak {
+    opacity: 0;
+}
+
+.fireball__target__reveal.reveal {
+    opacity: 1;
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
