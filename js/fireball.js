@@ -1,19 +1,19 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 document.addEventListener('DOMContentLoaded', function () {
-    const body = document.querySelector('#body');
-    const sidebar = document.querySelector('#sidebar');
-    const showSidebar = document.querySelector('#open-sidebar');
-    const closeSidebar = document.querySelector('#close-sidebar');
-    const toggleSidebar = document.querySelector('#toggle-sidebar');
-    const modal = document.querySelector('#modal');
-    const modalOverlay = document.querySelector('#modal-overlay');
-    const closeButton = document.querySelector('#close-modal');
-    const openButtons = document.querySelectorAll('.open-checklist');
-    const checkboxes = document.querySelectorAll('.a-checkbox');
+    const body = document.querySelector('#fireball__body');
+    const sidebar = document.querySelector('#fireball__sidebar');
+    const showSidebar = document.querySelector('#fireball__open-sidebar');
+    const closeSidebar = document.querySelector('#fireball__close-sidebar');
+    const toggleSidebar = document.querySelector('#fireball__toggle-sidebar');
+    const modal = document.querySelector('#fireball__modal');
+    const modalOverlay = document.querySelector('#fireball__modal-overlay');
+    const closeButton = document.querySelector('#fireball__close-modal');
+    const openButtons = document.querySelectorAll('.fireball__open-checklist');
+    const checkboxes = document.querySelectorAll('.fireball__a-checkbox');
     const totalCheckboxes = checkboxes.length;
-    const measureOutputs = document.querySelectorAll('.measure__output');
-    const measureProgresses = document.querySelectorAll('.measure__progress');
+    const measureOutputs = document.querySelectorAll('.fireball__measure__output');
+    const measureProgresses = document.querySelectorAll('.fireball__measure__progress');
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -38,32 +38,32 @@ document.addEventListener('DOMContentLoaded', function () {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     toggleSidebar.onclick = () => {
-        sidebar.classList.toggle('concealed');
-        body.classList.toggle('concealed');
+        sidebar.classList.toggle('fireball__concealed');
+        body.classList.toggle('fireball__concealed');
     };
 
     showSidebar.onclick = () => {
-        sidebar.classList.toggle('exposed');
+        sidebar.classList.toggle('fireball__exposed');
     };
 
     closeSidebar.onclick = () => {
-        sidebar.classList.toggle('exposed');
+        sidebar.classList.toggle('fireball__exposed');
     };
 
     modalOverlay.onclick = () => {
-        modal.classList.toggle('closed');
-        modalOverlay.classList.toggle('closed');
+        modal.classList.toggle('fireball__closed');
+        modalOverlay.classList.toggle('fireball__closed');
     };
 
     closeButton.onclick = () => {
-        modal.classList.toggle('closed');
-        modalOverlay.classList.toggle('closed');
+        modal.classList.toggle('fireball__closed');
+        modalOverlay.classList.toggle('fireball__closed');
     };
 
     openButtons.forEach((openButton) => {
         openButton.onclick = () => {
-            modal.classList.toggle('closed');
-            modalOverlay.classList.toggle('closed');
+            modal.classList.toggle('fireball__closed');
+            modalOverlay.classList.toggle('fireball__closed');
         };
     });
 
