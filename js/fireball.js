@@ -2,6 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', function () {
     const body = document.querySelector('#fireball__body');
+    const header = document.querySelector('#fireball__header');
+    const mainbar = document.querySelector('#fireball__mainbar');
     const sidebar = document.querySelector('#fireball__sidebar');
     const showSidebar = document.querySelector('#fireball__open-sidebar');
     const closeSidebar = document.querySelector('#fireball__close-sidebar');
@@ -12,8 +14,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const openButtons = document.querySelectorAll('.fireball__open-checklist');
     const checkboxes = document.querySelectorAll('.fireball__a-checkbox');
     const totalCheckboxes = checkboxes.length;
-    const measureOutputs = document.querySelectorAll('.fireball__measure__output');
-    const measureProgresses = document.querySelectorAll('.fireball__measure__progress');
+    const measureOutputs = document.querySelectorAll(
+        '.fireball__measure__output'
+    );
+    const measureProgresses = document.querySelectorAll(
+        '.fireball__measure__progress'
+    );
+    const targetWatch = document.querySelector('#fireball__target__watch');
+    const targetReveal = document.querySelector('#fireball__target__reveal');
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -72,6 +80,18 @@ document.addEventListener('DOMContentLoaded', function () {
             updateMeasure();
         };
     });
+
+    mainbar.onscroll = function () {
+        const targetRect = targetWatch.getBoundingClientRect();
+        const headerRect = header.getBoundingClientRect();
+        if (targetRect.top + targetRect.height < headerRect.height) {
+            targetReveal.classList.add('reveal');
+            targetReveal.classList.remove('cloak');
+        } else {
+            targetReveal.classList.add('cloak');
+            targetReveal.classList.remove('reveal');
+        }
+    };
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
