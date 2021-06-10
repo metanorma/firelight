@@ -1,0 +1,11 @@
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.fireball__content {
+    background-color: lime;
+}
+
+.fireball__content + .fireball__content {
+    margin-top: 2em;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
