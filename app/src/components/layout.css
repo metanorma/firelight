@@ -1,0 +1,93 @@
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+#layout {
+    font-size: 20px;
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: minmax(auto, 61.8%) 1fr;
+    grid-template-areas:
+        'layout__sidebar layout__header'
+        'layout__sidebar layout__mainbar';
+    overflow: hidden;
+    font-family: sans-serif;
+}
+
+@media (min-width: 800px) {
+    #layout.layout--sidebar-emancipated {
+        grid-template-columns: minmax(auto, 38.2%) 1fr;
+        grid-template-areas:
+            'layout__header layout__header'
+            'layout__sidebar layout__mainbar';
+    }
+    #layout.layout--sidebar-shackled {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            'layout__header'
+            'layout__mainbar';
+    }
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+#layout__header {
+    grid-area: layout__sidebar-start / layout__sidebar-start /
+        layout__header-end / layout__header-end;
+    background-color: cyan;
+    padding: 1em;
+}
+
+@media (min-width: 800px) {
+    #layout__header {
+        grid-area: layout__header;
+    }
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+#layout__mainbar {
+    grid-area: layout__mainbar-start / layout__sidebar-start /
+        layout__mainbar-end / layout__mainbar-end;
+    background-color: yellow;
+    overflow-y: scroll;
+    padding: 1em;
+}
+
+@media (min-width: 800px) {
+    #layout__mainbar {
+        grid-area: layout__mainbar;
+    }
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+#layout__sidebar {
+    grid-area: layout__sidebar;
+    background-color: orange;
+    transform: translateX(-100%);
+    transition: 200ms ease;
+    z-index: 1;
+    position: relative;
+    overflow-y: scroll;
+    padding: 1em;
+}
+
+@media (min-width: 800px) {
+    #layout__sidebar.layout__sidebar--emancipated {
+        transform: none;
+        transition: none;
+        z-index: initial;
+        position: static;
+    }
+    #layout__sidebar.layout__sidebar--shackled {
+        display: none;
+    }
+}
+
+#layout__sidebar.layout__sidebar--closed {
+}
+
+#layout__sidebar.layout__sidebar--open {
+    transform: translateX(0%);
+}

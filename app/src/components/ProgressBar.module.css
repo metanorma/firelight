@@ -1,0 +1,16 @@
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.progress-bar {
+    background: magenta;
+    padding: 1em;
+}
+
+.progress-bar__output {
+    background: yellow;
+}
+
+.progress-bar__progress {
+    background: blue;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

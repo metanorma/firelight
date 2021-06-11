@@ -1,0 +1,12 @@
+.stealth-title {
+    background: white;
+    transition: 0.5s ease-out;
+}
+
+.stealth-title--cloak {
+    opacity: 0;
+}
+
+.stealth-title--reveal {
+    opacity: 1;
+}
