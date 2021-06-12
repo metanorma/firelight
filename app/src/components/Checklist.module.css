@@ -1,13 +1,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-.hamburger {
-    display: none;
-}
-
-@media (min-width: 800px) {
-    .hamburger {
-        display: block;
-    }
+.checklist {
+    background: tan;
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

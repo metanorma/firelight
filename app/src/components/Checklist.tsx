@@ -1,7 +1,12 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+import { SimpleChecklist } from '../Types';
+import styles from './Checklist.module.css';
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 interface OwnProps {
-    checklist: { [key: string]: boolean };
+    checklist: SimpleChecklist;
     handleChange: (key: string) => void;
 }
 
@@ -25,7 +30,7 @@ function Checklist(props: OwnProps) {
             </li>
         );
     }
-    return <ul>{items}</ul>;
+    return <ul className={styles['checklist']}>{items}</ul>;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

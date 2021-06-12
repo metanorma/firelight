@@ -1,12 +1,12 @@
 export class Data {
     static checklist = {
-        'Happy': true,
-        'Grumpy': false,
-        'Sleepy': false,
-        'Sneezy': false,
-        'Bashful': false,
-        'Dopey': false,
-        'Doc': false
+        Happy: true,
+        Grumpy: false,
+        Sleepy: false,
+        Sneezy: false,
+        Bashful: false,
+        Dopey: false,
+        Doc: false
     };
     static modal = `
                 <br /><hr />
@@ -1141,7 +1141,7 @@ export class Data {
 <div class="fireball__content" id="fireball__target__watch">
     <div>
         <span class="title">
-            Standardization management system —{' '}
+            Standardization management system —
         </span>
         <span class="subtitle">
             Specification (Level 3 questionnaire)
@@ -2098,7 +2098,7 @@ export class Data {
                         evidence of results achieved (can be referred to as
                         records).
                     </p> </li
-                >{' '}
+                >
             </ol>
             <p></p>
         </div>
@@ -2324,10 +2324,10 @@ export class Data {
                 <a href="#term-organization">
                     <b>3.19</b>
                 </a>
-                ,{' '}
+                ,
                 <a href="#term-process">
                     <b>3.21</b> </a
-                >{' '} and
+                > and
                 <a href="#term-requirement">
                     <b>3.24</b>
                 </a>
@@ -2381,7 +2381,7 @@ export class Data {
         </h2>
         <p class="Terms" style="text-align: left"> measurement </p>
         <p id="_f18ffb0a-590c-4c60-89b6-5049a3d03563">
-            process (see{' '}
+            process (see
             <a href="#term-process">
                 <b>3.21</b>
             </a>
@@ -2876,7 +2876,7 @@ export class Data {
                 NOTE: See also
                 <a href="#term-organization">
                     <b>3.19</b> </a
-                >{' '} and
+                > and
                 <a href="#term-standardization-management-policy">
                     <b>3.29</b>
                 </a>
@@ -2916,7 +2916,7 @@ export class Data {
                 NOTE: See also
                 <a href="#term-organization">
                     <b>3.19</b> </a
-                >{' '} and
+                > and
                 <a href="#term-top-management">
                     <b>3.32</b>
                 </a>
@@ -2960,7 +2960,7 @@ export class Data {
                 NOTE 1: See also
                 <a href="#term-organization">
                     <b>3.19</b> </a
-                >{' '} and
+                > and
                 <a href="#term-standardization-management-objective">
                     <b>3.28</b>
                 </a>
@@ -3098,7 +3098,7 @@ export class Data {
                 <p id="_09fad264-a9e9-476b-bc1d-e43943403b4d">
                     delivering the intended outcome
                 </p> </li
-            >{' '}
+            >
         </ol>
         <h2 class="TermNum" id="term-worker">
             <a
@@ -3305,7 +3305,7 @@ export class Data {
             <ol type="a" id="_d98848d2-fdac-43f2-9713-622c7942e431">
                 <li>
                     <p id="_efc7a9a3-0e02-45fb-8c07-d3ca14aa8777">
-                        external and internal issues in accordance with{' '}
+                        external and internal issues in accordance with
                         <a href="#sec_4.1">
                             <b>4.1</b>
                         </a>
@@ -3541,7 +3541,7 @@ export class Data {
             5 Leadership
         </h1>
         <p id="_42ad30e9-808c-4ccd-bfe3-a8fa4566e3f5">
-            <i>COMMENTARY ON CLAUSE</i>{' '}
+            <i>COMMENTARY ON CLAUSE</i>
             <b>
                 <i>5</i>
             </b>
@@ -3585,7 +3585,7 @@ export class Data {
             <i>
                 f) appropriate resources are provided by
                 <a href="#term-top-management">top management</a>
-                (see{' '}
+                (see
                 <a href="#sec_5.3.1">
                     <b>5.3.1</b>
                 </a>
@@ -3670,7 +3670,7 @@ export class Data {
                     <p id="_0f157702-ce99-4b6e-ae94-93c3a5073683">
                         providing the appropriate level of training to deliver
                         <a href="#term-competence">competence</a>
-                        (see{' '}
+                        (see
                         <a href="#sec_7.6">
                             <b>7.6</b>
                         </a>
@@ -3938,7 +3938,7 @@ export class Data {
                             that the SMS conforms to the mission and vision of
                             the
                             <a href="#term-organization"> organization </a>
-                            (see{' '}
+                            (see
                             <a href="#sec_5.1">
                                 <b>5.1</b>
                             </a>
@@ -5802,7 +5802,7 @@ export class Data {
                 8.6 Assurance and validation of standards
             </h2>
             <p id="_724afa3f-f237-472e-90d7-d3780043fbf5">
-                <i>COMMENTARY ON</i>{' '}
+                <i>COMMENTARY ON</i>
                 <b>
                     <i>8.6</i>
                 </b>

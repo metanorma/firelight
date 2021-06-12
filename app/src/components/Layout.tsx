@@ -17,8 +17,15 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 function Layout(props: OwnProps) {
-    const { header, mainBar, sideBar, bonus, isSidebarShown, isSidebarOpen, handleMainScroll } =
-        props;
+    const {
+        header,
+        mainBar,
+        sideBar,
+        bonus,
+        isSidebarShown,
+        isSidebarOpen,
+        handleMainScroll
+    } = props;
     const layoutClasses = ['layout'];
     const headerClasses = ['layout__header'];
     const sidebarClasses = ['layout__sidebar'];
@@ -40,7 +47,11 @@ function Layout(props: OwnProps) {
             <header id="layout__header" className={headerClasses.join(' ')}>
                 {header}
             </header>
-            <main onScroll={handleMainScroll} id="layout__mainbar" className="layout__mainbar">
+            <main
+                onScroll={handleMainScroll}
+                id="layout__mainbar"
+                className="layout__mainbar"
+            >
                 {mainBar}
             </main>
             <aside id="layout__sidebar" className={sidebarClasses.join(' ')}>

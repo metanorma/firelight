@@ -12,7 +12,11 @@ interface OwnProps {
 
 function Hamburger(props: OwnProps) {
     const { onClick } = props;
-    return <button className={styles['hamburger']} onClick={onClick}>🍔</button>;
+    return (
+        <button className={styles['hamburger']} onClick={onClick}>
+            🍔
+        </button>
+    );
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
