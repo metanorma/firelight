@@ -20,7 +20,9 @@ function ProgressBar(props: OwnProps) {
     const { value, max } = progress;
     return (
         <aside className={styles['progress-bar']}>
-            <button onClick={onClick} className="open-checklist">{action}</button>
+            <button onClick={onClick} className="open-checklist">
+                {action}
+            </button>
             <output className={styles['progress-bar__output']}>
                 {value} / {max}
             </output>

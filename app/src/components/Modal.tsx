@@ -19,10 +19,6 @@ function Modal(props: OwnProps) {
     }
     return (
         <aside className={styles['modal']}>
-            <div
-                onClick={handleClose}
-                className={styles['modal__overlay']}
-            ></div>
             <div className={styles['modal__modal']}>
                 <button
                     onClick={handleClose}
@@ -32,6 +28,10 @@ function Modal(props: OwnProps) {
                 </button>
                 <div className={styles['modal__guts']}>{children}</div>
             </div>
+            <div
+                onClick={handleClose}
+                className={styles['modal__overlay']}
+            ></div>
         </aside>
     );
 }
