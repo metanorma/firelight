@@ -33,7 +33,6 @@
 #layout__header {
     grid-area: layout__sidebar-start / layout__sidebar-start /
         layout__header-end / layout__header-end;
-    background-color: cyan;
     padding: 1em;
 }
 
@@ -48,7 +47,6 @@
 #layout__mainbar {
     grid-area: layout__mainbar-start / layout__sidebar-start /
         layout__mainbar-end / layout__mainbar-end;
-    background-color: yellow;
     overflow-y: scroll;
     padding: 1em;
 }
@@ -63,7 +61,6 @@
 
 #layout__sidebar {
     grid-area: layout__sidebar;
-    background-color: orange;
     transform: translateX(-100%);
     transition: 200ms ease;
     z-index: 1;
