@@ -8,6 +8,8 @@ export class Data {
         Dopey: false,
         Doc: false
     };
+    static title =
+        'Standardization management system — Specification (Level 3 questionnaire)';
     static modal = `
                 <br /><hr />
                 This is a demonstration of a Level 3 dynamic checklist generated

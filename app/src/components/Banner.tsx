@@ -1,20 +1,22 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-import styles from './Logo.module.css';
-import logo from '../img/bsi-logo--white-text.svg';
+import styles from './Banner.module.css';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-interface OwnProps {}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-function Logo(props: OwnProps) {
-    return <img alt="BSI logo" src={logo} className={styles['logo']} />;
+interface OwnProps {
+    children: JSX.Element | JSX.Element[];
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-export default Logo;
+function Banner(props: OwnProps) {
+    const { children } = props;
+    return <div className={styles.banner}>{children}</div>;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+export default Banner;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

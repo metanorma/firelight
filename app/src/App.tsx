@@ -1,6 +1,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 import { useState } from 'react';
+import Banner from './components/Banner';
 import Checklist from './components/Checklist';
 import Hamburger from './components/Hamburger';
 import Knob from './components/Knob';
@@ -48,19 +49,22 @@ function App() {
                 }}
                 isSidebarShown={isSidebarShown}
                 isSidebarOpen={isSidebarOpen}
-                header={[
-                    <Logo />,
-                    <Hamburger
-                        onClick={() => setSidebarShown(!isSidebarShown)}
-                    />,
-                    <StealthTitle
-                        isStealthTitleVisible={isStealthTitleVisible}
-                    />,
-                    <Knob
-                        isOpen={false}
-                        onClick={() => setSidebarOpen(!isSidebarOpen)}
-                    />
-                ]}
+                header={
+                    <Banner>
+                        <Logo />
+                        <StealthTitle
+                            isStealthTitleVisible={isStealthTitleVisible}
+                            title={Data.title}
+                        />
+                        <Knob
+                            isOpen={false}
+                            onClick={() => setSidebarOpen(!isSidebarOpen)}
+                        />
+                        <Hamburger
+                            onClick={() => setSidebarShown(!isSidebarShown)}
+                        />
+                    </Banner>
+                }
                 mainBar={[
                     progressBarElement,
                     <div dangerouslySetInnerHTML={{ __html: Data.main }} />

@@ -1,7 +1,6 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #layout {
-    font-size: 20px;
     display: grid;
     width: 100vw;
     height: 100vh;
@@ -33,7 +32,6 @@
 #layout__header {
     grid-area: layout__sidebar-start / layout__sidebar-start /
         layout__header-end / layout__header-end;
-    padding: 1em;
 }
 
 @media (min-width: 800px) {

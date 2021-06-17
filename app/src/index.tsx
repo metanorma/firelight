@@ -7,6 +7,7 @@ import App from './App';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 import './css/vendor/reset.css';
+import './css/vendor/box-sizing.css';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
