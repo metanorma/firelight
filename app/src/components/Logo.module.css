@@ -1,11 +1,11 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .logo {
+    font-size: var(--font-size);
     background-color: initial;
     color: initial;
-    width: 19.1%;
-    max-width: 4em;
-    height: auto;
+    width: auto;
+    height: 1.618em;
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

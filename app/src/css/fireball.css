@@ -17,6 +17,7 @@
     --colour__orphan__foreground: #351fff;
     --colour__orphan__background: #1fff50;
     --font-family: 'Gesta', Tahoma, sans-serif;
+    --font-size: 20px;
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -24,7 +25,6 @@
 body {
     font-family: var(--font-family);
     font-weight: 400;
-    font-size: 20px;
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

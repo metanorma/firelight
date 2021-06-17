@@ -1,6 +1,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .banner {
+    font-size: var(--font-size);
     background: var(--colour__primary__black);
     padding: 1em;
     display: flex;

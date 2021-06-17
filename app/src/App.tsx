@@ -61,6 +61,9 @@ function App() {
                             onClick={() => setSidebarOpen(!isSidebarOpen)}
                         />
                         <Hamburger
+                            isActive={isSidebarShown}
+                            activeText={'Close Sidebar'}
+                            inactiveText={'Open Sidebar'}
                             onClick={() => setSidebarShown(!isSidebarShown)}
                         />
                     </Banner>
