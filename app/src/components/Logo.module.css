@@ -1,9 +1,9 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .logo {
+    font-family: var(--font-family);
+    font-weight: 400;
     font-size: var(--font-size);
-    background-color: initial;
-    color: initial;
     width: auto;
     height: 1.618em;
 }

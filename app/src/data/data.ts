@@ -1,12 +1,12 @@
 export class Data {
     static checklist = {
-        Happy: true,
-        Grumpy: false,
-        Sleepy: false,
-        Sneezy: false,
-        Bashful: false,
-        Dopey: false,
-        Doc: false
+        'Option 1': true,
+        'Option 2': false,
+        'Option 3': false,
+        'Option 4': false,
+        'Option 5': false,
+        'Option 6': false,
+        'Option 7': false
     };
     static title =
         'Standardization management system — Specification (Level 3 questionnaire)';

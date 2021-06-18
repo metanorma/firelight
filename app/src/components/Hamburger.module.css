@@ -13,9 +13,9 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .hamburger {
+    font-family: var(--font-family);
+    font-weight: 400;
     font-size: var(--font-size);
-    background-color: initial;
-    color: initial;
     border: 0;
     padding: 0;
     margin: 0;
@@ -42,8 +42,6 @@
 
 .hamburger__stack {
     display: block;
-    background-color: initial;
-    color: initial;
     width: 100%;
     height: 100%;
     background-size: 50% 50%;
