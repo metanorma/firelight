@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Banner from './components/Banner';
 import Checklist from './components/Checklist';
 import Hamburger from './components/Hamburger';
-import Knob from './components/Knob';
 import Layout from './components/Layout';
 import Logo from './components/Logo';
 import Modal from './components/Modal';
@@ -56,14 +55,18 @@ function App() {
                             isStealthTitleVisible={isStealthTitleVisible}
                             title={Data.title}
                         />
-                        <Knob
-                            isOpen={false}
+                        <Hamburger
+                            isDesktop={false}
+                            isActive={isSidebarOpen}
+                            activeText={'Close Sidebar'}
+                            inactiveText={'Open Sidebar'}
                             onClick={() => setSidebarOpen(!isSidebarOpen)}
                         />
                         <Hamburger
+                            isDesktop={true}
                             isActive={isSidebarShown}
-                            activeText={'Close Sidebar'}
-                            inactiveText={'Open Sidebar'}
+                            activeText={'Hide Sidebar'}
+                            inactiveText={'Show Sidebar'}
                             onClick={() => setSidebarShown(!isSidebarShown)}
                         />
                     </Banner>
@@ -74,10 +77,6 @@ function App() {
                 ]}
                 sideBar={[
                     progressBarElement,
-                    <Knob
-                        isOpen={true}
-                        onClick={() => setSidebarOpen(!isSidebarOpen)}
-                    />,
                     <div dangerouslySetInnerHTML={{ __html: Data.side }} />
                 ]}
                 bonus={

@@ -5,6 +5,7 @@ import styles from './Hamburger.module.css';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 interface OwnProps {
+    isDesktop: boolean;
     isActive: boolean;
     activeText: string;
     inactiveText: string;
@@ -14,18 +15,23 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 function Hamburger(props: OwnProps) {
-    const { onClick, isActive, activeText, inactiveText } = props;
-    const extraHamburgerClass = isActive
+    const { onClick, isActive, activeText, inactiveText, isDesktop } = props;
+    const extraHamburgerActivityClass = isActive
         ? 'hamburger--active'
         : 'hamburger--inactive';
+    const extraHamburgerRWDClass = isDesktop
+        ? 'hamburger--is-desktop'
+        : 'hamburger--is-mobile';
     const extraHamburgerStackClass = isActive
         ? 'hamburger__stack--active'
         : 'hamburger__stack--inactive';
     return (
         <button
-            className={[styles['hamburger'], styles[extraHamburgerClass]].join(
-                ' '
-            )}
+            className={[
+                styles['hamburger'],
+                styles[extraHamburgerActivityClass],
+                styles[extraHamburgerRWDClass]
+            ].join(' ')}
             onClick={onClick}
             title={isActive ? activeText : inactiveText}
         >
