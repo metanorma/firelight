@@ -9,6 +9,7 @@ import Logo from './components/Logo';
 import Modal from './components/Modal';
 import ProgressBar from './components/ProgressBar';
 import StealthTitle from './components/StealthTitle';
+import X from './components/X';
 import { Data } from './data/data';
 import { SimpleChecklist } from './Types';
 
@@ -99,6 +100,10 @@ function App() {
                     <div dangerouslySetInnerHTML={{ __html: Data.main }} />
                 ]}
                 sideBar={[
+                    <X
+                        text="Close Sidebar"
+                        onClick={() => setSidebarOpen(false)}
+                    />,
                     progressBarElement,
                     <div dangerouslySetInnerHTML={{ __html: Data.side }} />
                 ]}
