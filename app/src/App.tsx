@@ -37,6 +37,29 @@ function App() {
         />
     );
 
+    const bonus = [];
+    bonus.push(
+        <Modal isOpen={isModalOpen} handleClose={() => setModalOpen(false)}>
+            <Checklist
+                checklist={checklist}
+                handleChange={(key: string) => {
+                    const updatedChecklist = { ...checklist };
+                    updatedChecklist[key] = !updatedChecklist[key];
+                    setChecklist(updatedChecklist);
+                }}
+            />
+            <div dangerouslySetInnerHTML={{ __html: Data.modal }} />
+        </Modal>
+    );
+    if (isSidebarOpen) {
+        bonus.push(
+            <div
+                className="layout__overlay"
+                onClick={() => setSidebarOpen(false)}
+            ></div>
+        );
+    }
+
     return (
         <div className="App">
             <Layout
@@ -79,22 +102,7 @@ function App() {
                     progressBarElement,
                     <div dangerouslySetInnerHTML={{ __html: Data.side }} />
                 ]}
-                bonus={
-                    <Modal
-                        isOpen={isModalOpen}
-                        handleClose={() => setModalOpen(false)}
-                    >
-                        <Checklist
-                            checklist={checklist}
-                            handleChange={(key: string) => {
-                                const updatedChecklist = { ...checklist };
-                                updatedChecklist[key] = !updatedChecklist[key];
-                                setChecklist(updatedChecklist);
-                            }}
-                        />
-                        <div dangerouslySetInnerHTML={{ __html: Data.modal }} />
-                    </Modal>
-                }
+                bonus={bonus}
             />
         </div>
     );

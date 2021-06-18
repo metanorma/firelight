@@ -60,7 +60,7 @@
 #layout__sidebar {
     grid-area: layout__sidebar;
     transform: translateX(-100%);
-    transition: 200ms ease;
+    transition: 0.22s ease;
     z-index: 1;
     position: relative;
     overflow-y: scroll;
@@ -87,6 +87,25 @@
 
 .layout__sidebar {
     background-color: var(--colour__primary__white);
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.layout__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-color: var(--colour__primary__black);
+    opacity: 0.5;
+}
+
+@media (min-width: 800px) {
+    .layout__overlay {
+        display: none;
+    }
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
