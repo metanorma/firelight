@@ -8,7 +8,7 @@
         url('./../fonts/bsigesta-light-webfont.ttf') format('truetype'),
         url('./../fonts/bsigesta-light-webfont.svg#GestaLtRegular')
             format('svg');
-    font-weight: 300;
+    font-weight: var(--font-weight--light);
     font-style: normal;
 }
 
@@ -19,7 +19,7 @@
         url('./../fonts/bsigesta-webfont.woff') format('woff'),
         url('./../fonts/bsigesta-webfont.ttf') format('truetype'),
         url('./../fonts/bsigesta-webfont.svg#GestaRegular') format('svg');
-    font-weight: 400;
+    font-weight: var(--font-weight--regular);
     font-style: normal;
 }
 
@@ -32,7 +32,7 @@
         url('./../fonts/bsigesta-medium-webfont.ttf') format('truetype'),
         url('./../fonts/bsigesta-medium-webfont.svg#GestaMdRegular')
             format('svg');
-    font-weight: 500;
+    font-weight: var(--font-weight--medium);
     font-style: normal;
 }
 

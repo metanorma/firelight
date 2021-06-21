@@ -1,0 +1,27 @@
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.button {
+    font-family: var(--font-family);
+    font-weight: var(--font-weight--regular);
+    font-size: var(--font-size);
+    border: 0;
+    padding: 0.618em;
+    margin: 0;
+    background-color: var(--colour__primary__bsi-darker-red);
+    color: var(--colour__primary__white);
+    border-radius: 1px;
+    cursor: pointer;
+    transition: background-color 0.22s ease-in-out;
+}
+
+.button:hover {
+    background-color: var(--colour__secondary__bsi-dark-red);
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.button__title {
+    font-size: 1em;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

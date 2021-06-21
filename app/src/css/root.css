@@ -16,6 +16,9 @@
     --colour__secondary__bsi-teal: #00a3ad;
     --font-family: 'Gesta', Tahoma, sans-serif;
     --font-size: 20px;
+    --font-weight--light: 300;
+    --font-weight--regular: 400;
+    --font-weight--medium: 500;
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

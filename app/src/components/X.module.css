@@ -2,7 +2,7 @@
 
 .x {
     font-family: var(--font-family);
-    font-weight: 400;
+    font-weight: var(--font-weight--regular);
     font-size: var(--font-size);
     border: 0;
     padding: 0;

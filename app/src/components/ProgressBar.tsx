@@ -1,5 +1,6 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+import Button from './Button';
 import styles from './ProgressBar.module.css';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -20,9 +21,7 @@ function ProgressBar(props: OwnProps) {
     const { value, max } = progress;
     return (
         <aside className={styles['progress-bar']}>
-            <button onClick={onClick} className="open-checklist">
-                {action}
-            </button>
+            <Button title="Open Checklist" onClick={onClick} />
             <output className={styles['progress-bar__output']}>
                 {value} / {max}
             </output>

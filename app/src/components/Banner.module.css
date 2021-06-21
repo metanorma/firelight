@@ -2,7 +2,7 @@
 
 .banner {
     font-family: var(--font-family);
-    font-weight: 400;
+    font-weight: var(--font-weight--regular);
     font-size: var(--font-size);
     background: var(--colour__primary__black);
     padding: 1em;
