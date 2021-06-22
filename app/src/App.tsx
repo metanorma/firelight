@@ -30,14 +30,6 @@ function App() {
         (key: string) => checklist[key] === true
     ).length;
 
-    const progressBarElement = (
-        <ProgressBar
-            onClick={() => setModalOpen(true)}
-            action="Open Checklist"
-            progress={{ max: checklistItemMax, value: checklistItemCount }}
-        />
-    );
-
     const bonus = [];
     bonus.push(
         <Modal isOpen={isModalOpen} handleClose={() => setModalOpen(false)}>
@@ -96,7 +88,15 @@ function App() {
                     </Banner>
                 }
                 mainBar={[
-                    progressBarElement,
+                    <ProgressBar
+                        onClick={() => setModalOpen(true)}
+                        action="Open Checklist"
+                        progress={{
+                            max: checklistItemMax,
+                            value: checklistItemCount
+                        }}
+                        isLarge={true}
+                    />,
                     <div dangerouslySetInnerHTML={{ __html: Data.main }} />
                 ]}
                 sideBar={[
@@ -104,7 +104,15 @@ function App() {
                         text="Close Sidebar"
                         onClick={() => setSidebarOpen(false)}
                     />,
-                    progressBarElement,
+                    <ProgressBar
+                        onClick={() => setModalOpen(true)}
+                        action="Open Checklist"
+                        progress={{
+                            max: checklistItemMax,
+                            value: checklistItemCount
+                        }}
+                        isLarge={false}
+                    />,
                     <div dangerouslySetInnerHTML={{ __html: Data.side }} />
                 ]}
                 bonus={bonus}

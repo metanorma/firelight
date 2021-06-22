@@ -6,7 +6,7 @@ import styles from './Button.module.css';
 
 interface OwnProps {
     title: string;
-    onClick: any;
+    onClick: () => void;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
