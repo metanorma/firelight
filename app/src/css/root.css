@@ -14,10 +14,11 @@
     --colour__secondary__bsi-pale-teal: #e6f6f7;
     --colour__secondary__bsi-light-teal: #b3e3e6;
     --colour__secondary__bsi-teal: #00a3ad;
+    --colour__secondary__bsi-teal--a11y: #29828c;
     --colour__tertiary__platinum: #ebebeb;
     --colour__tertiary__cultured: #f2f2f2;
     --font-family: 'Gesta', Tahoma, sans-serif;
-    --font-size: 20px;
+    --font-size: 1.25em;
     --font-weight--light: 300;
     --font-weight--regular: 400;
     --font-weight--medium: 500;

@@ -1,0 +1,90 @@
+.cms h1,
+.cms h2,
+.cms h3,
+.cms h4,
+.cms h5,
+.cms h6,
+.cms p {
+    font-family: var(--font-family);
+    color: var(--colour__primary__black);
+}
+
+.cms h1,
+.cms h2,
+.cms h3,
+.cms h4,
+.cms h5,
+.cms h6 {
+    font-weight: var(--font-weight--medium);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    /* background-color: palegoldenrod; */
+}
+
+.cms p {
+    font-weight: var(--font-weight--regular);
+    font-size: var(--font-size);
+    /* background-color: paleturquoise; */
+}
+
+.cms h1 {
+    font-size: 2.027em;
+}
+
+.cms h2 {
+    font-size: 1.802em;
+}
+
+.cms h3 {
+    font-size: 1.602em;
+}
+
+.cms h4 {
+    font-size: 1.424em;
+}
+
+.cms h5 {
+    font-size: 1.266em;
+}
+
+.cms h6 {
+    font-size: 1.125em;
+}
+
+.cms img {
+    max-width: 100%;
+    width: auto;
+}
+
+.cms p,
+.cms figure,
+.cms div.figure {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+/*
+.cms figure, 
+.cms div.figure {}
+*/
+
+.cms a {
+    font-family: var(--font-family);
+}
+
+.cms a:link {
+    color: var(--colour__secondary__bsi-teal--a11y);
+    text-decoration: underline;
+}
+
+.cms a:visited {
+    color: var(--colour__primary__black);
+    text-decoration: underline;
+}
+
+.cms a:focus,
+.cms a:hover,
+.cms a:active {
+    color: var(--colour__primary__bsi-red);
+    text-decoration: underline;
+}

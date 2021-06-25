@@ -2,37 +2,38 @@
 
 @font-face {
     font-family: 'Gesta';
-    src: local('Gesta'),
-        url('./../fonts/bsigesta-light-webfont.eot') format('embedded-opentype'),
+    src: url('./../fonts/bsigesta-light-webfont.eot');
+    src: url('./../fonts/bsigesta-light-webfont.eot?#iefix')
+            format('embedded-opentype'),
         url('./../fonts/bsigesta-light-webfont.woff') format('woff'),
         url('./../fonts/bsigesta-light-webfont.ttf') format('truetype'),
-        url('./../fonts/bsigesta-light-webfont.svg#GestaLtRegular')
-            format('svg');
-    font-weight: var(--font-weight--light);
+        url('./../fonts/bsigesta-light-webfont.svg#GestaLtRegular') format('svg');
+    font-weight: 300;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Gesta';
-    src: local('Gesta'),
-        url('./../fonts/bsigesta-webfont.eot') format('embedded-opentype'),
+    src: url('./../fonts/bsigesta-webfont.eot');
+    src: url('./../fonts/bsigesta-webfont.eot?#iefix')
+            format('embedded-opentype'),
         url('./../fonts/bsigesta-webfont.woff') format('woff'),
         url('./../fonts/bsigesta-webfont.ttf') format('truetype'),
         url('./../fonts/bsigesta-webfont.svg#GestaRegular') format('svg');
-    font-weight: var(--font-weight--regular);
+    font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Gesta';
-    src: local('Gesta'),
-        url('./../fonts/bsigesta-medium-webfont.eot')
+    src: url('./../fonts/bsigesta-medium-webfont.eot');
+    src: url('./../fonts/bsigesta-medium-webfont.eot?#iefix')
             format('embedded-opentype'),
         url('./../fonts/bsigesta-medium-webfont.woff') format('woff'),
         url('./../fonts/bsigesta-medium-webfont.ttf') format('truetype'),
         url('./../fonts/bsigesta-medium-webfont.svg#GestaMdRegular')
             format('svg');
-    font-weight: var(--font-weight--medium);
+    font-weight: 500;
     font-style: normal;
 }
 

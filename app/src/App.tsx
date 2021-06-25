@@ -97,7 +97,7 @@ function App() {
                         }}
                         isLarge={true}
                     />,
-                    <div dangerouslySetInnerHTML={{ __html: Data.main }} />
+                    <div className="cms" dangerouslySetInnerHTML={{ __html: Data.main }} />
                 ]}
                 sideBar={[
                     <X
