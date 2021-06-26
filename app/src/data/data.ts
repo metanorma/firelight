@@ -1066,14 +1066,8 @@ standardization at the following addresses:</p><ul id="_4238c9ed-a469-474e-adb2-
   <a href="http://www.iso.org/obp">http://www.iso.org/obp</a></p> </li>
 <li> <p id="_3029b6a8-e114-4862-8a76-6a088db70aea_ISO_44001">IEC Electropedia: available at
 <a href="http://www.electropedia.org">http://www.electropedia.org</a>
-</p> </li> </ul><p id="_1210048d-a884-44ad-a166-7419544d636a_ISO_44001">For the purposes of this document, the following terms and definitions apply.</p><p id="_81ac8fe3-1465-4f95-85b1-83a41d0cca1f_ISO_44001">ISO and IEC maintain terminological databases for use in standardization at the following addresses:</p><ul id="_354077e1-e198-4013-8025-9279dcb57c66_ISO_44001">
-<li>
-<p id="_88aa7e86-5251-459a-bcef-f078c4eb5a0b_ISO_44001">ISO Online browsing platform: available at <a href="http://www.iso.org/obp">http://www.iso.org/obp</a></p>
-</li>
-<li>
-<p id="_26c092d3-fdab-4fc5-8e31-d0547647b0e6_ISO_44001">IEC Electropedia: available at <a href="http://www.electropedia.org/">http://www.electropedia.org/</a></p>
-</li>
-</ul><h2 class="TermNum" id="term-organization_ISO_44001"><a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="#term-organization_ISO_44001" style="font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 1em; line-height: inherit; font-family: anchorjs-icons; position: absolute; margin-left: -1em; padding-right: 0.5em;"></a>3.1</h2><p class="Terms" style="text-align:left;">organization</p><p id="_cf49fbda-d520-4a28-987d-2c54f1ea4302_ISO_44001">person or group of people that has its own functions with responsibilities, authorities and relationships to achieve its <i>objectives</i> (<a href="#term-objective_ISO_44001">3.8</a>)</p>
+</p> </li> </ul>
+<h2 class="TermNum" id="term-organization_ISO_44001"><a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="#term-organization_ISO_44001" style="font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 1em; line-height: inherit; font-family: anchorjs-icons; position: absolute; margin-left: -1em; padding-right: 0.5em;"></a>3.1</h2><p class="Terms" style="text-align:left;">organization</p><p id="_cf49fbda-d520-4a28-987d-2c54f1ea4302_ISO_44001">person or group of people that has its own functions with responsibilities, authorities and relationships to achieve its <i>objectives</i> (<a href="#term-objective_ISO_44001">3.8</a>)</p>
 <div id="_0bd0f33f-4a92-4593-b4ab-45d4ea34bdf4_ISO_44001" class="Note"><p>Note 1 to entry: The concept of organization includes, but is not limited to, sole-trader, company, corporation, firm, enterprise, authority, partnership, charity or institution, or part or combination thereof, whether incorporated or not, public or private.</p></div><h2 class="TermNum" id="term-stakeholder_ISO_44001"><a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" href="#term-stakeholder_ISO_44001" style="font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 1em; line-height: inherit; font-family: anchorjs-icons; position: absolute; margin-left: -1em; padding-right: 0.5em;"></a>3.2</h2><p class="Terms" style="text-align:left;">stakeholder</p>
 <p class="AltTerms" style="text-align:left;">interested party</p>
 
@@ -3742,10 +3736,10 @@ standardization at the following addresses:</p><ul id="_4238c9ed-a469-474e-adb2-
 </th>
             </tr>
             <tr>
-              <th style="font-weight:bold;text-align:left;vertical-align:top;border-top:none;border-bottom:solid windowtext 1.0pt;;text-align:center;vertical-align:middle;" scope="col"><b>D</b>*Limited application*</th>
-              <th style="font-weight:bold;text-align:left;vertical-align:top;border-top:none;border-bottom:solid windowtext 1.0pt;;text-align:center;vertical-align:middle;" scope="col"><b>C</b>*Low level of maturity*</th>
-              <th style="font-weight:bold;text-align:left;vertical-align:top;border-top:none;border-bottom:solid windowtext 1.0pt;;text-align:center;vertical-align:middle;" scope="col"><b>B</b>*Medium level of maturity*</th>
-              <th style="font-weight:bold;text-align:left;vertical-align:top;border-top:none;border-bottom:solid windowtext 1.0pt;;text-align:center;vertical-align:middle;" scope="col"><b>A</b>*High level of maturity*</th>
+              <th style="font-weight:bold;text-align:left;vertical-align:top;border-top:none;border-bottom:solid windowtext 1.0pt;;text-align:center;vertical-align:middle;" scope="col"><b>D</b><br/>Limited application</th>
+              <th style="font-weight:bold;text-align:left;vertical-align:top;border-top:none;border-bottom:solid windowtext 1.0pt;;text-align:center;vertical-align:middle;" scope="col"><b>C</b><br/>Low level of maturity</th>
+              <th style="font-weight:bold;text-align:left;vertical-align:top;border-top:none;border-bottom:solid windowtext 1.0pt;;text-align:center;vertical-align:middle;" scope="col"><b>B</b><br/>Medium level of maturity</th>
+              <th style="font-weight:bold;text-align:left;vertical-align:top;border-top:none;border-bottom:solid windowtext 1.0pt;;text-align:center;vertical-align:middle;" scope="col"><b>A</b><br/>High level of maturity</th>
             </tr>
             <tr>
               <th style="font-weight:bold;text-align:left;vertical-align:top;border-top:none;border-bottom:solid windowtext 1.5pt;;text-align:center;vertical-align:middle;" scope="col">
