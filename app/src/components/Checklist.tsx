@@ -25,7 +25,7 @@ function Checklist(props: OwnProps) {
                         checked={value}
                         value={key}
                     />
-                    {key}
+                    <span>{key}</span>
                 </label>
             </li>
         );

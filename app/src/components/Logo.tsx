@@ -5,11 +5,7 @@ import logo from '../img/bsi-logo--white-text.svg';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-interface OwnProps {}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-function Logo(props: OwnProps) {
+function Logo() {
     return <img alt="BSI logo" src={logo} className={styles['logo']} />;
 }
 

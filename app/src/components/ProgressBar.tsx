@@ -53,7 +53,7 @@ function ProgressBar(props: OwnProps) {
                     {value} / {max}
                 </output>
             </div>
-            <Button title={action} onClick={onClick} />
+            <Button text={action} onClick={onClick} />
         </aside>
     );
 }

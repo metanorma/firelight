@@ -5,14 +5,14 @@ import styles from './StealthTitle.module.css';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 interface OwnProps {
-    isStealthTitleVisible: boolean;
+    isVisible: boolean;
     title: string;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 function StealthTitle(props: OwnProps) {
-    const { isStealthTitleVisible, title } = props;
+    const { isVisible: isStealthTitleVisible, title } = props;
     const extraClass = isStealthTitleVisible
         ? 'stealth-title--reveal'
         : 'stealth-title--cloak';

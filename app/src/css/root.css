@@ -22,6 +22,7 @@
     --font-weight--light: 300;
     --font-weight--regular: 400;
     --font-weight--medium: 500;
+    --transition-time: 0.22s;
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

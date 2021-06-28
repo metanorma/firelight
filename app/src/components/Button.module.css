@@ -9,18 +9,20 @@
     margin: 0;
     background-color: var(--colour__primary__bsi-darker-red);
     color: var(--colour__primary__white);
-    border-radius: 1px;
+    border-radius: 0.1em;
     cursor: pointer;
-    transition: background-color 0.22s ease-in-out;
+    transition: background-color var(--transition-time) ease-in-out;
 }
 
-.button:hover {
+.button:focus,
+.button:hover,
+.button:active {
     background-color: var(--colour__secondary__bsi-dark-red);
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-.button__title {
+.button__text {
     font-size: 1em;
 }
 

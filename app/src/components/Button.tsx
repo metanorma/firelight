@@ -5,17 +5,17 @@ import styles from './Button.module.css';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 interface OwnProps {
-    title: string;
+    text: string;
     onClick: () => void;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 function Button(props: OwnProps) {
-    const { onClick, title } = props;
+    const { onClick, text: title } = props;
     return (
         <button onClick={onClick} className={styles['button']}>
-            <span className={styles['button__title']}>{title}</span>
+            <span className={styles['button__text']}>{title}</span>
         </button>
     );
 }

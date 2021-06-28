@@ -14,7 +14,7 @@
     flex-wrap: nowrap;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.22s ease-in;
+    transition: background-color var(--transition-time) ease-in;
     border-radius: 50%;
     flex-shrink: 0;
 }

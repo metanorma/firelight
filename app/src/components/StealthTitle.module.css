@@ -1,7 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .stealth-title {
-    transition: 0.22s ease-out;
+    color: var(--colour__primary__white);
+    transition: opacity var(--transition-time) ease-out;
 }
 
 .stealth-title--cloak {

@@ -12,6 +12,8 @@
     font-style: normal;
 }
 
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 @font-face {
     font-family: 'Gesta';
     src: url('./../fonts/bsigesta-webfont.eot');
@@ -23,6 +25,8 @@
     font-weight: 400;
     font-style: normal;
 }
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 @font-face {
     font-family: 'Gesta';

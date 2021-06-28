@@ -30,9 +30,13 @@ function App() {
         (key: string) => checklist[key] === true
     ).length;
 
-    const bonus = [];
-    bonus.push(
-        <Modal isOpen={isModalOpen} handleClose={() => setModalOpen(false)}>
+    const bonusElements = [];
+    bonusElements.push(
+        <Modal
+            key="modal"
+            isOpen={isModalOpen}
+            handleClose={() => setModalOpen(false)}
+        >
             <Checklist
                 checklist={checklist}
                 handleChange={(key: string) => {
@@ -45,8 +49,9 @@ function App() {
         </Modal>
     );
     if (isSidebarOpen) {
-        bonus.push(
+        bonusElements.push(
             <div
+                key="layout--overlay"
                 className="layout__overlay"
                 onClick={() => setSidebarOpen(false)}
             ></div>
@@ -68,7 +73,7 @@ function App() {
                     <Banner>
                         <Logo />
                         <StealthTitle
-                            isStealthTitleVisible={isStealthTitleVisible}
+                            isVisible={isStealthTitleVisible}
                             title={Data.title}
                         />
                         <Hamburger
@@ -97,7 +102,10 @@ function App() {
                         }}
                         isLarge={true}
                     />,
-                    <div className="cms" dangerouslySetInnerHTML={{ __html: Data.main }} />
+                    <div
+                        className="cms"
+                        dangerouslySetInnerHTML={{ __html: Data.main }}
+                    />
                 ]}
                 sideBar={[
                     <X
@@ -115,7 +123,7 @@ function App() {
                     />,
                     <div dangerouslySetInnerHTML={{ __html: Data.side }} />
                 ]}
-                bonus={bonus}
+                bonus={bonusElements}
             />
         </div>
     );
