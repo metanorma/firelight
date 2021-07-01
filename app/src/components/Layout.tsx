@@ -1,5 +1,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+import BackToTop from './BackToTop';
+
 // CSS is in `layout.css` because we need IDs for grid
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -52,10 +54,14 @@ function Layout(props: OwnProps) {
                 id="layout__mainbar"
                 className="layout__mainbar"
             >
+                <span id="main-top"></span>
                 {mainBar}
+                <BackToTop anchorId="main-top" />
             </main>
             <aside id="layout__sidebar" className={sidebarClasses.join(' ')}>
+                <span id="side-top"></span>
                 {sideBar}
+                <BackToTop anchorId="side-top" />
             </aside>
             {bonus}
         </div>

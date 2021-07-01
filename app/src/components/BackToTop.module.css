@@ -1,0 +1,10 @@
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.back-to-top {
+    font-family: var(--font-family);
+    font-weight: var(--font-weight--regular);
+    font-size: var(--font-size);
+    margin-top: 1em;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
