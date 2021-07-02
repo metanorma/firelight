@@ -58,15 +58,36 @@
 
 .cms p,
 .cms figure,
-.cms div.figure {
+.cms .figure {
     margin-top: 1rem;
     margin-bottom: 1rem;
 }
 
-/*
-.cms figure, 
-.cms div.figure {}
-*/
+.cms .figure {
+    margin-bottom: 3em;
+}
+
+.cms .figure .figure {
+}
+
+.cms .figure img {
+    display: block;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    height: auto;
+}
+
+.cms .figure .FigureTitle {
+    margin: 2rem 0 0 0 !important;
+    color: var(--colour__primary__black);
+    font-style: italic;
+}
+
+.cms .figure .figure .FigureTitle {
+    margin: 1rem 0 2rem 0 !important;
+    color: var(--colour__secondary__50-percent-black);
+}
 
 .cms a {
     font-family: var(--font-family);
