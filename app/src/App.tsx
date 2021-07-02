@@ -9,6 +9,7 @@ import Logo from './components/Logo';
 import Modal from './components/Modal';
 import ProgressBar from './components/ProgressBar';
 import StealthTitle from './components/StealthTitle';
+import TubeMap from './components/TubeMap';
 import X from './components/X';
 import { Data } from './data/data';
 import { SimpleChecklist } from './Types';
@@ -45,6 +46,7 @@ function App() {
                     setChecklist(updatedChecklist);
                 }}
             />
+            <TubeMap stops={10} current={0} />
             <div dangerouslySetInnerHTML={{ __html: Data.modal }} />
         </Modal>
     );
@@ -95,6 +97,7 @@ function App() {
                     </Banner>
                 }
                 mainBar={[
+                    <TubeMap stops={7} current={3} />,
                     <ProgressBar
                         onClick={() => setModalOpen(true)}
                         action="Open Checklist"
@@ -125,6 +128,7 @@ function App() {
                         }}
                         isLarge={false}
                     />,
+                    <TubeMap stops={3} current={3} />,
                     <div dangerouslySetInnerHTML={{ __html: Data.side }} />
                 ]}
                 bonus={bonusElements}
