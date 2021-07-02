@@ -76,20 +76,22 @@ function App() {
                             isVisible={isStealthTitleVisible}
                             title={Data.title}
                         />
-                        <Hamburger
-                            isDesktop={false}
-                            isActive={isSidebarOpen}
-                            activeText={'Close Sidebar'}
-                            inactiveText={'Open Sidebar'}
-                            onClick={() => setSidebarOpen(!isSidebarOpen)}
-                        />
-                        <Hamburger
-                            isDesktop={true}
-                            isActive={isSidebarShown}
-                            activeText={'Hide Sidebar'}
-                            inactiveText={'Show Sidebar'}
-                            onClick={() => setSidebarShown(!isSidebarShown)}
-                        />
+                        <div>
+                            <Hamburger
+                                isDesktop={false}
+                                isActive={isSidebarOpen}
+                                activeText={'Close Sidebar'}
+                                inactiveText={'Open Sidebar'}
+                                onClick={() => setSidebarOpen(!isSidebarOpen)}
+                            />
+                            <Hamburger
+                                isDesktop={true}
+                                isActive={isSidebarShown}
+                                activeText={'Hide Sidebar'}
+                                inactiveText={'Show Sidebar'}
+                                onClick={() => setSidebarShown(!isSidebarShown)}
+                            />
+                        </div>
                     </Banner>
                 }
                 mainBar={[

@@ -14,4 +14,12 @@
     align-items: center;
 }
 
+.banner__item {
+
+}
+
+.banner__item + .banner__item {
+    margin-left: 1em;
+}
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
