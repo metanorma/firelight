@@ -1,6 +1,8 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 import BackToTop from './BackToTop';
+import SourceCode from './SourceCode';
+import { Data } from '../data/data';
 
 // CSS is in `layout.css` because we need IDs for grid
 
@@ -56,11 +58,13 @@ function Layout(props: OwnProps) {
             >
                 <span id="main-top"></span>
                 {mainBar}
+                <SourceCode code={Data.code} language="javascript" />
                 <BackToTop anchorId="main-top" />
             </main>
             <aside id="layout__sidebar" className={sidebarClasses.join(' ')}>
                 <span id="side-top"></span>
                 {sideBar}
+                <SourceCode code={Data.code} language="javascript" />
                 <BackToTop anchorId="side-top" />
             </aside>
             {bonus}

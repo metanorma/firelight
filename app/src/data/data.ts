@@ -8,6 +8,10 @@ export class Data {
         'Option 6': false,
         'Option 7': false
     };
+    static code = `
+console.log('hello world');
+alert('hello world');
+        `;
     static title =
         'Standardization management system — Specification (Level 3 questionnaire)';
     static modal = `
