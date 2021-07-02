@@ -60,7 +60,7 @@
 #layout__sidebar {
     grid-area: layout__sidebar;
     transform: translateX(-100%);
-    transition: var(--transition-time) ease;
+    transition: var(--transition-time) ease-in-out;
     z-index: 1;
     position: relative;
     overflow-y: scroll;

@@ -1,6 +1,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 import styles from './Modal.module.css';
+import X from './X';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -19,13 +20,20 @@ function Modal(props: OwnProps) {
     }
     return (
         <aside className={styles['modal']}>
-            <div className={styles['modal__modal']}>
-                <button
-                    onClick={handleClose}
-                    className={styles['modal__close']}
+            <div className={styles['modal__content']}>
+                <span
+                    className={[
+                        styles['modal__hotspot'],
+                        styles['modal__hotspot--close']
+                    ].join(' ')}
                 >
-                    Close Modal
-                </button>
+                    <X
+                        text="Close Modal"
+                        onClick={handleClose}
+                        showDesktop
+                        showMobile
+                    />
+                </span>
                 <div className={styles['modal__guts']}>{children}</div>
             </div>
             <div

@@ -113,6 +113,8 @@ function App() {
                     <X
                         text="Close Sidebar"
                         onClick={() => setSidebarOpen(false)}
+                        showDesktop={false}
+                        showMobile={true}
                     />,
                     <ProgressBar
                         onClick={() => setModalOpen(true)}

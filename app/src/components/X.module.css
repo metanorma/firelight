@@ -16,18 +16,29 @@
     justify-content: center;
     border-radius: 50%;
     flex-shrink: 0;
-    background: var(--colour__primary__bsi-red);
+    background-color: var(--colour__secondary__50-percent-black);
+    display: none;
+    transition: background-color var(--transition-time) ease-in-out;
+}
+
+.x:focus,
+.x:hover,
+.x:active {
+    background-color: var(--colour__primary__black);
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-.x {
+.x--show-mobile {
     display: flex;
 }
 
 @media (min-width: 800px) {
-    .x {
+    .x--show-mobile {
         display: none;
+    }
+    .x--show-desktop {
+        display: flex;
     }
 }
 
