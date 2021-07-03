@@ -1,5 +1,6 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+import { ButtonType } from '../Enums';
 import Button from './Button';
 import styles from './ProgressBar.module.css';
 
@@ -53,7 +54,7 @@ function ProgressBar(props: OwnProps) {
                     {value} / {max}
                 </output>
             </div>
-            <Button text={action} onClick={onClick} />
+            <Button text={action} onClick={onClick} type={ButtonType.Primary} />
         </aside>
     );
 }

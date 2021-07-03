@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Banner from './components/Banner';
+import Button from './components/Button';
+import ButtonGroup from './components/ButtonGroup';
 import Checklist from './components/Checklist';
 import Hamburger from './components/Hamburger';
 import Layout from './components/Layout';
@@ -12,6 +14,7 @@ import StealthTitle from './components/StealthTitle';
 import TubeMap from './components/TubeMap';
 import X from './components/X';
 import { Data } from './data/data';
+import { ButtonType } from './Enums';
 import { SimpleChecklist } from './Types';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -48,6 +51,23 @@ function App() {
             />
             <TubeMap stops={10} current={0} />
             <div dangerouslySetInnerHTML={{ __html: Data.modal }} />
+            <ButtonGroup>
+                <Button
+                    text="&larr;  Previous"
+                    type={ButtonType.Secondary}
+                    onClick={() => null}
+                />
+                <Button
+                    text="Do Something"
+                    type={ButtonType.Tertiary}
+                    onClick={() => null}
+                />
+                <Button
+                    text="Next  &rarr;"
+                    type={ButtonType.Secondary}
+                    onClick={() => null}
+                />
+            </ButtonGroup>
         </Modal>
     );
     if (isSidebarOpen) {

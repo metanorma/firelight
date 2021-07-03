@@ -3,21 +3,53 @@
 .button {
     font-family: var(--font-family);
     font-weight: var(--font-weight--regular);
-    font-size: var(--font-size);
+    letter-spacing: 0.05rem;
+    font-size: 1.1rem;
     border: 0;
-    padding: 0.618em;
+    padding: 1rem 2rem;
     margin: 0;
-    background-color: var(--colour__primary__bsi-darker-red);
-    color: var(--colour__primary__white);
-    border-radius: 0.1em;
+    border-radius: 0.2rem;
     cursor: pointer;
     transition: background-color var(--transition-time) ease-in-out;
+    text-transform: uppercase;
 }
 
 .button:focus,
 .button:hover,
 .button:active {
+}
+
+.button--primary {
+    background-color: var(--colour__primary__bsi-darker-red);
+    color: var(--colour__primary__white);
+}
+
+.button--primary:focus,
+.button--primary:hover,
+.button--primary:active {
     background-color: var(--colour__secondary__bsi-dark-red);
+}
+
+.button--secondary {
+    background-color: var(--colour__secondary__bsi-teal--a11y);
+    color: var(--colour__primary__white);
+}
+
+.button--secondary:focus,
+.button--secondary:hover,
+.button--secondary:active {
+    background-color: var(--colour__secondary__bsi-teal);
+}
+
+.button--tertiary {
+    background-color: var(--colour__secondary__30-percent-black);
+    color: var(--colour__primary__black);
+}
+
+.button--tertiary:focus,
+.button--tertiary:hover,
+.button--tertiary:active {
+    background-color: var(--colour__secondary__50-percent-black);
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
