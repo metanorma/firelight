@@ -1,11 +1,11 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .progress-bar {
-    font-family: var(--font-family);
+    font-family: var(--font-family--primary);
     font-weight: 400;
     font-size: var(--font-size);
-    background-color: var(--colour__primary__white);
-    border: 0.5em solid var(--colour__tertiary__cultured);
+    background-color: var(--colour--white);
+    border: 0.5em solid var(--colour--cultured);
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
@@ -56,13 +56,13 @@
 }
 
 .progress-bar__progress {
-    background-color: var(--colour__secondary__10-percent-black);
+    background-color: var(--colour--10-percent-black);
     width: 100%;
     height: 0.618em;
 }
 
 .progress-bar__progress__value {
-    background-color: var(--colour__secondary__bsi-teal);
+    background-color: var(--colour--bsi-teal);
     height: 100%;
     width: 50%;
 }

@@ -1,7 +1,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .x {
-    font-family: var(--font-family);
+    font-family: var(--font-family--primary);
     font-weight: var(--font-weight--regular);
     font-size: var(--font-size);
     border: 0;
@@ -16,7 +16,7 @@
     justify-content: center;
     border-radius: 50%;
     flex-shrink: 0;
-    background-color: var(--colour__secondary__50-percent-black);
+    background-color: var(--colour--50-percent-black);
     display: none;
     transition: background-color var(--transition-time) ease-in-out;
 }
@@ -24,7 +24,7 @@
 .x:focus,
 .x:hover,
 .x:active {
-    background-color: var(--colour__primary__black);
+    background-color: var(--colour--black);
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -61,7 +61,7 @@
     content: '';
     width: 50%;
     height: 10%;
-    background-color: var(--colour__primary__white);
+    background-color: var(--colour--white);
 }
 
 .x__x::before {

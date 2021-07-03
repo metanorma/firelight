@@ -1,12 +1,12 @@
 .tube-map {
-    font-family: var(--font-family);
+    font-family: var(--font-family--primary);
     font-weight: var(--font-weight--regular);
     font-size: 2em;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     cursor: default;
-    color: var(--colour__primary__black);
+    color: var(--colour--black);
     overflow: hidden;
     justify-content: center;
     align-items: center;
@@ -29,11 +29,11 @@
 }
 
 .tube-map__station--visited {
-    color: var(--colour__primary__bsi-red);
+    color: var(--colour--bsi-red);
 }
 
 .tube-map__station--unvisited {
-    color: var(--colour__secondary__30-percent-black);
+    color: var(--colour--30-percent-black);
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

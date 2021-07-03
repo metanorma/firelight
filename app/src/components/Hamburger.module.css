@@ -1,7 +1,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .hamburger {
-    font-family: var(--font-family);
+    font-family: var(--font-family--primary);
     font-weight: var(--font-weight--regular);
     font-size: var(--font-size);
     border: 0;
@@ -46,7 +46,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .hamburger--active {
-    background-color: var(--colour__primary__bsi-red);
+    background-color: var(--colour--bsi-red);
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -71,16 +71,16 @@
 .hamburger__stack--inactive {
     background-image: linear-gradient(
         to bottom,
-        var(--colour__secondary__50-percent-black),
-        var(--colour__secondary__50-percent-black) 20%,
+        var(--colour--50-percent-black),
+        var(--colour--50-percent-black) 20%,
         transparent 20%,
         transparent 40%,
-        var(--colour__secondary__50-percent-black) 40%,
-        var(--colour__secondary__50-percent-black) 60%,
+        var(--colour--50-percent-black) 40%,
+        var(--colour--50-percent-black) 60%,
         transparent 60%,
         transparent 80%,
-        var(--colour__secondary__50-percent-black) 80%,
-        var(--colour__secondary__50-percent-black) 100%
+        var(--colour--50-percent-black) 80%,
+        var(--colour--50-percent-black) 100%
     );
 }
 
@@ -89,16 +89,16 @@
 .hamburger__stack--inactive:active {
     background-image: linear-gradient(
         to bottom,
-        var(--colour__primary__white),
-        var(--colour__primary__white) 20%,
+        var(--colour--white),
+        var(--colour--white) 20%,
         transparent 20%,
         transparent 40%,
-        var(--colour__primary__white) 40%,
-        var(--colour__primary__white) 60%,
+        var(--colour--white) 40%,
+        var(--colour--white) 60%,
         transparent 60%,
         transparent 80%,
-        var(--colour__primary__white) 80%,
-        var(--colour__primary__white) 100%
+        var(--colour--white) 80%,
+        var(--colour--white) 100%
     );
 }
 
@@ -107,16 +107,16 @@
 .hamburger__stack--active {
     background-image: linear-gradient(
         to bottom,
-        var(--colour__secondary__10-percent-black),
-        var(--colour__secondary__10-percent-black) 20%,
+        var(--colour--10-percent-black),
+        var(--colour--10-percent-black) 20%,
         transparent 20%,
         transparent 40%,
-        var(--colour__secondary__10-percent-black) 40%,
-        var(--colour__secondary__10-percent-black) 60%,
+        var(--colour--10-percent-black) 40%,
+        var(--colour--10-percent-black) 60%,
         transparent 60%,
         transparent 80%,
-        var(--colour__secondary__10-percent-black) 80%,
-        var(--colour__secondary__10-percent-black) 100%
+        var(--colour--10-percent-black) 80%,
+        var(--colour--10-percent-black) 100%
     );
 }
 
@@ -125,16 +125,16 @@
 .hamburger__stack--active:active {
     background-image: linear-gradient(
         to bottom,
-        var(--colour__primary__white),
-        var(--colour__primary__white) 20%,
+        var(--colour--white),
+        var(--colour--white) 20%,
         transparent 20%,
         transparent 40%,
-        var(--colour__primary__white) 40%,
-        var(--colour__primary__white) 60%,
+        var(--colour--white) 40%,
+        var(--colour--white) 60%,
         transparent 60%,
         transparent 80%,
-        var(--colour__primary__white) 80%,
-        var(--colour__primary__white) 100%
+        var(--colour--white) 80%,
+        var(--colour--white) 100%
     );
 }
 

@@ -1,10 +1,10 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .stealth-title {
-    font-family: var(--font-family);
+    font-family: var(--font-family--primary);
     font-weight: var(--font-weight--regular);
     font-size: var(--font-size);
-    color: var(--colour__primary__white);
+    color: var(--colour--white);
     transition: opacity var(--transition-time) ease-in-out;
     text-align: center;
     display: none;

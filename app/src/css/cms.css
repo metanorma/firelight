@@ -5,8 +5,8 @@
 .cms h5,
 .cms h6,
 .cms p {
-    font-family: var(--font-family);
-    color: var(--colour__primary__black);
+    font-family: var(--font-family--primary);
+    color: var(--colour--black);
 }
 
 .cms h1,
@@ -80,32 +80,32 @@
 
 .cms .figure .FigureTitle {
     margin: 2rem 0 0 0 !important;
-    color: var(--colour__primary__black);
+    color: var(--colour--black);
     font-style: italic;
 }
 
 .cms .figure .figure .FigureTitle {
     margin: 1rem 0 2rem 0 !important;
-    color: var(--colour__secondary__50-percent-black);
+    color: var(--colour--50-percent-black);
 }
 
 .cms a {
-    font-family: var(--font-family);
+    font-family: var(--font-family--primary);
 }
 
 .cms a:link {
-    color: var(--colour__secondary__bsi-teal--a11y);
+    color: var(--colour--bsi-teal--a11y);
     text-decoration: underline;
 }
 
 .cms a:visited {
-    color: var(--colour__primary__black);
+    color: var(--colour--black);
     text-decoration: underline;
 }
 
 .cms a:focus,
 .cms a:hover,
 .cms a:active {
-    color: var(--colour__primary__bsi-red);
+    color: var(--colour--bsi-red);
     text-decoration: underline;
 }

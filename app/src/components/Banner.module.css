@@ -1,10 +1,10 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .banner {
-    font-family: var(--font-family);
+    font-family: var(--font-family--primary);
     font-weight: var(--font-weight--regular);
     font-size: var(--font-size);
-    background: var(--colour__primary__black);
+    background: var(--colour--black);
     padding: 1em;
     display: flex;
     flex-direction: row;
@@ -15,7 +15,6 @@
 }
 
 .banner__item {
-
 }
 
 .banner__item + .banner__item {

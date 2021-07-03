@@ -1,7 +1,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .button {
-    font-family: var(--font-family);
+    font-family: var(--font-family--primary);
     font-weight: var(--font-weight--regular);
     letter-spacing: 0.05rem;
     font-size: 1.1rem;
@@ -20,36 +20,36 @@
 }
 
 .button--primary {
-    background-color: var(--colour__primary__bsi-darker-red);
-    color: var(--colour__primary__white);
+    background-color: var(--colour--bsi-darker-red);
+    color: var(--colour--white);
 }
 
 .button--primary:focus,
 .button--primary:hover,
 .button--primary:active {
-    background-color: var(--colour__secondary__bsi-dark-red);
+    background-color: var(--colour--bsi-dark-red);
 }
 
 .button--secondary {
-    background-color: var(--colour__secondary__bsi-teal--a11y);
-    color: var(--colour__primary__white);
+    background-color: var(--colour--bsi-teal--a11y);
+    color: var(--colour--white);
 }
 
 .button--secondary:focus,
 .button--secondary:hover,
 .button--secondary:active {
-    background-color: var(--colour__secondary__bsi-teal);
+    background-color: var(--colour--bsi-teal);
 }
 
 .button--tertiary {
-    background-color: var(--colour__secondary__30-percent-black);
-    color: var(--colour__primary__black);
+    background-color: var(--colour--30-percent-black);
+    color: var(--colour--black);
 }
 
 .button--tertiary:focus,
 .button--tertiary:hover,
 .button--tertiary:active {
-    background-color: var(--colour__secondary__50-percent-black);
+    background-color: var(--colour--50-percent-black);
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

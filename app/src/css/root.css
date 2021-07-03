@@ -1,23 +1,23 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 :root {
-    --colour__primary__bsi-red: #ff2b1f;
-    --colour__primary__black: #000;
-    --colour__primary__white: #fff;
-    --colour__primary__bsi-darker-red: #d72d18;
-    --colour__secondary__bsi-pale-red: #ffb9af;
-    --colour__secondary__bsi-light-red: #ff8273;
-    --colour__secondary__bsi-dark-red: #9e2b1f;
-    --colour__secondary__10-percent-black: #ececec;
-    --colour__secondary__30-percent-black: #c5c5c5;
-    --colour__secondary__50-percent-black: #9b9b9b;
-    --colour__secondary__bsi-pale-teal: #e6f6f7;
-    --colour__secondary__bsi-light-teal: #b3e3e6;
-    --colour__secondary__bsi-teal: #00a3ad;
-    --colour__secondary__bsi-teal--a11y: #29828c;
-    --colour__tertiary__platinum: #ebebeb;
-    --colour__tertiary__cultured: #f2f2f2;
-    --font-family: 'Gesta', Tahoma, sans-serif;
+    --colour--bsi-red: #ff2b1f;
+    --colour--black: #000;
+    --colour--white: #fff;
+    --colour--bsi-darker-red: #d72d18;
+    --colour--bsi-pale-red: #ffb9af;
+    --colour--bsi-light-red: #ff8273;
+    --colour--bsi-dark-red: #9e2b1f;
+    --colour--10-percent-black: #ececec;
+    --colour--30-percent-black: #c5c5c5;
+    --colour--50-percent-black: #9b9b9b;
+    --colour--bsi-pale-teal: #e6f6f7;
+    --colour--bsi-light-teal: #b3e3e6;
+    --colour--bsi-teal: #00a3ad;
+    --colour--bsi-teal--a11y: #29828c;
+    --colour--platinum: #ebebeb;
+    --colour--cultured: #f2f2f2;
+    --font-family--primary: 'Gesta', Tahoma, sans-serif;
     --font-size: 1.25em;
     --font-weight--light: 300;
     --font-weight--regular: 400;
