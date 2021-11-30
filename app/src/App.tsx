@@ -16,6 +16,7 @@ import X from './components/X';
 import { Data } from './data/data';
 import { ButtonType } from './Enums';
 import { SimpleChecklist } from './Types';
+import NavIMenu from './components/NavMenu';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -133,23 +134,24 @@ function App() {
                     />
                 ]}
                 sideBar={[
-                    <X
-                        text="Close Sidebar"
-                        onClick={() => setSidebarOpen(false)}
-                        showDesktop={false}
-                        showMobile={true}
-                    />,
-                    <ProgressBar
-                        onClick={() => setModalOpen(true)}
-                        action="Open Checklist"
-                        progress={{
-                            max: checklistItemMax,
-                            value: checklistItemCount
-                        }}
-                        isLarge={false}
-                    />,
-                    <TubeMap stops={3} current={3} />,
-                    <div dangerouslySetInnerHTML={{ __html: Data.side }} />
+                    // <X
+                    //     text="Close Sidebar"
+                    //     onClick={() => setSidebarOpen(false)}
+                    //     showDesktop={false}
+                    //     showMobile={true}
+                    // />,
+                    // <ProgressBar
+                    //     onClick={() => setModalOpen(true)}
+                    //     action="Open Checklist"
+                    //     progress={{
+                    //         max: checklistItemMax,
+                    //         value: checklistItemCount
+                    //     }}
+                    //     isLarge={false}
+                    // />,
+                    // <TubeMap stops={3} current={3} />,
+                    // <div dangerouslySetInnerHTML={{ __html: Data.side }} />
+                    <NavIMenu />
                 ]}
                 bonus={bonusElements}
             />

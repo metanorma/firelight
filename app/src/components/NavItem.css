@@ -1,27 +1,42 @@
 .collapse-group {
-    display: flex;
-    align-items: center;
-    position: relative;
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 60px;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 15px;
+  background-color: #efefef;
+  border: 1px solid white;
 }
 
 .collapse-button {
-    position: absolute;
-    right: 0;
-    display: inline-block;
-    height: 20px;
-    width: 20px;
-    cursor: pointer;
-    background-image: url('data:image/svg+xml,<svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="rgba(0,0,0,.54)" d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"></path></svg>');
+  position: absolute;
+  right: 15px;
+  display: inline-block;
+  height: 30px;
+  width: 30px;
+  cursor: pointer;
+  background-image: url('data:image/svg+xml,<svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="rgba(0,0,0,.54)" d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"></path></svg>');
 }
 
 .collapse {
-    display: none;
+  display: none;
 }
 
 .expand {
-    transform: rotateZ(-180deg);
+  transform: rotateZ(-180deg);
 }
 
 .active {
-    background-color: red;
+  background-color: var(--colour--bsi-darker-red);
+}
+
+.item-active {
+  background-color: var(--colour--50-percent-black);
+}
+
+.subitem {
+  cursor: pointer;
+  padding: 15px 15px 15px 25px;
 }

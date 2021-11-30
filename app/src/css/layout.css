@@ -5,7 +5,7 @@
     width: 100vw;
     height: 100vh;
     grid-template-rows: auto 1fr;
-    /* grid-template-columns: minmax(auto, 38.2%) 1fr; */
+    /* grid-template-columns: minmax(auto, 60%) 1fr; */
     grid-template-areas:
         'layout__sidebar layout__header'
         'layout__mainbar layout__sidebar';
@@ -14,7 +14,7 @@
 
 @media (min-width: 800px) {
     #layout.layout--sidebar-emancipated {
-        grid-template-columns: minmax(auto, 61.8%) 1fr;
+        grid-template-columns: minmax(auto, 75%) 1fr;
         grid-template-areas:
             'layout__header layout__header'
             'layout__mainbar layout__sidebar';
@@ -64,7 +64,7 @@
     z-index: 1;
     position: relative;
     overflow-y: scroll;
-    padding: 1em;
+    /* padding: 1em; */
 }
 
 @media (min-width: 800px) {
