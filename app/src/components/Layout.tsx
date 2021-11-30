@@ -62,10 +62,10 @@ function Layout(props: OwnProps) {
                 <BackToTop anchorId="main-top" />
             </main>
             <aside id="layout__sidebar" className={sidebarClasses.join(' ')}>
-                <span id="side-top"></span>
+                {/* <span id="side-top"></span> */}
                 {sideBar}
-                <SourceCode code={Data.code} language="javascript" />
-                <BackToTop anchorId="side-top" />
+                {/* <SourceCode code={Data.code} language="javascript" /> */}
+                {/* <BackToTop anchorId="side-top" /> */}
             </aside>
             {bonus}
         </div>
