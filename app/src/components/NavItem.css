@@ -40,3 +40,10 @@
   cursor: pointer;
   padding: 15px 15px 15px 25px;
 }
+
+.menu-text {
+  width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;  
+}
