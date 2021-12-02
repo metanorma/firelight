@@ -1,12 +1,12 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-import { useMemo, useEffect, useState } from "react";
-import classnames from "classnames";
+import { useMemo, useState } from "react";
+// import classnames from "classnames";
 import NavItem from "./NavItem";
 // import axios from 'axios';
 
 import "./NavMenu.css";
-import datas from "../data/sidebar.json";
+// import datas from "../data/sidebar.json";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -90,7 +90,7 @@ export default function NavIMenu({ xmlData }: OwnProps) {
     }
     return menuItem;
   }, [xmlData]);
-  console.log(menuItem);
+  
   return (
     <nav>
       <div id="toc">
