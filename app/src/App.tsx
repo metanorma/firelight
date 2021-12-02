@@ -12,15 +12,16 @@ import Modal from "./components/Modal";
 import ProgressBar from "./components/ProgressBar";
 import StealthTitle from "./components/StealthTitle";
 import TubeMap from "./components/TubeMap";
-import X from "./components/X";
 import { Data } from "./data/data";
 import { ButtonType } from "./Enums";
 import { SimpleChecklist } from "./Types";
 import NavIMenu from "./components/NavMenu";
-import XMLData from "./data/document-l3";
+import MainPage from "./components/MainPage";
 import presentationData from "./data/document-presentation";
 import { parseString } from "xml2js";
-var xmlParser = require("react-xml-parser");
+// import XMLData from "./data/document-l3";
+// import X from "./components/X";
+const xmlParser = require("react-xml-parser");
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -36,11 +37,14 @@ function App() {
   const [xmlData, setXmlData] = useState({});
 
   useEffect(() => {
-    const jsonDataFromXml = parseString(presentationData, {}, function (err, result) {
+    parseString(presentationData, {}, function (err, result) {
       setXmlData(result);
+
+      const xml = new xmlParser().parseFromString(presentationData);
+      console.log(xml, 'xml')
     });
   }, []);
-console.log(xmlData);
+
   const checklistItemMax = Object.keys(checklist).length;
   const checklistItemCount = Object.keys(checklist).filter(
     (key: string) => checklist[key] === true
@@ -129,20 +133,21 @@ console.log(xmlData);
           </Banner>
         }
         mainBar={[
-          <TubeMap stops={7} current={3} />,
-          <ProgressBar
-            onClick={() => setModalOpen(true)}
-            action="Open Checklist"
-            progress={{
-              max: checklistItemMax,
-              value: checklistItemCount,
-            }}
-            isLarge={true}
-          />,
-          <div
-            className="cms"
-            dangerouslySetInnerHTML={{ __html: Data.main }}
-          />,
+          // <TubeMap stops={7} current={3} />,
+          // <ProgressBar
+          //   onClick={() => setModalOpen(true)}
+          //   action="Open Checklist"
+          //   progress={{
+          //     max: checklistItemMax,
+          //     value: checklistItemCount,
+          //   }}
+          //   isLarge={true}
+          // />,
+          // <div
+          //   className="cms"
+          //   dangerouslySetInnerHTML={{ __html: Data.main }}
+          // />,
+          <MainPage xmlData={xmlData} />,
         ]}
         sideBar={[
           // <X
@@ -162,7 +167,7 @@ console.log(xmlData);
           // />,
           // <TubeMap stops={3} current={3} />,
           // <div dangerouslySetInnerHTML={{ __html: Data.side }} />
-          <NavIMenu xmlData={xmlData}/>,
+          <NavIMenu xmlData={xmlData} />,
         ]}
         bonus={bonusElements}
       />
