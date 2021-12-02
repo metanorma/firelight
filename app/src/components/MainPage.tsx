@@ -1,6 +1,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 import { useMemo, useState } from "react";
+import ContentSection from "./ContentSection";
 // import classnames from "classnames";
 // import axios from 'axios';
 // import datas from "../data/sidebar.json";
@@ -16,12 +17,14 @@ interface OwnProps {
 export default function MainPage({ xmlData }: OwnProps) {
   const [selectedItem, setSelectedItem] = useState("");
 
-  const menuItem = useMemo(() => {
+  // split the xml data by content section and save those as array
+  const contentSections = useMemo(() => {
 
     const getMenuItem = (data: any): any => {
       const returnData: any = {};
       returnData.index = data["$"]["displayorder"];
       returnData.data = data;
+      return returnData;
     };
 
     const menuItem: any[] = [];
@@ -65,6 +68,10 @@ export default function MainPage({ xmlData }: OwnProps) {
   }, [xmlData]);
   
   return (
-    <div></div>
+    <div className="main-page">
+        {contentSections?.length > 0 && contentSections.map((item: any) => 
+            <ContentSection xmlData={item.data} key={item.index}/>
+        )}
+    </div>
   );
 }
