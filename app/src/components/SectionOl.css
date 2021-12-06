@@ -17,3 +17,12 @@ ol > li:before {
   position: absolute;
   left: 0em;
 }
+
+ol[type="1"] {
+  counter-reset: arabic;
+}
+
+ol[type="1"] > li:before {
+  counter-increment: arabic;
+  content: counter(arabic, decimal) ") ";
+}
