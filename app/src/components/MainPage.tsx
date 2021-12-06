@@ -1,7 +1,8 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import ContentSection from "./ContentSection";
+import { getChildsById } from "../utility";
 // import classnames from "classnames";
 // import axios from 'axios';
 // import datas from "../data/sidebar.json";
@@ -15,8 +16,9 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function MainPage({ xmlData }: OwnProps) {
-  const [selectedItem, setSelectedItem] = useState("");
-
+console.log(getChildsById("_5107463c-5acc-19df-d5f3-5693e3174eb7"), 'child1');
+console.log(getChildsById("sec_0.4"), 'child2');
+// console.log(getChildsById("sec_foreword")?.childNodes[0], 'child3');
   // split the xml data by content section and save those as array
   const contentSections = useMemo(() => {
 
