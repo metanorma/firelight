@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { tokenToString } from "typescript";
+import DisplayNode from "./DisplayNode";
 import "./SectionTitle.css";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -13,29 +14,41 @@ interface OwnProps {
 
 export default function SectionTitle({ title }: OwnProps) {
   const renderTitle = useMemo(() => {
-    let text = title;
-    let depth = "0";
-    if (typeof title !== "string") {
-      text = title["_"];
-      depth = title["$"] ? title["$"]["depth"] : "1";
+    if (typeof title === "string") {
+      return <h3 className="title title-3">{title}</h3>;
     }
-    const matches: any = text?.match(/[a-zA-Z]+/g);
-    const index: number = text?.indexOf(matches[0]);
-    let titleString = index
-      ? text.substr(0, index) + "  " + text.substr(index)
-      : text;
-      if (title['strong'] !== undefined && title['strong'].length > 0) {
-        titleString = `${title['strong'][0]} ${title["_"]} ${title['strong'][1]}`; 
-      }
+    const attrs: any[] = title.attributes;
+    const depthRow = Object.values(attrs).find(
+      (attr: any) => attr?.name === "depth"
+    );
+    let depth = depthRow?.value ? depthRow.value : "2";
+    if (title.childNodes[0].data === 'Foreword') depth = "0";
+
     switch (depth) {
       case "0":
-        return <h1 className="title title-1">{titleString}</h1>;
+        return (
+          <h1 className="title title-1">
+            <DisplayNode data={title.childNodes} />
+          </h1>
+        );
       case "1":
-        return <h2 className="title title-2">{titleString}</h2>;
+        return (
+          <h2 className="title title-2">
+            <DisplayNode data={title.childNodes} />
+          </h2>
+        );
       case "2":
-        return <h3 className="title title-3">{titleString}</h3>;
+        return (
+          <h3 className="title title-3">
+            <DisplayNode data={title.childNodes} />
+          </h3>
+        );
       default:
-        return <h2 className="title title-4">{titleString}</h2>;
+        return (
+          <h2 className="title title-4">
+            <DisplayNode data={title.childNodes} />
+          </h2>
+        );
     }
   }, [title]);
 
