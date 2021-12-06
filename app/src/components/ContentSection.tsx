@@ -1,7 +1,6 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-import SectionTitle from "./SectionTitle";
-import SectionP from "./SectionP";
-import SectionOl from "./SectionOl";
+import { getChildsById } from "../utility";
+import DisplayNode from "./DisplayNode";
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 interface OwnProps {
@@ -12,12 +11,14 @@ interface OwnProps {
 
 export default function ContentSection({ xmlData }: OwnProps) {
   const id = xmlData?.$?.id ? xmlData.$.id : "";
+  let node: any = "";
+  if (id) {
+    node = getChildsById(id);
+  }
 
-  return id ? (
+  return node ? (
     <div className="content-section" id={id}>
-      {xmlData?.title?.length && <SectionTitle title={xmlData.title[0]} />}
-      {xmlData?.p?.length && <SectionP data={xmlData.p} />}
-      {xmlData?.ol?.length && <SectionOl data={xmlData.ol[0]} />}
+      <DisplayNode data={node.childNodes}/>
       {xmlData?.clause?.length > 0 &&
         xmlData.clause.map((child: any, index: number) => (
           <ContentSection key={index} xmlData={child} />
@@ -25,9 +26,7 @@ export default function ContentSection({ xmlData }: OwnProps) {
     </div>
   ) : (
     <>
-      {xmlData?.title?.length && <SectionTitle title={xmlData.title[0]} />}
-      {xmlData?.p?.length && <SectionP data={xmlData.p} />}
-      {xmlData?.ol?.length && <SectionOl data={xmlData.ol[0]} />}
+      
       {xmlData?.clause?.length > 0 &&
         xmlData.clause.map((child: any, index: number) => (
           <ContentSection key={index} xmlData={child} />
