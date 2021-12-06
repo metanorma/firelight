@@ -1,7 +1,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 import { useMemo } from "react";
-import ContentSection from "./ContentSection";
+import DisplayNode from "./DisplayNode";
 import "./SectionOl.css";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -14,13 +14,24 @@ interface OwnProps {
 export default function SectionOl({ data }: OwnProps) {
   const renderContent = useMemo(() => {
     if (typeof data === "string") return <ol>{data}</ol>;
-    const id = data?.$?.id ? data.$.id : "";
-    const type = data?.$?.type ? data.$.type : "";
-    return <ol type="A">{
-      data?.li?.length > 0 && data.li.map((item:any, index: number) => 
-        <li key={index}><ContentSection xmlData={item} /></li>
-      )
-    }</ol>
+    const attrs: any[] = data.attributes;
+    let dataRow = Object.values(attrs).find((attr: any) => attr?.name === "id");
+    const id = dataRow?.value ? dataRow.value : "";
+    dataRow = Object.values(attrs).find((attr: any) => attr?.name === "type");
+    const type: any = dataRow?.value === "alphabet" ? "A" : "1";
+    return (
+      <ol type={type} id={id}>
+        {Object.values(data.childNodes).length > 0 &&
+          Object.values(data.childNodes).map(
+            (item: any, index: number) =>
+              item.tagName === "li" && (
+                <li key={index}>
+                  <DisplayNode data={item.childNodes} />
+                </li>
+              )
+          )}
+      </ol>
+    );
   }, [data]);
 
   return <>{renderContent}</>;
