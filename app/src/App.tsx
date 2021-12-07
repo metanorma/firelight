@@ -108,19 +108,20 @@ function App() {
         isSidebarShown={isSidebarShown}
         isSidebarOpen={isSidebarOpen}
         header={
-          <Banner>
+          <Banner key="banner">
             <Logo />
             <StealthTitle
               isVisible={isStealthTitleVisible}
               title={Data.title}
             />
-            <div>
+            <div key="hamburger">
               <Hamburger
                 isDesktop={false}
                 isActive={isSidebarOpen}
                 activeText={"Close Sidebar"}
                 inactiveText={"Open Sidebar"}
                 onClick={() => setSidebarOpen(!isSidebarOpen)}
+                key="mobile"
               />
               <Hamburger
                 isDesktop={true}
@@ -128,6 +129,7 @@ function App() {
                 activeText={"Hide Sidebar"}
                 inactiveText={"Show Sidebar"}
                 onClick={() => setSidebarShown(!isSidebarShown)}
+                key="desktop"
               />
             </div>
           </Banner>
@@ -167,7 +169,7 @@ function App() {
           // />,
           // <TubeMap stops={3} current={3} />,
           // <div dangerouslySetInnerHTML={{ __html: Data.side }} />
-          <NavIMenu xmlData={xmlData} />,
+          <NavIMenu xmlData={xmlData} key="nav-meunu"/>,
         ]}
         bonus={bonusElements}
       />

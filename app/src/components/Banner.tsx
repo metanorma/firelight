@@ -14,8 +14,8 @@ function Banner(props: OwnProps) {
     const { children } = props;
     return (
         <div className={styles.banner}>
-            {children.map((child: JSX.Element) => (
-                <div className={styles['banner__item']}>{child}</div>
+            {children.map((child: JSX.Element, index: number) => (
+                <div className={styles['banner__item']} key={index}>{child}</div>
             ))}
         </div>
     );
