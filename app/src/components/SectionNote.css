@@ -1,0 +1,12 @@
+.note {
+    background-color: #fff495;
+    color: #47430c;
+    padding: 0.5em;
+    margin: 1.5em 0 1.5em 0;
+    text-align: left;
+  }
+  
+  li > .note {
+    margin-left: -1.4em !important;
+  }
+  
