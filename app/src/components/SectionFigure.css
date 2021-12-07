@@ -1,11 +1,10 @@
-.note {
-  background-color: #fff495;
-  color: #47430c;
-  padding: 0.5em;
-  margin: 1.5em 0 1.5em 0;
-  text-align: left;
-}
-
-li > .note {
-  margin-left: -1.4em !important;
+.figure {
+  background-color: #f5faff;
+  font-size: 1em;
+  line-height: 1.6em;
+  padding: 1.5em;
+  margin: 2em 0 1em 0;
+  overflow: auto;
+  font-size: 1em;
+  text-align: center;
 }
