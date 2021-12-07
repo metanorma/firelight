@@ -147,7 +147,7 @@ function App() {
           //   className="cms"
           //   dangerouslySetInnerHTML={{ __html: Data.main }}
           // />,
-          <MainPage xmlData={xmlData} />,
+          <MainPage xmlData={xmlData} key="main-page"/>,
         ]}
         sideBar={[
           // <X
