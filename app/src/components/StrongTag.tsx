@@ -12,7 +12,7 @@ interface OwnProps {
 export default function StrongTag({ data }: OwnProps) {
     const renderContent = useMemo(() => {
         const value = data.childNodes[0].data;
-        return <strong>{value}</strong>;
+        return <strong className="strong">{value}</strong>;
       }, [data]);
 
   return <>{renderContent}</>;
