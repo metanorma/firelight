@@ -1,6 +1,6 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 import { useMemo } from "react";
-import "./DisplayNode.css";
+import "./LinkTag.css";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 interface OwnProps {
@@ -16,7 +16,7 @@ export default function LinkTag({ data }: OwnProps) {
         const attrs: any = {};
         attrs.href = attr[0].value;
         const value = child[0].data;
-        return <a {...attrs} key={attrs.href}>{value}</a>;
+        return <a {...attrs} key={attrs.href} className="link">{value}</a>;
       }, [data]);
 
   return <>{renderContent}</>;
