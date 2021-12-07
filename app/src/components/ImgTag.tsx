@@ -11,7 +11,7 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function ImgTag({ data }: OwnProps) {
-    const renderContent = useMemo(() => {
+    const renderContent = useMemo(() => { 
         const attrs: any = {};
         const attr = data?.attributes;
         Object.values(attr).map((item: any) => {

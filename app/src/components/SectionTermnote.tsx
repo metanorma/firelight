@@ -13,10 +13,10 @@ interface OwnProps {
 export default function SectionNote({ data }: OwnProps) {
   const renderContent = useMemo(() => {
     const attrs: any[] = data.attributes;
-    const depthRow = Object.values(attrs).find(
+    const idRow = Object.values(attrs).find(
       (attr: any) => attr?.name === "id"
     );
-    const id = depthRow?.value ? depthRow.value : "";
+    const id = idRow?.value ? idRow.value : "";
     return <div id={id} className="term-note"><DisplayNode data={data.childNodes} /></div>
   }, [data]);
 
