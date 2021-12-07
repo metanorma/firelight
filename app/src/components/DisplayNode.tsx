@@ -2,7 +2,9 @@
 import { useMemo } from "react";
 import LinkTag from "./LinkTag";
 import StrongTag from "./StrongTag";
+import EmTag from "./EmTag";
 import XrefTag from "./XrefTag";
+import ErefTag from "./ErefTag";
 import NameTag from "./NameTag";
 import ImgTag from "./ImgTag";
 import SectionTitle from "./SectionTitle";
@@ -10,6 +12,10 @@ import SectionP from "./SectionP";
 import SectionNote from "./SectionNote";
 import SectionFigure from "./SectionFigure";
 import SectionOl from "./SectionOl";
+import SectionTerm from "./SectionTerm";
+import SectionPreferred from "./SectionPreferred";
+import SectionDefinition from "./SectionDefinition";
+import SectionTermnote from "./SectionTermnote";
 import "./DisplayNode.css";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -22,42 +28,64 @@ interface OwnProps {
 export default function DisplayNode({ data }: OwnProps) {
   const renderContent = useMemo(() => {
     return Object.values(data).map((item: any, index: number) => {
+  
       if (!item?.tagName) return item.data;
-      if (item.tagName === "link") {
-        return <LinkTag data={item} key={index}/>;
-      }
-      if (item.tagName === "strong") {
-        return <StrongTag data={item} key={index}/>;
-      }
-      if (item.tagName === "xref") {
-        return <XrefTag data={item} key={index}/>;
-      }
-      if (item.tagName === "tab") {
-        return <span key={index}>{"    "}</span>;
-      }
-      if (item.tagName === "\n") {
-        return <></>;
-      }
-      if (item.tagName === "name") {
-        return <NameTag data={item} key={index} />
-      }
-      if (item.tagName === "image") {
-        return <ImgTag data={item} key={index} />
-      }
-      if (item.tagName === 'title') {
-        return <SectionTitle title={item} key={index}/>;
-      }
-      if (item.tagName === 'p') {
-        return <SectionP data={item} key={index}/>
-      }
-      if (item.tagName === 'note') {
-        return <SectionNote data={item} key={index} />
-      }
-      if (item.tagName === 'ol') {
-        return <SectionOl data={item} key={index} />
-      }
-      if (item.tagName === 'figure') {
-        return <SectionFigure data={item} key={index} />
+
+      switch (item.tagName) {
+
+        case 'link':
+          return <LinkTag data={item} key={index} />;
+
+        case 'strong':
+          return <StrongTag data={item} key={index} />;
+
+        case 'em':
+          return <EmTag data={item} key={index} />;
+
+        case 'xref':
+          return <XrefTag data={item} key={index} />;
+
+        case 'eref':
+          return <ErefTag data={item} key={index} />;
+
+        case 'tab':
+          return <span key={index}>{"    "}</span>;
+        case "\n":
+          return <></>;
+
+        case "name":
+          return <NameTag data={item} key={index} />;
+
+        case "image":
+          return <ImgTag data={item} key={index} />;
+
+        case 'title':
+          return <SectionTitle title={item} key={index} />;
+
+        case 'p':
+          return <SectionP data={item} key={index} />;
+
+        case 'note':
+          return <SectionNote data={item} key={index} />;
+
+        case 'ol':
+          return <SectionOl data={item} key={index} />;
+
+        case 'figure':
+          return <SectionFigure data={item} key={index} />;
+
+        case 'term':
+          return <SectionTerm data={item} key={index} />;
+
+        case 'preferred':
+          return <SectionPreferred data={item} key={index} />;
+
+        case 'definition':
+          return <SectionDefinition data={item} key={index} />;
+
+        case 'termnote':
+          return <SectionTermnote data={item} key={index} />;
+
       }
     });
   }, [data]);
