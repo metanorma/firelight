@@ -14,11 +14,10 @@ interface OwnProps {
 export default function SectionTerm({ data }: OwnProps) {
   const renderContent = useMemo(() => {
     const attrs: any[] = data.attributes;
-    const depthRow = Object.values(attrs).find(
+    const idRow = Object.values(attrs).find(
       (attr: any) => attr?.name === "id"
     );
-    console.log(data, 'preferred')
-    const id = depthRow?.value ? depthRow.value : "";
+    const id = idRow?.value ? idRow.value : "";
     return <div className="preferred" id={id}><DisplayNode data={data.childNodes} /></div>
   }, [data]);
 
