@@ -9,4 +9,9 @@
   li > .note {
     margin-left: -1.4em !important;
   }
+
+  .note > .p {
+    margin-block-start: 0;
+    margin-block-end: 0;
+  } 
   
