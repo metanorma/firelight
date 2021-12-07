@@ -12,8 +12,7 @@ interface OwnProps {
 
 export default function ErefTag({ data }: OwnProps) {
   const renderContent = useMemo(() => {
-
-    const attrs: any[] = data.attributes;
+    const attrs: any  [] = data.attributes;
     const xrefRow = Object.values(attrs).find(
       (attr: any) => attr?.name === "bibitemid"
     );
