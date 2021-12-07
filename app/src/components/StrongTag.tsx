@@ -1,5 +1,6 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 import { useMemo } from "react";
+import DisplayNode from "./DisplayNode";
 import "./StrongTag.css";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -11,8 +12,8 @@ interface OwnProps {
 
 export default function StrongTag({ data }: OwnProps) {
     const renderContent = useMemo(() => {
-        const value = data.childNodes[0].data;
-        return <strong className="strong">{value}</strong>;
+        if (typeof data === 'string') return <strong>{data}</strong>
+        return <strong className="strong"><DisplayNode data={data.childNodes} /></strong>;
       }, [data]);
 
   return <>{renderContent}</>;
