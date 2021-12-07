@@ -52,7 +52,7 @@ function Layout(props: OwnProps) {
                 {header}
             </header>
             <main
-                onScroll={handleMainScroll}
+                // onScroll={handleMainScroll}
                 id="layout__mainbar"
                 className="layout__mainbar"
             >

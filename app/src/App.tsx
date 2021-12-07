@@ -29,7 +29,7 @@ function App() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isSidebarShown, setSidebarShown] = useState(true);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [isStealthTitleVisible, setStealthTitleVisible] = useState(false);
+  const [isStealthTitleVisible, setStealthTitleVisible] = useState(true);
   const STEALTH_TITLE__SCROLL_THRESHOLD_PX = 500;
   const [checklist, setChecklist] = useState({
     ...(Data.checklist as SimpleChecklist),
