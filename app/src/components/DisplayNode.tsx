@@ -16,6 +16,7 @@ import SectionTerm from "./SectionTerm";
 import SectionPreferred from "./SectionPreferred";
 import SectionDefinition from "./SectionDefinition";
 import SectionTermnote from "./SectionTermnote";
+import TermText from "./TermText";
 import "./DisplayNode.css";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -29,7 +30,8 @@ export default function DisplayNode({ data }: OwnProps) {
   const renderContent = useMemo(() => {
     return Object.values(data).map((item: any, index: number) => {
   
-      if (!item?.tagName) return item.data;
+      if (!item?.tagName) return <TermText text={item.data} key={index}/>;
+      // if (!item?.tagName) return item.data;
 
       switch (item.tagName) {
 
