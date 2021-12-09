@@ -2,11 +2,7 @@
 
 import { useMemo } from 'react';
 import ContentSection from './ContentSection';
-import { getTerminologies, getChildsByTagname } from '../utility';
-import TermText from './TermText';
-// import classnames from "classnames";
-// import axios from 'axios';
-// import datas from "../data/sidebar.json";
+import Cover from './Cover';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -53,22 +49,22 @@ export default function MainPage({ xmlData }: OwnProps) {
             menuItem[terms.index] = terms;
             // menuItem.push(terms)
             // the sction part
-            const sections = xmlData["bsi-standard"]["sections"][0]["clause"];
+            const sections = xmlData['bsi-standard']['sections'][0]['clause'];
             if (sections?.length) {
-              sections.map((sectoin: any) => {
-                const sectionItem = getMenuItem(sectoin);
-                menuItem[sectionItem.index] = sectionItem;
-                // menuItem.push(sectionItem);
-              })
+                sections.map((sectoin: any) => {
+                    const sectionItem = getMenuItem(sectoin);
+                    menuItem[sectionItem.index] = sectionItem;
+                    // menuItem.push(sectionItem);
+                });
             }
             //the sction part
-            const annex = xmlData["bsi-standard"]["annex"];
+            const annex = xmlData['bsi-standard']['annex'];
             if (annex?.length) {
-              annex.map((sectoin: any) => {
-                const sectionItem = getMenuItem(sectoin);
-                menuItem[sectionItem.index] = sectionItem;
-                // menuItem.push(sectionItem)
-              })
+                annex.map((sectoin: any) => {
+                    const sectionItem = getMenuItem(sectoin);
+                    menuItem[sectionItem.index] = sectionItem;
+                    // menuItem.push(sectionItem)
+                });
             }
         }
         return menuItem;
@@ -76,10 +72,11 @@ export default function MainPage({ xmlData }: OwnProps) {
 
     return (
         <div className="main-page">
-            {contentSections?.length > 0 && contentSections.map((item: any) => 
-            <ContentSection xmlData={item.data} key={item.index}/>
-        )}
-            {/* <TermText text="aspect of corporate governance in which top management provides accurate and current information to stakeholders concerning the efficiency and effectiveness of its policies and operations, and the status of its compliance with statutory obligations" /> */}
+            <Cover />
+            {contentSections?.length > 0 &&
+                contentSections.map((item: any) => (
+                    <ContentSection xmlData={item.data} key={item.index} />
+                ))}
         </div>
     );
 }
