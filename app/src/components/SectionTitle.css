@@ -15,3 +15,7 @@
 .title-3 {
   font-size: 24px;
 }
+
+.title > .terminology  {
+  text-decoration: none;
+}
