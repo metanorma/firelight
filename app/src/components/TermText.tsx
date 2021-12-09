@@ -34,16 +34,22 @@ export default function TermText({ text }: OwnProps) {
                 position = start + token.indexOf(term.text);
                 token = token.substr(position + term.text.length);
                 //check the just previous text
-                if ([' ', '.', ','].includes(text.charAt(position - 1 ))){
+                if ([' ', '.', ','].includes(text.charAt(position - 1))) {
                     //check the plural
-                    if (text.substr(position, plural.length).toLowerCase() === plural) {
+                    if (
+                        text.substr(position, plural.length).toLowerCase() ===
+                        plural
+                    ) {
                         indexArray.push(position);
                         termArray[position] = {
                             ...term,
                             text: text.substr(position, plural.length)
                         };
                         start = position + plural.length;
-                    } else if ([' ', '.', ','].includes(text.charAt(position + term.text.length))
+                    } else if (
+                        [' ', '.', ','].includes(
+                            text.charAt(position + term.text.length)
+                        )
                     ) {
                         indexArray.push(position);
                         termArray[position] = {
@@ -52,13 +58,13 @@ export default function TermText({ text }: OwnProps) {
                         };
                         start = position + term.text.length;
                     }
-                }                
+                }
             }
         });
         if (indexArray.length === 0) return text;
-        indexArray = indexArray.sort();
+        indexArray = indexArray.sort((first: number, second: number) => first - second);
         let materialArray = [];
-        if (indexArray.length >= 2) console.log(indexArray);
+        if (indexArray.length >= 2) console.log(indexArray, 'indexArray');
         let start = 0;
         indexArray.map((value: number) => {
             if (value !== 0 && start !== text?.length)
