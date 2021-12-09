@@ -1,12 +1,12 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 import { useMemo } from "react";
-import DisplayNode from "./DisplayNode";
+import DisplayNode, { XMLNode } from "./DisplayNode";
 import "./SectionTitle.css";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 interface OwnProps {
-  title: string | any;
+  title: string | XMLNode;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
