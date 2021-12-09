@@ -19,3 +19,11 @@
 .title > .terminology  {
   text-decoration: none;
 }
+
+.title > .strong > .terminology {
+  text-decoration: none;
+}
+
+.title > .strong:last-child {
+  padding-left: 0.3em;
+}
