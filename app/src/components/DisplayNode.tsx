@@ -24,11 +24,18 @@ interface OwnProps {
   data: any;
 }
 
+export interface XMLNode {
+  attributes?: any;
+  childNodes?: any;
+  tagName?: string;
+  data?: string;
+}
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function DisplayNode({ data }: OwnProps) {
   const renderContent = useMemo(() => {
-    return Object.values(data).map((item: any, index: number) => {
+    return Object.values(data).map((item: XMLNode | any, index: number) => {
   
       if (!item?.tagName) return <TermText text={item.data} key={index}/>;
       // if (!item?.tagName) return item.data;
