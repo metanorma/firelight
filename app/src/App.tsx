@@ -41,7 +41,6 @@ function App() {
       setXmlData(result);
 
       const xml = new xmlParser().parseFromString(presentationData);
-      console.log(xml, 'xml')
     });
   }, []);
 
