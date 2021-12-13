@@ -18,7 +18,7 @@ export default function SectionTable({ data }: OwnProps) {
       (attr: any) => attr?.name === "id"
     );
     const id = idRow?.value ? idRow.value : "";
-    return <div className="table" id={id}><DisplayNode data={data.childNodes} /></div>
+    return <table className="table" id={id}><DisplayNode data={data.childNodes} /></table>
   }, [data]);
 
   return <>{renderContent}</>;
