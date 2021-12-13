@@ -1,4 +1,14 @@
-.table > .name {
-    display: block;
+.table  {
+    display: table;
+    width: auto;
+    background-color: #eee;
+    border: 1px solid #666666;
+    border-spacing: 5px; /* cellspacing:poor IE support for  this */
     text-align: center;
+}
+
+.table > .name {
+    display: table-caption;
+    text-align: center;
+    font-size: inherit;
 }
