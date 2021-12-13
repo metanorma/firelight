@@ -13,8 +13,8 @@ interface OwnProps {
 
 export default function SectionThead({ data }: OwnProps) {
   const renderContent = useMemo(() => {
-    const attrs: any[] = data.attributes;
-    const idRow = Object.values(attrs).find(
+    const attrs: any = data.attributes;
+    const idRow: any = Object.values(attrs).find(
       (attr: any) => attr?.name === "id"
     );
     const id = idRow?.value ? idRow.value : "";
