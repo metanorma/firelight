@@ -14,16 +14,15 @@ interface OwnProps {
 export default function SectionP({ data }: OwnProps) {
   const renderContent = useMemo(() => {
     const attrs: any[] = data.attributes;
-    const valignRow = Object.values(attrs).find(
-      (attr: any) => attr?.name === "valign"
+    const props: any = {};
+    const valignRow = Object.values(attrs).map(
+      (attr: any) => {
+        if (attr?.name) {
+          props[attr.name] = attr.value;
+        }
+      }
     );
-    const alignRow = Object.values(attrs).find(
-      (attr: any) => attr?.name === "align"
-    );
-    const attr: any = {};
-    attr.valign = valignRow?.value ? valignRow.value : "";
-    attr.align = alignRow?.value ? alignRow.value : "";
-    return <th className="th" {...attr}><DisplayNode data={data.childNodes} /></th>
+    return <th className="th" {...props}><DisplayNode data={data.childNodes} /></th>
   }, [data]);
 
   return <>{renderContent}</>;
