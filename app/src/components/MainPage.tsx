@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import ContentSection from './ContentSection';
 import Cover from './Cover';
+import { getChildsById } from '../utility';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -66,6 +67,11 @@ export default function MainPage({ xmlData }: OwnProps) {
                     // menuItem.push(sectionItem)
                 });
             }
+            //the bibliography part
+            const bibliography = getMenuItem(
+                xmlData['bsi-standard']['bibliography'][0]['clause'][0]
+            );console.log(bibliography, 'bib')
+            menuItem[bibliography.index] = bibliography;
         }
         return menuItem;
     }, [xmlData]);
