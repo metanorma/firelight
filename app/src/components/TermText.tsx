@@ -18,6 +18,7 @@ export default function TermText({ text }: OwnProps) {
     }, [getTerminologies]);
 
     const renderContent = useMemo(() => {
+        if (text === '\n') return "";
         // split the text by the <>terms</> and return the result
         let termArray: any = {};
         let indexArray: number[] = [];
@@ -64,7 +65,6 @@ export default function TermText({ text }: OwnProps) {
         if (indexArray.length === 0) return text;
         indexArray = indexArray.sort((first: number, second: number) => first - second);
         let materialArray = [];
-        if (indexArray.length >= 2) console.log(indexArray, 'indexArray');
         let start = 0;
         indexArray.map((value: number) => {
             if (value !== 0 && start !== text?.length)
@@ -74,8 +74,6 @@ export default function TermText({ text }: OwnProps) {
             materialArray.push(termArray[value]);
         });
         if (start < text.length) materialArray.push(text.substr(start));
-        if (indexArray.length >= 2)
-            console.log(materialArray, 'mate', text, start);
         return materialArray.map((material: any, key: number) => {
             if (typeof material === 'string') return material;
             else if (typeof material === 'object' && material?.id)
