@@ -54,9 +54,9 @@ export interface XMLNode {
 export default function DisplayNode({ data }: OwnProps) {
     const renderContent = useMemo(() => {
         return Object.values(data).map((item: XMLNode | any, index: number) => {
-            if (!item?.tagName)
-                return <TermText text={item.data} key={index} />;
-            // if (!item?.tagName) return item.data;
+            // if (!item?.tagName)
+            //     return <TermText text={item.data} key={index} />;
+            if (!item?.tagName) return item.data;
 
             switch (item.tagName) {
                 case 'link':
