@@ -1,36 +1,40 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-import { getChildsById } from "../utility";
-import DisplayNode from "./DisplayNode";
+import { useMemo } from 'react';
+import { getChildsById } from '../utility';
+import DisplayNode from './DisplayNode';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 interface OwnProps {
-  xmlData: any;
+    xmlData: any;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function ContentSection({ xmlData }: OwnProps) {
-  const id = xmlData?.$?.id ? xmlData.$.id : "";
-  let node: any = "";
-  if (id) {
-    node = getChildsById(id);
-  }
+    const renderContent = useMemo(() => {
+        const id = xmlData?.$?.id ? xmlData.$.id : '';
+        let node: any = '';
+        if (id) {
+            node = getChildsById(id);
+        }
 
-  return node ? (
-    <div className="content-section" id={id}>
-      <DisplayNode data={node.childNodes}/>
-      {xmlData?.clause?.length > 0 &&
-        xmlData.clause.map((child: any, index: number) => (
-          <ContentSection key={index} xmlData={child} />
-        ))}
-    </div>
-  ) : (
-    <>
-      
-      {xmlData?.clause?.length > 0 &&
-        xmlData.clause.map((child: any, index: number) => (
-          <ContentSection key={index} xmlData={child} />
-        ))}
-    </>
-  );
+        return node ? (
+            <div className="content-section" id={id}>
+                <DisplayNode data={node.childNodes} />
+                {xmlData?.clause?.length > 0 &&
+                    xmlData.clause.map((child: any, index: number) => (
+                        <ContentSection key={index} xmlData={child} />
+                    ))}
+            </div>
+        ) : (
+            <>
+                {xmlData?.clause?.length > 0 &&
+                    xmlData.clause.map((child: any, index: number) => (
+                        <ContentSection key={index} xmlData={child} />
+                    ))}
+            </>
+        );
+    }, [xmlData]);
+
+    return <>{renderContent}</>;
 }
