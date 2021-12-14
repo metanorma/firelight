@@ -1,6 +1,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import ContentSection from './ContentSection';
 import Cover from './Cover';
 import { getChildsById } from '../utility';
@@ -14,6 +15,10 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function MainPage({ xmlData }: OwnProps) {
+    let location = useLocation();
+    const [page, setPage] = useState(0);
+    const [contents, setContents] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
     // split the xml data by content section and save those as array
     const contentSections = useMemo(() => {
         const getMenuItem = (data: any): any => {
@@ -70,19 +75,82 @@ export default function MainPage({ xmlData }: OwnProps) {
             //the bibliography part
             const bibliography = getMenuItem(
                 xmlData['bsi-standard']['bibliography'][0]['clause'][0]
-            );console.log(bibliography, 'bib')
+            );
             menuItem[bibliography.index] = bibliography;
         }
-        return menuItem;
+        const resultArray: any[] = [];
+        menuItem.map((item: any) => {
+            if (item?.data) resultArray.push(item);
+        });
+        return resultArray;
     }, [xmlData]);
+
+    const loader = useRef<HTMLDivElement | null>(null);
+    // here we handle what happens when user scrolls to Load More div
+    // in this case we just update page variable
+    const handleObserver = (entities: any) => {
+        const target = entities[0];
+        if (target.isIntersecting) {
+            console.log(target.isIntersecting, 'intersecting');
+            setPage((_page) => _page + 1);
+        }
+    };
+
+    useEffect(() => {
+        const options = {
+            root: null,
+            rootMargin: '20px',
+            threshold: 1.0
+        };
+        // initialize IntersectionObserver and attaching to Load More div
+        const observer = new IntersectionObserver(handleObserver, options);
+        if (loader.current) {
+            observer.observe(loader.current);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (contentSections?.length && !contents[page]) {
+            if (page && page < contentSections.length) {
+                const newContent = contents;
+                newContent[page] = contentSections[page];
+                setContents(newContent);
+            } else if (page === 0) {
+                setContents([contentSections[0]]);
+            }
+        }
+    }, [page, contentSections]);
+
+    useEffect(() => {
+        if (loader.current) {
+            setLoading(false);
+            console.log('true loading');
+        }
+    }, [loader]);
+    
+    useEffect(() => {
+        const hash: string = location.hash.substr(1);
+        //find the id in contentSections
+        const index: number = contentSections.findIndex((item: any) => {
+            return item?.data?.$?.id === hash;
+        });
+        console.log(index, 'hash', hash);
+        if (index !== -1 && !contents[index]) {
+            console.log('already')
+            const newContent = contents;
+            newContent[page] = contentSections[page];
+            setContents(newContent);
+        }
+    }, [location]);
 
     return (
         <div className="main-page">
             <Cover />
-            {contentSections?.length > 0 &&
-                contentSections.map((item: any) => (
+            {contents?.length > 0 &&
+                contents.map((item: any) => (
                     <ContentSection xmlData={item.data} key={item.index} />
                 ))}
+            <div ref={loader} className="load-more"></div>
         </div>
     );
 }
