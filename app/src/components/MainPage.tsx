@@ -134,7 +134,6 @@ export default function MainPage({ xmlData }: OwnProps) {
         const index: number = contentSections.findIndex((item: any) => {
             return item?.data?.$?.id === hash;
         });
-        console.log(index, 'hash', hash);
         if (index !== -1 && !contents[index]) {
             console.log('already')
             const newContent = contents;
