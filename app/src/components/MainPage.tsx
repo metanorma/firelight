@@ -111,7 +111,7 @@ export default function MainPage({ xmlData }: OwnProps) {
 
     useEffect(() => {
         if (contentSections?.length && !contents[page]) {
-            if (page && page < contentSections.length) {
+            if (page && page !== -1 && page < contentSections.length) {
                 const newContent = contents;
                 newContent[page] = contentSections[page];
                 setContents(newContent);
@@ -124,7 +124,6 @@ export default function MainPage({ xmlData }: OwnProps) {
     useEffect(() => {
         if (loader.current) {
             setLoading(false);
-            console.log('true loading');
         }
     }, [loader]);
     
@@ -133,12 +132,10 @@ export default function MainPage({ xmlData }: OwnProps) {
         //find the id in contentSections
         const index: number = contentSections.findIndex((item: any) => {
             return item?.data?.$?.id === hash;
-        });
-        if (index !== -1 && !contents[index]) {
+        }); console.log(index, 'index')
+        if (index !== -1 && index < contentSections.length) {
             console.log('already')
-            const newContent = contents;
-            newContent[page] = contentSections[page];
-            setContents(newContent);
+            setPage(index);
         }
     }, [location]);
 
