@@ -13,7 +13,6 @@ interface OwnProps {
 
 export default function SectionTd({ data }: OwnProps) {
   const renderContent = useMemo(() => {
-    console.log(data, 'tddata');
     const attrs: any = data.attributes;
     const props: any = {};
     const valignRow = Object.values(attrs).map(
