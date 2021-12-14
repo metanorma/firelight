@@ -1,0 +1,9 @@
+.dt {
+    display: inline;
+    padding-left: 1em;
+    padding-right: 35%;
+}
+
+.dd > .dl > .dd > .dl > .dt {
+    padding-right: 20%;
+}
