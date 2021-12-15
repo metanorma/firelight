@@ -95,7 +95,7 @@ export default function MainContent({ contentSections, index }: OwnProps) {
             }
         }
     }, [page, contentSections]);
-    console.log(page, contents);
+    
     return (
         <div className="main-page">
             {page <= 0 && <Cover />}
