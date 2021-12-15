@@ -17,7 +17,7 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function NavIMenu({ xmlData }: OwnProps) {
-    const [selectedItem, setSelectedItem] = useState('');
+    const [selectedItem, setSelectedItem] = useState<number>(-1);
     const menuItem = useMemo(() => {
         const insertSpace = (text: string): any => {
             const matches: any = text.match(/[a-zA-Z]+/g);
@@ -108,7 +108,11 @@ export default function NavIMenu({ xmlData }: OwnProps) {
             );
             menuItem[bibliography.index] = bibliography;
         }
-        return menuItem;
+        const resultArray: any[] = [];
+        menuItem.map((item: any) => {
+            if (item?.title) resultArray.push(item);
+        });
+        return resultArray;
     }, [xmlData]);
 
     return (
@@ -118,6 +122,7 @@ export default function NavIMenu({ xmlData }: OwnProps) {
                     {menuItem.map((item, index) => (
                         <NavItem
                             key={index}
+                            index={index}
                             data={item}
                             active={selectedItem === item.id}
                             setSelectedItem={setSelectedItem}
