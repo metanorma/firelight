@@ -4,7 +4,6 @@
   position: relative;
   height: 60px;
   font-size: 20px;
-  cursor: pointer;
   padding: 0 15px;
   background-color: #efefef;
   border: 1px solid white;
@@ -12,6 +11,7 @@
 
 .collapse-button {
   position: absolute;
+  cursor: pointer;
   right: 15px;
   display: inline-block;
   height: 30px;
@@ -46,4 +46,5 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;  
+  cursor: pointer;
 }

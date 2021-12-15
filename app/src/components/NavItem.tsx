@@ -25,6 +25,7 @@ export default function NavItem(props: OwnProps) {
 
   const handleClick = (href: string) => {
     setSelectedItem(index);
+    window.location.href = `/${index}`;
     // window.location.href = `/#${href}`;
   }
 
