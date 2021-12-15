@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import classnames from "classnames";
+import { useLocation } from 'react-router-dom';
 
 import "./NavItem.css";
 
@@ -10,19 +11,26 @@ import "./NavItem.css";
 interface OwnProps {
   data: any;
   active: boolean;
-  setSelectedItem: (s: string) => void;
+  index: number | any;
+  setSelectedItem: (s: number) => void;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function NavItem(props: OwnProps) {
-  const { data, active, setSelectedItem } = props;
+  const location = useLocation();
+  const { data, active, setSelectedItem, index } = props;
   const [collapse, setCollapse] = useState(true);
   const [selected, setSelected] = useState("");
 
   const handleClick = (href: string) => {
-    setSelectedItem(data.id);
-    window.location.href = `#${href}`;
+    setSelectedItem(index);
+    // window.location.href = `/#${href}`;
+  }
+
+  const handleRoute = (index: number) => {
+    setSelectedItem(index);
+    window.location.href = `/${index}`;
   }
 
   useEffect(() => {
@@ -32,10 +40,9 @@ export default function NavItem(props: OwnProps) {
   return (
     <li className="h1" key={data.id}>
       <div
-        className={classnames("collapse-group", { active: active })}
-        onClick={(e) => handleClick(data.id)}
+        className={classnames("collapse-group", { active: location.pathname === `/${index}` })}
       >
-         <div className="menu-text">{data.title}</div>
+         <div className="menu-text" onClick={(e) => handleRoute(index)}>{data.title}</div>
         {data.children.length > 0 && (
           <div
             className={classnames("collapse-button", { expand: !collapse })}
