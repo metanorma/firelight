@@ -71,12 +71,20 @@ export default function MainContent({ contentSections, index }: OwnProps) {
             if (contents.length === 0) {
                 const arr: any = [];
                 arr[page] = contentSections[page];
+                if (page === 2 || page === 3) {
+                    arr[page + 1] = contentSections[page + 1];
+                    arr[page + 2] = contentSections[page + 2];
+                }
                 setContents(arr);
             }
-            else if (page && page > -1 && page < contentSections.length) {
+            else if (page > -1 && page < contentSections.length) {
                 const newContent = contents;
                 if (isScroll) {
                     newContent[page] = contentSections[page];
+                    if (page === 2 || page === 3) {
+                        newContent[page + 1] = contentSections[page + 1];
+                        newContent[page + 2] = contentSections[page + 2];
+                    }
                     setContents(newContent);
                 } else {
                     // if (!newContent[page - 1]) newContent[page - 1] = contentSections[page - 1];
@@ -87,10 +95,10 @@ export default function MainContent({ contentSections, index }: OwnProps) {
             }
         }
     }, [page, contentSections]);
-    console.log(page);
+    console.log(page, contents);
     return (
         <div className="main-page">
-            {page < 0 && <Cover />}
+            {page <= 0 && <Cover />}
             <div ref={loaderStart} className="load-start"></div>
             {contents?.length > 0 &&
                 contents.map((item: any) =>
