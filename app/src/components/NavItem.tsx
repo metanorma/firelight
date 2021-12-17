@@ -22,7 +22,7 @@ export default function NavItem(props: OwnProps) {
   const { data, active, setSelectedItem, index } = props;
   const [collapse, setCollapse] = useState(true);
   const [selected, setSelected] = useState("");
-console.log(data, active);
+
   const handleClick = (href: string) => {
     setSelectedItem(data.id);
     window.location.href = `/#${href}`;
