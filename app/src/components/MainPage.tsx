@@ -80,10 +80,10 @@ export default function MainPage() {
         });
         return resultArray;
     }, [xmlJson]);
-
+console.log(xmlJson, 'xmlJson')
     return (
         <div className="main-page">
-            <Cover />
+            {/* <Cover /> */}
             {contentSections?.length > 0 &&
                 contentSections.map((item: any) =>
                     item?.data ? (
