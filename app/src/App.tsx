@@ -25,7 +25,34 @@ function App() {
     const STEALTH_TITLE__SCROLL_THRESHOLD_PX = 500;
     const { title } = useXmlData();
 
-    const bonusElements = [];
+  const bonusElements = [];
+  bonusElements.push(
+    <Modal
+      key="modal"
+      isOpen={isModalOpen}
+      handleClose={() => setModalOpen(false)}
+    >
+      <TubeMap stops={10} current={0} />
+      <ButtonGroup>
+        <Button
+          text="&larr;  Previous"
+          type={ButtonType.Secondary}
+          onClick={() => null}
+        />
+        <Button
+          text="Do Something"
+          type={ButtonType.Tertiary}
+          onClick={() => null}
+        />
+        <Button
+          text="Next  &rarr;"
+          type={ButtonType.Secondary}
+          onClick={() => null}
+        />
+      </ButtonGroup>
+    </Modal>
+  );
+  if (isSidebarOpen) {
     bonusElements.push(
         <Modal
             key="modal"
@@ -52,15 +79,7 @@ function App() {
             </ButtonGroup>
         </Modal>
     );
-    if (isSidebarOpen) {
-        bonusElements.push(
-            <div
-                key="layout--overlay"
-                className="layout__overlay"
-                onClick={() => setSidebarOpen(false)}
-            ></div>
-        );
-    }
+  }
 
     return (
         <div className="App">
@@ -138,9 +157,9 @@ function App() {
                     <NavIMenu key="nav-meunu" />
                 ]}
                 bonus={bonusElements}
-            />
-        </div>
-    );
+      />
+    </div>
+  );
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

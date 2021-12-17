@@ -15,6 +15,7 @@ interface OwnProps {
 
 export default function MainPage() {
     const { xmlJson } = useXmlData();
+
     // split the xml data by content section and save those as array
     const contentSections = useMemo(() => {
         const getMenuItem = (data: any): any => {
@@ -80,7 +81,7 @@ export default function MainPage() {
         });
         return resultArray;
     }, [xmlJson]);
-console.log(xmlJson, 'xmlJson')
+
     return (
         <div className="main-page">
             {/* <Cover /> */}
