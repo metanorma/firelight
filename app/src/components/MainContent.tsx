@@ -1,7 +1,6 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 import { useEffect, useState, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 import ContentSection from './ContentSection';
 import Cover from './Cover';
 
@@ -15,7 +14,6 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function MainContent({ contentSections, index }: OwnProps) {
-    let location = useLocation();
     const [page, setPage] = useState(index);
     const [start, setStart] = useState(index);
     const [end, setEnd] = useState(index);

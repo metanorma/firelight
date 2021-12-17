@@ -16,7 +16,6 @@ import SectionTerm from './SectionTerm';
 import SectionPreferred from './SectionPreferred';
 import SectionDefinition from './SectionDefinition';
 import SectionTermnote from './SectionTermnote';
-import TermText from './TermText';
 import SectionForm from './SectionForm';
 import SectionTable from './SectionTable';
 import SectionColgroup from './SectionColgroup';
@@ -36,6 +35,7 @@ import './DisplayNode.css';
 import SectionDocidentifier from './SectionDocidentifier';
 import SectionBibitem from './SectionBibitem';
 import SectionFormattedDoc from './SectionFormattedDoc';
+// import TermText from './TermText';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 interface OwnProps {

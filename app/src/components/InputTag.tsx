@@ -1,7 +1,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 import { useMemo } from "react";
-import DisplayNode, { XMLNode } from "./DisplayNode";
+import { XMLNode } from "./DisplayNode";
 import "./LabelTag.css";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

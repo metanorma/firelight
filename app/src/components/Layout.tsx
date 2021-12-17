@@ -1,8 +1,8 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-import BackToTop from './BackToTop';
-import SourceCode from './SourceCode';
-import { Data } from '../data/data';
+// import BackToTop from './BackToTop';
+// import SourceCode from './SourceCode';
+// import { Data } from '../data/data';
 
 // CSS is in `layout.css` because we need IDs for grid
 

@@ -4,11 +4,6 @@ import { XMLNode } from './DisplayNode';
 import './Cover.css';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-interface OwnProps {
-    data: any;
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function Cover() {
     const bibdata: XMLNode = getChildsByTagname('bibdata')[0];
