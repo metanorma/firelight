@@ -1,9 +1,14 @@
 import { DOMParser } from 'xmldom';
-import presentationData from './data/document-presentation';
+
+export const url = "https://github.com/metanorma/bs-l3-ux/files/7626440/document-l3.presentation.xml.zip";
+
+const presentationData = () => {
+    return localStorage.getItem('xml') || " ";
+}
 
 export const getChildsById = (id: string) => {
     const xmlDoc = new DOMParser().parseFromString(
-        presentationData,
+        presentationData(),
         'text/xml'
     );
     return xmlDoc.getElementById(id);
@@ -11,7 +16,7 @@ export const getChildsById = (id: string) => {
 
 export const getChildsByTagname = (name: string) => {
     const xmlDoc = new DOMParser().parseFromString(
-        presentationData,
+        presentationData(),
         'text/xml'
     );
     return xmlDoc.getElementsByTagName(name);
