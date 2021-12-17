@@ -1,6 +1,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 import { useMemo, useState } from 'react';
+import { useXmlData } from '../context';
 // import classnames from "classnames";
 import NavItem from './NavItem';
 // import axios from 'axios';
@@ -17,6 +18,7 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function NavIMenu({ xmlData }: OwnProps) {
+    const { xmlJson } = useXmlData();
     const [selectedItem, setSelectedItem] = useState<number>(-1);
     const menuItem = useMemo(() => {
         const insertSpace = (text: string): any => {
@@ -59,33 +61,33 @@ export default function NavIMenu({ xmlData }: OwnProps) {
         };
 
         const menuItem: any[] = [];
-        if (xmlData['bsi-standard']) {
+        if (xmlJson['bsi-standard']) {
             //the foreword part for menu item
             const foreword = getMenuItem(
-                xmlData['bsi-standard']['preface'][0]['foreword'][0]
+                xmlJson['bsi-standard']['preface'][0]['foreword'][0]
             );
             menuItem[foreword.index] = foreword;
             // menuItem.push(foreword);
             //the introduction part for menu item
             const introduction = getMenuItem(
-                xmlData['bsi-standard']['preface'][0]['introduction'][0]
+                xmlJson['bsi-standard']['preface'][0]['introduction'][0]
             );
             menuItem[introduction.index] = introduction;
             // menuItem.push(introduction);
             //the introduction part for menu item
             const references = getMenuItem(
-                xmlData['bsi-standard']['bibliography'][0]['references'][0]
+                xmlJson['bsi-standard']['bibliography'][0]['references'][0]
             );
             menuItem[references.index] = references;
             // menuItem.push(references);
             //the terms part for menu item
             const terms = getMenuItem(
-                xmlData['bsi-standard']['sections'][0]['terms'][0]
+                xmlJson['bsi-standard']['sections'][0]['terms'][0]
             );
             menuItem[terms.index] = terms;
             // menuItem.push(terms)
             //the sction part for menu item
-            const sections = xmlData['bsi-standard']['sections'][0]['clause'];
+            const sections = xmlJson['bsi-standard']['sections'][0]['clause'];
             if (sections?.length) {
                 sections.map((sectoin: any) => {
                     const sectionItem = getMenuItem(sectoin);
@@ -94,7 +96,7 @@ export default function NavIMenu({ xmlData }: OwnProps) {
                 });
             }
             //the sction part for menu item
-            const annex = xmlData['bsi-standard']['annex'];
+            const annex = xmlJson['bsi-standard']['annex'];
             if (annex?.length) {
                 annex.map((sectoin: any) => {
                     const sectionItem = getMenuItem(sectoin);
@@ -104,7 +106,7 @@ export default function NavIMenu({ xmlData }: OwnProps) {
             }
             //the bibliography part
             const bibliography = getMenuItem(
-                xmlData['bsi-standard']['bibliography'][0]['clause'][0]
+                xmlJson['bsi-standard']['bibliography'][0]['clause'][0]
             );
             menuItem[bibliography.index] = bibliography;
         }
@@ -113,7 +115,7 @@ export default function NavIMenu({ xmlData }: OwnProps) {
             if (item?.title) resultArray.push(item);
         });
         return resultArray;
-    }, [xmlData]);
+    }, [xmlJson]);
 
     return (
         <nav>
