@@ -57,7 +57,7 @@ export default function DisplayNode({ data }: OwnProps) {
             // if (!item?.tagName)
             //     return <TermText text={item.data} key={index} />;
             if (!item?.tagName) return item.data;
-
+            
             switch (item.tagName) {
                 case 'link':
                     return <LinkTag data={item} key={index} />;
