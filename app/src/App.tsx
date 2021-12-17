@@ -1,28 +1,19 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Banner from './components/Banner';
 import Button from './components/Button';
 import ButtonGroup from './components/ButtonGroup';
-import Checklist from './components/Checklist';
 import Hamburger from './components/Hamburger';
 import Layout from './components/Layout';
 import Logo from './components/Logo';
 import Modal from './components/Modal';
-import ProgressBar from './components/ProgressBar';
 import StealthTitle from './components/StealthTitle';
 import TubeMap from './components/TubeMap';
-import { Data } from './data/data';
+import { useXmlData } from './context';
 import { ButtonType } from './Enums';
-import { SimpleChecklist } from './Types';
 import NavIMenu from './components/NavMenu';
 import MainPage from './components/MainPage';
-import { parseString } from 'xml2js';
-import axios from 'axios';
-import presentationData from './data/presentation.xml';
-// import XMLData from "./data/document-l3";
-// import X from "./components/X";
-const xmlParser = require('react-xml-parser');
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -32,29 +23,7 @@ function App() {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [isStealthTitleVisible, setStealthTitleVisible] = useState(true);
     const STEALTH_TITLE__SCROLL_THRESHOLD_PX = 500;
-    const [checklist, setChecklist] = useState({
-        ...(Data.checklist as SimpleChecklist)
-    });
-    const [xmlData, setXmlData] = useState({});
-
-    useEffect(() => {
-        axios
-            .get(presentationData, {
-                headers: {
-                    Accept: 'application/xml'
-                }
-            })
-            .then((response) => {
-                parseString(response.data, {}, function (err, result) {
-                    setXmlData(result);
-                });
-            });
-    }, []);
-
-    const checklistItemMax = Object.keys(checklist).length;
-    const checklistItemCount = Object.keys(checklist).filter(
-        (key: string) => checklist[key] === true
-    ).length;
+    const { title } = useXmlData();
 
     const bonusElements = [];
     bonusElements.push(
@@ -63,16 +32,7 @@ function App() {
             isOpen={isModalOpen}
             handleClose={() => setModalOpen(false)}
         >
-            <Checklist
-                checklist={checklist}
-                handleChange={(key: string) => {
-                    const updatedChecklist = { ...checklist };
-                    updatedChecklist[key] = !updatedChecklist[key];
-                    setChecklist(updatedChecklist);
-                }}
-            />
             <TubeMap stops={10} current={0} />
-            <div dangerouslySetInnerHTML={{ __html: Data.modal }} />
             <ButtonGroup>
                 <Button
                     text="&larr;  Previous"
@@ -118,7 +78,7 @@ function App() {
                         <Logo />
                         <StealthTitle
                             isVisible={isStealthTitleVisible}
-                            title={Data.title}
+                            title={title}
                         />
                         <div key="hamburger">
                             <Hamburger
@@ -155,7 +115,7 @@ function App() {
                     //   className="cms"
                     //   dangerouslySetInnerHTML={{ __html: Data.main }}
                     // />,
-                    <MainPage xmlData={xmlData} key="main-page" />
+                    <MainPage key="main-page" />
                 ]}
                 sideBar={[
                     // <X
@@ -175,7 +135,7 @@ function App() {
                     // />,
                     // <TubeMap stops={3} current={3} />,
                     // <div dangerouslySetInnerHTML={{ __html: Data.side }} />
-                    <NavIMenu xmlData={xmlData} key="nav-meunu" />
+                    <NavIMenu key="nav-meunu" />
                 ]}
                 bonus={bonusElements}
             />
