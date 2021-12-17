@@ -17,9 +17,9 @@ interface OwnProps {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-export default function NavIMenu({ xmlData }: OwnProps) {
+export default function NavIMenu() {
     const { xmlJson } = useXmlData();
-    const [selectedItem, setSelectedItem] = useState<number>(-1);
+    const [selectedItem, setSelectedItem] = useState<string>('');
     const menuItem = useMemo(() => {
         const insertSpace = (text: string): any => {
             const matches: any = text.match(/[a-zA-Z]+/g);

@@ -12,7 +12,7 @@ interface OwnProps {
   data: any;
   active: boolean;
   index: number | any;
-  setSelectedItem: (s: number) => void;
+  setSelectedItem: (s: string) => void;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -22,16 +22,10 @@ export default function NavItem(props: OwnProps) {
   const { data, active, setSelectedItem, index } = props;
   const [collapse, setCollapse] = useState(true);
   const [selected, setSelected] = useState("");
-
+console.log(data, active);
   const handleClick = (href: string) => {
-    setSelectedItem(index);
-    window.location.href = `/${index}`;
-    // window.location.href = `/#${href}`;
-  }
-
-  const handleRoute = (index: number) => {
-    setSelectedItem(index);
-    window.location.href = `/${index}`;
+    setSelectedItem(data.id);
+    window.location.href = `/#${href}`;
   }
 
   useEffect(() => {
@@ -41,9 +35,9 @@ export default function NavItem(props: OwnProps) {
   return (
     <li className="h1" key={data.id}>
       <div
-        className={classnames("collapse-group", { active: location.pathname === `/${index}` })}
+        className={classnames("collapse-group", { active: active })}
       >
-         <div className="menu-text" onClick={(e) => handleRoute(index)}>{data.title}</div>
+         <div className="menu-text" onClick={(e) => handleClick(data.id)}>{data.title}</div>
         {data.children.length > 0 && (
           <div
             className={classnames("collapse-button", { expand: !collapse })}
