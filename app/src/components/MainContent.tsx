@@ -94,7 +94,7 @@ export default function MainContent({ contentSections, index }: OwnProps) {
     
     return (
         <div className="main-page">
-            {page <= 0 && <Cover />}
+            {/* {page <= 0 && <Cover />} */}
             <div ref={loaderStart} className="load-start"></div>
             {contents?.length > 0 &&
                 contents.map((item: any) =>
