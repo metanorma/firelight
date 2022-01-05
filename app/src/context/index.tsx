@@ -17,6 +17,10 @@ const contextDefaultValues: XmlData = {
 
 export const XmlContext = createContext<XmlData>(contextDefaultValues);
 
+// const xmlUrl = "/presentation.xml";
+const xmlUrl = "https://metanorma.github.io/mn-samples-iso/documents/international-workshop-agreement/document.xml";
+// const xmlUrl = "/iso.xml";
+
 const XmlProvider: React.FC = ({ children }) => {
     const [xml, setXml] = useState<string>('');
     const [title, setTitle] = useState<string>('');
@@ -24,12 +28,13 @@ const XmlProvider: React.FC = ({ children }) => {
 
     useEffect(() => {
         axios
-            .get('/presentation.xml', {
+            .get(xmlUrl, {
                 headers: {
                     Accept: 'application/xml'
                 }
             })
             .then((response) => {
+                console.log(response.data, 'xml')
                 if (response.data) {
                     localStorage.setItem('xml', response.data);
                     setXml(response.data);
@@ -65,6 +70,7 @@ const XmlProvider: React.FC = ({ children }) => {
                     setTitle(mainTitle?.childNodes[0].data);
 
                     parseString(response.data, {}, function (err, result) {
+                        console.log(result, 'jsonXml');
                         setXmlJson(result);
                     });
                 }
