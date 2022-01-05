@@ -19,8 +19,10 @@ interface OwnProps {
 
 export default function NavIMenu() {
     const { xmlJson } = useXmlData();
+    console.log('xmlJson', xmlJson);
     const [selectedItem, setSelectedItem] = useState<string>('');
     const menuItem = useMemo(() => {
+        let index = 0;
         const insertSpace = (text: string): any => {
             const matches: any = text.match(/[a-zA-Z]+/g);
             const index: number = text.indexOf(matches[0]);
@@ -32,7 +34,8 @@ export default function NavIMenu() {
         const getMenuItem = (data: any): any => {
             const returnData: any = {};
             returnData.id = data['$']['id'];
-            returnData.index = data['$']['displayorder'];
+            // returnData.index = data['$']['displayorder'];
+            returnData.index = index++;
             returnData.title = insertSpace(
                 typeof data['title'][0] === 'string'
                     ? data['title'][0]
@@ -57,66 +60,76 @@ export default function NavIMenu() {
                     returnData.children[index] = childItem;
                 });
             }
+            console.log(returnData, `returndata ${index}`);
             return returnData;
         };
 
         const menuItem: any[] = [];
-        if (xmlJson['bsi-standard']) {
+        if (xmlJson['iso-standard']) {
             //the foreword part for menu item
-            const foreword = getMenuItem(
-                xmlJson['bsi-standard']['preface'][0]['foreword'][0]
-            );
-            menuItem[foreword.index] = foreword;
-            // menuItem.push(foreword);
+            if (xmlJson['iso-standard']['preface']) {
+                const foreword = getMenuItem(
+                    xmlJson['iso-standard']['preface'][0]['foreword'][0]
+                );
+                menuItem[foreword.index] = foreword;
+            }
             //the introduction part for menu item
-            const introduction = getMenuItem(
-                xmlJson['bsi-standard']['preface'][0]['introduction'][0]
-            );
-            menuItem[introduction.index] = introduction;
-            // menuItem.push(introduction);
-            //the introduction part for menu item
-            const references = getMenuItem(
-                xmlJson['bsi-standard']['bibliography'][0]['references'][0]
-            );
-            menuItem[references.index] = references;
-            // menuItem.push(references);
+            if (xmlJson['iso-standard']['preface']) {
+                const introduction = getMenuItem(
+                    xmlJson['iso-standard']['preface'][0]['introduction'][0]
+                );
+                menuItem[introduction.index] = introduction;
+            }
+            //the scopt part for menu
+            if (xmlJson['iso-standard']['sections'] ) {
+                const sectionItem = getMenuItem(
+                    xmlJson['iso-standard']['sections'][0]['clause'][0]
+                );
+                menuItem[sectionItem.index] = sectionItem;
+            }
+            //the normative part for menu item
+            if (xmlJson['iso-standard']['bibliography']) {
+                const references = getMenuItem(
+                    xmlJson['iso-standard']['bibliography'][0]['references'][0]
+                );
+                menuItem[references.index] = references;
+            }
             //the terms part for menu item
-            const terms = getMenuItem(
-                xmlJson['bsi-standard']['sections'][0]['terms'][0]
-            );
-            menuItem[terms.index] = terms;
-            // menuItem.push(terms)
-            //the sction part for menu item
-            const sections = xmlJson['bsi-standard']['sections'][0]['clause'];
-            if (sections?.length) {
-                sections.map((sectoin: any) => {
-                    const sectionItem = getMenuItem(sectoin);
-                    menuItem[sectionItem.index] = sectionItem;
-                    // menuItem.push(sectionItem);
-                });
+            if (xmlJson['iso-standard']['sections']) {
+                const terms = getMenuItem(
+                    xmlJson['iso-standard']['sections'][0]['terms'][0]
+                );
+                menuItem[terms.index] = terms;
+            }
+            //the section part for menu item
+            if (xmlJson['iso-standard']['sections'] ) {
+                const sectionItem = getMenuItem(
+                    xmlJson['iso-standard']['sections'][0]['clause'][1]
+                );
+                menuItem[sectionItem.index] = sectionItem;
             }
             //the sction part for menu item
-            const annex = xmlJson['bsi-standard']['annex'];
-            if (annex?.length) {
-                annex.map((sectoin: any) => {
-                    const sectionItem = getMenuItem(sectoin);
-                    menuItem[sectionItem.index] = sectionItem;
-                    // menuItem.push(sectionItem)
-                });
+            if (xmlJson['iso-standard']['annex']) {
+                const annex = xmlJson['iso-standard']['annex'];
+                if (annex?.length) {
+                    annex.map((sectoin: any) => {
+                        const sectionItem = getMenuItem(sectoin);
+                        menuItem[sectionItem.index] = sectionItem;
+                        // menuItem.push(sectionItem)
+                    });
+                }
             }
             //the bibliography part
-            const bibliography = getMenuItem(
-                xmlJson['bsi-standard']['bibliography'][0]['clause'][0]
-            );
-            menuItem[bibliography.index] = bibliography;
+            if (xmlJson['iso-standard']['bibliography']) {
+                const references = getMenuItem(
+                    xmlJson['iso-standard']['bibliography'][0]['references'][1]
+                );
+                menuItem[references.index] = references;
+            }
         }
-        const resultArray: any[] = [];
-        menuItem.map((item: any) => {
-            if (item?.title) resultArray.push(item);
-        });
-        return resultArray;
+        return menuItem;
     }, [xmlJson]);
-
+    console.log(menuItem, 'menuItem');
     return (
         <nav>
             <div id="toc">
