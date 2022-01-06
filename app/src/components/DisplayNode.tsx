@@ -35,6 +35,7 @@ import './DisplayNode.css';
 import SectionDocidentifier from './SectionDocidentifier';
 import SectionBibitem from './SectionBibitem';
 import SectionFormattedDoc from './SectionFormattedDoc';
+import SectionAdmitted from './SectionAdmitted';
 // import TermText from './TermText';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -57,7 +58,7 @@ export default function DisplayNode({ data }: OwnProps) {
             // if (!item?.tagName)
             //     return <TermText text={item.data} key={index} />;
             if (!item?.tagName) return item.data;
-            
+
             switch (item.tagName) {
                 case 'link':
                     return <LinkTag data={item} key={index} />;
@@ -163,9 +164,11 @@ export default function DisplayNode({ data }: OwnProps) {
 
                 case 'formattedref':
                     return <SectionFormattedDoc data={item} key={index} />;
-                    
+
                 case 'docidentifier':
                     return <SectionDocidentifier data={item} key={index} />;
+                case 'admitted':
+                    return <SectionAdmitted data={item} key={index} />;
             }
         });
     }, [data]);
