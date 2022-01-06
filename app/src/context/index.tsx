@@ -18,8 +18,9 @@ const contextDefaultValues: XmlData = {
 export const XmlContext = createContext<XmlData>(contextDefaultValues);
 
 // const xmlUrl = "/presentation.xml";
-const xmlUrl = "https://metanorma.github.io/mn-samples-iso/documents/international-workshop-agreement/document.xml";
+// const xmlUrl = "https://metanorma.github.io/mn-samples-iso/documents/international-workshop-agreement/document.xml";
 // const xmlUrl = "/iso.xml";
+const xmlUrl = "https://metanorma.github.io/mn-samples-iso/documents/international-standard/rice-en.wd.xml";
 
 const XmlProvider: React.FC = ({ children }) => {
     const [xml, setXml] = useState<string>('');
