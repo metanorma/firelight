@@ -60,7 +60,6 @@ export default function NavIMenu() {
                     returnData.children[index] = childItem;
                 });
             }
-            console.log(returnData, `returndata ${index}`);
             return returnData;
         };
 
@@ -129,7 +128,7 @@ export default function NavIMenu() {
         }
         return menuItem;
     }, [xmlJson]);
-    console.log(menuItem, 'menuItem');
+
     return (
         <nav>
             <div id="toc">
