@@ -12,6 +12,7 @@ import SectionP from './SectionP';
 import SectionNote from './SectionNote';
 import SectionFigure from './SectionFigure';
 import SectionOl from './SectionOl';
+import SectionUl from './SectionUl';
 import SectionTerm from './SectionTerm';
 import SectionPreferred from './SectionPreferred';
 import SectionDefinition from './SectionDefinition';
@@ -98,6 +99,8 @@ export default function DisplayNode({ data }: OwnProps) {
 
                 case 'ol':
                     return <SectionOl data={item} key={index} />;
+                case 'ul':
+                    return <SectionUl data={item} key={index} />;
 
                 case 'figure':
                     return <SectionFigure data={item} key={index} />;
