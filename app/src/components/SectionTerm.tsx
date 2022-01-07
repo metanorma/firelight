@@ -66,7 +66,7 @@ export default function SectionTerm({ data }: OwnProps) {
         return (
             <div className="term" id={id}>
                 <DisplayNode data={data.childNodes} />
-                <div className="termsource">[SOURCE: <a href={ bibitemid ? `#${bibitemid}` : ''}>{bibitemText}</a>{ modified ? `, ${modified}` : ''}]</div>
+                {bibitemText && <div className="termsource">[SOURCE: <a href={ bibitemid ? `#${bibitemid}` : ''}>{bibitemText}</a>{ modified ? `, ${modified}` : ''}]</div>}
             </div>
         );
     }, [data]);
