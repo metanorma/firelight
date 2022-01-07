@@ -10,5 +10,8 @@
 @import './layout.css';
 @import './cms.css';
 @import './shame.css';
+#toc > ul {
+    margin: 0 !important;
+}
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
