@@ -125,7 +125,7 @@ export default function NavIMenu() {
                 );
                 menuItem[references.index] = references;
             }
-        }
+        } console.log(menuItem, menuItem)
         return menuItem;
     }, [xmlJson]);
 

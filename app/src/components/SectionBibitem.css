@@ -1,3 +1,8 @@
 .bibitem {
-    display: flex;
+    margin-left: 15px;
+    margin-bottom: 10px;
+}
+
+.italic {
+    font-style: italic;
 }
