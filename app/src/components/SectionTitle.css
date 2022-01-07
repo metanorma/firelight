@@ -27,3 +27,7 @@
 .title > .strong:last-child {
   padding-left: 0.3em;
 }
+
+.content-section > .content-section > .title {
+  font-size: 18px !important;
+}

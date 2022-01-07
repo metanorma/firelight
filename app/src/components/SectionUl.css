@@ -1,5 +1,5 @@
 ul {
-  margin-left: 2em;
+  margin-left: 2em !important;
 }
 
 ul > li > div.p:before {
