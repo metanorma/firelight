@@ -23,6 +23,7 @@ export default function NavIMenu() {
     const [selectedItem, setSelectedItem] = useState<string>('');
     const menuItem = useMemo(() => {
         let index = 0;
+        let count = 0;
         const insertSpace = (text: string): any => {
             const matches: any = text.match(/[a-zA-Z]+/g);
             const index: number = text.indexOf(matches[0]);
@@ -41,12 +42,21 @@ export default function NavIMenu() {
                     ? data['title'][0]
                     : data['title'][0]['_']
             );
-            if (returnData?.id && returnData?.id.toLowerCase().includes('annex')) {
-              returnData.title = returnData.id + ' (Normative) ' + returnData.title;   
-              hasIndex = false;
+            if (
+                returnData?.id &&
+                returnData?.id.toLowerCase().includes('annex')
+            ) {
+                returnData.title =
+                    returnData.id + ' (Normative) ' + returnData.title;
+                hasIndex = false;
             }
-            if (hasIndex && returnData?.title && returnData.title !== 'Foreword' && returnData.title !== 'Introduction') {
-                returnData.title = `${(index-2)} ${returnData.title}`;
+            if (
+                hasIndex &&
+                returnData?.title &&
+                returnData.title !== 'Foreword' &&
+                returnData.title !== 'Introduction'
+            ) {
+                returnData.title = `${++count} ${returnData.title}`;
             }
             returnData.children = [];
             if (data?.clause?.length > 1) {
@@ -58,6 +68,20 @@ export default function NavIMenu() {
                             ? item['title'][0]
                             : item['title'][0]['_']
                     );
+                    let letter: string = '';
+                    if (hasIndex) {
+                        letter = count.toString();
+                    } else if (
+                        returnData?.id &&
+                        returnData?.id.toLowerCase().includes('annex')
+                    ) {
+                        letter = returnData.id.substr(-1);
+                    }
+
+                    if (letter)
+                        childItem.title = `${letter}.${index + 1} ${
+                            childItem.title
+                        }`;
                     returnData.children[index] = childItem;
                 });
             }
@@ -81,32 +105,38 @@ export default function NavIMenu() {
                 menuItem[introduction.index] = introduction;
             }
             //the scopt part for menu
-            if (xmlJson['iso-standard']['sections'] ) {
+            if (xmlJson['iso-standard']['sections']) {
                 const sectionItem = getMenuItem(
-                    xmlJson['iso-standard']['sections'][0]['clause'][0], true
+                    xmlJson['iso-standard']['sections'][0]['clause'][0],
+                    true
                 );
                 menuItem[sectionItem.index] = sectionItem;
             }
             //the normative part for menu item
             if (xmlJson['iso-standard']['bibliography']) {
                 const references = getMenuItem(
-                    xmlJson['iso-standard']['bibliography'][0]['references'][0], true
+                    xmlJson['iso-standard']['bibliography'][0]['references'][0],
+                    true
                 );
                 menuItem[references.index] = references;
             }
             //the terms part for menu item
             if (xmlJson['iso-standard']['sections']) {
                 const terms = getMenuItem(
-                    xmlJson['iso-standard']['sections'][0]['terms'][0], true
+                    xmlJson['iso-standard']['sections'][0]['terms'][0],
+                    true
                 );
                 menuItem[terms.index] = terms;
             }
             //the section part for menu item
-            if (xmlJson['iso-standard']['sections'] ) {
-                const sectionItem = getMenuItem(
-                    xmlJson['iso-standard']['sections'][0]['clause'][1], true
+            if (xmlJson['iso-standard']['sections']) {
+                xmlJson['iso-standard']['sections'][0]['clause'].map(
+                    (item: any, index: number) => {
+                        if (index === 0) return;
+                        const sectionItem = getMenuItem(item, true);
+                        menuItem[sectionItem.index] = sectionItem;
+                    }
                 );
-                menuItem[sectionItem.index] = sectionItem;
             }
             //the sction part for menu item
             if (xmlJson['iso-standard']['annex']) {
