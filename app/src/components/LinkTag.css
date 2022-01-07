@@ -1,3 +1,4 @@
-.link:visited {
+.link, .link:visited {
     color: inherit;
 }
+
