@@ -13,7 +13,6 @@ interface OwnProps {
 
 export default function SectionReference({ data }: OwnProps) {
   const renderContent = useMemo(() => { 
-    console.log(data, 'bibitem');
     const attrs: any = data.attributes;
     const idRow: any = Object.values(attrs).find(
       (attr: any) => attr?.name === "id"
@@ -26,7 +25,7 @@ export default function SectionReference({ data }: OwnProps) {
       (child: any) => child?.tagName === "docidentifier"
     ) 
     let idText = docidentifier?.childNodes[0].data;
-    console.log(idText, 'idText');
+    
     let titleChild: any = Object.values(childs).find(
       (child: any) => {
         if (child?.tagName !== 'title') return false;
