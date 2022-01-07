@@ -31,7 +31,7 @@ export default function NavIMenu() {
                 : text;
         };
 
-        const getMenuItem = (data: any): any => {
+        const getMenuItem = (data: any, hasIndex: boolean = false): any => {
             const returnData: any = {};
             returnData.id = data['$']['id'];
             // returnData.index = data['$']['displayorder'];
@@ -43,6 +43,10 @@ export default function NavIMenu() {
             );
             if (returnData?.id && returnData?.id.toLowerCase().includes('annex')) {
               returnData.title = returnData.id + ' (Normative) ' + returnData.title;   
+              hasIndex = false;
+            }
+            if (hasIndex && returnData?.title && returnData.title !== 'Foreword' && returnData.title !== 'Introduction') {
+                returnData.title = `${(index-2)} ${returnData.title}`;
             }
             returnData.children = [];
             if (data?.clause?.length > 1) {
@@ -79,28 +83,28 @@ export default function NavIMenu() {
             //the scopt part for menu
             if (xmlJson['iso-standard']['sections'] ) {
                 const sectionItem = getMenuItem(
-                    xmlJson['iso-standard']['sections'][0]['clause'][0]
+                    xmlJson['iso-standard']['sections'][0]['clause'][0], true
                 );
                 menuItem[sectionItem.index] = sectionItem;
             }
             //the normative part for menu item
             if (xmlJson['iso-standard']['bibliography']) {
                 const references = getMenuItem(
-                    xmlJson['iso-standard']['bibliography'][0]['references'][0]
+                    xmlJson['iso-standard']['bibliography'][0]['references'][0], true
                 );
                 menuItem[references.index] = references;
             }
             //the terms part for menu item
             if (xmlJson['iso-standard']['sections']) {
                 const terms = getMenuItem(
-                    xmlJson['iso-standard']['sections'][0]['terms'][0]
+                    xmlJson['iso-standard']['sections'][0]['terms'][0], true
                 );
                 menuItem[terms.index] = terms;
             }
             //the section part for menu item
             if (xmlJson['iso-standard']['sections'] ) {
                 const sectionItem = getMenuItem(
-                    xmlJson['iso-standard']['sections'][0]['clause'][1]
+                    xmlJson['iso-standard']['sections'][0]['clause'][1], true
                 );
                 menuItem[sectionItem.index] = sectionItem;
             }
@@ -122,7 +126,7 @@ export default function NavIMenu() {
                 );
                 menuItem[references.index] = references;
             }
-        } console.log(menuItem, menuItem)
+        }
         return menuItem;
     }, [xmlJson]);
 
