@@ -64,6 +64,9 @@ export default function DisplayNode({ data }: OwnProps) {
                 case 'link':
                     return <LinkTag data={item} key={index} />;
 
+                case 'br':
+                    return <br/>;
+
                 case 'strong':
                     return <StrongTag data={item} key={index} />;
 
