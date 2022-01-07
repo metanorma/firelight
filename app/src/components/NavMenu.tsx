@@ -41,11 +41,8 @@ export default function NavIMenu() {
                     ? data['title'][0]
                     : data['title'][0]['_']
             );
-            if (
-                data['title'][0]['strong'] &&
-                data['title'][0]['strong'].length > 0
-            ) {
-                returnData.title = `${data['title'][0]['strong'][0]} ${data['title'][0]['_']} ${data['title'][0]['strong'][1]}`;
+            if (returnData?.id && returnData?.id.toLowerCase().includes('annex')) {
+              returnData.title = returnData.id + ' (Normative) ' + returnData.title;   
             }
             returnData.children = [];
             if (data?.clause?.length > 1) {
