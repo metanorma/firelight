@@ -1,0 +1,11 @@
+ul {
+  margin-left: 2em;
+}
+
+ul > li > div.p:before {
+  content: "\2014";
+  display: inline-block;
+  width: 1em;
+  margin-left: -1.5em;
+  margin-right: 0.5em;
+}
