@@ -20,6 +20,33 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
         }
 
         if (!titleIndex) {
+            if(id && id.toLowerCase().includes('annex')) {
+                let title = id  + ' (Normative) ' + xmlData.title[0];
+                let letter = id.substr(5) 
+                if (node) {
+                    Object.values(node?.childNodes).map((child: any, index: number) => {
+                        if (child?.tagName === 'title') delete node.childNodes[index];
+                    })
+                    return (
+                        <div className="content-section" id={id}>
+                            <h1 className="title title-3">{title}</h1>
+                            <DisplayNode data={node.childNodes} />
+                            {xmlData?.clause?.length > 0 &&
+                                xmlData.clause.map(
+                                    (child: any, index: number) => (
+                                        <ContentSection
+                                            key={index}
+                                            xmlData={child}
+                                            titleIndex={`${letter}.${
+                                                index + 1
+                                            }`}
+                                        />
+                                    )
+                                )}
+                        </div>
+                    );
+                }
+            }
             return node ? (
                 <div className="content-section" id={id}>
                     <DisplayNode data={node.childNodes} />
@@ -37,12 +64,14 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                 </>
             );
         } else {
-            console.log(xmlData?.title, 'title');
+            
             if (xmlData?.title && xmlData?.title[0]) {
                 let title = xmlData.title[0];
                 title = `${titleIndex} ${title}`;
                 if (node) {
-                    delete node.childNodes[0];
+                    Object.values(node?.childNodes).map((child: any, index: number) => {
+                        if (child?.tagName === 'title') delete node.childNodes[index];
+                    })
                     return (
                         <div className="content-section" id={id}>
                             <h1 className="title title-3">{title}</h1>
