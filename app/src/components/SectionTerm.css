@@ -18,8 +18,20 @@
     margin-left: 1em;
 }
 
-
-
 .term > .termsource > a {
     color: inherit;
+}
+
+.index-number {
+    font-weight: bold;
+}
+
+.content-section > .term-index {
+    display: inline;
+    font-weight: bold;
+}
+
+.content-section > .preferred {
+    display: inline;
+    font-weight: bold;
 }
