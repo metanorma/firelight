@@ -28,11 +28,14 @@ export default function SectionTerm({ data }: OwnProps) {
         let bibitemid = '';
         let bibitemText = '';
         let referenceIndex = '';
+        let indexNumber = '';
 
         if (termSource?.childNodes) {
             let origin: any = Object.values(termSource.childNodes).find(
               (child: any) => child?.tagName === 'origin'
             )
+            
+            
             let attr = origin?.attributes;
             
             let reference: any = Object.values(origin?.attributes).find(
@@ -65,6 +68,7 @@ export default function SectionTerm({ data }: OwnProps) {
 
         return (
             <div className="term" id={id}>
+                {/* {indexNumber && <div className='index-number'>{indexNumber}</div>} */}
                 <DisplayNode data={data.childNodes} />
                 {bibitemText && <div className="termsource">[SOURCE: <a href={ bibitemid ? `#${bibitemid}` : ''}>{bibitemText}</a>{ modified ? `, ${modified}` : ''}]</div>}
             </div>
