@@ -19,7 +19,7 @@ export default function XrefTag({ data }: OwnProps) {
     );
     const attr: any = {};
     attr.href = `#${xrefRow.value}`;
-    return <a className="xref" {...attr}><DisplayNode data={data.childNodes} /></a>
+    return <a className="xref" {...attr}>{attr.href.substr(1)}</a>
   }, [data]);
 
   return <>{renderContent}</>;
