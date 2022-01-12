@@ -1,0 +1,14 @@
+.termexample {
+    background-color: #e1eef1;
+    padding: 0.5em;
+    margin: 2em 0 1em 0;
+    text-align: left;
+    color: #424242;
+    padding-left: 2em;
+    color: black;
+    padding-left: 0.5em;
+}
+
+.termexample > .p {
+    display: inline;
+}
