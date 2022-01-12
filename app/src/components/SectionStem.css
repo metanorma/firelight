@@ -1,0 +1,37 @@
+.term {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
+.term > .preferred {
+    font-weight: bold;
+}
+
+.term > .admitted {
+    padding: 5px 0px 0 25px;
+}
+
+.term > .definition, .term > .termsource {
+    margin-left: 1em;
+}
+
+.term > .termsource > a {
+    color: inherit;
+}
+
+.index-number {
+    font-weight: bold;
+}
+
+.content-section > .term-index {
+    display: inline;
+    font-weight: bold;
+}
+
+.content-section > .preferred {
+    display: inline;
+    font-weight: bold;
+}
