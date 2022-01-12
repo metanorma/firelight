@@ -37,6 +37,9 @@ import SectionDocidentifier from './SectionDocidentifier';
 import SectionBibitem from './SectionBibitem';
 import SectionFormattedDoc from './SectionFormattedDoc';
 import SectionAdmitted from './SectionAdmitted';
+import SectionTermexample from './SectionTermexample';
+import SectionDomain from './SectionDomain';
+import SectionConcept from './SectionConcept';
 // import TermText from './TermText';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -65,7 +68,7 @@ export default function DisplayNode({ data }: OwnProps) {
                     return <LinkTag data={item} key={index} />;
 
                 case 'br':
-                    return <br/>;
+                    return <br />;
 
                 case 'strong':
                     return <StrongTag data={item} key={index} />;
@@ -173,8 +176,18 @@ export default function DisplayNode({ data }: OwnProps) {
 
                 case 'docidentifier':
                     return <SectionDocidentifier data={item} key={index} />;
+
                 case 'admitted':
                     return <SectionAdmitted data={item} key={index} />;
+
+                case 'termexample':
+                    return <SectionTermexample data={item} key={index} />;
+
+                case 'domain':
+                    return <SectionDomain data={item} key={index} />;
+
+                case 'concept':
+                    return <SectionConcept data={item} key={index} />;
             }
         });
     }, [data]);
