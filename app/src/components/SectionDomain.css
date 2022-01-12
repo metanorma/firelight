@@ -1,0 +1,14 @@
+.domain {
+    display: inline;
+    margin-left: 15px;
+}
+
+.term > .domain {
+    display: inline;
+    margin-left: 8px;
+}
+
+
+.term > .definition > .p {
+    display: inline;
+}
