@@ -1,0 +1,8 @@
+.concept {
+    display: inline;
+    color: inherit;
+}
+
+.concept > a {
+    color: inherit;
+}
