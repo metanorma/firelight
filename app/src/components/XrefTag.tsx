@@ -11,6 +11,10 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function XrefTag({ data }: OwnProps) {
+  const makeFirstLetterToUpperCase = (word: string) => {
+    return word.substring(0,1).toLocaleUpperCase() + word.substring(1);
+  }
+
   const renderContent = useMemo(() => {   
 
     const attrs: any[] = data.attributes;
@@ -19,7 +23,7 @@ export default function XrefTag({ data }: OwnProps) {
     );
     const attr: any = {};
     attr.href = `#${xrefRow.value}`;
-    return <a className="xref" {...attr}>{attr.href.substr(1)}</a>
+    return <a className="xref" {...attr}>{makeFirstLetterToUpperCase(attr.href.substr(1))}</a>
   }, [data]);
 
   return <>{renderContent}</>;
