@@ -11,18 +11,18 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function ErefTag({ data }: OwnProps) {
-  const renderContent = useMemo(() => {
-    const attrs: any  [] = data.attributes;
-    const xrefRow = Object.values(attrs).find(
+  const renderContent = useMemo(() => {   
+
+    const attrs: any[] = data.attributes; console.log(attrs, 'attrs')
+    const biditemid = Object.values(attrs).find(
       (attr: any) => attr?.name === "bibitemid"
     );
-    // const citeasRow = Object.values(attrs).find(
-    //   (attr: any) => attr?.name === "citeas"
-    // );
-    // attr.citeas = citeasRow.value;
-    const attr: any = {};
-    attr.href = `#${xrefRow.value}`;
-    return <a className="eref" {...attr}><DisplayNode data={data.childNodes} /></a>
+
+    const citeas = Object.values(attrs).find(
+      (attr: any) => attr?.name === "citeas"
+    );
+    console.log(biditemid, 'biditem')
+    return <a className="eref" href={`#${biditemid.value}`}>{citeas.value}</a>
   }, [data]);
 
   return <>{renderContent}</>;
