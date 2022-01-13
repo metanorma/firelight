@@ -12,3 +12,9 @@
     text-align: center;
     font-size: inherit;
 }
+
+
+.table > .note {
+    width: 200%;
+    margin-left: 15px;
+}
