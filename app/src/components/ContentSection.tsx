@@ -102,9 +102,20 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                     );
                 }
             }
-            if (xmlData?.title && xmlData?.title[0]) {
-                let title = xmlData.title[0];
-                title = `${titleIndex} ${title}`;
+
+            if (titleIndex.includes('3.')) {
+                console.log(node, 'term node')
+                return (
+                    <div className="content-section term" id={id}>
+                        <div className="term-index">{titleIndex}</div>
+                        <DisplayNode data={[node]} />
+                    </div>
+                );
+            }
+
+            // if (xmlData?.title && xmlData?.title[0]) {
+                let title = titleIndex;
+                if (xmlData?.title && xmlData?.title[0]) title = `${title} ${xmlData?.title[0]}`;
                 if (node) {
                     Object.values(node?.childNodes).map(
                         (child: any, index: number) => {
@@ -131,16 +142,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                         </div>
                     );
                 }
-            }
-            if (titleIndex.includes('3.')) {
-                console.log(node, 'term node')
-                return (
-                    <div className="content-section term" id={id}>
-                        <div className="term-index">{titleIndex}</div>
-                        <DisplayNode data={[node]} />
-                    </div>
-                );
-            }
+            // }
         }
     }, [xmlData]);
 
