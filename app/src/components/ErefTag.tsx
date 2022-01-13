@@ -21,14 +21,17 @@ export default function ErefTag({ data }: OwnProps) {
     const citeas = Object.values(attrs).find(
       (attr: any) => attr?.name === "citeas"
     );
-    if (biditemid.value === 'ISO24333') console.log(data, 'eref data')
+    
     let value = '';
     if (data?.childNodes && data?.childNodes[0]) {
       value = data.childNodes[0].data;
-    } else {
-      value = citeas.value;
+      if (!value) {
+        value = data.childNodes[0].childNodes[0].childNodes[0].childNodes[0].data;
+        value = citeas.value + ', Clause ' + value;
+      }
     }
-    return <a className="eref" href={`#${biditemid.value}`}>{value}</a>
+    if (biditemid.value === 'ISO16634') console.log(data, 'eref data', value)
+    return <a className="eref" href={`#${biditemid.value}`}>{value ? value : citeas.value}</a>
   }, [data]);
 
   return <>{renderContent}</>;
