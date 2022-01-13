@@ -19,7 +19,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
         if (id) {
             node = getChildsById(id);
         }
-        console.log(titleIndex, 'titleIndex', xmlData, 'xmlDat', node, 'node');
+        
         if (!titleIndex) {
             if (id && id.toLowerCase().includes('annex')) {
                 let title = id + ' (Normative) ' + xmlData.title[0];
@@ -69,7 +69,6 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
             );
         } else {
             if (titleIndex === '3') {
-                console.log(node, 'node', xmlData.term, 'term');
                 let title = xmlData.title[0];
                 title = `${titleIndex} ${title}`;
                 if (node) {
@@ -104,7 +103,6 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
             }
 
             if (titleIndex.includes('3.')) {
-                console.log(node, 'term node')
                 return (
                     <div className="content-section term" id={id}>
                         <div className="term-index">{titleIndex}</div>
