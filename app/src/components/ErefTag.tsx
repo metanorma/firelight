@@ -30,7 +30,7 @@ export default function ErefTag({ data }: OwnProps) {
         value = citeas.value + ', Clause ' + value;
       }
     }
-    if (biditemid.value === 'ISO16634') console.log(data, 'eref data', value)
+    
     return <a className="eref" href={`#${biditemid.value}`}>{value ? value : citeas.value}</a>
   }, [data]);
 

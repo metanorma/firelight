@@ -12,7 +12,7 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function SectionDomain({ data }: OwnProps) {
-  const renderContent = useMemo(() => { console.log(data, 'concept')
+  const renderContent = useMemo(() => { 
     const attrs: any[] = data.attributes;
     const idRow = Object.values(attrs).find(
       (attr: any) => attr?.name === "id"
