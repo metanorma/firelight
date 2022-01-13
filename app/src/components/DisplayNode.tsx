@@ -188,6 +188,9 @@ export default function DisplayNode({ data }: OwnProps) {
 
                 case 'concept':
                     return <SectionConcept data={item} key={index} />;
+                
+
+                
             }
         });
     }, [data]);
