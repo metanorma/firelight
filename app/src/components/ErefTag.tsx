@@ -12,8 +12,8 @@ interface OwnProps {
 
 export default function ErefTag({ data }: OwnProps) {
   const renderContent = useMemo(() => {   
-
-    const attrs: any[] = data.attributes; console.log(attrs, 'attrs')
+    
+    const attrs: any[] = data.attributes;
     const biditemid = Object.values(attrs).find(
       (attr: any) => attr?.name === "bibitemid"
     );
@@ -21,8 +21,14 @@ export default function ErefTag({ data }: OwnProps) {
     const citeas = Object.values(attrs).find(
       (attr: any) => attr?.name === "citeas"
     );
-    console.log(biditemid, 'biditem')
-    return <a className="eref" href={`#${biditemid.value}`}>{citeas.value}</a>
+    if (biditemid.value === 'ISO24333') console.log(data, 'eref data')
+    let value = '';
+    if (data?.childNodes && data?.childNodes[0]) {
+      value = data.childNodes[0].data;
+    } else {
+      value = citeas.value;
+    }
+    return <a className="eref" href={`#${biditemid.value}`}>{value}</a>
   }, [data]);
 
   return <>{renderContent}</>;
