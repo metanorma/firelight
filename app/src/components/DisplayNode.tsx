@@ -50,6 +50,7 @@ import SectionMn from './SectionMn';
 import SectionMo from './SectionMo';
 import SectionFn from './SectionFn';
 import SectionAdmonition from './SectionAdmonition';
+import SectionFormula from './SectionFormula';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 interface OwnProps {
@@ -224,10 +225,13 @@ export default function DisplayNode({ data }: OwnProps) {
 
                 case 'fn':
                     return <SectionFn data={item} key={index} />;
-                
+
                 case 'admonition':
-                    return <SectionAdmonition data={item} key={index} />
-             }
+                    return <SectionAdmonition data={item} key={index} />;
+
+                case 'formula':
+                    return <SectionFormula data={item} key={index} />;
+            }
         });
     }, [data]);
 
