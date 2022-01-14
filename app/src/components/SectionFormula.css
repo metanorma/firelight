@@ -1,0 +1,20 @@
+.formula {
+    background-color: #f7f7f7;
+    padding: 1.5em;
+    margin-top: 2em;
+    text-align: center;
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
+.formula > .dl {
+    display: inline;
+}
+
+.formula > .dl > .dt, .formula > .dl > .dd, .formula > .dl > .dd > .p {
+    display: inline;
+}
+
+.formula > .dl > .dt > .stem, .formula > .dl > .dt > .stem > .math {
+    display: inline;
+}
