@@ -27,3 +27,13 @@
     position: absolute;
     bottom: 0;
 }
+
+.mrow > .mo {
+    position: absolute;
+    bottom: 0;
+}
+
+.th > .stem {
+    display: flex;
+    justify-content: center;
+}
