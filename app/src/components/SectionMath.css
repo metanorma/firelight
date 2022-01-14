@@ -1,3 +1,7 @@
+.p > .stem, .p > .stem > .math {
+    display: inline;
+}
+
 .msub {
     display: flex;
 }
@@ -36,4 +40,8 @@
 .th > .stem {
     display: flex;
     justify-content: center;
+}
+
+.mi, .mn, .mo {
+    display: inline;
 }
