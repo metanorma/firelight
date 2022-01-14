@@ -1,0 +1,29 @@
+.msub {
+    display: flex;
+}
+
+.mrow {
+    display: inline;
+    position: relative;
+}
+
+.mrow > .mi, .mrow > mn {
+    display: inline;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    vertical-align: 0;
+    line-height: normal;
+    text-decoration: none;
+    box-sizing: content-box;
+}
+
+.mi {
+    font-style: italic;
+    font-size: 1.5em;
+}
+
+.mrow > .mn {
+    position: absolute;
+    bottom: 0;
+}
