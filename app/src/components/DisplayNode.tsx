@@ -23,6 +23,7 @@ import SectionColgroup from './SectionColgroup';
 import SectionCol from './SectionCol';
 import SectionThead from './SectionThead';
 import SectionTbody from './SectionTbody';
+import SectionTfoot from './SectionTfoot';
 import SectionTh from './SectionTh';
 import SectionTd from './SectionTd';
 import SectionTr from './SectionTr';
@@ -40,7 +41,15 @@ import SectionAdmitted from './SectionAdmitted';
 import SectionTermexample from './SectionTermexample';
 import SectionDomain from './SectionDomain';
 import SectionConcept from './SectionConcept';
-// import TermText from './TermText';
+import SectionStem from './SectionStem';
+import SectionMath from './SectionMath';
+import SectionMsub from './SectionMsub';
+import SectionMrow from './SectionMrow';
+import SectionMi from './SectionMi';
+import SectionMn from './SectionMn';
+import SectionMo from './SectionMo';
+import SectionFn from './SectionFn';
+import SectionAdmonition from './SectionAdmonition';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 interface OwnProps {
@@ -141,6 +150,9 @@ export default function DisplayNode({ data }: OwnProps) {
                 case 'tbody':
                     return <SectionTbody data={item} key={index} />;
 
+                case 'tfoot':
+                    return <SectionTfoot data={item} key={index} />;
+
                 case 'tr':
                     return <SectionTr data={item} key={index} />;
 
@@ -188,10 +200,34 @@ export default function DisplayNode({ data }: OwnProps) {
 
                 case 'concept':
                     return <SectionConcept data={item} key={index} />;
-                
 
+                case 'stem':
+                    return <SectionStem data={item} key={index} />;
+
+                case 'math':
+                    return <SectionMath data={item} key={index} />;
+
+                case 'msub':
+                    return <SectionMsub data={item} key={index} />;
+
+                case 'mrow':
+                    return <SectionMrow data={item} key={index} />;
+
+                case 'mi':
+                    return <SectionMi data={item} key={index} />;
+
+                case 'mn':
+                    return <SectionMn data={item} key={index} />;
+
+                case 'mo':
+                    return <SectionMo data={item} key={index} />;
+
+                case 'fn':
+                    return <SectionFn data={item} key={index} />;
                 
-            }
+                case 'admonition':
+                    return <SectionAdmonition data={item} key={index} />
+             }
         });
     }, [data]);
 
