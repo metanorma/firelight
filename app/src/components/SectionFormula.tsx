@@ -18,7 +18,7 @@ export default function SectionFormula({ data }: OwnProps) {
             (attr: any) => attr?.name === 'id'
         );
         const id = idRow?.value ? idRow.value : '';
-
+console.log(data, 'formula');
         return (
             <div className="formula" id={id}>
                 <DisplayNode data={data.childNodes} />
