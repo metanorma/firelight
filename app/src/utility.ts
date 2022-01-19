@@ -2,7 +2,7 @@ import { DOMParser } from 'xmldom';
 
 export const url = "https://github.com/metanorma/bs-l3-ux/files/7626440/document-l3.presentation.xml.zip";
 
-const presentationData = () => {
+export const presentationData = () => {
     return localStorage.getItem('xml') || " ";
 }
 
