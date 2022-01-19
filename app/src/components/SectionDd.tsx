@@ -18,7 +18,7 @@ export default function SectionDl({ data }: OwnProps) {
       (attr: any) => attr?.name === "id"
     );
     const id = idRow?.value ? idRow.value : "";
-    return <dd className="dd" id={id}><DisplayNode data={data.childNodes} /></dd>
+    return <><dd className="dd" id={id}><DisplayNode data={data.childNodes} /></dd><br/></>;
   }, [data]);
 
   return <>{renderContent}</>;
