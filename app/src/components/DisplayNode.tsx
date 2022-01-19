@@ -48,6 +48,7 @@ import SectionMrow from './SectionMrow';
 import SectionMi from './SectionMi';
 import SectionMn from './SectionMn';
 import SectionMo from './SectionMo';
+import SectionMfrac from './SectionMfrac';
 import SectionFn from './SectionFn';
 import SectionAdmonition from './SectionAdmonition';
 import SectionFormula from './SectionFormula';
@@ -222,6 +223,9 @@ export default function DisplayNode({ data }: OwnProps) {
 
                 case 'mo':
                     return <SectionMo data={item} key={index} />;
+
+                case 'mfrac':
+                    return <SectionMfrac data={item} key={index} />;
 
                 case 'fn':
                     return <SectionFn data={item} key={index} />;
