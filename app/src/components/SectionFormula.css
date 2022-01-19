@@ -8,13 +8,29 @@
 }
 
 .formula > .dl {
+    display: block;
+    margin-top: 15px;
+}
+
+.formula > .dl > .dt, .formula > .dl > .dd, .formula > .dl > .dt > .stem, .formula > .dl > .dt > .stem > #react-mathjax-preview > .react-mathjax-preview-result, .formula > .dl > .dd > .p {
     display: inline;
 }
 
-.formula > .dl > .dt, .formula > .dl > .dd, .formula > .dl > .dd > .p {
+#react-mathjax-preview > .react-mathjax-preview-result {
     display: inline;
 }
 
-.formula > .dl > .dt > .stem, .formula > .dl > .dt > .stem > .math {
+.formula > .dl > .dt {
+    width: 30%; 
+    text-align: right;
+    padding: 0;
+}
+
+.formula > .dl > .dd {
+    width: 70%;
+    text-align: left;
+}
+
+.td > .stem {
     display: inline;
 }
