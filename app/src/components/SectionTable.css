@@ -1,6 +1,6 @@
 .table  {
     display: table;
-    width: auto;
+    width: 100%;
     background-color: #eee;
     border: 1px solid #666666;
     border-spacing: 5px; /* cellspacing:poor IE support for  this */
