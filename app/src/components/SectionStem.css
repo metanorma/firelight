@@ -35,3 +35,7 @@
     display: inline;
     font-weight: bold;
 }
+
+.dt > .stem {
+    display: inline;
+}
