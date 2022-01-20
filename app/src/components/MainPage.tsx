@@ -33,7 +33,7 @@ export default function MainPage() {
         };
 
         const menuItem: any[] = [];
-        if (xmlJson['iso-standard']) {
+        if (xmlJson && xmlJson['iso-standard']) {
             //the foreword part for menu item
             if (xmlJson['iso-standard']['preface']) {
                 const foreword = getMenuItem(
