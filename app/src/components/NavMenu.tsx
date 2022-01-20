@@ -22,6 +22,14 @@ export default function NavIMenu() {
     console.log('xmlJson', xmlJson);
     const [selectedItem, setSelectedItem] = useState<string>('');
     const menuItem = useMemo(() => {
+        //verify the type of document.
+        let standard = '';
+        if (xmlJson['itu-standard']) {
+            standard = 'itu-standard';
+        } else if (xmlJson['iso-standard']) {
+            standard = 'itu-standarad';
+        }
+
         let index = 0;
         let count = 0;
         const insertSpace = (text: string): any => {
@@ -34,7 +42,19 @@ export default function NavIMenu() {
 
         const getMenuItem = (data: any, hasIndex: boolean = false): any => {
             const returnData: any = {};
-            returnData.id = data['$']['id'];
+            if (data?.references) {
+                console.log(data, 'references');
+                returnData.id = data.references[0]['$']['id'];
+                returnData.index = index++;
+                returnData.title = data.references[0]['title']['0'];
+                returnData.children = [] ;
+                return returnData; 
+            }
+            if (!data?.title) {
+                return;
+            }            
+            // if (standard === 'iso-standard') {
+            if (data?.$ && data['$']['id']) returnData.id = data['$']['id'];
             // returnData.index = data['$']['displayorder'];
             returnData.index = index++;
             returnData.title = insertSpace(
@@ -63,11 +83,13 @@ export default function NavIMenu() {
                 data.clause.map((item: any, index: number) => {
                     const childItem: any = {};
                     childItem.id = item['$']['id'];
+                    if (!item.title) return;
                     childItem.title = insertSpace(
                         typeof item['title'][0] === 'string'
                             ? item['title'][0]
                             : item['title'][0]['_']
                     );
+
                     let letter: string = '';
                     if (hasIndex) {
                         letter = count.toString();
@@ -80,15 +102,73 @@ export default function NavIMenu() {
 
                     if (letter)
                         childItem.title = `${letter}.${index + 1} ${
-                            childItem.title
+                            childItem?.title ? childItem.title : ''
                         }`;
                     returnData.children[index] = childItem;
                 });
             }
+
             return returnData;
         };
 
         const menuItem: any[] = [];
+
+        if (xmlJson[standard]) {
+            console.log(xmlJson[standard], 'standard');
+            if (xmlJson[standard]['preface']) {
+                console.log(xmlJson[standard]['preface'], 'preface');
+                //abstract
+                if (xmlJson[standard]['preface'][0]['abstract']) {
+                    xmlJson[standard]['preface'][0]['abstract'].map(
+                        (data: any) => {
+                            const item = getMenuItem(data);
+                            if (item) menuItem[item.index] = item;
+                        }
+                    );
+                }
+                if (xmlJson[standard]['preface'][0]['introduction']) {
+                    xmlJson[standard]['preface'][0]['introduction'].map(
+                        (data: any) => {
+                            const item = getMenuItem(data);
+                            if (item) menuItem[item.index] = item;
+                        }
+                    );
+                }
+                if (xmlJson[standard]['preface'][0]['clause']) {
+                    xmlJson[standard]['preface'][0]['clause'].map(
+                        (data: any) => {
+                            const item = getMenuItem(data);
+                            if (item) menuItem[item.index] = item;
+                        }
+                    );
+                }
+                if (xmlJson[standard]['sections'][0]['clause']) {
+                    xmlJson[standard]['sections'][0]['clause'].map(
+                        (data: any) => {
+                            const item = getMenuItem(data, true);
+                            if (item) menuItem[item.index] = item;
+                        }
+                    );
+                }
+                if (xmlJson[standard]['annex']) {
+                    xmlJson[standard]['annex'].map(
+                        (data: any) => {
+                            const item = getMenuItem(data);
+                            if (item) menuItem[item.index] = item;
+                        }
+                    );
+                }
+                if (xmlJson[standard]['bibliography']) {
+                    xmlJson[standard]['bibliography'].map(
+                        (data: any) => {
+                            const item = getMenuItem(data);
+                            if (item) menuItem[item.index] = item;
+                        }
+                    );
+                }
+            }
+        }
+
         if (xmlJson['iso-standard']) {
             //the foreword part for menu item
             if (xmlJson['iso-standard']['preface']) {
@@ -159,7 +239,7 @@ export default function NavIMenu() {
         }
         return menuItem;
     }, [xmlJson]);
-
+    console.log(menuItem, 'menuItem');
     return (
         <nav>
             <div id="toc">
