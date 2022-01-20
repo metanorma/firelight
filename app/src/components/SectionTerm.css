@@ -10,12 +10,13 @@
     font-weight: bold;
 }
 
-.term > .admitted {
+.term > .admitted, .term > .domain {
     padding: 5px 0px 0 25px;
 }
 
 .term > .definition, .term > .termsource {
     margin-left: 1em;
+    margin-top: 4px;
 }
 
 .term > .termsource > a {
@@ -34,4 +35,8 @@
 .content-section > .preferred {
     display: inline;
     font-weight: bold;
+}
+
+.term > .term {
+    display: inline;
 }
