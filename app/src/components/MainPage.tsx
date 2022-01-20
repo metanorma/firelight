@@ -56,6 +56,23 @@ export default function MainPage() {
                         }
                     );
                 }
+                if (xmlJson[standard]['preface'][0]['introduction']) {
+                    xmlJson[standard]['preface'][0]['introduction'].map(
+                        (data: any) => {
+                            const item = getMenuItem(data);
+                            if (item) menuItem[item.index] = item;
+                        }
+                    );
+                }
+                //preface part
+                if (xmlJson[standard]['preface'][0]['clause']) {
+                    xmlJson[standard]['preface'][0]['clause'].map(
+                        (data: any) => {
+                            const item = getMenuItem(data);
+                            if (item) menuItem[item.index] = item;
+                        }
+                    );
+                }
                 
             }
         }
