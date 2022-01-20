@@ -21,7 +21,13 @@ export const XmlContext = createContext<XmlData>(contextDefaultValues);
 // const xmlUrl = "https://metanorma.github.io/mn-samples-iso/documents/international-workshop-agreement/document.xml";
 // const xmlUrl = "/iso.xml";
 // const xmlUrl = "https://metanorma.github.io/mn-samples-iso/documents/international-standard/rice-en.wd.xml";
-const xmlUrl = "/rice.xml";
+// const xmlUrl0 = "/rice.xml";
+const xmlUrl = "https://metanorma.github.io/mn-samples-itu/documents/T-TUT-CCIT-2015-E.xml";
+const localXmlUrl = "/a2015.xml";
+const xmlUrl1 = "https://metanorma.github.io/mn-samples-itu/documents/T-TUT-L-2020-GLR.xml";
+const localXmlUrl1 = "/2020.xml";
+const xmlUrl2 = "https://metanorma.github.io/mn-samples-itu/documents/T-REC-A.8-200810-I!!MSW-E.xml";
+const localXmlUrl2 = "/2008.xml";
 
 const XmlProvider: React.FC = ({ children }) => {
     const [xml, setXml] = useState<string>('');
@@ -48,28 +54,32 @@ const XmlProvider: React.FC = ({ children }) => {
 
                     const bibdata: XMLNode =
                         xmlDoc.getElementsByTagName('bibdata')[0];
-                    const childs = bibdata.childNodes;
-
-                    const mainTitle: XMLNode | any = Object.values(childs).find(
-                        (child: any) => {
-                            if (child.tagName === 'title') {
-                                let attrs = child.attributes;
-                                let result = false;
-                                Object.values(attrs).map((attr: any) => {
-                                    if (
-                                        attr.name === 'type' &&
-                                        attr.value === 'main'
-                                    ) {
-                                        result = true;
-                                    }
-                                });
-                                return result;
-                            } else {
-                                return;
+                    if (bibdata?.childNodes) {
+                        const childs = bibdata.childNodes;
+    
+                        const mainTitle: XMLNode | any = Object.values(childs).find(
+                            (child: any) => {
+                                if (child.tagName === 'title') {
+                                    let attrs = child.attributes;
+                                    let result = false;
+                                    Object.values(attrs).map((attr: any) => {
+                                        if (
+                                            attr.name === 'type' &&
+                                            attr.value === 'main'
+                                        ) {
+                                            result = true;
+                                        }
+                                    });
+                                    return result;
+                                } else {
+                                    return;
+                                }
                             }
-                        }
-                    );
-                    setTitle(mainTitle?.childNodes[0].data);
+                        );
+                        setTitle(mainTitle?.childNodes[0].data);
+                    } else {
+                        setTitle('');
+                    }
 
                     parseString(response.data, {}, function (err, result) {
                         console.log(result, 'jsonXml');
