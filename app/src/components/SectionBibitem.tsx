@@ -12,7 +12,7 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function SectionReference({ data }: OwnProps) {
-  const renderContent = useMemo(() => { 
+  const renderContent = useMemo(() => { console.log(data, 'bibitem')
     const attrs: any = data.attributes;
     const idRow: any = Object.values(attrs).find(
       (attr: any) => attr?.name === "id"

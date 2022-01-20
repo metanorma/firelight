@@ -11,7 +11,7 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function LinkTag({ data }: OwnProps) {
-    const renderContent = useMemo(() => { console.log(data, 'link');
+    const renderContent = useMemo(() => {
         const attr = data?.attributes;
         const child = data?.childNodes;
         const attrs: any = {};

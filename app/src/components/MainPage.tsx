@@ -43,15 +43,13 @@ export default function MainPage() {
         const menuItem: any[] = [];
 
         if (xmlJson[standard]) {
-            console.log(xmlJson[standard], 'standard');
             if (xmlJson[standard]['preface']) {
-                console.log(xmlJson[standard]['preface'], 'preface');
                 //abstract
                 if (xmlJson[standard]['preface'][0]['abstract']) {
                     xmlJson[standard]['preface'][0]['abstract'].map(
                         (data: any) => {
                             const item = getMenuItem(data);
-                            console.log(item, 'preface')
+                            console.log(item, 'preface');
                             if (item) menuItem[item.index] = item;
                         }
                     );
@@ -78,17 +76,26 @@ export default function MainPage() {
                     xmlJson[standard]['sections'][0]['clause'].map(
                         (data: any) => {
                             const item = getMenuItem(data, true);
-                            console.log(item, 'section part')
                             if (item) menuItem[item.index] = item;
                         }
                     );
                 }
-                
-                
-                
+                //annex part
+                if (xmlJson[standard]['annex']) {
+                    xmlJson[standard]['annex'].map((data: any) => {
+                        const item = getMenuItem(data);
+                        if (item) menuItem[item.index] = item;
+                    });
+                }
+                //bibliography part
+                if (xmlJson[standard]['bibliography']) {
+                    xmlJson[standard]['bibliography'].map((data: any) => {
+                        const item = getMenuItem(data);
+                        if (item) menuItem[item.index] = item;
+                    });
+                }
             }
         }
-
 
         if (xmlJson && xmlJson['iso-standard']) {
             //the foreword part for menu item

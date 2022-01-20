@@ -19,7 +19,6 @@ interface OwnProps {
 
 export default function NavIMenu() {
     const { xmlJson } = useXmlData();
-    console.log('xmlJson', xmlJson);
     const [selectedItem, setSelectedItem] = useState<string>('');
     const menuItem = useMemo(() => {
         //verify the type of document.
@@ -43,7 +42,6 @@ export default function NavIMenu() {
         const getMenuItem = (data: any, hasIndex: boolean = false): any => {
             const returnData: any = {};
             if (data?.references) {
-                console.log(data, 'references');
                 returnData.id = data.references[0]['$']['id'];
                 returnData.index = index++;
                 returnData.title = data.references[0]['title']['0'];
@@ -114,9 +112,7 @@ export default function NavIMenu() {
         const menuItem: any[] = [];
 
         if (xmlJson[standard]) {
-            console.log(xmlJson[standard], 'standard');
             if (xmlJson[standard]['preface']) {
-                console.log(xmlJson[standard]['preface'], 'preface');
                 //abstract
                 if (xmlJson[standard]['preface'][0]['abstract']) {
                     xmlJson[standard]['preface'][0]['abstract'].map(
@@ -239,7 +235,7 @@ export default function NavIMenu() {
         }
         return menuItem;
     }, [xmlJson]);
-    console.log(menuItem, 'menuItem');
+    
     return (
         <nav>
             <div id="toc">
