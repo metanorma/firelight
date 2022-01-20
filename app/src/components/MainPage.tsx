@@ -18,6 +18,14 @@ export default function MainPage() {
 
     // split the xml data by content section and save those as array
     const contentSections = useMemo(() => {
+        //verify the type of document.
+        let standard = '';
+        if (xmlJson['itu-standard']) {
+            standard = 'itu-standard';
+        } else if (xmlJson['iso-standard']) {
+            standard = 'itu-standarad';
+        }
+
         let index = 0;
         let count = 1;
         const getMenuItem = (data: any, hasIndex: boolean = false): any => {
@@ -33,6 +41,26 @@ export default function MainPage() {
         };
 
         const menuItem: any[] = [];
+
+        if (xmlJson[standard]) {
+            console.log(xmlJson[standard], 'standard');
+            if (xmlJson[standard]['preface']) {
+                console.log(xmlJson[standard]['preface'], 'preface');
+                //abstract
+                if (xmlJson[standard]['preface'][0]['abstract']) {
+                    xmlJson[standard]['preface'][0]['abstract'].map(
+                        (data: any) => {
+                            const item = getMenuItem(data);
+                            console.log(item, 'preface')
+                            if (item) menuItem[item.index] = item;
+                        }
+                    );
+                }
+                
+            }
+        }
+
+
         if (xmlJson && xmlJson['iso-standard']) {
             //the foreword part for menu item
             if (xmlJson['iso-standard']['preface']) {
