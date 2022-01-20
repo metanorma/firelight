@@ -73,6 +73,18 @@ export default function MainPage() {
                         }
                     );
                 }
+                //sections part
+                if (xmlJson[standard]['sections'][0]['clause']) {
+                    xmlJson[standard]['sections'][0]['clause'].map(
+                        (data: any) => {
+                            const item = getMenuItem(data, true);
+                            console.log(item, 'section part')
+                            if (item) menuItem[item.index] = item;
+                        }
+                    );
+                }
+                
+                
                 
             }
         }
