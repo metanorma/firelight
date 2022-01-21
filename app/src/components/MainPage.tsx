@@ -88,7 +88,7 @@ export default function MainPage() {
                     });
                 }
                 //bibliography part
-                if (xmlJson[standard]['bibliography'][0]['references']) {
+                if (xmlJson[standard]['bibliography'] && xmlJson[standard]['bibliography'][0]['references']) {
                     xmlJson[standard]['bibliography'][0]['references'].map((data: any) => {
                         const item = getMenuItem(data);
                         if (item) menuItem[item.index] = item;
