@@ -63,14 +63,38 @@ export default function SectionReference({ data }: OwnProps) {
               }
             }
         }
-
+        let formattedText = '';
         if(!valueText) {
-          console.log(data, 'other')
+          let formattedRef: any = Object.values(childs).find(
+            (data: any) => {
+              return data?.tagName === 'formattedref';
+            }
+          )
+          
+          if (formattedRef) {
+            let emRow: any = Object.values(formattedRef.childNodes).find(
+              (data: any) => data?.tagName === 'em'
+            )
+            if (emRow) {
+              formattedText = emRow?.childNodes[0].data;
+              valueText = emRow?.childNodes[0].data;
+            } else {
+              let linkRow: any = Object.values(formattedRef.childNodes).find(
+                (data: any) => data?.tagName === 'link'
+              )
+              if (linkRow?.attributes) {
+                let hrefRow: any = Object.values(linkRow.attributes).find(
+                  (data: any) => data?.name === 'target'
+                );
+                if (hrefRow) valueText = hrefRow?.value;
+              }
+            }
+          } 
         }
 
         return (
             <div className="bibitem" id={id}>
-                [{idText}]
+                [{idText}] {formattedText ? formattedText : ''}
                 {valueText && (
                     <>
                         <i className="italic">{valueText}</i>
