@@ -19,8 +19,8 @@ export default function LinkTag({ data }: OwnProps) {
         let value = '';
         if(child.length && child[0].data) value = child[0].data;
         if (!value) {
-          value = attrs.href.split(":")[1];
-        }
+          value = attrs.href;
+        } 
         return <a {...attrs} key={attrs.href} className="link">{value}</a>;
       }, [data]);
 
