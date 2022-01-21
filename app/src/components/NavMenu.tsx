@@ -77,7 +77,7 @@ export default function NavIMenu() {
                 returnData.title = `${++count} ${returnData.title}`;
             }
             returnData.children = [];
-            if (data?.clause?.length > 1) {
+            if (data?.clause?.length > 0) {
                 data.clause.map((item: any, index: number) => {
                     const childItem: any = {};
                     childItem.id = item['$']['id'];
