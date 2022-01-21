@@ -46,7 +46,7 @@ export default function SectionReference({ data }: OwnProps) {
             });
 
             if (titleChild) {
-              valueText = titleChild?.childNodes[0].data;
+                valueText = titleChild?.childNodes[0].data;
             }
 
             let dateRow: any = Object.values(childs).find((child: any) => {
@@ -54,52 +54,60 @@ export default function SectionReference({ data }: OwnProps) {
             });
 
             if (dateRow?.childNodes) {
-              let on: any = Object.values(dateRow.childNodes).find((child: any) => child?.tagName === 'on')
-              if (on?.childNodes) {
-                let date = on.childNodes[0].data;
-                if (date) {
-                  valueText = `${idText} ( ${date.split("-")[0]} ), ${valueText}`;
+                let on: any = Object.values(dateRow.childNodes).find(
+                    (child: any) => child?.tagName === 'on'
+                );
+                if (on?.childNodes) {
+                    let date = on.childNodes[0].data;
+                    if (date) {
+                        valueText = `${idText} ( ${
+                            date.split('-')[0]
+                        } ), ${valueText}`;
+                    }
                 }
-              }
             }
         }
         let formattedText = '';
-        if(!valueText) {
-          let formattedRef: any = Object.values(childs).find(
-            (data: any) => {
-              return data?.tagName === 'formattedref';
-            }
-          )
-          
-          if (formattedRef) {
-            let emRow: any = Object.values(formattedRef.childNodes).find(
-              (data: any) => data?.tagName === 'em'
-            )
-            if (emRow) {
-              formattedText = emRow?.childNodes[0].data;
-              valueText = emRow?.childNodes[0].data;
-            } else {
-              let linkRow: any = Object.values(formattedRef.childNodes).find(
-                (data: any) => data?.tagName === 'link'
-              )
-              if (linkRow?.attributes) {
-                let hrefRow: any = Object.values(linkRow.attributes).find(
-                  (data: any) => data?.name === 'target'
+        if (!valueText) {
+            let formattedRef: any = Object.values(childs).find((data: any) => {
+                return data?.tagName === 'formattedref';
+            });
+
+            if (formattedRef) {
+                let emRow: any = Object.values(formattedRef.childNodes).find(
+                    (data: any) => data?.tagName === 'em'
                 );
-                if (hrefRow) valueText = hrefRow?.value;
-              }
+                if (formattedRef.childNodes[0].data) {
+                    valueText = formattedRef.childNodes[0].data;
+                }
+                if (emRow) {
+                    formattedText = emRow?.childNodes[0].data;
+                } else {
+                    let linkRow: any = Object.values(
+                        formattedRef.childNodes
+                    ).find((data: any) => data?.tagName === 'link');
+                    if (linkRow?.attributes) {
+                        let hrefRow: any = Object.values(
+                            linkRow.attributes
+                        ).find((data: any) => data?.name === 'target');
+                        if (hrefRow) valueText = hrefRow?.value;
+                    }
+                }
             }
-          } 
         }
 
         return (
             <div className="bibitem" id={id}>
-                [{idText}] {formattedText ? formattedText : ''}
-                {valueText && (
-                    <>
-                        <i className="italic">{valueText}</i>
-                    </>
-                )}
+                <div className="td1">[{idText}]</div>
+                <div className="td2">
+                    {' '}
+                    {formattedText ? formattedText : ''}
+                    {valueText && (
+                        <>
+                            <i className="italic">{valueText}</i>
+                        </>
+                    )}
+                </div>
             </div>
         );
     }, [data]);
