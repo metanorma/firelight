@@ -19,9 +19,6 @@ export default function SectionTerm({ data }: OwnProps) {
         );
         const id = idRow?.value ? idRow.value : '';
 
-        const childs: any[] = data.childNodes;
-        console.log(data, 'stem data')
-
         return (
             <div className="stem" id={id}>
                 <DisplayNode data={data.childNodes} />
