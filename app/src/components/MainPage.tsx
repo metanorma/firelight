@@ -193,7 +193,7 @@ export default function MainPage() {
 
     return (
         <div className="main-page">
-            {/* <Cover /> */}
+            <Cover />
             {contentSections?.length > 0 &&
                 contentSections.map((item: any) =>
                     item?.data ? (
