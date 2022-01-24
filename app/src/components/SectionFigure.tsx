@@ -42,8 +42,8 @@ export default function SectionFigure({ data }: OwnProps) {
             );
 
             return (<div id={id} className='figure'>
-              {name && <span className='name'>{name ? name: ''}</span>}
               {imageRow && <DisplayNode data={[imageRow]} />}
+              {name && <div className='name'>{name ? name: ''}</div>}
             </div>);
         }
 

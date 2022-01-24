@@ -8,3 +8,7 @@
   font-size: 1em;
   text-align: center;
 }
+
+.figure > .name {
+  margin-top: 1em;
+}
