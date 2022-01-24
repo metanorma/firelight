@@ -1,4 +1,5 @@
 .link, .link:visited {
-    color: inherit;
+    text-decoration: none;
+    color: #00539f;
 }
 
