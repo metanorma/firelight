@@ -43,6 +43,20 @@ export default function MainPage() {
         const menuItem: any[] = [];
 
         if (xmlJson[standard]) {
+            console.log(xmlJson[standard], 'xml');
+            //Foreword
+            if (xmlJson[standard]['boilerplate']) {
+                if (xmlJson[standard]['boilerplate'][0]['legal-statement']) {
+                    xmlJson[standard]['boilerplate'][0][
+                        'legal-statement'
+                    ][0]['clause'].map((data: any) => {
+                        const item = getMenuItem(data);
+                        console.log(item, 'foreword');
+                        if (item) menuItem[item.index] = item;
+                    });
+                }
+            }
+
             if (xmlJson[standard]['preface']) {
                 //abstract
                 if (xmlJson[standard]['preface'][0]['abstract']) {
@@ -88,11 +102,16 @@ export default function MainPage() {
                     });
                 }
                 //bibliography part
-                if (xmlJson[standard]['bibliography'] && xmlJson[standard]['bibliography'][0]['references']) {
-                    xmlJson[standard]['bibliography'][0]['references'].map((data: any) => {
-                        const item = getMenuItem(data);
-                        if (item) menuItem[item.index] = item;
-                    });
+                if (
+                    xmlJson[standard]['bibliography'] &&
+                    xmlJson[standard]['bibliography'][0]['references']
+                ) {
+                    xmlJson[standard]['bibliography'][0]['references'].map(
+                        (data: any) => {
+                            const item = getMenuItem(data);
+                            if (item) menuItem[item.index] = item;
+                        }
+                    );
                 }
             }
         }

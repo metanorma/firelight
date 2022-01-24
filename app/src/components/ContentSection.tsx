@@ -16,9 +16,19 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
     const renderContent = useMemo(() => {
         const id = xmlData?.$?.id ? xmlData.$.id : '';
         let node: any = '';
-        if (id) {
-            node = getChildsById(id);
+        if (!id) {
+            console.log(xmlData, 'foreword')
+            if (xmlData?.title && xmlData.title[0]) {
+                let title = xmlData.title[0];
+
+                return <div className="cotent-section">
+                    <h1 className="title title-3">{title}</h1>
+                    {xmlData?.p?.length && xmlData.p.map((data: any) => <div className="p" id={data?.$?.id}>{data?._}</div>)}
+                </div>
+            }
         }
+
+        node = getChildsById(id);
 
         if (id === '_impacts_of_counterfeit_ict_equipment_and_components') {
             console.log(xmlData, 'node', titleIndex);
