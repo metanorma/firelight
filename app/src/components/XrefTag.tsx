@@ -12,7 +12,15 @@ interface OwnProps {
 
 export default function XrefTag({ data }: OwnProps) {
   const makeFirstLetterToUpperCase = (word: string) => {
-    return word.substring(0,1).toLocaleUpperCase() + word.substring(1);
+    let string = '';
+    if (word.toLocaleLowerCase().includes('fig') && !word.toLocaleLowerCase().includes('figure')) {
+      if (Number.isInteger(parseInt(word.substring(3)))) {
+        string = 'Figure ' + word.substring(3);
+      } else {
+        string = 'Figure ' + word.substring(4).substring(0,1).toUpperCase() + word.substring(4).substring(1);
+      }
+    } 
+    return string ? string : word.substring(0,1).toLocaleUpperCase() + word.substring(1);
   }
 
   const renderContent = useMemo(() => {   
