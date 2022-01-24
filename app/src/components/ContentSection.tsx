@@ -17,7 +17,6 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
         const id = xmlData?.$?.id ? xmlData.$.id : '';
         let node: any = '';
         if (!id) {
-            console.log(xmlData, 'foreword')
             if (xmlData?.title && xmlData.title[0]) {
                 let title = xmlData.title[0];
 
@@ -29,10 +28,6 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
         }
 
         node = getChildsById(id);
-
-        if (id === '_impacts_of_counterfeit_ict_equipment_and_components') {
-            console.log(xmlData, 'node', titleIndex);
-        }
 
         if (!titleIndex) {
             if (id && id.toLowerCase().includes('annex')) {
