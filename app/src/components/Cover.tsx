@@ -10,7 +10,7 @@ export default function Cover() {
     const { xmlJson } = useXmlData();
 
     if (xmlJson['iso-standard']) {
-        console.log(xmlJson['iso-standard'], 'iso')
+        console.log(xmlJson['iso-standard'], 'iso');
         const bibdata: XMLNode = getChildsByTagname('bibdata')[0];
         const childs = bibdata.childNodes;
 
@@ -48,35 +48,39 @@ export default function Cover() {
             </div>
         );
     } else if (xmlJson['itu-standard']) {
-        console.log(xmlJson['itu-standard'], 'itu')
+        console.log(xmlJson['itu-standard'], 'itu');
+        let author = '';
+        let ext = '';
+        let doctype = '';
+        let bureau = '';
+        let docNumber = '';
+        let publishedDate = '';
+        let title = '';
+        let keywords = '';
+
+        let copyRightMark = '';
+        let copyRightText = '';
+        
         if (xmlJson['itu-standard']['bibdata']) {
+
             const bibdata = xmlJson['itu-standard']['bibdata'][0];
-            let author = '';
-            let ext = '';
-            let doctype = '';
-            let bureau = '';
-            let docNumber = '';
-            let publishedDate = '';
-            let title = '';
-            let keywords = '';
-console.log(bibdata, 'bibdata', typeof bibdata.contributor)
+            console.log(bibdata, 'bibdata', typeof bibdata.contributor);
+
             if (bibdata?.contributor) {
-                let authorRow = bibdata.contributor.find(
-                    (child: any) => {
-                        if (!child?.role) return false;
-                        let roleRow = child.role.map(
-                            (child: any) => child?.$?.type === 'author'
-                        );
-                        return !!roleRow;
-                    }
-                );
+                let authorRow = bibdata.contributor.find((child: any) => {
+                    if (!child?.role) return false;
+                    let roleRow = child.role.map(
+                        (child: any) => child?.$?.type === 'author'
+                    );
+                    return !!roleRow;
+                });
                 author = authorRow?.organization[0]['name'][0];
             }
 
             if (bibdata?.ext) {
                 let extRow: any = bibdata.ext[0];
                 doctype = extRow?.doctype[0];
-                let structuredIdetifier = extRow?.structuredidentifier[0]; 
+                let structuredIdetifier = extRow?.structuredidentifier[0];
                 if (structuredIdetifier?.bureau) {
                     bureau = structuredIdetifier?.bureau[0].toUpperCase();
                     ext = 'ITU-' + structuredIdetifier?.bureau[0].toUpperCase();
@@ -86,16 +90,16 @@ console.log(bibdata, 'bibdata', typeof bibdata.contributor)
                     docNumber = structuredIdetifier.docnumber[0];
                     ext += ' ' + structuredIdetifier.docnumber[0];
                 }
-                console.log(ext, 'ext')
+                console.log(ext, 'ext');
             }
 
             if (bibdata?.date) {
                 let dateRow = bibdata.date[0];
-                console.log(dateRow, 'dateRow')
+                console.log(dateRow, 'dateRow');
                 if (dateRow) {
                     let dates = dateRow.on[0].split('-');
                     publishedDate = dates[1] + '/' + dates[0];
-                    console.log(publishedDate, 'date')
+                    console.log(publishedDate, 'date');
                 }
             }
 
@@ -103,24 +107,47 @@ console.log(bibdata, 'bibdata', typeof bibdata.contributor)
                 let titleRow = bibdata.title.find(
                     (child: any) => child?.$?.type === 'main'
                 );
-                
+
                 if (titleRow?._) {
                     title = titleRow._;
-                    console.log(title, 'title')
+                    console.log(title, 'title');
                 }
             }
 
             if (bibdata?.keyword) {
                 keywords = bibdata.keyword.join(' ');
-                console.log(keywords, 'keywords')
+                console.log(keywords, 'keywords');
             }
-
-            
-            
         }
-    }
-        
-    return (<header>ITU-Standard</header>);
-    
 
+        if (xmlJson['itu-standard']['boilerplate']) {
+            const boilerPlate = xmlJson['itu-standard']['boilerplate'][0];
+            
+            if (boilerPlate['copyright-statement']) {
+                const copyRight = boilerPlate['copyright-statement'][0];
+
+                if (copyRight?.clause) {
+                    const clause = copyRight.clause[0];
+
+                    if (clause) {
+                        const data = clause.p;
+
+                        if (data[0]) copyRightMark = data[0]._;
+                        if (data[1]) copyRightText = data[1]._;
+                    }
+                }
+            }
+        }
+        console.log(copyRightMark, 'copyright', copyRightText);
+
+
+        return <header>
+            <div className="coverpage">
+                <div className="wrapper-top"></div>
+                <div className="WordSection11"></div>
+            </div>
+        </header>
+    }
+
+    return <header>ITU-Standard</header>;
 }
