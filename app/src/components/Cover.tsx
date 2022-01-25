@@ -53,8 +53,12 @@ export default function Cover() {
             const bibdata = xmlJson['itu-standard']['bibdata'][0];
             let author = '';
             let ext = '';
+            let doctype = '';
+            let bureau = '';
+            let docNumber = '';
             let publishedDate = '';
             let title = '';
+            let keywords = '';
 console.log(bibdata, 'bibdata', typeof bibdata.contributor)
             if (bibdata?.contributor) {
                 let authorRow = bibdata.contributor.find(
@@ -71,11 +75,17 @@ console.log(bibdata, 'bibdata', typeof bibdata.contributor)
 
             if (bibdata?.ext) {
                 let extRow: any = bibdata.ext[0];
-                let doctype = extRow?.doctype[0];
+                doctype = extRow?.doctype[0];
                 let structuredIdetifier = extRow?.structuredidentifier[0]; 
-                if (structuredIdetifier?.bureau) ext = 'ITU-' + structuredIdetifier?.bureau[0].toUpperCase();
+                if (structuredIdetifier?.bureau) {
+                    bureau = structuredIdetifier?.bureau[0].toUpperCase();
+                    ext = 'ITU-' + structuredIdetifier?.bureau[0].toUpperCase();
+                }
                 if (doctype) ext += ' ' + doctype.toUpperCase();
-                if (structuredIdetifier?.docnumber) ext += ' ' + structuredIdetifier.docnumber[0];
+                if (structuredIdetifier?.docnumber) {
+                    docNumber = structuredIdetifier.docnumber[0];
+                    ext += ' ' + structuredIdetifier.docnumber[0];
+                }
                 console.log(ext, 'ext')
             }
 
@@ -99,6 +109,14 @@ console.log(bibdata, 'bibdata', typeof bibdata.contributor)
                     console.log(title, 'title')
                 }
             }
+
+            if (bibdata?.keyword) {
+                keywords = bibdata.keyword.join(' ');
+                console.log(keywords, 'keywords')
+            }
+
+            
+            
         }
     }
         
