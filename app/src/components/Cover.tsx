@@ -54,6 +54,7 @@ export default function Cover() {
             let author = '';
             let ext = '';
             let publishedDate = '';
+            let title = '';
 console.log(bibdata, 'bibdata', typeof bibdata.contributor)
             if (bibdata?.contributor) {
                 let authorRow = bibdata.contributor.find(
@@ -85,6 +86,17 @@ console.log(bibdata, 'bibdata', typeof bibdata.contributor)
                     let dates = dateRow.on[0].split('-');
                     publishedDate = dates[1] + '/' + dates[0];
                     console.log(publishedDate, 'date')
+                }
+            }
+
+            if (bibdata?.title) {
+                let titleRow = bibdata.title.find(
+                    (child: any) => child?.$?.type === 'main'
+                );
+                
+                if (titleRow?._) {
+                    title = titleRow._;
+                    console.log(title, 'title')
                 }
             }
         }
