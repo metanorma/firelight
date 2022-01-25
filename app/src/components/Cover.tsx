@@ -53,6 +53,7 @@ export default function Cover() {
             const bibdata = xmlJson['itu-standard']['bibdata'][0];
             let author = '';
             let ext = '';
+            let publishedDate = '';
 console.log(bibdata, 'bibdata', typeof bibdata.contributor)
             if (bibdata?.contributor) {
                 let authorRow = bibdata.contributor.find(
@@ -75,6 +76,16 @@ console.log(bibdata, 'bibdata', typeof bibdata.contributor)
                 if (doctype) ext += ' ' + doctype.toUpperCase();
                 if (structuredIdetifier?.docnumber) ext += ' ' + structuredIdetifier.docnumber[0];
                 console.log(ext, 'ext')
+            }
+
+            if (bibdata?.date) {
+                let dateRow = bibdata.date[0];
+                console.log(dateRow, 'dateRow')
+                if (dateRow) {
+                    let dates = dateRow.on[0].split('-');
+                    publishedDate = dates[1] + '/' + dates[0];
+                    console.log(publishedDate, 'date')
+                }
             }
         }
     }
