@@ -43,7 +43,6 @@ export default function MainPage() {
         const menuItem: any[] = [];
 
         if (xmlJson[standard]) {
-            console.log(xmlJson[standard], 'xml');
             //Foreword
             if (xmlJson[standard]['boilerplate']) {
                 if (xmlJson[standard]['boilerplate'][0]['legal-statement']) {
@@ -51,7 +50,6 @@ export default function MainPage() {
                         'legal-statement'
                     ][0]['clause'].map((data: any) => {
                         const item = getMenuItem(data);
-                        console.log(item, 'foreword');
                         if (item) menuItem[item.index] = item;
                     });
                 }
@@ -63,7 +61,6 @@ export default function MainPage() {
                     xmlJson[standard]['preface'][0]['abstract'].map(
                         (data: any) => {
                             const item = getMenuItem(data);
-                            console.log(item, 'preface');
                             if (item) menuItem[item.index] = item;
                         }
                     );
