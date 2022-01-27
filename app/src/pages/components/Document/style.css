@@ -1,0 +1,113 @@
+.document {
+    padding-top: 5px;
+    border-bottom: 1px solid #0e1a85;
+}
+
+.doc-line {
+    padding-top: 2em;
+    display: flex;
+}
+
+.doc-type-wrap {
+    padding-top: 3px;
+    margin-left: 1em;
+}
+
+.doc-published, .doc-updated, .doc-identifier, .doc-stage, .doc-type, h2, h3 {
+    display: inline-block;
+}
+
+.doc-type1.standard {
+    background-color: #0AC442;
+}
+
+.doc-type1 {
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 0.85em;
+    line-height: 1em;
+    margin-right: 10px;
+    color: white;
+    text-transform: uppercase;
+    font-size: 12.5px;
+}
+
+a, a:visited {
+    text-decoration: none;
+    color: #485094;
+}
+
+.doc-line > .doc-identifier1 > h2  > a{
+    font-size: 19.5px;
+}
+
+.doc-info {
+    padding-top: 0;
+    padding-bottom: 10px;
+    font-size: 0.9em;
+    line-height: 1em;
+}
+
+.doc-stage:before {
+    content: "STAGE: ";
+}
+
+.doc-stage {
+    text-transform: uppercase;
+    font-size: 1em;
+    line-height: 1em;
+}
+
+.doc-dates {
+    padding-top: 5px;
+    display: inline-block;
+    margin-left: 0.5em;
+}
+
+.doc-published, .doc-updated, .doc-identifier, .doc-stage, .doc-type, h2, h3 {
+    display: inline-block;
+}
+
+.doc-bib > div {
+    margin: 5px 10px;
+}
+
+.doc-access, .doc-bib {
+    display: block;
+}
+
+.doc-access > div {
+    margin: 5px 10px;
+}
+
+.doc-info-container {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.doc-info-content {
+    display: flex;
+}
+
+.doc-access1 {
+    display: flex;
+}
+
+.doc-access1 div {
+    padding-left: 10px;
+}
+
+@media (max-width: 600px) {
+    .doc-info-content {
+        flex-direction: column;
+    }
+    .doc-access1 {
+        order: 2;
+    }
+
+    .doc-bib1 {
+        text-align: right;
+    }
+}
+
