@@ -42,7 +42,8 @@
     margin-bottom: 42px;
 }
 
-.ITU-sector, .doc-identifier {
+.ITU-sector,
+.doc-identifier {
     font-size: 42px;
     font-weight: 800;
     display: inline;
@@ -63,13 +64,15 @@
     margin-top: 42px;
 }
 
-.ITU-sector, .doc-identifier {
+.ITU-sector,
+.doc-identifier {
     font-size: 42px;
     font-weight: 800;
     display: inline;
 }
 
-.doc-identifier, .publication-month {
+.doc-identifier,
+.publication-month {
     display: block;
     text-align: right;
 }
@@ -80,14 +83,16 @@
     line-height: 1.5;
 }
 
-span.doc-title, span.doc-annextitle {
+span.doc-title,
+span.doc-annextitle {
     font-size: 26px;
     font-weight: 800;
     margin-top: 20px;
     margin-right: 42px;
 }
 
-span.doc-title, span.doc-annextitle {
+span.doc-title,
+span.doc-annextitle {
     font-size: 26px;
     font-weight: 800;
     margin-top: 20px;
@@ -95,7 +100,7 @@ span.doc-title, span.doc-annextitle {
 }
 
 span.doc-title {
-    border-top: 2px solid #DA1D52;
+    border-top: 2px solid #da1d52;
 }
 
 .doc-footer {
@@ -110,7 +115,8 @@ span.doc-title {
     display: block;
 }
 
-.doc-footer span, .doc-footer .keywords {
+.doc-footer span,
+.doc-footer .keywords {
     font-size: 18px;
     font-weight: 400;
     letter-spacing: 0;
@@ -119,7 +125,8 @@ span.doc-title {
     padding-right: 10px;
 }
 
-.doc-footer span, .doc-footer .keywords {
+.doc-footer span,
+.doc-footer .keywords {
     font-size: 18px;
     font-weight: 400;
     letter-spacing: 0;
@@ -150,7 +157,9 @@ span.doc-title {
     right: 0;
 }
 
-.cls-1{fill:#16a0db;}
+.cls-1 {
+    fill: #16a0db;
+}
 
 .info-section {
     padding: 0;
@@ -161,13 +170,14 @@ span.doc-title {
     margin-top: 3em;
     width: 280px;
     text-align: left;
-    color: #00539F !important;
+    color: #00539f !important;
     background-color: #f1f8ff;
     border-radius: 25px;
 }
 
-.contact-info p, .contact-info a {
-    font-family: "Courier New",monospace;
+.contact-info p,
+.contact-info a {
+    font-family: 'Courier New', monospace;
     font-variant-ligatures: none;
     font-weight: 400;
     color: inherit;
@@ -196,6 +206,13 @@ span.doc-title {
 
 .copy-right > p {
     padding-top: 0.5em;
+}
+
+.rule {
+    width: 100%;
+    height: 1px;
+    background-color: #00539f;
+    margin: 2em 0;
 }
 
 @media (max-width: 799px) {

@@ -63,7 +63,7 @@ export default function Cover() {
 
         if (xmlJson['itu-standard']['bibdata']) {
             const bibdata = xmlJson['itu-standard']['bibdata'][0];
-            console.log(bibdata, 'bibdata', typeof bibdata.contributor);
+            console.log(bibdata, 'bibdata1', typeof bibdata.contributor);
 
             if (bibdata?.contributor) {
                 let authorRow = bibdata.contributor.find((child: any) => {
@@ -97,12 +97,13 @@ export default function Cover() {
                 console.log(dateRow, 'dateRow');
                 if (dateRow) {
                     let dates = dateRow.on[0].split('-');
-                    publishedDate = dates[1] + '/' + dates[0];
+                    publishedDate = '(' + dates[1] + '/' + dates[0] + ')';
                     console.log(publishedDate, 'date');
                 }
             }
 
             if (bibdata?.title) {
+                console.log(bibdata?.title, 'title')
                 let titleRow = bibdata.title.find(
                     (child: any) => child?.$?.type === 'main'
                 );
@@ -229,8 +230,9 @@ export default function Cover() {
                                     <a href="www.itu.int">www.itu.int</a>
                                 </p>
                             </div>
-                        </div>
+                        </div>                        
                     </div>
+                    <div className="rule"></div>
                 </div>
             </header>
         );
