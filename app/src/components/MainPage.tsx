@@ -24,6 +24,8 @@ export default function MainPage() {
             standard = 'itu-standard';
         } else if (xmlJson['iso-standard']) {
             standard = 'itu-standarad';
+        } else if(xmlJson['ogc-standard']) {
+            standard = 'ogc-standard';
         }
 
         let index = 0;
@@ -42,13 +44,13 @@ export default function MainPage() {
 
         const menuItem: any[] = [];
 
-        if (xmlJson[standard]) {
+        if (xmlJson[standard] && standard === 'itu-standard') {
             //Foreword
             if (xmlJson[standard]['boilerplate']) {
                 if (xmlJson[standard]['boilerplate'][0]['legal-statement']) {
-                    xmlJson[standard]['boilerplate'][0][
-                        'legal-statement'
-                    ][0]['clause'].map((data: any) => {
+                    xmlJson[standard]['boilerplate'][0]['legal-statement'][0][
+                        'clause'
+                    ].map((data: any) => {
                         const item = getMenuItem(data);
                         if (item) menuItem[item.index] = item;
                     });
@@ -113,7 +115,7 @@ export default function MainPage() {
             }
         }
 
-        if (xmlJson && xmlJson['iso-standard']) {
+        if (standard === 'iso-standard' && xmlJson['iso-standard']) {
             //the foreword part for menu item
             if (xmlJson['iso-standard']['preface']) {
                 const foreword = getMenuItem(
@@ -179,6 +181,29 @@ export default function MainPage() {
                     xmlJson['iso-standard']['bibliography'][0]['references'][1]
                 );
                 menuItem[references.index] = references;
+            }
+        }
+console.log(standard, 'ss')
+        if (standard === 'ogc-standard' && xmlJson[standard]) {
+            if (xmlJson[standard]['preface']) {
+                if (xmlJson[standard]['preface'][0]?.clause) {
+                    //security considerations
+                    xmlJson[standard]['preface'][0]?.clause.map(
+                        (child: any) => {
+                            console.log(child, 'child');
+                            if (
+                                child?.title &&
+                                child.title[0] &&
+                                child.title[0].toLowerCase() ===
+                                    'Security considerations'.toLocaleLowerCase()
+                            ) {
+                                const consideration = getMenuItem(child);
+                                menuItem[consideration.index] = consideration;
+                            }
+                        }
+                    );
+                    
+                }
             }
         }
         const resultArray: any[] = [];
