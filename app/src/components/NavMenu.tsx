@@ -27,6 +27,8 @@ export default function NavIMenu() {
             standard = 'itu-standard';
         } else if (xmlJson['iso-standard']) {
             standard = 'itu-standarad';
+        } else if (xmlJson['ogc-standard']) {
+            standard = 'ogc-standard';
         }
 
         let index = 0;
@@ -111,7 +113,7 @@ export default function NavIMenu() {
 
         const menuItem: any[] = [];
 
-        if (xmlJson[standard]) {
+        if (standard === 'itu-standard' && xmlJson[standard]) {
             if (xmlJson[standard]['preface']) {
                 //abstract
                 if (xmlJson[standard]['preface'][0]['abstract']) {
@@ -233,6 +235,35 @@ export default function NavIMenu() {
                 menuItem[references.index] = references;
             }
         }
+
+        if (standard === 'ogc-standard' && xmlJson[standard]) {
+            console.log(xmlJson[standard],'ogc-standard')
+            if (xmlJson[standard]['preface']) {
+                if (xmlJson[standard]['preface'][0]?.clause) {
+                    //security considerations
+                    xmlJson[standard]['preface'][0]?.clause.map(
+                        (child: any) => {
+                            console.log(child, 'child');
+                            if (child?.title && child.title[0] && child.title[0].toLowerCase() === "Security considerations".toLocaleLowerCase()) {
+                                const consideration = getMenuItem(child);
+                                menuItem[consideration.index] = consideration;
+                            }
+                        }
+                    );
+                    //Revision history
+                    xmlJson[standard]['preface'][0]?.clause.map(
+                        (child: any) => {
+                            console.log(child, 'child');
+                            if (child?.title && child.title[0] && child.title[0].toLowerCase() === "Revision history".toLocaleLowerCase()) {
+                                const consideration = getMenuItem(child);
+                                menuItem[consideration.index] = consideration;
+                            }
+                        }
+                    );
+                }
+            }
+        }
+
         return menuItem;
     }, [xmlJson]);
     
