@@ -183,7 +183,7 @@ export default function MainPage() {
                 menuItem[references.index] = references;
             }
         }
-console.log(standard, 'ss')
+
         if (standard === 'ogc-standard' && xmlJson[standard]) {
             if (xmlJson[standard]['preface']) {
                 if (xmlJson[standard]['preface'][0]?.clause) {
@@ -202,7 +202,23 @@ console.log(standard, 'ss')
                             }
                         }
                     );
-                    
+
+                    //Revision history
+                    xmlJson[standard]['preface'][0]?.clause.map(
+                        (child: any) => {
+                            if (
+                                child?.title &&
+                                child.title[0] &&
+                                child.title[0].toLowerCase() ===
+                                    'Revision history'.toLocaleLowerCase()
+                            ) {
+                                const revision = getMenuItem(child);
+                                console.log(revision, 'Revision')
+                                menuItem[revision.index] = revision;
+                            }
+                        }
+                    );
+                    console.log(menuItem, 'menuItem');
                 }
             }
         }
