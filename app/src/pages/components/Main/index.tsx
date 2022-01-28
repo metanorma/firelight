@@ -24,7 +24,8 @@ const Main = () => {
             stage: 'IN-FORCE',
             isStandard: true
         }
-    ];
+    ]; 
+    
     return <main className="main-section">
         {data?.map(
             (child: DocumentType, index: number) => <Document key={index} {...child}/>
