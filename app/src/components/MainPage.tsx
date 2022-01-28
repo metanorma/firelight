@@ -226,12 +226,21 @@ export default function MainPage() {
                     if (xmlJson[standard]['sections'][0]?.clause) {
                         xmlJson[standard]['sections'][0].clause.map(
                             (child: any) => {
-                                console.log(child, 'child')
+                                console.log(child, 'child');
                                 let item = getMenuItem(child, true);
                                 menuItem[item.index] = item;
                             }
                         );
                     }
+                }
+
+                //annex part
+                if (xmlJson[standard]['annex']) {
+                    xmlJson[standard]['annex'].map((child: any) => {
+                        // console.log(child, 'annex');
+                        let item = getMenuItem(child);
+                        menuItem[item.index] = item;
+                    });
                 }
             }
         }
