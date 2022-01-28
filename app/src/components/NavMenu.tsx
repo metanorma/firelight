@@ -252,13 +252,13 @@ export default function NavIMenu() {
         }
 
         if (standard === 'ogc-standard' && xmlJson[standard]) {
-            console.log(xmlJson[standard], 'ogc-standard');
+            
             if (xmlJson[standard]['preface']) {
                 if (xmlJson[standard]['preface'][0]?.clause) {
                     //security considerations
                     xmlJson[standard]['preface'][0]?.clause.map(
                         (child: any) => {
-                            console.log(child, 'child');
+                            // console.log(child, 'child');
                             if (
                                 child?.title &&
                                 child.title[0] &&
@@ -302,7 +302,7 @@ export default function NavIMenu() {
             //annex part
             if (xmlJson[standard]['annex']) {
                 xmlJson[standard]['annex'].map((child: any) => {
-                    console.log(child, 'annex');
+                    // console.log(child, 'annex');
                     let item = getMenuItem(child);
                     menuItem[item.index] = item;
                 });
