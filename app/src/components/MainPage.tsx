@@ -24,7 +24,7 @@ export default function MainPage() {
             standard = 'itu-standard';
         } else if (xmlJson['iso-standard']) {
             standard = 'itu-standarad';
-        } else if(xmlJson['ogc-standard']) {
+        } else if (xmlJson['ogc-standard']) {
             standard = 'ogc-standard';
         }
 
@@ -213,12 +213,25 @@ export default function MainPage() {
                                     'Revision history'.toLocaleLowerCase()
                             ) {
                                 const revision = getMenuItem(child);
-                                console.log(revision, 'Revision')
+                                console.log(revision, 'Revision');
                                 menuItem[revision.index] = revision;
                             }
                         }
                     );
                     console.log(menuItem, 'menuItem');
+                }
+
+                //sections part
+                if (xmlJson[standard]['sections']) {
+                    if (xmlJson[standard]['sections'][0]?.clause) {
+                        xmlJson[standard]['sections'][0].clause.map(
+                            (child: any) => {
+                                console.log(child, 'child')
+                                let item = getMenuItem(child, true);
+                                menuItem[item.index] = item;
+                            }
+                        );
+                    }
                 }
             }
         }
