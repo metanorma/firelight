@@ -33,6 +33,7 @@ export default function NavIMenu() {
 
         let index = 0;
         let count = 0;
+        let annexCount = 65;
         const insertSpace = (text: string): any => {
             const matches: any = text.match(/[a-zA-Z]+/g);
             const index: number = text.indexOf(matches[0]);
@@ -47,12 +48,12 @@ export default function NavIMenu() {
                 returnData.id = data.references[0]['$']['id'];
                 returnData.index = index++;
                 returnData.title = data.references[0]['title']['0'];
-                returnData.children = [] ;
-                return returnData; 
+                returnData.children = [];
+                return returnData;
             }
             if (!data?.title) {
                 return;
-            }            
+            }
             // if (standard === 'iso-standard') {
             if (data?.$ && data['$']['id']) returnData.id = data['$']['id'];
             // returnData.index = data['$']['displayorder'];
@@ -62,13 +63,18 @@ export default function NavIMenu() {
                     ? data['title'][0]
                     : data['title'][0]['_']
             );
+
             if (
                 returnData?.id &&
                 returnData?.id.toLowerCase().includes('annex')
             ) {
-                returnData.title =
-                    returnData.id + ' (Normative) ' + returnData.title;
-                hasIndex = false;
+                if (standard === 'ogc-standard') {
+                    returnData.title = 'Annex' + String.fromCharCode(annexCount ++ ) + ' (Normative) ' + returnData.title;;
+                } else {
+                    returnData.title =
+                        returnData.id + ' (Normative) ' + returnData.title;
+                    hasIndex = false;
+                }
             }
 
             if (
@@ -80,9 +86,11 @@ export default function NavIMenu() {
                 returnData.title = `${++count} ${returnData.title}`;
             }
 
-
-
-            if (standard === 'ogc-standard' && hasIndex && returnData?.title === 'Introduction') {
+            if (
+                standard === 'ogc-standard' &&
+                hasIndex &&
+                returnData?.title === 'Introduction'
+            ) {
                 returnData.title = `${++count} ${returnData.title}`;
             }
 
@@ -106,6 +114,9 @@ export default function NavIMenu() {
                         returnData?.id.toLowerCase().includes('annex')
                     ) {
                         letter = returnData.id.substr(-1);
+                        if (standard === 'ogc-standard') {
+                            letter = String.fromCharCode(annexCount - 1);
+                        }
                     }
 
                     if (letter)
@@ -157,20 +168,16 @@ export default function NavIMenu() {
                     );
                 }
                 if (xmlJson[standard]['annex']) {
-                    xmlJson[standard]['annex'].map(
-                        (data: any) => {
-                            const item = getMenuItem(data);
-                            if (item) menuItem[item.index] = item;
-                        }
-                    );
+                    xmlJson[standard]['annex'].map((data: any) => {
+                        const item = getMenuItem(data);
+                        if (item) menuItem[item.index] = item;
+                    });
                 }
                 if (xmlJson[standard]['bibliography']) {
-                    xmlJson[standard]['bibliography'].map(
-                        (data: any) => {
-                            const item = getMenuItem(data);
-                            if (item) menuItem[item.index] = item;
-                        }
-                    );
+                    xmlJson[standard]['bibliography'].map((data: any) => {
+                        const item = getMenuItem(data);
+                        if (item) menuItem[item.index] = item;
+                    });
                 }
             }
         }
@@ -245,14 +252,19 @@ export default function NavIMenu() {
         }
 
         if (standard === 'ogc-standard' && xmlJson[standard]) {
-            console.log(xmlJson[standard],'ogc-standard')
+            console.log(xmlJson[standard], 'ogc-standard');
             if (xmlJson[standard]['preface']) {
                 if (xmlJson[standard]['preface'][0]?.clause) {
                     //security considerations
                     xmlJson[standard]['preface'][0]?.clause.map(
                         (child: any) => {
                             console.log(child, 'child');
-                            if (child?.title && child.title[0] && child.title[0].toLowerCase() === "Security considerations".toLocaleLowerCase()) {
+                            if (
+                                child?.title &&
+                                child.title[0] &&
+                                child.title[0].toLowerCase() ===
+                                    'Security considerations'.toLocaleLowerCase()
+                            ) {
                                 const consideration = getMenuItem(child);
                                 menuItem[consideration.index] = consideration;
                             }
@@ -261,8 +273,12 @@ export default function NavIMenu() {
                     //Revision history
                     xmlJson[standard]['preface'][0]?.clause.map(
                         (child: any) => {
-                            console.log(child, 'child');
-                            if (child?.title && child.title[0] && child.title[0].toLowerCase() === "Revision history".toLocaleLowerCase()) {
+                            if (
+                                child?.title &&
+                                child.title[0] &&
+                                child.title[0].toLowerCase() ===
+                                    'Revision history'.toLocaleLowerCase()
+                            ) {
                                 const consideration = getMenuItem(child);
                                 menuItem[consideration.index] = consideration;
                             }
@@ -279,14 +295,23 @@ export default function NavIMenu() {
                             let item = getMenuItem(child, true);
                             menuItem[item.index] = item;
                         }
-                    )
+                    );
                 }
+            }
+
+            //annex part
+            if (xmlJson[standard]['annex']) {
+                xmlJson[standard]['annex'].map((child: any) => {
+                    console.log(child, 'annex');
+                    let item = getMenuItem(child);
+                    menuItem[item.index] = item;
+                });
             }
         }
 
         return menuItem;
     }, [xmlJson]);
-    
+
     return (
         <nav>
             <div id="toc">
