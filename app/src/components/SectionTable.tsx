@@ -18,8 +18,6 @@ export default function SectionTable({ data }: OwnProps) {
             (attr: any) => attr?.name === 'id'
         );
         const id = idRow?.value ? idRow.value : '';
-        
-        if (id === 'fig5') console.log(data, 'fig5')
 
         if (id?.toLowerCase().includes('fig')) {
             let name = '';
