@@ -27,7 +27,7 @@ const Main = () => {
     ];
     return <main className="main-section">
         {data?.map(
-            (child: DocumentType) => <Document {...child}/>
+            (child: DocumentType, index: number) => <Document key={index} {...child}/>
         )}
     </main>;
 };

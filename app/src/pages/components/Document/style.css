@@ -32,6 +32,10 @@
     font-size: 12.5px;
 }
 
+.doc-title {
+    margin-top: 0.5em;
+}
+
 a, a:visited {
     text-decoration: none;
     color: #485094;
