@@ -33,7 +33,7 @@ const Header = ({ generatedDate, companyName, title }: Props) => {
                                 <span className="title-first">
                                     {title
                                         ? title
-                                        : 'International Telecommunications Union'}
+                                        : 'ITU Documents in Metanorma'}
                                 </span>
                             </div>
                         </div>
