@@ -70,6 +70,7 @@ export default function NavIMenu() {
                     returnData.id + ' (Normative) ' + returnData.title;
                 hasIndex = false;
             }
+
             if (
                 hasIndex &&
                 returnData?.title &&
@@ -78,6 +79,13 @@ export default function NavIMenu() {
             ) {
                 returnData.title = `${++count} ${returnData.title}`;
             }
+
+
+
+            if (standard === 'ogc-standard' && hasIndex && returnData?.title === 'Introduction') {
+                returnData.title = `${++count} ${returnData.title}`;
+            }
+
             returnData.children = [];
             if (data?.clause?.length > 0) {
                 data.clause.map((item: any, index: number) => {
@@ -260,6 +268,18 @@ export default function NavIMenu() {
                             }
                         }
                     );
+                }
+            }
+
+            //sections part
+            if (xmlJson[standard]['sections']) {
+                if (xmlJson[standard]['sections'][0]?.clause) {
+                    xmlJson[standard]['sections'][0].clause.map(
+                        (child: any) => {
+                            let item = getMenuItem(child, true);
+                            menuItem[item.index] = item;
+                        }
+                    )
                 }
             }
         }
