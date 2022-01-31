@@ -135,8 +135,22 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
 
             // if (xmlData?.title && xmlData?.title[0]) {
             let title = titleIndex;
-            if (xmlData?.title && xmlData?.title[0])
-                title = `${title} ${xmlData?.title[0]}`;
+            if (xmlData?.title && xmlData?.title[0]){
+
+                if (typeof xmlData.title[0] !== 'object')
+                    title = `${title} ${xmlData?.title[0]}`;
+                else {
+
+                    if (xmlData.title[0]?._) {
+                        title = `${title} ${xmlData?.title[0]._}`;
+                    }
+
+                    if (xmlData.title[0]?.em) {
+                        title = `${title} ${xmlData?.title[0].em[0]}`;
+                    }
+                }
+            }
+                
             if (node) {
                 Object.values(node?.childNodes).map(
                     (child: any, index: number) => {
