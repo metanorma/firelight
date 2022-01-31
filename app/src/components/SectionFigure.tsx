@@ -12,6 +12,7 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function SectionFigure({ data }: OwnProps) {
+
     const renderContent = useMemo(() => {
         const attrs: any[] = data.attributes;
         const idRow = Object.values(attrs).find(
@@ -28,12 +29,25 @@ export default function SectionFigure({ data }: OwnProps) {
                 name = nameRow.childNodes[0].data;
                 let index = '';
                 if (isNaN(parseInt(id.substring(3)))) {
-                    index =
-                        'Figure ' +
-                        id.substring(4).substring(0, 1).toUpperCase() +
-                        id.substring(4).substring(1).toUpperCase();
+                    if (!id.substring(3).includes('-'))
+                        index =
+                            'Figure ' +
+                            id.substring(4).substring(0, 1).toUpperCase() +
+                            id.substring(4).substring(1).toUpperCase();
+                    else {
+                        let figure = localStorage.getItem('figure');
+                        let figureId = localStorage.getItem('id');
+                        console.log(figure, 'figure', id, 'id')
+                        if (figure) index = (parseInt(figure)).toString();
+                        else index = '1';
+                        if (id !== figureId) {
+                            localStorage.setItem('figure', (parseInt(index) + 1).toString());
+                            localStorage.setItem('id', id)
+                        }
+                    }
                 } else {
                     index = 'Figure ' + id.substring(3);
+                    localStorage.setItem('figure', id.substring(3));
                 }
                 if (index) name = index + ' — ' + name;
             }
@@ -41,10 +55,12 @@ export default function SectionFigure({ data }: OwnProps) {
                 (child: any) => child?.tagName === 'image'
             );
 
-            return (<div id={id} className='figure'>
-              {imageRow && <DisplayNode data={[imageRow]} />}
-              {name && <div className='name'>{name ? name: ''}</div>}
-            </div>);
+            return (
+                <div id={id} className="figure">
+                    {imageRow && <DisplayNode data={[imageRow]} />}
+                    {name && <div className="name">{name ? name : ''}</div>}
+                </div>
+            );
         }
 
         return (
