@@ -190,7 +190,6 @@ export default function MainPage() {
                     //security considerations
                     xmlJson[standard]['preface'][0]?.clause.map(
                         (child: any) => {
-                            console.log(child, 'child');
                             if (
                                 child?.title &&
                                 child.title[0] &&
@@ -218,7 +217,7 @@ export default function MainPage() {
                             }
                         }
                     );
-                    console.log(menuItem, 'menuItem');
+                    
                 }
 
                 //sections part
@@ -226,7 +225,6 @@ export default function MainPage() {
                     if (xmlJson[standard]['sections'][0]?.clause) {
                         xmlJson[standard]['sections'][0].clause.map(
                             (child: any) => {
-                                console.log(child, 'child');
                                 let item = getMenuItem(child, true);
                                 menuItem[item.index] = item;
                             }
