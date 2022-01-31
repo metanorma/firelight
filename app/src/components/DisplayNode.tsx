@@ -52,7 +52,7 @@ import SectionMfrac from './SectionMfrac';
 import SectionFn from './SectionFn';
 import SectionAdmonition from './SectionAdmonition';
 import SectionFormula from './SectionFormula';
-
+import SectionTt from './SectionTt';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 interface OwnProps {
     data: any;
@@ -163,6 +163,9 @@ export default function DisplayNode({ data }: OwnProps) {
 
                 case 'td':
                     return <SectionTd data={item} key={index} />;
+
+                case 'tt':
+                    return <SectionTt data={item} key={index} />;
 
                 case 'dl':
                     return <SectionDl data={item} key={index} />;
