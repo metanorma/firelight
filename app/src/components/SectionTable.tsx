@@ -28,10 +28,25 @@ export default function SectionTable({ data }: OwnProps) {
                 name = nameRow.childNodes[0].data;
                 let index = '';
                 if (isNaN(parseInt(id.substring(3)))) {
-                    index =
-                        'Figure ' +
-                        id.substring(4).substring(0, 1).toUpperCase() +
-                        id.substring(4).substring(1).toUpperCase();
+                    if (!id.substring(4).includes('-'))
+                        index =
+                            'Figure ' +
+                            id.substring(4).substring(0, 1).toUpperCase() +
+                            id.substring(4).substring(1).toUpperCase();
+                    else {
+                        let figure = localStorage.getItem('figure');
+                        let figureId = localStorage.getItem('id');
+                        if (figure) index = parseInt(figure).toString();
+                        else index = '1';
+                        if (id !== figureId) {
+                            localStorage.setItem(
+                                'figure',
+                                (parseInt(index) + 1).toString()
+                            );
+                            localStorage.setItem('figure', id.substring(3));
+                            localStorage.setItem('id', id);
+                        }
+                    }
                 } else {
                     index = 'Figure ' + id.substring(3);
                 }
@@ -39,8 +54,8 @@ export default function SectionTable({ data }: OwnProps) {
             }
 
             let nodes = Object.values(data?.childNodes).filter(
-              (child: any, index: number) => child?.tagName !== 'name'
-            )
+                (child: any, index: number) => child?.tagName !== 'name'
+            );
             return (
                 <table className="table" id={id}>
                     <DisplayNode data={nodes} />
@@ -69,8 +84,8 @@ export default function SectionTable({ data }: OwnProps) {
             }
 
             let nodes = Object.values(data?.childNodes).filter(
-              (child: any, index: number) => child?.tagName !== 'name'
-            )
+                (child: any, index: number) => child?.tagName !== 'name'
+            );
             return (
                 <table className="table" id={id}>
                     {name && <div className="name">{name ? name : ''}</div>}

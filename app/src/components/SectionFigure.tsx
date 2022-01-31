@@ -29,7 +29,7 @@ export default function SectionFigure({ data }: OwnProps) {
                 name = nameRow.childNodes[0].data;
                 let index = '';
                 if (isNaN(parseInt(id.substring(3)))) {
-                    if (!id.substring(3).includes('-'))
+                    if (!id.substring(4).includes('-'))
                         index =
                             'Figure ' +
                             id.substring(4).substring(0, 1).toUpperCase() +
@@ -37,7 +37,6 @@ export default function SectionFigure({ data }: OwnProps) {
                     else {
                         let figure = localStorage.getItem('figure');
                         let figureId = localStorage.getItem('id');
-                        console.log(figure, 'figure', id, 'id')
                         if (figure) index = (parseInt(figure)).toString();
                         else index = '1';
                         if (id !== figureId) {
@@ -48,6 +47,7 @@ export default function SectionFigure({ data }: OwnProps) {
                 } else {
                     index = 'Figure ' + id.substring(3);
                     localStorage.setItem('figure', id.substring(3));
+                    localStorage.setItem('id', id)
                 }
                 if (index) name = index + ' — ' + name;
             }
