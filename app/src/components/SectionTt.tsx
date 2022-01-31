@@ -12,7 +12,7 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function SectionTd({ data }: OwnProps) {
-  const renderContent = useMemo(() => { console.log(data, 'tt')
+  const renderContent = useMemo(() => { 
     const attrs: any = data.attributes;
     const props: any = {};
     const valignRow = Object.values(attrs).map(
