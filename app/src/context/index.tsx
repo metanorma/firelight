@@ -7,15 +7,19 @@ export type XmlData = {
     xml: string;
     xmlJson: any;
     title: string;
+    figureIndex: number;
+    setFigureIndex: (a: number) => void;
 };
 
 const contextDefaultValues: XmlData = {
     xml: '',
     xmlJson: {},
-    title: ''
+    title: '',
+    figureIndex: 0,
+    setFigureIndex: (a: number) => {}
 };
 
-export const XmlContext = createContext<XmlData>(contextDefaultValues);
+export const XmlContext = createContext<XmlData>({} as XmlData);
 
 // const xmlUrl = "/presentation.xml";
 // const xmlUrl = "https://metanorma.github.io/mn-samples-iso/documents/international-workshop-agreement/document.xml";
@@ -38,10 +42,11 @@ const XmlProvider: React.FC = ({ children }) => {
     const [xml, setXml] = useState<string>('');
     const [title, setTitle] = useState<string>('');
     const [xmlJson, setXmlJson] = useState<any>({});
+    const [figureIndex, setFigureIndex] = useState<number>(0);
 
     useEffect(() => {
         axios
-            .get(ogcUrl, {
+            .get(xmlUrl1, {
                 headers: {
                     Accept: 'application/xml'
                 }
@@ -87,7 +92,8 @@ const XmlProvider: React.FC = ({ children }) => {
                             let mainTitle: XMLNode | any = Object.values(
                                 childs
                             ).find((child: any) => child?.tagName === 'title');
-                            if (mainTitle) setTitle(mainTitle?.childNodes[0].data);
+                            if (mainTitle)
+                                setTitle(mainTitle?.childNodes[0].data);
                         }
                     } else {
                         setTitle('');
@@ -97,12 +103,22 @@ const XmlProvider: React.FC = ({ children }) => {
                         console.log(result, 'jsonXml');
                         setXmlJson(result);
                     });
+
+                    // set the index of figure to zero.
+                    localStorage.setItem('figure', '0');
+                    localStorage.setItem('id', '');
                 }
             });
+            // set the index of figure to zero.
+            localStorage.setItem('figure', '0');
+            localStorage.setItem('id', '');
+            console.log(localStorage.getItem('figure'), 'figure 1')
     }, []);
 
     return (
-        <XmlContext.Provider value={{ xml, xmlJson, title }}>
+        <XmlContext.Provider
+            value={{ xml, xmlJson, title, figureIndex, setFigureIndex }}
+        >
             {children}
         </XmlContext.Provider>
     );
