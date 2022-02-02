@@ -236,6 +236,34 @@ export default function Cover() {
                 </div>
             </header>
         );
+    } else if (xmlJson['ogc-standard']) {
+        let title = '';
+        let editor = '';
+        let submissionDate = '';
+        let approvalDate = '';
+        let publicationDate = '';
+        let externalIdentifier = '';
+        let internalIdentifier = '';
+        let version = '';
+
+        if (xmlJson['ogc-standard']['bibdata']) {
+            console.log(xmlJson['ogc-standard']['bibdata'], 'ogc bib')
+            const bibdata = xmlJson['ogc-standard']['bibdata'][0];
+
+            if (bibdata?.title) {
+                console.log(bibdata?.title, 'title')
+                let titleRow = bibdata.title.find(
+                    (child: any) => child?.$?.type === 'main'
+                );
+
+                if (!titleRow) titleRow = bibdata.title[0];
+
+                if (titleRow?._) {
+                    title = titleRow._;
+                    console.log(title, 'title');
+                }
+            }
+        }
     }
 
     return <></>;
