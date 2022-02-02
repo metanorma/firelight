@@ -247,9 +247,9 @@ export default function Cover() {
         let version = '';
 
         if (xmlJson['ogc-standard']['bibdata']) {
-            console.log(xmlJson['ogc-standard']['bibdata'], 'ogc bib')
             const bibdata = xmlJson['ogc-standard']['bibdata'][0];
-
+            console.log(bibdata, 'ogc bib')
+            // get the title
             if (bibdata?.title) {
                 console.log(bibdata?.title, 'title')
                 let titleRow = bibdata.title.find(
@@ -261,6 +261,22 @@ export default function Cover() {
                 if (titleRow?._) {
                     title = titleRow._;
                     console.log(title, 'title');
+                }
+            }
+            //get the editor
+            if (bibdata?.contributor) {
+                let editorRow: any = Object.values(bibdata.contributor).find(
+                    (child: any) => {                        
+                        if (!child?.role) return false;
+                        if (child.role[0]?.$?.type && child.role[0]?.$?.type === 'editor') {
+                            return true;
+                        }
+                    }
+                );
+
+                if (editorRow) {
+                    title = editorRow?.person[0]?.name[0]?.completename[0];
+                    console.log(title, 'title')
                 }
             }
         }
