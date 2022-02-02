@@ -309,6 +309,35 @@ export default function Cover() {
                     console.log(publicationDate, 'publicationDate')
                 }
             }
+
+            if (bibdata?.docidentifier) {
+                //get the external identifier
+                let externalRow: any = Object.values(bibdata.docidentifier).find(
+                    (child: any) => {
+                        console.log(child, 'child')
+                        if (child?.$?.type && child?.$?.type === "ogc-external") return true;
+                        return false;
+                    }
+                );
+
+                if (externalRow) {
+                    externalIdentifier = externalRow._;
+                    console.log(externalIdentifier, 'externalIdentifier');
+                }
+
+                //get the internal identiier
+                let internalRow: any = Object.values(bibdata.docidentifier).find(
+                    (child: any) => {
+                        if (child?.$?.type && child?.$?.type === "ogc-internal") return true;
+                        return false;
+                    }
+                );
+
+                if (internalRow) {
+                    internalIdentifier = internalRow._;
+                    console.log(internalIdentifier, 'internalIdentifier');
+                }
+            }
         }
     }
 
