@@ -456,6 +456,70 @@ export default function Cover() {
                                 </p>
                             </div>
                         </div>
+                        <div className="ogc-coverpage-warning">
+                            <div className="ogc-boilerplate-legal">
+                                <div>
+                                    <h1 className="ogc-IntroTitle" id="notice">
+                                        <a
+                                            className="ogc-anchorjs-link ogc-anchorjs-links"
+                                            aria-label="Anchor"
+                                            data-anchorjs-icon=""
+                                            href="#notice"
+                                        ></a>
+                                        Notice
+                                    </h1>
+
+                                    <p
+                                        id="_0e376e62-9d80-9feb-0320-d2b7b5920109"
+                                        className="p"
+                                    >
+                                        This document is not an OGC Standard.
+                                        This document is an OGC Other and is
+                                        therefore not an official position of
+                                        the OGC membership. It is distributed
+                                        for review and comment. It is subject to
+                                        change without notice and may not be
+                                        referred to as an OGC Standard.
+                                    </p>
+                                    <p
+                                        id="_f0ff3a66-eed0-0209-c3f3-00f86825ea3a"
+                                        className="p"
+                                    >
+                                        Further, an OGC Other should not be
+                                        referenced as required or mandatory
+                                        technology in procurements.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="docstage-box">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>Document number:</td>
+                                        <td>12-077r1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Document type:</td>
+                                        <td>OGC Other</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">Document subtype:</td>
+                                        <td align="right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">Document stage:</td>
+                                        <td align="right">Published</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">
+                                            Document language:
+                                        </td>
+                                        <td align="right">English</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </header>
             );
