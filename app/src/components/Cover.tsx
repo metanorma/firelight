@@ -244,6 +244,8 @@ export default function Cover() {
         let externalIdentifier = '';
         let internalIdentifier = '';
         let version = '';
+        let doctype = '';
+        let publishedState = '';
 
         if (xmlJson['ogc-standard']['bibdata']) {
             const bibdata = xmlJson['ogc-standard']['bibdata'][0];
@@ -348,6 +350,22 @@ export default function Cover() {
                 console.log(version, 'version');
             }
 
+            //get the doc type
+            if (bibdata?.ext) {
+                console.log(bibdata?.ext, 'ext');
+                if (bibdata.ext[0]?.doctype && bibdata.ext[0]?.doctype[0]) {
+                    doctype = bibdata.ext[0].doctype[0];
+                    console.log(doctype, 'doctype');
+                }
+            }
+
+            //get the published state
+            if (publicationDate) {
+                publishedState = 'Published';
+            } else {
+                publishedState = '';
+            }
+
             return (
                 <header>
                     <div className="ogc-coverpage">
@@ -381,28 +399,61 @@ export default function Cover() {
                                 <span className="ogc-label">
                                     Approval Date:{' '}
                                 </span>{' '}
-                                <span className="ogc-value">{approvalDate ? approvalDate : 'xxxx-xx-xx'}</span>
+                                <span className="ogc-value">
+                                    {approvalDate ? approvalDate : 'xxxx-xx-xx'}
+                                </span>
                                 <span className="ogc-label">
                                     Publication Date:{' '}
                                 </span>{' '}
-                                <span className="ogc-value">{publicationDate ? publicationDate : 'xxxx-xx-xx'}</span>
+                                <span className="ogc-value">
+                                    {publicationDate
+                                        ? publicationDate
+                                        : 'xxxx-xx-xx'}
+                                </span>
                                 <span className="ogc-label">
                                     External identifier of this OGC® document:{' '}
                                     <span className="ogc-docnumber ogc-value">
-                                        {externalIdentifier ? externalIdentifier : ''}
+                                        {externalIdentifier
+                                            ? externalIdentifier
+                                            : ''}
                                     </span>
                                 </span>
                                 <span className="ogc-label">
                                     Internal identifier of this OGC® document:{' '}
                                     <span className="ogc-docnumber ogc-value">
-                                        {internalIdentifier ? internalIdentifier : ''}
+                                        {internalIdentifier
+                                            ? internalIdentifier
+                                            : ''}
                                     </span>
                                 </span>
                             </div>
                             <div className="ogc-coverpage-alt-formats">
                                 <span className="ogc-label">Version: </span>{' '}
-                                <span className="ogc-value">{version ? version: 'x.x'}</span>
+                                <span className="ogc-value">
+                                    {version ? version : 'x.x'}
+                                </span>
                                 <br />
+                            </div>
+                        </div>
+                        <div className="ogc-wrapper-top-bottom"></div>
+                        <div className="ogc-wordsection">
+                            <div className="ogc-coverpage-stage-block">
+                                <span
+                                    className="ogc-coverpage-stage"
+                                    id="other"
+                                >
+                                    OGC {doctype}
+                                </span>
+                            </div>
+                            <div className="ogc-coverpage-stage-block">
+                                <p>
+                                    <span
+                                        className="coverpage-maturity"
+                                        id="published"
+                                    >
+                                        {publishedState}
+                                    </span>
+                                </p>
                             </div>
                         </div>
                     </div>
