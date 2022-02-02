@@ -279,6 +279,36 @@ export default function Cover() {
                     console.log(title, 'title')
                 }
             }
+            //submission date
+
+            
+            if (bibdata?.date) {
+                //get the approval date
+                let approveRow: any = Object.values(bibdata.date).find(
+                    (child: any) => {
+                        if (child?.$?.type === 'issued') return true;
+                        return false;
+                    }
+                );
+
+                if (approveRow) {
+                    approvalDate = approveRow?.on[0];
+                    console.log(approvalDate, 'approvalDate')
+                }
+
+                //get the published date
+                let publishedRow: any = Object.values(bibdata.date).find(
+                    (child: any) => {
+                        if (child?.$?.type === 'published') return true;
+                        return false;
+                    }
+                );
+
+                if (publishedRow) {
+                    publicationDate = publishedRow?.on[0];
+                    console.log(publicationDate, 'publicationDate')
+                }
+            }
         }
     }
 
