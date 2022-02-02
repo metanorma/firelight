@@ -497,11 +497,11 @@ export default function Cover() {
                                 <tbody>
                                     <tr>
                                         <td>Document number:</td>
-                                        <td>12-077r1</td>
+                                        <td>{internalIdentifier}</td>
                                     </tr>
                                     <tr>
                                         <td>Document type:</td>
-                                        <td>OGC Other</td>
+                                        <td>OGC {doctype}</td>
                                     </tr>
                                     <tr>
                                         <td align="right">Document subtype:</td>
@@ -509,7 +509,7 @@ export default function Cover() {
                                     </tr>
                                     <tr>
                                         <td align="right">Document stage:</td>
-                                        <td align="right">Published</td>
+                                        <td align="right">{publishedState}</td>
                                     </tr>
                                     <tr>
                                         <td align="right">
