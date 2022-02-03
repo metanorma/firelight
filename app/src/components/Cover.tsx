@@ -520,6 +520,83 @@ export default function Cover() {
                                 </tbody>
                             </table>
                         </div>
+                        <div className="ogc--info-section">
+                            <div className="ogc-copyright">
+                                <div className="ogc-boilerplate-copyright">
+                                    <div>
+                                        <h1
+                                            className="ogc-intro-title"
+                                            id="copyright-notice"
+                                        >
+                                            <a
+                                                className="ogc-anchorjs-link text-center"
+                                                aria-label="Anchor"
+                                                data-anchorjs-icon=""
+                                                href="#copyright-notice"
+                                            ></a>
+                                            Copyright notice
+                                        </h1>
+
+                                        <p
+                                            id="_ee734113-40c4-d03f-165b-a7c397d4f5ed"
+                                            className="text-center"
+                                        >
+                                            Copyright © 2012 Open Geospatial
+                                            Consortium
+                                            <br />
+                                            To obtain additional rights of use,
+                                            visit
+                                            <a href="http://www.ogc.org/legal/" className="ogc-link">
+                                                http://www.ogc.org/legal/
+                                            </a>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h1
+                                            className="ogc-intro-title"
+                                            id="note"
+                                        >
+                                            <a
+                                                className="ogc-anchorjs-link text-center"
+                                                aria-label="Anchor"
+                                                data-anchorjs-icon=""
+                                                href="#note"
+                                            ></a>
+                                            Note
+                                        </h1>
+
+                                        <p
+                                            id="_11e88dba-9912-1a89-a82d-7291bf232191"
+                                            className="text-left"
+                                        >
+                                            Attention is drawn to the
+                                            possibility that some of the
+                                            elements of this document may be the
+                                            subject of patent rights. The Open
+                                            Geospatial Consortium shall not be
+                                            held responsible for identifying any
+                                            or all such patent rights.
+                                        </p>
+
+                                        <p
+                                            id="_15067213-c07b-cba0-7e18-395ab2e00ab3"
+                                            className="text-left"
+                                        >
+                                            Recipients of this document are
+                                            requested to submit, with their
+                                            comments, notification of any
+                                            relevant patent claims or other
+                                            intellectual property rights of
+                                            which they may be aware that might
+                                            be infringed by any implementation
+                                            of the standard set forth in this
+                                            document, and to provide supporting
+                                            documentation.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </header>
             );
