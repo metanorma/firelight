@@ -354,12 +354,17 @@ span.doc-title {
     font-family: 'Overpass', sans-serif;
     font-weight: 400;
     font-size: 1.3em;
-    margin: 0 0 2em 0;
     text-transform: uppercase;
 }
 
 #other {
-    border-bottom: solid 3px #0074d9;
+    border-bottom: solid 3px #3D9970;
+    font-family: "Overpass",sans-serif;
+    font-weight: 400;
+    font-size: 1.3em;
+    margin: 0 0 2em 0;
+    text-transform: uppercase;
+    color: rgb(0, 51, 91);
 }
 
 .ogc-coverpage-stage-block {
@@ -404,6 +409,24 @@ span.doc-title {
     color: #00335b;
 }
 
+.docstage-box {
+    display: flex;
+    justify-content: center;
+}
+
+.docstage-box td {
+    vertical-align: top;
+    background-color: #daeef3;
+    padding: 0.5em;
+    border: 0;
+    color: rgb(0, 51, 91)
+}
+
+.docstage-box table, .docstage-box table th, .docstage-box table td {
+    border: none;
+    width: auto;
+}
+
 .ogc-anchor-link {
     font-style: normal;
     font-variant: normal;
@@ -422,23 +445,6 @@ span.doc-title {
     color: #485094;
 }
 
-.docstage-box {
-    display: flex;
-    justify-content: center;
-}
-
-.docstage-box td {
-    vertical-align: top;
-    background-color: #daeef3;
-    padding: 0.5em;
-    border: 0;
-    color: rgb(0, 51, 91)
-}
-
-.docstage-box table, .docstage-box table th, .docstage-box table td {
-    border: none;
-    width: auto;
-}
 
 .ogc-info-section {
     padding: 0 2em 0 5em;
@@ -479,4 +485,22 @@ span.doc-title {
 .ogc-link, .ogc-link:visited {
     text-decoration: none;
     color: #2e81c2;
+}
+
+.ogc-license {
+    padding: 0 3em 0 6em;
+    color: #00335b;
+    margin-bottom: 3em;
+}
+
+.ogc-boilorplate-license p {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.ogc-rule {
+    width: 100%;
+    height: 1px;
+    background-color: #00335b;
+    margin: 2em 0;
 }
