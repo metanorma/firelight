@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { getTerminologies } from '../utility';
 import Pluralize from 'pluralize';
 import './TermText.css';
+import { useXmlData } from '../context';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 interface OwnProps {
@@ -12,8 +13,9 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function TermText({ text }: OwnProps) {
+    const { xml } = useXmlData();
     const terminologies = useMemo(() => {
-        return getTerminologies();
+        return getTerminologies(xml);
         // return [{ text: 'standard', id: 'term-standard' }];
     }, [getTerminologies]);
 
