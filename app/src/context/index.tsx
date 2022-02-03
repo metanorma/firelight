@@ -38,6 +38,8 @@ const localXmlUrl2 = '/2008.xml';
 const ogcUrl =
     'https://metanorma.github.io/mn-samples-ogc/documents/12-077r1/document.xml';
 
+const ogcUrl1 = "https://metanorma.github.io/mn-samples-ogc/documents/15-104r5/document.xml";
+
 const XmlProvider: React.FC = ({ children }) => {
     const [xml, setXml] = useState<string>('');
     const [title, setTitle] = useState<string>('');
@@ -46,7 +48,7 @@ const XmlProvider: React.FC = ({ children }) => {
 
     useEffect(() => {
         axios
-            .get(xmlUrl1, {
+            .get(ogcUrl1, {
                 headers: {
                     Accept: 'application/xml'
                 }
@@ -54,7 +56,8 @@ const XmlProvider: React.FC = ({ children }) => {
             .then((response) => {
                 console.log(response.data, 'xml');
                 if (response.data) {
-                    localStorage.setItem('xml', response.data);
+                    localStorage.clear();
+                    // localStorage.setItem('xml', response.data);
                     setXml(response.data);
 
                     const xmlDoc = new DOMParser().parseFromString(
