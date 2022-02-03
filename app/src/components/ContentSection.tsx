@@ -3,6 +3,8 @@ import { useMemo } from 'react';
 import { getChildsById } from '../utility';
 import DisplayNode from './DisplayNode';
 import SectionTerm from './SectionTerm';
+
+import { useXmlData } from '../context';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 interface OwnProps {
@@ -13,6 +15,8 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
+    const { xml } = useXmlData();
+
     const renderContent = useMemo(() => {
         const id = xmlData?.$?.id ? xmlData.$.id : '';
         let node: any = '';
@@ -27,7 +31,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
             }
         }
 
-        node = getChildsById(id);
+        node = getChildsById(id, xml);
 
         if (!titleIndex) {
             if (id && id.toLowerCase().includes('annex')) {
