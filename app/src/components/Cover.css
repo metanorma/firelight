@@ -220,3 +220,222 @@ span.doc-title {
         margin-top: 90px;
     }
 }
+.ogc-coverpage {
+    margin: -1em;
+    position: relative;
+}
+
+.ogc-wrapper-top {
+    background: #00335b;
+    background: linear-gradient(130deg, #00335b 45%, #f1f8ff 100%);
+    color: #ffffff;
+    padding: 5em 0;
+    width: 100%;
+}
+
+.ogc-coverpage-doc-identity {
+    font-size: 2em;
+    line-height: 2em;
+}
+
+.ogc-coverpage-title {
+    padding-bottom: 0.5em;
+    font-family: 'Overpass', sans-serif;
+    font-weight: 100;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.ogc-coverpage-title span {
+    font-family: 'Overpass', sans-serif;
+    font-size: 1.8em;
+    line-height: 1;
+}
+
+.ogc-coverpage-logo {
+    display: flex;
+    justify-content: center;
+}
+
+.ogc-coverpage-logo span,
+.ogc-coverpage-tc-name span {
+    font-family: 'Overpass', sans-serif;
+    text-transform: none;
+    font-weight: 300;
+    margin-left: 1em;
+    text-align: center;
+}
+
+.ogc-coverpage-logo img {
+    width: 500px;
+    height: auto;
+}
+.ogc-authors {
+    margin-top: 2em;
+    display: flex;
+    justify-content: center;
+}
+
+.ogc-authors span.ogc-roletag {
+    display: inline-block;
+    font-size: 12px;
+    color: #00335b;
+    background-color: white;
+    padding: 2px 5px;
+    margin-left: 7px;
+    border-radius: 5px;
+}
+
+.ogc-coverpage-metadata {
+    margin-top: 35px;
+    padding-top: 15px;
+    margin-right: 25px;
+    border-top: solid 1px white;
+}
+
+.ogc-coverpage-metadata,
+.ogc-coverpage-alt-formats {
+    font-size: 12px;
+    font-family: 'Overpass', sans-serif;
+    margin-left: 1em;
+    text-align: left;
+}
+
+.ogc-coverpage-metadata span,
+.ogc-coverpage-alt-formats span {
+    display: block;
+    text-align: left;
+}
+
+.ogc-coverpage-metadata .ogc-label,
+.ogc-coverpage-alt-formats .ogc-label {
+    font-size: 12px;
+    padding: 0;
+}
+
+.ogc-coverpage-metadata .ogc-value,
+.ogc-coverpage-alt-formats .ogc-value {
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+.ogc-coverpage-metadata,
+.ogc-coverpage-alt-formats {
+    font-size: 12px;
+    font-family: 'Overpass', sans-serif;
+    margin-left: 1em;
+    text-align: left;
+}
+
+.ogc-coverpage-metadata .ogc-label,
+.ogc-coverpage-alt-formats .ogc-label {
+    font-size: 12px;
+    padding: 0;
+}
+.ogc-coverpage-alt-formats span {
+    display: inline;
+    text-align: left;
+}
+
+.ogc-wrapper-top-bottom {
+    width: 0;
+    height: 0;
+    border-top: 100px solid #00335b;
+    border-right: 100px solid transparent;
+    position: absolute;
+}
+
+.ogc-ogc-wordsection {
+    padding: 0 2em 0 3em;
+}
+
+.ogc-coverpage-maturity,
+.coverpage-stage {
+    font-family: 'Overpass', sans-serif;
+    font-weight: 400;
+    font-size: 1.3em;
+    margin: 0 0 2em 0;
+    text-transform: uppercase;
+}
+
+#other {
+    border-bottom: solid 3px #0074d9;
+}
+
+.ogc-coverpage-stage-block {
+    font-family: 'Overpass', sans-serif;
+    font-weight: 600;
+    font-size: 1.25em;
+    margin: 2em 0em 2em 0em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+}
+
+.ogc-coverpage-stage-block > p {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+#published {
+    border-bottom: solid 3px #9abd48;
+}
+
+#standard,
+#published {
+    color: #9abd48;
+}
+
+.ogc-coverpage-warning {
+    border: #f36f36 solid 2px;
+    color: #f36f36 !important;
+    margin: 1em 2em;
+    color: #2e81c2;
+    padding: 2em 1em 1em 1em;
+    border-radius: 25px;
+}
+
+.ogc-coverpage-warning h1 {
+    font-family: "Overpass",sans-serif;
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size: 1.2em;
+    text-align: center;
+    color: #00335b;
+}
+
+.ogc-anchor-link {
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    font-stretch: normal;
+    font-size: 1em;
+    line-height: inherit;
+    font-family: anchorjs-icons;
+    position: absolute;
+    margin-left: -1em;
+    padding-right: 0.5em;
+}
+
+.ogc-anchor-link , .ogc-anchor-link:visited {
+    text-decoration: none;
+    color: #485094;
+}
+
+.docstage-box {
+    display: flex;
+    justify-content: center;
+}
+
+.docstage-box td {
+    vertical-align: top;
+    background-color: #daeef3;
+    padding: 0.5em;
+    border: 0;
+    color: rgb(0, 51, 91)
+}
+
+.docstage-box table, .docstage-box table th, .docstage-box table td {
+    border: none;
+    width: auto;
+}
