@@ -7,11 +7,11 @@ import './Cover.css';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function Cover() {
-    const { xmlJson } = useXmlData();
+    const { xmlJson, xml } = useXmlData();
 
     if (xmlJson['iso-standard']) {
         console.log(xmlJson['iso-standard'], 'iso');
-        const bibdata: XMLNode = getChildsByTagname('bibdata')[0];
+        const bibdata: XMLNode = getChildsByTagname('bibdata', xml)[0];
         const childs = bibdata.childNodes;
 
         const mainTitle: XMLNode | any = Object.values(childs).find(
@@ -311,6 +311,19 @@ export default function Cover() {
                     publicationDate = publishedRow?.on[0];
                     console.log(publicationDate, 'publicationDate');
                 }
+
+                //get the submission date
+                let submissionRow: any = Object.values(bibdata.date).find(
+                    (child: any) => {
+                        if (child?.$?.type === 'received') return true;
+                        return false;
+                    }
+                )
+
+                if (submissionRow) {
+                    submissionDate = submissionRow?.on[0];
+                    console.log(submissionDate, 'submissionDate');
+                }
             }
 
             if (bibdata?.docidentifier) {
@@ -360,11 +373,13 @@ export default function Cover() {
             }
 
             //get the published state
-            if (publicationDate) {
-                publishedState = 'Published';
-            } else {
-                publishedState = '';
-            }
+            if (bibdata?.status) {
+                console.log(bibdata.status, 'status')
+                if (bibdata.status[0]?.stage[0]) {
+                    publishedState = bibdata.status[0]?.stage[0];
+                    console.log(publishedState, 'state')
+                }
+            } 
 
             return (
                 <header>
@@ -395,7 +410,7 @@ export default function Cover() {
                                 <span className="ogc-label">
                                     Submission Date:{' '}
                                 </span>{' '}
-                                <span className="ogc-value">XXX</span>
+                                <span className="ogc-value">{submissionDate ? submissionDate : 'XXX'}</span>
                                 <span className="ogc-label">
                                     Approval Date:{' '}
                                 </span>{' '}
@@ -509,7 +524,7 @@ export default function Cover() {
                                     </tr>
                                     <tr>
                                         <td align="right">Document stage:</td>
-                                        <td align="right">{publishedState}</td>
+                                        <td align="right">{publishedState ? publishedState : ''}</td>
                                     </tr>
                                     <tr>
                                         <td align="right">
@@ -545,8 +560,11 @@ export default function Cover() {
                                             Consortium
                                             <br />
                                             To obtain additional rights of use,
-                                            visit
-                                            <a href="http://www.ogc.org/legal/" className="ogc-link">
+                                            visit <br />
+                                            <a
+                                                href="http://www.ogc.org/legal/"
+                                                className="ogc-link"
+                                            >
                                                 http://www.ogc.org/legal/
                                             </a>
                                         </p>
@@ -594,7 +612,153 @@ export default function Cover() {
                                             documentation.
                                         </p>
                                     </div>
+                                    <div className="ogc-rule"></div>
                                 </div>
+                                
+                            </div>
+                        </div>
+                        <div className="ogc-license">
+                            <div className="ogc-boilorplate-license">
+                                <h1
+                                    className="ogc-intro-title"
+                                    id="license-agreement"
+                                >
+                                    License Agreement
+                                </h1>
+                                <p id="_e8566381-218f-c22d-320d-4d0371bfd58f">
+                                    Permission is hereby granted by the Open
+                                    Geospatial Consortium, (“Licensor”), free of
+                                    charge and subject to the terms set forth
+                                    below, to any person obtaining a copy of
+                                    this Intellectual Property and any
+                                    associated documentation, to deal in the
+                                    Intellectual Property without restriction
+                                    (except as set forth below), including
+                                    without limitation the rights to implement,
+                                    use, copy, modify, merge, publish,
+                                    distribute, and/or sublicense copies of the
+                                    Intellectual Property, and to permit persons
+                                    to whom the Intellectual Property is
+                                    furnished to do so, provided that all
+                                    copyright notices on the intellectual
+                                    property are retained intact and that each
+                                    person to whom the Intellectual Property is
+                                    furnished agrees to the terms of this
+                                    Agreement.
+                                </p>
+                                <p id="_52ebb386-d365-27d0-d76d-a59ac165fc4d">
+                                    If you modify the Intellectual Property, all
+                                    copies of the modified Intellectual Property
+                                    must include, in addition to the above
+                                    copyright notice, a notice that the
+                                    Intellectual Property includes modifications
+                                    that have not been approved or adopted by
+                                    LICENSOR.
+                                </p>
+                                <p id="_178f14b4-0718-a5b8-09cd-84f8f4b756ed">
+                                    THIS LICENSE IS A COPYRIGHT LICENSE ONLY,
+                                    AND DOES NOT CONVEY ANY RIGHTS UNDER ANY
+                                    PATENTS THAT MAY BE IN FORCE ANYWHERE IN THE
+                                    WORLD. THE INTELLECTUAL PROPERTY IS PROVIDED
+                                    “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+                                    EXPRESS OR IMPLIED, INCLUDING BUT NOT
+                                    LIMITED TO THE WARRANTIES OF
+                                    MERCHANTABILITY, FITNESS FOR A PARTICULAR
+                                    PURPOSE, AND NONINFRINGEMENT OF THIRD PARTY
+                                    RIGHTS. THE COPYRIGHT HOLDER OR HOLDERS
+                                    INCLUDED IN THIS NOTICE DO NOT WARRANT THAT
+                                    THE FUNCTIONS CONTAINED IN THE INTELLECTUAL
+                                    PROPERTY WILL MEET YOUR REQUIREMENTS OR THAT
+                                    THE OPERATION OF THE INTELLECTUAL PROPERTY
+                                    WILL BE UNINTERRUPTED OR ERROR FREE. ANY USE
+                                    OF THE INTELLECTUAL PROPERTY SHALL BE MADE
+                                    ENTIRELY AT THE USER’S OWN RISK. IN NO EVENT
+                                    SHALL THE COPYRIGHT HOLDER OR ANY
+                                    CONTRIBUTOR OF INTELLECTUAL PROPERTY RIGHTS
+                                    TO THE INTELLECTUAL PROPERTY BE LIABLE FOR
+                                    ANY CLAIM, OR ANY DIRECT, SPECIAL, INDIRECT
+                                    OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES
+                                    WHATSOEVER RESULTING FROM ANY ALLEGED
+                                    INFRINGEMENT OR ANY LOSS OF USE, DATA OR
+                                    PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+                                    NEGLIGENCE OR UNDER ANY OTHER LEGAL THEORY,
+                                    ARISING OUT OF OR IN CONNECTION WITH THE
+                                    IMPLEMENTATION, USE, COMMERCIALIZATION OR
+                                    PERFORMANCE OF THIS INTELLECTUAL PROPERTY.
+                                </p>
+                                <p id="_2ad7fe27-9ae4-52c5-9dd9-faa4004247fb">
+                                    This license is effective until terminated.
+                                    You may terminate it at any time by
+                                    destroying the Intellectual Property
+                                    together with all copies in any form. The
+                                    license will also terminate if you fail to
+                                    comply with any term or condition of this
+                                    Agreement. Except as provided in the
+                                    following sentence, no such termination of
+                                    this license shall require the termination
+                                    of any third party end-user sublicense to
+                                    the Intellectual Property which is in force
+                                    as of the date of notice of such
+                                    termination. In addition, should the
+                                    Intellectual Property, or the operation of
+                                    the Intellectual Property, infringe, or in
+                                    LICENSOR’s sole opinion be likely to
+                                    infringe, any patent, copyright, trademark
+                                    or other right of a third party, you agree
+                                    that LICENSOR, in its sole discretion, may
+                                    terminate this license without any
+                                    compensation or liability to you, your
+                                    licensees or any other party. You agree upon
+                                    termination of any kind to destroy or cause
+                                    to be destroyed the Intellectual Property
+                                    together with all copies in any form,
+                                    whether held by you or by any third party.
+                                </p>
+                                <p id="_3254c815-179c-5f54-9a01-b8e964837171">
+                                    Except as contained in this notice, the name
+                                    of LICENSOR or of any other holder of a
+                                    copyright in all or part of the Intellectual
+                                    Property shall not be used in advertising or
+                                    otherwise to promote the sale, use or other
+                                    dealings in this Intellectual Property
+                                    without prior written authorization of
+                                    LICENSOR or such copyright holder. LICENSOR
+                                    is and shall at all times be the sole entity
+                                    that may authorize you or any third party to
+                                    use certification marks, trademarks or other
+                                    special designations to indicate compliance
+                                    with any LICENSOR standards or
+                                    specifications. This Agreement is governed
+                                    by the laws of the Commonwealth of
+                                    Massachusetts. The application to this
+                                    Agreement of the United Nations Convention
+                                    on Contracts for the International Sale of
+                                    Goods is hereby expressly excluded. In the
+                                    event any provision of this Agreement shall
+                                    be deemed unenforceable, void or invalid,
+                                    such provision shall be modified so as to
+                                    make it valid and enforceable, and as so
+                                    modified the entire Agreement shall remain
+                                    in full force and effect. No decision,
+                                    action or inaction by LICENSOR shall be
+                                    construed to be a waiver of any rights or
+                                    remedies available to it.
+                                </p>
+                                <p id="_4fa1ef5b-3dd5-7a05-3c68-bca93a0f14bb">
+                                    None of the Intellectual Property or
+                                    underlying information or technology may be
+                                    downloaded or otherwise exported or
+                                    reexported in violation of U.S. export laws
+                                    and regulations. In addition, you are
+                                    responsible for complying with any local
+                                    laws in your jurisdiction which may impact
+                                    your right to import, export or use the
+                                    Intellectual Property, and you represent
+                                    that you have complied with any regulations
+                                    or registration procedures required by
+                                    applicable law to make this license
+                                    enforceable.
+                                </p>
                             </div>
                         </div>
                     </div>
