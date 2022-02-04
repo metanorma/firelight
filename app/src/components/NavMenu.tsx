@@ -69,7 +69,11 @@ export default function NavIMenu() {
                 returnData?.id.toLowerCase().includes('annex')
             ) {
                 if (standard === 'ogc-standard') {
-                    returnData.title = 'Annex' + String.fromCharCode(annexCount ++ ) + ' (Normative) ' + returnData.title;;
+                    returnData.title =
+                        'Annex' +
+                        String.fromCharCode(annexCount++) +
+                        ' (Normative) ' +
+                        returnData.title;
                 } else {
                     returnData.title =
                         returnData.id + ' (Normative) ' + returnData.title;
@@ -252,9 +256,60 @@ export default function NavIMenu() {
         }
 
         if (standard === 'ogc-standard' && xmlJson[standard]) {
-            
             if (xmlJson[standard]['preface']) {
                 if (xmlJson[standard]['preface'][0]?.clause) {
+                    //abstract part
+                    if (xmlJson[standard]['preface'][0]?.abstract) {
+                        console.log(
+                            xmlJson[standard]['preface'][0]?.abstract,
+                            'abstract'
+                        );
+                        const abstract = getMenuItem(
+                            xmlJson[standard]['preface'][0].abstract[0]
+                        );
+                        menuItem[abstract.index] = abstract;
+                    }
+
+                    //keywords part
+                    // if (xmlJson[standard]['bibdata'][0]?.keyword) {
+                    //     console.log(
+                    //         xmlJson[standard]['bibdata'][0]?.keyword,
+                    //         'keyword'
+                    //     );
+                    //     if (
+                    //         xmlJson[standard]['bibdata'][0]?.keyword?.length > 0
+                    //     ) {
+                    //         const keywords =
+                    //             xmlJson[standard]['bibdata'][0]?.keyword.join(
+                    //                 ' '
+                    //             );
+                    //         let data = {
+                    //             data: {
+                    //                 id: '_keywords',
+                    //                 p: [
+                    //                     'The following organizations submitted this Document to the Open Geospatial Consortium (OGC):',
+                    //                     keywords
+                    //                 ]
+                    //             },
+                    //             index: index++
+                    //         };
+                    //         menuItem[data.index] = data;
+                    //     }
+                    // }
+
+                    //preface part(foreword)
+                    if (xmlJson[standard]['preface'][0]?.foreword) {
+                        console.log(
+                            xmlJson[standard]['preface'][0]?.foreword,
+                            'preface forward'
+                        );
+                        const foreword = getMenuItem(
+                            xmlJson[standard]['preface'][0].foreword[0]
+                        );
+                        menuItem[foreword.index] = foreword;
+                        console.log(menuItem, 'menuITem')
+                    }
+
                     //security considerations
                     xmlJson[standard]['preface'][0]?.clause.map(
                         (child: any) => {
@@ -286,6 +341,40 @@ export default function NavIMenu() {
                     );
                 }
             }
+
+            //submitting organizations
+            if (xmlJson[standard]['bibdata'][0]?.contributor) {
+                console.log(
+                    xmlJson[standard]['bibdata'][0]?.contributor,
+                    'contributor'
+                );
+
+                // if (
+                //     xmlJson[standard]['bibdata'][0]?.contributor?.length > 0
+                // ) {
+                //     let organizations: string[] = [];
+                //     xmlJson[standard][
+                //         'bibdata'
+                //     ][0]?.contributor.map((child: any) => {
+                //         if (child?.organization && child.organization[0]?.name[0]) {
+                //             organizations.push(child?.organization[0]?.name[0])
+                //         };            
+                //     });
+                    
+                //     let data = {
+                //         index: index++,
+                //         data: {
+                //             id: '_organizations',
+                //             p: 'The following organizations submitted this Document to the Open Geospatial Consortium (OGC):',
+                //             organizations
+                //         }
+                //     }
+
+                //     menuItem[data.index] = data;
+                // }
+            }
+
+            
 
             //sections part
             if (xmlJson[standard]['sections']) {
