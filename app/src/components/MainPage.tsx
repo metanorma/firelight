@@ -244,6 +244,24 @@ export default function MainPage() {
                     }
                 }
 
+                if (xmlJson[standard]['preface'][0]?.clause) {
+                    //introduction part
+                    xmlJson[standard]['preface'][0]?.clause.map(
+                        (child: any) => {
+                            if (
+                                child?.title &&
+                                child.title[0] &&
+                                child.title[0].toLowerCase() ===
+                                    'Introduction'.toLocaleLowerCase()
+                            ) {
+                                const introduction = getMenuItem(child);
+                                menuItem[introduction.index] = introduction;
+                            }
+                        }
+                    );
+                    
+                }
+
                 //sections part
                 if (xmlJson[standard]['sections']) {
                     if (xmlJson[standard]['sections'][0]?.clause) {
