@@ -271,31 +271,27 @@ export default function NavIMenu() {
                     }
 
                     //keywords part
-                    // if (xmlJson[standard]['bibdata'][0]?.keyword) {
-                    //     console.log(
-                    //         xmlJson[standard]['bibdata'][0]?.keyword,
-                    //         'keyword'
-                    //     );
-                    //     if (
-                    //         xmlJson[standard]['bibdata'][0]?.keyword?.length > 0
-                    //     ) {
-                    //         const keywords =
-                    //             xmlJson[standard]['bibdata'][0]?.keyword.join(
-                    //                 ' '
-                    //             );
-                    //         let data = {
-                    //             data: {
-                    //                 id: '_keywords',
-                    //                 p: [
-                    //                     'The following organizations submitted this Document to the Open Geospatial Consortium (OGC):',
-                    //                     keywords
-                    //                 ]
-                    //             },
-                    //             index: index++
-                    //         };
-                    //         menuItem[data.index] = data;
-                    //     }
-                    // }
+                    if (xmlJson[standard]['bibdata'][0]?.keyword) {
+                        console.log(
+                            xmlJson[standard]['bibdata'][0]?.keyword,
+                            'keyword'
+                        );
+                        if (
+                            xmlJson[standard]['bibdata'][0]?.keyword?.length > 0
+                        ) {
+                            const keywords =
+                                xmlJson[standard]['bibdata'][0]?.keyword.join(
+                                    ' '
+                                );
+                            let data = {
+                                id: '_keywords',
+                                index: index++,
+                                title: 'Keywords',
+                                children: []
+                            };
+                            menuItem[data.index] = data;
+                        }
+                    }
 
                     //preface part(foreword)
                     if (xmlJson[standard]['preface'][0]?.foreword) {
@@ -307,7 +303,7 @@ export default function NavIMenu() {
                             xmlJson[standard]['preface'][0].foreword[0]
                         );
                         menuItem[foreword.index] = foreword;
-                        console.log(menuItem, 'menuITem')
+                        console.log(menuItem, 'menuITem');
                     }
 
                     //security considerations
@@ -358,9 +354,9 @@ export default function NavIMenu() {
                 //     ][0]?.contributor.map((child: any) => {
                 //         if (child?.organization && child.organization[0]?.name[0]) {
                 //             organizations.push(child?.organization[0]?.name[0])
-                //         };            
+                //         };
                 //     });
-                    
+
                 //     let data = {
                 //         index: index++,
                 //         data: {
@@ -373,8 +369,6 @@ export default function NavIMenu() {
                 //     menuItem[data.index] = data;
                 // }
             }
-
-            
 
             //sections part
             if (xmlJson[standard]['sections']) {
