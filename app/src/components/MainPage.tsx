@@ -186,6 +186,15 @@ export default function MainPage() {
 
         if (standard === 'ogc-standard' && xmlJson[standard]) {
             if (xmlJson[standard]['preface']) {
+                console.log(xmlJson[standard]['preface'], 'preface')
+                //abstract part
+                if (xmlJson[standard]['preface'][0]?.abstract) {
+                    console.log(xmlJson[standard]['preface'][0]?.abstract, 'abstract')
+                    const abstract = getMenuItem(xmlJson[standard]['preface'][0].abstract[0]);
+                    menuItem[abstract.index] = abstract;
+                }
+
+
                 if (xmlJson[standard]['preface'][0]?.clause) {
                     //security considerations
                     xmlJson[standard]['preface'][0]?.clause.map(
