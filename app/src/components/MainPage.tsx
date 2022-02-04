@@ -194,6 +194,13 @@ export default function MainPage() {
                     menuItem[abstract.index] = abstract;
                 }
 
+                //preface part(foreword)
+                if (xmlJson[standard]['preface'][0]?.foreword) {
+                    console.log(xmlJson[standard]['preface'][0]?.foreword, 'preface forward')
+                    const foreword = getMenuItem(xmlJson[standard]['preface'][0].foreword[0]);
+                    menuItem[foreword.index] = foreword;
+                }
+
 
                 if (xmlJson[standard]['preface'][0]?.clause) {
                     //security considerations
