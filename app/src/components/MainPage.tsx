@@ -186,18 +186,51 @@ export default function MainPage() {
 
         if (standard === 'ogc-standard' && xmlJson[standard]) {
             if (xmlJson[standard]['preface']) {
-                console.log(xmlJson[standard]['preface'], 'preface')
+                console.log(xmlJson[standard]['preface'], 'preface');
                 //abstract part
                 if (xmlJson[standard]['preface'][0]?.abstract) {
-                    console.log(xmlJson[standard]['preface'][0]?.abstract, 'abstract')
-                    const abstract = getMenuItem(xmlJson[standard]['preface'][0].abstract[0]);
+                    console.log(
+                        xmlJson[standard]['preface'][0]?.abstract,
+                        'abstract'
+                    );
+                    const abstract = getMenuItem(
+                        xmlJson[standard]['preface'][0].abstract[0]
+                    );
                     menuItem[abstract.index] = abstract;
+                }
+
+                //keywords part
+                if (xmlJson[standard]['bibdata'][0]?.keyword) {
+                    console.log(
+                        xmlJson[standard]['bibdata'][0]?.keyword,
+                        'keyword'
+                    );
+                    if (xmlJson[standard]['bibdata'][0]?.keyword?.length > 0) {
+                        const keywords =
+                            xmlJson[standard]['bibdata'][0]?.keyword.join(' ');
+                        let data = {
+                            data: {
+                                id: '_keywords',
+                                p: [
+                                    'The following organizations submitted this Document to the Open Geospatial Consortium (OGC):',
+                                    keywords
+                                ]
+                            },
+                            index: index++
+                        };
+                        menuItem[data.index] = data;
+                    }
                 }
 
                 //preface part(foreword)
                 if (xmlJson[standard]['preface'][0]?.foreword) {
-                    console.log(xmlJson[standard]['preface'][0]?.foreword, 'preface forward')
-                    const foreword = getMenuItem(xmlJson[standard]['preface'][0].foreword[0]);
+                    console.log(
+                        xmlJson[standard]['preface'][0]?.foreword,
+                        'preface forward'
+                    );
+                    const foreword = getMenuItem(
+                        xmlJson[standard]['preface'][0].foreword[0]
+                    );
                     menuItem[foreword.index] = foreword;
                 }
 
@@ -217,6 +250,8 @@ export default function MainPage() {
                         }
                     );
 
+                    //submitting organizations
+
                     //Revision history
                     xmlJson[standard]['preface'][0]?.clause.map(
                         (child: any) => {
@@ -232,14 +267,18 @@ export default function MainPage() {
                             }
                         }
                     );
-                    
                 }
-                
+
                 //submission part
                 if (xmlJson[standard]['preface']) {
                     if (xmlJson[standard]['preface'][0]?.submitters) {
-                        console.log(xmlJson[standard]['preface'][0]?.submitters, 'submitters')
-                        const submitters = getMenuItem(xmlJson[standard]['preface'][0].submitters[0]);
+                        console.log(
+                            xmlJson[standard]['preface'][0]?.submitters,
+                            'submitters'
+                        );
+                        const submitters = getMenuItem(
+                            xmlJson[standard]['preface'][0].submitters[0]
+                        );
                         menuItem[submitters.index] = submitters;
                     }
                 }
@@ -259,7 +298,21 @@ export default function MainPage() {
                             }
                         }
                     );
-                    
+
+                    //Reference Notes part
+                    xmlJson[standard]['preface'][0]?.clause.map(
+                        (child: any) => {
+                            if (
+                                child?.title &&
+                                child.title[0] &&
+                                child.title[0].toLowerCase() ===
+                                    'Reference notes'.toLocaleLowerCase()
+                            ) {
+                                const referenceNotes = getMenuItem(child);
+                                menuItem[referenceNotes.index] = referenceNotes;
+                            }
+                        }
+                    );
                 }
 
                 //sections part

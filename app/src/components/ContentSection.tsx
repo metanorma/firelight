@@ -24,14 +24,33 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
             if (xmlData?.title && xmlData.title[0]) {
                 let title = xmlData.title[0];
 
-                return <div className="cotent-section">
-                    <h1 className="title title-3">{title}</h1>
-                    {xmlData?.p?.length && xmlData.p.map((data: any) => <div className="p" id={data?.$?.id}>{data?._}</div>)}
-                </div>
+                return (
+                    <div className="cotent-section">
+                        <h1 className="title title-3">{title}</h1>
+                        {xmlData?.p?.length &&
+                            xmlData.p.map((data: any) => (
+                                <div className="p" id={data?.$?.id}>
+                                    {data?._}
+                                </div>
+                            ))}
+                    </div>
+                );
             }
         }
 
         node = getChildsById(id, xml);
+
+        if (xmlData?.id && xmlData.id === '_keywords') {
+            console.log(xmlData, 'xmlData');
+            return (
+                <div className="content-section" id={xmlData?.id}>
+                    <h1 className="title title-3">Keywords</h1>
+                    {xmlData?.p?.map((child: any) => (
+                        <div className="p">{child}</div>
+                    ))}
+                </div>
+            );
+        }
 
         if (!titleIndex) {
             if (id && id.toLowerCase().includes('annex')) {
@@ -139,12 +158,10 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
 
             // if (xmlData?.title && xmlData?.title[0]) {
             let title = titleIndex;
-            if (xmlData?.title && xmlData?.title[0]){
-
+            if (xmlData?.title && xmlData?.title[0]) {
                 if (typeof xmlData.title[0] !== 'object')
                     title = `${title} ${xmlData?.title[0]}`;
                 else {
-
                     if (xmlData.title[0]?._) {
                         title = `${title} ${xmlData?.title[0]._}`;
                     }
@@ -154,7 +171,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                     }
                 }
             }
-                
+
             if (node) {
                 Object.values(node?.childNodes).map(
                     (child: any, index: number) => {
