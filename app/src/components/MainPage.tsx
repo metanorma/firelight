@@ -250,8 +250,6 @@ export default function MainPage() {
                         }
                     );
 
-                    //submitting organizations
-
                     //Revision history
                     xmlJson[standard]['preface'][0]?.clause.map(
                         (child: any) => {
@@ -267,6 +265,53 @@ export default function MainPage() {
                             }
                         }
                     );
+                }
+
+                //submitting organizations
+                if (xmlJson[standard]['bibdata'][0]?.contributor) {
+                    console.log(
+                        xmlJson[standard]['bibdata'][0]?.contributor,
+                        'contributor'
+                    );
+
+                    if (
+                        xmlJson[standard]['bibdata'][0]?.contributor?.length > 0
+                    ) {
+                        let organizations: string[] = [];
+                        xmlJson[standard][
+                            'bibdata'
+                        ][0]?.contributor.map((child: any) => {
+                            if (child?.organization && child.organization[0]?.name[0]) {
+                                organizations.push(child?.organization[0]?.name[0])
+                            };            
+                        });
+                        
+                        let data = {
+                            index: index++,
+                            data: {
+                                id: '_organizations',
+                                p: 'The following organizations submitted this Document to the Open Geospatial Consortium (OGC):',
+                                organizations
+                            }
+                        }
+
+                        menuItem[data.index] = data;
+                    }
+                    // if (xmlJson[standard]['bibdata'][0]?.keyword?.length > 0) {
+                    //     const keywords =
+                    //         xmlJson[standard]['bibdata'][0]?.keyword.join(' ');
+                    //     let data = {
+                    //         data: {
+                    //             id: '_keywords',
+                    //             p: [
+                    //                 'The following organizations submitted this Document to the Open Geospatial Consortium (OGC):',
+                    //                 keywords
+                    //             ]
+                    //         },
+                    //         index: index++
+                    //     };
+                    //     menuItem[data.index] = data;
+                    // }
                 }
 
                 //submission part

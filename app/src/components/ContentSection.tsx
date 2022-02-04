@@ -52,6 +52,22 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
             );
         }
 
+        if (xmlData?.id && xmlData.id === '_organizations') {
+            console.log(xmlData, 'xmlData');
+            return (
+                <div className="content-section" id={xmlData?.id}>
+                    <h1 className="title title-3">SUBMITTING ORGANIZATIONS</h1>
+                    <div className="p">{xmlData?.p ? xmlData?.p : ''}</div>
+                    <ul className="organization">
+                        {xmlData?.organizations &&
+                            xmlData?.organizations.map((child: string, index: number) => (
+                                <li key={index}>{child}</li>
+                            ))}
+                    </ul>
+                </div>
+            );
+        }
+
         if (!titleIndex) {
             if (id && id.toLowerCase().includes('annex')) {
                 let title = id + ' (Normative) ' + xmlData.title[0];
