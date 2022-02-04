@@ -356,6 +356,53 @@ export default function NavIMenu() {
                 }
             }
 
+            //submission part
+            if (xmlJson[standard]['preface']) {
+                if (xmlJson[standard]['preface'][0]?.submitters) {
+                    console.log(
+                        xmlJson[standard]['preface'][0]?.submitters,
+                        'submitters'
+                    );
+                    const submitters = getMenuItem(
+                        xmlJson[standard]['preface'][0].submitters[0]
+                    );
+                    menuItem[submitters.index] = submitters;
+                }
+            }
+
+            if (xmlJson[standard]['preface'][0]?.clause) {
+                //introduction part
+                xmlJson[standard]['preface'][0]?.clause.map(
+                    (child: any) => {
+                        if (
+                            child?.title &&
+                            child.title[0] &&
+                            child.title[0].toLowerCase() ===
+                                'Introduction'.toLocaleLowerCase()
+                        ) {
+                            const introduction = getMenuItem(child);
+                            menuItem[introduction.index] = introduction;
+                        }
+                    }
+                );
+
+                //Reference Notes part
+                xmlJson[standard]['preface'][0]?.clause.map(
+                    (child: any) => {
+                        if (
+                            child?.title &&
+                            child.title[0] &&
+                            child.title[0].toLowerCase() ===
+                                'Reference notes'.toLocaleLowerCase()
+                        ) {
+                            const referenceNotes = getMenuItem(child);
+                            menuItem[referenceNotes.index] = referenceNotes;
+                        }
+                    }
+                );
+            }
+
+
             //sections part
             if (xmlJson[standard]['sections']) {
                 if (xmlJson[standard]['sections'][0]?.clause) {

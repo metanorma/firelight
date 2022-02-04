@@ -232,7 +232,7 @@ export default function MainPage() {
                         xmlJson[standard]['preface'][0].foreword[0]
                     );
                     menuItem[foreword.index] = foreword;
-                }
+                } 
 
                 if (xmlJson[standard]['preface'][0]?.clause) {
                     //security considerations
@@ -297,21 +297,6 @@ export default function MainPage() {
 
                         menuItem[data.index] = data;
                     }
-                    // if (xmlJson[standard]['bibdata'][0]?.keyword?.length > 0) {
-                    //     const keywords =
-                    //         xmlJson[standard]['bibdata'][0]?.keyword.join(' ');
-                    //     let data = {
-                    //         data: {
-                    //             id: '_keywords',
-                    //             p: [
-                    //                 'The following organizations submitted this Document to the Open Geospatial Consortium (OGC):',
-                    //                 keywords
-                    //             ]
-                    //         },
-                    //         index: index++
-                    //     };
-                    //     menuItem[data.index] = data;
-                    // }
                 }
 
                 //submission part
