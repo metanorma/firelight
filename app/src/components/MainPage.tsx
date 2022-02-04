@@ -201,7 +201,6 @@ export default function MainPage() {
                     menuItem[foreword.index] = foreword;
                 }
 
-
                 if (xmlJson[standard]['preface'][0]?.clause) {
                     //security considerations
                     xmlJson[standard]['preface'][0]?.clause.map(
@@ -234,6 +233,15 @@ export default function MainPage() {
                         }
                     );
                     
+                }
+                
+                //submission part
+                if (xmlJson[standard]['preface']) {
+                    if (xmlJson[standard]['preface'][0]?.submitters) {
+                        console.log(xmlJson[standard]['preface'][0]?.submitters, 'submitters')
+                        const submitters = getMenuItem(xmlJson[standard]['preface'][0].submitters[0]);
+                        menuItem[submitters.index] = submitters;
+                    }
                 }
 
                 //sections part
