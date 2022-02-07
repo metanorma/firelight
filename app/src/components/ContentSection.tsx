@@ -17,7 +17,7 @@ interface OwnProps {
 export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
     const { xml } = useXmlData();
 
-    const renderContent = useMemo(() => {
+    const renderContent = useMemo(() => { console.log(xmlData, 'contentSection')
         const id = xmlData?.$?.id ? xmlData.$.id : '';
         let node: any = '';
         if (!id) {
@@ -26,7 +26,10 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
 
                 return (
                     <div className="cotent-section">
-                        <h1 className="title title-3">{title}</h1>
+                        <h1 className="title title-3">
+                            {xmlData?.romanNum ? xmlData?.romanNum + '. ' : ''}
+                            {title}
+                        </h1>
                         {xmlData?.p?.length &&
                             xmlData.p.map((data: any) => (
                                 <div className="p" id={data?.$?.id}>
@@ -44,7 +47,10 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
             console.log(xmlData, 'xmlData');
             return (
                 <div className="content-section" id={xmlData?.id}>
-                    <h1 className="title title-3">Keywords</h1>
+                    <h1 className="title title-3">
+                        {xmlData?.romanNum ? xmlData?.romanNum + '. ' : ''}
+                        Keywords
+                    </h1>
                     {xmlData?.p?.map((child: any) => (
                         <div className="p">{child}</div>
                     ))}
@@ -56,16 +62,63 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
             console.log(xmlData, 'xmlData');
             return (
                 <div className="content-section" id={xmlData?.id}>
-                    <h1 className="title title-3">SUBMITTING ORGANIZATIONS</h1>
+                    <h1 className="title title-3">
+                        {xmlData?.romanNum ? xmlData?.romanNum + '. ' : ''}
+                        SUBMITTING ORGANIZATIONS
+                    </h1>
                     <div className="p">{xmlData?.p ? xmlData?.p : ''}</div>
                     <ul className="organization">
                         {xmlData?.organizations &&
-                            xmlData?.organizations.map((child: string, index: number) => (
-                                <li key={index}>{child}</li>
-                            ))}
+                            xmlData?.organizations.map(
+                                (child: string, index: number) => (
+                                    <li key={index}>{child}</li>
+                                )
+                            )}
                     </ul>
                 </div>
             );
+        }
+
+        if (xmlData?.romanNum) {
+            let title = xmlData.romanNum + '. ';
+
+            if (xmlData?.title && xmlData?.title[0]) {
+                if (typeof xmlData.title[0] !== 'object')
+                    title = `${title} ${xmlData?.title[0]}`;
+                else {
+                    if (xmlData.title[0]?._) {
+                        title = `${title} ${xmlData?.title[0]._}`;
+                    }
+
+                    if (xmlData.title[0]?.em) {
+                        title = `${title} ${xmlData?.title[0].em[0]}`;
+                    }
+                }
+            }
+
+            if (node) {
+                Object.values(node?.childNodes).map(
+                    (child: any, index: number) => {
+                        if (child?.tagName === 'title')
+                            delete node.childNodes[index];
+                    }
+                );
+                return (
+                    <div className="content-section" id={id}>
+                        <h1 className="title title-3">{title}</h1>
+                        <DisplayNode data={node.childNodes} />
+                        {xmlData?.clause?.length > 0 &&
+                            xmlData.clause.map((child: any, index: number) => (
+                                <ContentSection
+                                    key={index}
+                                    xmlData={child}
+                                    titleIndex={`${titleIndex}.${index + 1}`}
+                                />
+                            ))}
+                    </div>
+                );
+            }
+            // }
         }
 
         if (!titleIndex) {
