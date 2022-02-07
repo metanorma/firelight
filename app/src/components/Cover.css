@@ -474,6 +474,17 @@ span.doc-title {
     margin-bottom: 1em;
 }
 
+.ogc-roman {
+    font-size: inherit;
+    color: inherit;
+}
+
+.org-roman > h1 {
+    font-size: 18px;
+    font-weight: bold;
+    padding-left: 15px;
+}
+
 .ogc-intro-title {
     font-size: 1.8em;
     text-transform: uppercase;
