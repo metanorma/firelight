@@ -34,6 +34,8 @@ export default function NavIMenu() {
         let index = 0;
         let count = 0;
         let annexCount = 65;
+        let roman = 1;
+
         const insertSpace = (text: string): any => {
             const matches: any = text.match(/[a-zA-Z]+/g);
             const index: number = text.indexOf(matches[0]);
@@ -42,7 +44,34 @@ export default function NavIMenu() {
                 : text;
         };
 
-        const getMenuItem = (data: any, hasIndex: boolean = false): any => {
+        const romanize = (num: number) => {
+            let lookup: any = {
+                M: 1000,
+                CM: 900,
+                D: 500,
+                CD: 400,
+                C: 100,
+                XC: 90,
+                L: 50,
+                XL: 40,
+                X: 10,
+                IX: 9,
+                V: 5,
+                IV: 4,
+                I: 1
+            };
+            let roman: string = '';
+            let i: string = '';
+            for (let i in lookup) {
+                while (num >= lookup[i]) {
+                    roman += i;
+                    num -= lookup[i];
+                }
+            }
+            return roman;
+        };
+
+        const getMenuItem = (data: any, hasIndex: boolean = false, hasRoman: boolean = false): any => {
             const returnData: any = {};
             if (data?.references) {
                 returnData.id = data.references[0]['$']['id'];
@@ -54,6 +83,7 @@ export default function NavIMenu() {
             if (!data?.title) {
                 return;
             }
+
             // if (standard === 'iso-standard') {
             if (data?.$ && data['$']['id']) returnData.id = data['$']['id'];
             // returnData.index = data['$']['displayorder'];
@@ -129,6 +159,10 @@ export default function NavIMenu() {
                         }`;
                     returnData.children[index] = childItem;
                 });
+            }
+
+            if (hasRoman) {
+                returnData.title = romanize(roman ++) + ". " + returnData.title;
             }
 
             return returnData;
@@ -265,7 +299,7 @@ export default function NavIMenu() {
                             'abstract'
                         );
                         const abstract = getMenuItem(
-                            xmlJson[standard]['preface'][0].abstract[0]
+                            xmlJson[standard]['preface'][0].abstract[0], false, true
                         );
                         menuItem[abstract.index] = abstract;
                     }
@@ -286,7 +320,7 @@ export default function NavIMenu() {
                             let data = {
                                 id: '_keywords',
                                 index: index++,
-                                title: 'Keywords',
+                                title: romanize(roman ++) + '. Keywords',
                                 children: []
                             };
                             menuItem[data.index] = data;
@@ -300,7 +334,7 @@ export default function NavIMenu() {
                             'preface forward'
                         );
                         const foreword = getMenuItem(
-                            xmlJson[standard]['preface'][0].foreword[0]
+                            xmlJson[standard]['preface'][0].foreword[0], false, true
                         );
                         menuItem[foreword.index] = foreword;
                         console.log(menuItem, 'menuITem');
@@ -316,7 +350,7 @@ export default function NavIMenu() {
                                 child.title[0].toLowerCase() ===
                                     'Security considerations'.toLocaleLowerCase()
                             ) {
-                                const consideration = getMenuItem(child);
+                                const consideration = getMenuItem(child, false, true);
                                 menuItem[consideration.index] = consideration;
                             }
                         }
@@ -330,7 +364,7 @@ export default function NavIMenu() {
                                 child.title[0].toLowerCase() ===
                                     'Revision history'.toLocaleLowerCase()
                             ) {
-                                const consideration = getMenuItem(child);
+                                const consideration = getMenuItem(child, false, true);
                                 menuItem[consideration.index] = consideration;
                             }
                         }
@@ -349,7 +383,7 @@ export default function NavIMenu() {
                     let data = {
                         id: '_organizations',
                         index: index++,
-                        title: 'Organizations',
+                        title: romanize(roman) + '. Organizations',
                         children: []
                     };
                     menuItem[data.index] = data;
@@ -364,7 +398,7 @@ export default function NavIMenu() {
                         'submitters'
                     );
                     const submitters = getMenuItem(
-                        xmlJson[standard]['preface'][0].submitters[0]
+                        xmlJson[standard]['preface'][0].submitters[0], false, true
                     );
                     menuItem[submitters.index] = submitters;
                 }
@@ -380,7 +414,7 @@ export default function NavIMenu() {
                             child.title[0].toLowerCase() ===
                                 'Introduction'.toLocaleLowerCase()
                         ) {
-                            const introduction = getMenuItem(child);
+                            const introduction = getMenuItem(child, false, true);
                             menuItem[introduction.index] = introduction;
                         }
                     }
@@ -395,7 +429,7 @@ export default function NavIMenu() {
                             child.title[0].toLowerCase() ===
                                 'Reference notes'.toLocaleLowerCase()
                         ) {
-                            const referenceNotes = getMenuItem(child);
+                            const referenceNotes = getMenuItem(child, false, true);
                             menuItem[referenceNotes.index] = referenceNotes;
                         }
                     }
