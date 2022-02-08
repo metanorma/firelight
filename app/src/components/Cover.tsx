@@ -10,7 +10,6 @@ export default function Cover() {
     const { xmlJson, xml } = useXmlData();
 
     if (xmlJson['iso-standard']) {
-        console.log(xmlJson['iso-standard'], 'iso');
         const bibdata: XMLNode = getChildsByTagname('bibdata', xml)[0];
         const childs = bibdata.childNodes;
 
@@ -48,7 +47,6 @@ export default function Cover() {
             </div>
         );
     } else if (xmlJson['itu-standard']) {
-        console.log(xmlJson['itu-standard'], 'itu');
         let author = '';
         let ext = '';
         let doctype = '';
@@ -63,7 +61,6 @@ export default function Cover() {
 
         if (xmlJson['itu-standard']['bibdata']) {
             const bibdata = xmlJson['itu-standard']['bibdata'][0];
-            console.log(bibdata, 'bibdata1', typeof bibdata.contributor);
 
             if (bibdata?.contributor) {
                 let authorRow = bibdata.contributor.find((child: any) => {
@@ -89,34 +86,28 @@ export default function Cover() {
                     docNumber = structuredIdetifier.docnumber[0];
                     ext += ' ' + structuredIdetifier.docnumber[0];
                 }
-                console.log(ext, 'ext');
             }
 
             if (bibdata?.date) {
                 let dateRow = bibdata.date[0];
-                console.log(dateRow, 'dateRow');
                 if (dateRow) {
                     let dates = dateRow.on[0].split('-');
                     publishedDate = '(' + dates[1] + '/' + dates[0] + ')';
-                    console.log(publishedDate, 'date');
                 }
             }
 
             if (bibdata?.title) {
-                console.log(bibdata?.title, 'title');
                 let titleRow = bibdata.title.find(
                     (child: any) => child?.$?.type === 'main'
                 );
 
                 if (titleRow?._) {
                     title = titleRow._;
-                    console.log(title, 'title');
                 }
             }
 
             if (bibdata?.keyword) {
                 keywords = bibdata.keyword.join(' ');
-                console.log(keywords, 'keywords');
             }
         }
 
@@ -249,10 +240,10 @@ export default function Cover() {
 
         if (xmlJson['ogc-standard']['bibdata']) {
             const bibdata = xmlJson['ogc-standard']['bibdata'][0];
-            console.log(bibdata, 'ogc bib');
+
             // get the title
             if (bibdata?.title) {
-                console.log(bibdata?.title, 'title');
+            
                 let titleRow = bibdata.title.find(
                     (child: any) => child?.$?.type === 'main'
                 );
@@ -261,7 +252,7 @@ export default function Cover() {
 
                 if (titleRow?._) {
                     title = titleRow._;
-                    console.log(title, 'title');
+                    
                 }
             }
             //get the editor
@@ -280,7 +271,7 @@ export default function Cover() {
 
                 if (editorRow) {
                     editor = editorRow?.person[0]?.name[0]?.completename[0];
-                    console.log(editor, 'editor');
+                    
                 }
             }
             //submission date
@@ -296,7 +287,7 @@ export default function Cover() {
 
                 if (approveRow) {
                     approvalDate = approveRow?.on[0];
-                    console.log(approvalDate, 'approvalDate');
+                    
                 }
 
                 //get the published date
@@ -309,7 +300,7 @@ export default function Cover() {
 
                 if (publishedRow) {
                     publicationDate = publishedRow?.on[0];
-                    console.log(publicationDate, 'publicationDate');
+                    // console.log(publicationDate, 'publicationDate');
                 }
 
                 //get the submission date
@@ -322,7 +313,7 @@ export default function Cover() {
 
                 if (submissionRow) {
                     submissionDate = submissionRow?.on[0];
-                    console.log(submissionDate, 'submissionDate');
+                    // console.log(submissionDate, 'submissionDate');
                 }
             }
 
@@ -331,7 +322,7 @@ export default function Cover() {
                 let externalRow: any = Object.values(
                     bibdata.docidentifier
                 ).find((child: any) => {
-                    console.log(child, 'child');
+                    // console.log(child, 'child');
                     if (child?.$?.type && child?.$?.type === 'ogc-external')
                         return true;
                     return false;
@@ -339,7 +330,7 @@ export default function Cover() {
 
                 if (externalRow) {
                     externalIdentifier = externalRow._;
-                    console.log(externalIdentifier, 'externalIdentifier');
+                    // console.log(externalIdentifier, 'externalIdentifier');
                 }
 
                 //get the internal identiier
@@ -353,31 +344,31 @@ export default function Cover() {
 
                 if (internalRow) {
                     internalIdentifier = internalRow._;
-                    console.log(internalIdentifier, 'internalIdentifier');
+                    // console.log(internalIdentifier, 'internalIdentifier');
                 }
             }
 
             //get the version for document
             if (bibdata?.edition) {
                 version = bibdata.edition[0];
-                console.log(version, 'version');
+                // console.log(version, 'version');
             }
 
             //get the doc type
             if (bibdata?.ext) {
-                console.log(bibdata?.ext, 'ext');
+                // console.log(bibdata?.ext, 'ext');
                 if (bibdata.ext[0]?.doctype && bibdata.ext[0]?.doctype[0]) {
                     doctype = bibdata.ext[0].doctype[0];
-                    console.log(doctype, 'doctype');
+                    // console.log(doctype, 'doctype');
                 }
             }
 
             //get the published state
             if (bibdata?.status) {
-                console.log(bibdata.status, 'status')
+                // console.log(bibdata.status, 'status')
                 if (bibdata.status[0]?.stage[0]) {
                     publishedState = bibdata.status[0]?.stage[0];
-                    console.log(publishedState, 'state')
+                    // console.log(publishedState, 'state')
                 }
             } 
 
