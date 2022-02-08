@@ -17,7 +17,7 @@ interface OwnProps {
 export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
     const { xml } = useXmlData();
 
-    const renderContent = useMemo(() => { console.log(xmlData, 'contentSection')
+    const renderContent = useMemo(() => { 
         const id = xmlData?.$?.id ? xmlData.$.id : '';
         let node: any = '';
         if (!id) {
@@ -44,7 +44,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
         node = getChildsById(id, xml);
 
         if (xmlData?.id && xmlData.id === '_keywords') {
-            console.log(xmlData, 'xmlData');
+            // console.log(xmlData, 'xmlData');
             return (
                 <div className="content-section" id={xmlData?.id}>
                     <h1 className="title title-3">
@@ -59,7 +59,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
         }
 
         if (xmlData?.id && xmlData.id === '_organizations') {
-            console.log(xmlData, 'xmlData');
+            // console.log(xmlData, 'xmlData');
             return (
                 <div className="content-section" id={xmlData?.id}>
                     <h1 className="title title-3">
@@ -216,7 +216,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
             }
 
             // if (titleIndex.includes('3.')) {
-            //     console.log(xmlData, 'xmldata123')
+                // console.log(xmlData, 'xmldata123')
             //     return (
             //         <div className="content-section term" id={id}>
             //             <div className="term-index">{titleIndex}</div>

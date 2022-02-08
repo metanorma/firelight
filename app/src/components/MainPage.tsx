@@ -67,22 +67,29 @@ export default function MainPage() {
             hasRoman: boolean = false
         ): any => {
             let returnData: any = {};
-            // returnData.index = data['$']['displayorder'];
-            returnData.index = index++;
+            // returnData.index = data['$']['displayorder']
+                
             if (hasIndex) {
                 if (typeof hasIndex === 'number') {
-                    returnData.titleIndex = hasIndex;
+                    returnData.index = roman + hasIndex - 2;
+                    returnData.titleIndex = hasIndex.toString();
                 } else {
                     //check whether the count is 3 or 4 and the value is available
-                    if (count === 3 && menuItem[count] !== undefined) {
+                    if (count === 3 && menuItem[roman + count - 2] !== undefined) {
                         count ++;
+                        index ++;
                     }
-                    if (count === 4 && menuItem[count] !== undefined) {
+                    if (count === 4 && menuItem[roman + count - 2] !== undefined) {
+                        console.log(menuItem[roman + count], roman + count, 'undefined')
                         count ++;
+                        index ++;
                     }
                     returnData.titleIndex = count.toString();
+                    returnData.index = index ++;
                     count++;
                 }
+            } else {
+                returnData.index = index ++;
             }
 
             if (hasRoman) {
@@ -441,7 +448,7 @@ export default function MainPage() {
                         return false;
                     });
 
-                    let normativeReferences = getMenuItem(normativeRow, 3);
+                    let normativeReferences = getMenuItem(normativeRow, 3); console.log(normativeReferences, 'normativeReferences')
                     menuItem[normativeReferences.index] = normativeReferences;
                 }
 
@@ -451,6 +458,7 @@ export default function MainPage() {
                         xmlJson[standard]['sections'][0].clause.map(
                             (child: any) => {
                                 let item = getMenuItem(child, true);
+                                console.log(item, 'section')
                                 menuItem[item.index] = item;
                             }
                         );
