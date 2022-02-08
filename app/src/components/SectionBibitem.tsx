@@ -96,6 +96,25 @@ export default function SectionReference({ data }: OwnProps) {
             }
         }
 
+        let uri = '';
+        let uriRow: any = Object.values(data.childNodes).find(
+            (child: any) => {
+                if (child?.tagName === 'uri') {
+                    console.log(child, 'uri')
+                    let row = Object.values(child?.attributes).find(
+                        (child: any) => child?.name === 'type' && child?.value === 'src'
+                    )
+                    if (row) return true;
+                    return false;
+                }
+                return false;
+            }
+        );
+
+        if (uriRow) {
+            uri = uriRow?.childNodes[0].data;
+        }
+
         return (
             <div className="bibitem" id={id}>
                 <div className="td1">[{idText}]</div>
@@ -107,6 +126,7 @@ export default function SectionReference({ data }: OwnProps) {
                             <i className="italic">{valueText}</i>
                         </>
                     )}
+                    {uri && <a className="uri" href={uri}>{uri}</a>}
                 </div>
             </div>
         );
