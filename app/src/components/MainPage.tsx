@@ -32,6 +32,7 @@ export default function MainPage() {
         let count = 1;
         let roman = 1;
 
+        const menuItem: any[] = [];
 
         const romanize = (num: number) => {
             let lookup: any = {
@@ -60,29 +61,42 @@ export default function MainPage() {
             return roman;
         };
 
-        const getMenuItem = (data: any, hasIndex: boolean = false, hasRoman: boolean = false): any => {
+        const getMenuItem = (
+            data: any,
+            hasIndex: boolean | number = false,
+            hasRoman: boolean = false
+        ): any => {
             let returnData: any = {};
             // returnData.index = data['$']['displayorder'];
             returnData.index = index++;
             if (hasIndex) {
-                returnData.titleIndex = count.toString();
-                count++;
+                if (typeof hasIndex === 'number') {
+                    returnData.titleIndex = hasIndex;
+                } else {
+                    //check whether the count is 3 or 4 and the value is available
+                    if (count === 3 && menuItem[count] !== undefined) {
+                        count ++;
+                    }
+                    if (count === 4 && menuItem[count] !== undefined) {
+                        count ++;
+                    }
+                    returnData.titleIndex = count.toString();
+                    count++;
+                }
             }
 
             if (hasRoman) {
                 let romanNum = romanize(roman);
-                roman ++;
+                roman++;
                 let clone = Object.assign({}, data);
                 clone.romanNum = romanNum;
                 returnData.data = clone;
             } else {
                 returnData.data = data;
-            }            
+            }
 
             return returnData;
         };
-
-        const menuItem: any[] = [];
 
         if (xmlJson[standard] && standard === 'itu-standard') {
             //Foreword
@@ -234,7 +248,9 @@ export default function MainPage() {
                         'abstract'
                     );
                     const abstract = getMenuItem(
-                        xmlJson[standard]['preface'][0].abstract[0], false, true
+                        xmlJson[standard]['preface'][0].abstract[0],
+                        false,
+                        true
                     );
                     menuItem[abstract.index] = abstract;
                 }
@@ -255,7 +271,7 @@ export default function MainPage() {
                                     'The following organizations submitted this Document to the Open Geospatial Consortium (OGC):',
                                     keywords
                                 ],
-                                romanNum: romanize(roman ++),
+                                romanNum: romanize(roman++)
                             },
                             index: index++
                         };
@@ -270,7 +286,9 @@ export default function MainPage() {
                         'preface forward'
                     );
                     const foreword = getMenuItem(
-                        xmlJson[standard]['preface'][0].foreword[0], false, true
+                        xmlJson[standard]['preface'][0].foreword[0],
+                        false,
+                        true
                     );
                     menuItem[foreword.index] = foreword;
                 }
@@ -285,7 +303,11 @@ export default function MainPage() {
                                 child.title[0].toLowerCase() ===
                                     'Security considerations'.toLocaleLowerCase()
                             ) {
-                                const consideration = getMenuItem(child, false, true);
+                                const consideration = getMenuItem(
+                                    child,
+                                    false,
+                                    true
+                                );
                                 menuItem[consideration.index] = consideration;
                             }
                         }
@@ -300,7 +322,11 @@ export default function MainPage() {
                                 child.title[0].toLowerCase() ===
                                     'Revision history'.toLocaleLowerCase()
                             ) {
-                                const revision = getMenuItem(child, false, true);
+                                const revision = getMenuItem(
+                                    child,
+                                    false,
+                                    true
+                                );
                                 console.log(revision, 'Revision');
                                 menuItem[revision.index] = revision;
                             }
@@ -339,7 +365,7 @@ export default function MainPage() {
                                 p: 'The following organizations submitted this Document to the Open Geospatial Consortium (OGC):',
                                 organizations
                             },
-                            romanNum: romanize(roman ++),
+                            romanNum: romanize(roman++)
                         };
 
                         menuItem[data.index] = data;
@@ -354,7 +380,9 @@ export default function MainPage() {
                             'submitters'
                         );
                         const submitters = getMenuItem(
-                            xmlJson[standard]['preface'][0].submitters[0], false, true
+                            xmlJson[standard]['preface'][0].submitters[0],
+                            false,
+                            true
                         );
                         menuItem[submitters.index] = submitters;
                     }
@@ -370,7 +398,11 @@ export default function MainPage() {
                                 child.title[0].toLowerCase() ===
                                     'Introduction'.toLocaleLowerCase()
                             ) {
-                                const introduction = getMenuItem(child, false, true);
+                                const introduction = getMenuItem(
+                                    child,
+                                    false,
+                                    true
+                                );
                                 menuItem[introduction.index] = introduction;
                             }
                         }
@@ -385,11 +417,32 @@ export default function MainPage() {
                                 child.title[0].toLowerCase() ===
                                     'Reference notes'.toLocaleLowerCase()
                             ) {
-                                const referenceNotes = getMenuItem(child, false, true);
+                                const referenceNotes = getMenuItem(
+                                    child,
+                                    false,
+                                    true
+                                );
                                 menuItem[referenceNotes.index] = referenceNotes;
                             }
                         }
                     );
+                }
+
+                //Normative References
+                if (xmlJson[standard]['bibliography']) {
+                    const normativeRow = Object.values(
+                        xmlJson[standard]['bibliography'][0]['references']
+                    ).find((child: any) => {
+                        if (
+                            child?.title[0].toLowerCase() ===
+                            'Normative references'.toLocaleLowerCase()
+                        )
+                            return true;
+                        return false;
+                    });
+
+                    let normativeReferences = getMenuItem(normativeRow, 3);
+                    menuItem[normativeReferences.index] = normativeReferences;
                 }
 
                 //sections part
@@ -420,7 +473,7 @@ export default function MainPage() {
         });
         return resultArray;
     }, [xmlJson]);
-console.log(contentSections, 'content')
+    console.log(contentSections, 'content');
     return (
         <div className="main-page">
             <Cover />
