@@ -100,7 +100,6 @@ export default function SectionReference({ data }: OwnProps) {
         let uriRow: any = Object.values(data.childNodes).find(
             (child: any) => {
                 if (child?.tagName === 'uri') {
-                    console.log(child, 'uri')
                     let row = Object.values(child?.attributes).find(
                         (child: any) => child?.name === 'type' && child?.value === 'src'
                     )
