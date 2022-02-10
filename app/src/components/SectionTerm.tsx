@@ -50,7 +50,8 @@ export default function SectionTerm({ data }: OwnProps) {
             bibitemText = reference?.value;
 
             if (origin?.childNodes) {
-              referenceIndex = origin?.childNodes[0]?.childNodes[0]?.childNodes[0]?.childNodes[0]?.data;
+              // console.log(origin.childNodes, 'origin reference')
+              // referenceIndex = origin?.childNodes[0]?.childNodes[0]?.childNodes[0]?.childNodes[0]?.data;
               // console.log(origin?.childNodes, 'origin')
             }
             
