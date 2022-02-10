@@ -71,7 +71,7 @@ export default function NavIMenu() {
             return roman;
         };
 
-        const getMenuItem = (data: any, hasIndex: boolean = false, hasRoman: boolean = false): any => {
+        const getMenuItem = (data: any, hasIndex: boolean | number = false, hasRoman: boolean = false): any => {
             const returnData: any = {};
             if (data?.references) {
                 returnData.id = data.references[0]['$']['id'];
@@ -84,10 +84,30 @@ export default function NavIMenu() {
                 return;
             }
 
+            if (hasIndex) {
+                if (typeof hasIndex === 'number') {
+                    returnData.index = roman + hasIndex - 1;
+                } else {
+                    if (count === 2 && menuItem[roman + count] !== undefined) {
+                        count ++;
+                        index ++;
+                        
+                    }
+                    if (count === 3 && menuItem[roman + count ] !== undefined) {
+                        count ++;
+                        index ++;
+                    }
+                    returnData.index = index ++;
+                    count ++;
+                }
+            } else {
+                returnData.index = index++;
+            }
+
             // if (standard === 'iso-standard') {
             if (data?.$ && data['$']['id']) returnData.id = data['$']['id'];
-            // returnData.index = data['$']['displayorder'];
-            returnData.index = index++;
+
+            
             returnData.title = insertSpace(
                 typeof data['title'][0] === 'string'
                     ? data['title'][0]
@@ -116,8 +136,13 @@ export default function NavIMenu() {
                 returnData?.title &&
                 returnData.title !== 'Foreword' &&
                 returnData.title !== 'Introduction'
-            ) {
-                returnData.title = `${++count} ${returnData.title}`;
+            ) { 
+                if (typeof hasIndex === 'number') {
+                    returnData.title = `${hasIndex} ${returnData.title}`;
+                } else {
+                    returnData.title = `${count} ${returnData.title}`;
+                }
+                    
             }
 
             if (
@@ -435,6 +460,23 @@ export default function NavIMenu() {
                     }
                 );
             }
+            //Normative References
+            if (xmlJson[standard]['bibliography']) {
+                const normativeRow = Object.values(
+                    xmlJson[standard]['bibliography'][0]['references']
+                ).find(
+                    (child: any) => {
+                        if (child?.title[0].toLowerCase() === 'Normative references'.toLocaleLowerCase())
+                            return true;
+                        return false;
+                    }
+                );
+                
+                let normaitveReferences = getMenuItem(normativeRow, 3);
+                console.log(normaitveReferences , 'normative')
+                menuItem[normaitveReferences.index] = normaitveReferences;
+                console.log(menuItem, 'normative menuItem')
+            }
 
 
             //sections part
@@ -452,7 +494,6 @@ export default function NavIMenu() {
             //annex part
             if (xmlJson[standard]['annex']) {
                 xmlJson[standard]['annex'].map((child: any) => {
-                    // console.log(child, 'annex');
                     let item = getMenuItem(child);
                     menuItem[item.index] = item;
                 });
