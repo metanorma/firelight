@@ -17,7 +17,7 @@ interface OwnProps {
 export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
     const { xml } = useXmlData();
 
-    const renderContent = useMemo(() => { 
+    const renderContent = useMemo(() => {
         const id = xmlData?.$?.id ? xmlData.$.id : '';
         let node: any = '';
         if (!id) {
@@ -169,7 +169,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                 </>
             );
         } else {
-            if (titleIndex === '3') {
+            if (titleIndex === '3' || titleIndex === '4') {
                 let title = xmlData.title[0];
                 title = `${titleIndex} ${title}`;
                 if (node) {
@@ -216,7 +216,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
             }
 
             // if (titleIndex.includes('3.')) {
-                // console.log(xmlData, 'xmldata123')
+            // console.log(xmlData, 'xmldata123')
             //     return (
             //         <div className="content-section term" id={id}>
             //             <div className="term-index">{titleIndex}</div>
@@ -238,6 +238,75 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                     if (xmlData.title[0]?.em) {
                         title = `${title} ${xmlData?.title[0].em[0]}`;
                     }
+                }
+            }
+
+            if (xmlData?.preferred) {
+                let titleContent = '';
+                let termSource: any[] = [];
+                if (xmlData.preferred[0]?.expression) {
+                    if (xmlData.preferred[0].expression[0]?.name)
+                        titleContent =
+                            xmlData.preferred[0].expression[0]?.name[0];
+                }
+
+                if (titleContent) title += ' ' + titleContent;
+
+                if (xmlData?.termsource) {
+                    if (xmlData.termsource.length > 0) {
+                        xmlData.termsource.map((child: any, index: number) => {
+                            if (child?.origin) {
+                                let bibitem = child.origin[0]?.$?.bibitem;
+                                let text = child.origin[0]?._;
+                                termSource.push({
+                                    bibitem: bibitem,
+                                    text: text
+                                });
+                            }
+                        });
+                    }
+                }
+                
+                if (node) {
+                    Object.values(node?.childNodes).map(
+                        (child: any, index: number) => {
+                            if (
+                                child?.tagName === 'preferred' ||
+                                child?.tagName === 'termsource'
+                            )
+                                delete node.childNodes[index];
+                        }
+                    );
+
+                    return (
+                        <div className="content-section" id={id}>
+                            <h1 className="title title-3">{title}</h1>
+                            <DisplayNode data={node.childNodes} />
+                            {termSource?.length > 0 && (
+                                <div className="termsource">
+                                    [ SOURCE{': '}
+                                    {termSource.map(
+                                        (child: any, index: number) => (
+                                            <>
+                                                {index !== 0 && ';'}
+                                                <a
+                                                    className="bibtext"
+                                                    href={
+                                                        child?.bibitemid
+                                                            ? `#${child.bibitemid}`
+                                                            : ''
+                                                    }
+                                                >
+                                                    {child?.text ?  child?.text : ''}
+                                                </a>
+                                            </>
+                                        )
+                                    )}{' '}
+                                    ]
+                                </div>
+                            )}
+                        </div>
+                    );
                 }
             }
 
