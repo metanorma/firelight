@@ -473,9 +473,15 @@ export default function NavIMenu() {
                 );
                 
                 let normaitveReferences = getMenuItem(normativeRow, 3);
-                console.log(normaitveReferences , 'normative')
                 menuItem[normaitveReferences.index] = normaitveReferences;
-                console.log(menuItem, 'normative menuItem')
+            }
+
+            // terms and definitions
+            if (xmlJson[standard]['sections']) {
+                if (xmlJson[standard]['sections'][0]?.terms) {
+                    let terms = getMenuItem(xmlJson[standard]['sections'][0]?.terms[0], 4);
+                    menuItem[terms.index] = terms;
+                }
             }
 
 
