@@ -31,7 +31,8 @@ export default function SectionTerm({ data }: OwnProps) {
         let indexNumber = '';
 
         if (termSource?.childNodes) {
-            let origin: any = Object.values(termSource.childNodes).find(
+          console.log(termSource.childNodes, 'term child')
+            let origin: any = Object.values(termSource?.childNodes).find(
               (child: any) => child?.tagName === 'origin'
             )
             
@@ -48,7 +49,11 @@ export default function SectionTerm({ data }: OwnProps) {
             )
             bibitemText = reference?.value;
 
-            referenceIndex = origin?.childNodes[0].childNodes[0].childNodes[0].childNodes[0].data;
+            if (origin?.childNodes) {
+              referenceIndex = origin?.childNodes[0]?.childNodes[0]?.childNodes[0]?.childNodes[0]?.data;
+              // console.log(origin?.childNodes, 'origin')
+            }
+            
 
             let modification: any = Object.values(termSource.childNodes).find(
               (child: any) => child?.tagName === 'modification'
