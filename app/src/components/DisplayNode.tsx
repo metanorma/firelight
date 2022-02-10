@@ -53,6 +53,7 @@ import SectionFn from './SectionFn';
 import SectionAdmonition from './SectionAdmonition';
 import SectionFormula from './SectionFormula';
 import SectionTt from './SectionTt';
+import VerbalDefinition from './VerbalDefinition';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 interface OwnProps {
     data: any;
@@ -238,6 +239,9 @@ export default function DisplayNode({ data }: OwnProps) {
 
                 case 'formula':
                     return <SectionFormula data={item} key={index} />;
+
+                case 'verbaldefinition':
+                    return <VerbalDefinition data={item} key={index} />;
             }
         });
     }, [data]);
