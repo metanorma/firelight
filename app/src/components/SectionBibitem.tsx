@@ -2,6 +2,8 @@
 
 import { useMemo } from 'react';
 import DisplayNode, { XMLNode } from './DisplayNode';
+import SectionFormattedRef from './SectionFormattedRef';
+import { useXmlData } from '../context';
 import './SectionBibitem.css';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -12,6 +14,8 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function SectionReference({ data }: OwnProps) {
+    const { xmlJson } = useXmlData();
+
     const renderContent = useMemo(() => {
         const attrs: any = data.attributes;
         const idRow: any = Object.values(attrs).find(
@@ -25,6 +29,21 @@ export default function SectionReference({ data }: OwnProps) {
             (child: any) => child?.tagName === 'docidentifier'
         );
         let idText = docidentifier?.childNodes[0].data;
+
+        let formattedRef: any = Object.values(childs).find((data: any) => {
+            return data?.tagName === 'formattedref';
+        });
+
+        if (xmlJson['ogc-standard'] && formattedRef) {
+            return (
+                <div className="bibitem" id={id}>
+                    <div className="td1">{idText}</div>
+                    <div className="td2">
+                        <SectionFormattedRef data={formattedRef} />
+                    </div>
+                </div>
+            );
+        }
 
         let titleChild: any = Object.values(childs).find((child: any) => {
             if (child?.tagName !== 'title') return false;
@@ -69,9 +88,6 @@ export default function SectionReference({ data }: OwnProps) {
         }
         let formattedText = '';
         if (!valueText) {
-            let formattedRef: any = Object.values(childs).find((data: any) => {
-                return data?.tagName === 'formattedref';
-            });
 
             if (formattedRef) {
                 let emRow: any = Object.values(formattedRef.childNodes).find(
@@ -97,18 +113,17 @@ export default function SectionReference({ data }: OwnProps) {
         }
 
         let uri = '';
-        let uriRow: any = Object.values(data.childNodes).find(
-            (child: any) => {
-                if (child?.tagName === 'uri') {
-                    let row = Object.values(child?.attributes).find(
-                        (child: any) => child?.name === 'type' && child?.value === 'src'
-                    )
-                    if (row) return true;
-                    return false;
-                }
+        let uriRow: any = Object.values(data.childNodes).find((child: any) => {
+            if (child?.tagName === 'uri') {
+                let row = Object.values(child?.attributes).find(
+                    (child: any) =>
+                        child?.name === 'type' && child?.value === 'src'
+                );
+                if (row) return true;
                 return false;
             }
-        );
+            return false;
+        });
 
         if (uriRow) {
             uri = uriRow?.childNodes[0].data;
@@ -116,7 +131,7 @@ export default function SectionReference({ data }: OwnProps) {
 
         return (
             <div className="bibitem" id={id}>
-                <div className="td1">[{idText}]</div>
+                <div className="td1"> {idText.includes('[') ? idText : `[${idText}]`}</div>
                 <div className="td2">
                     {' '}
                     {formattedText ? formattedText : ''}
@@ -125,7 +140,11 @@ export default function SectionReference({ data }: OwnProps) {
                             <i className="italic">{valueText}</i>
                         </>
                     )}
-                    {uri && <a className="uri" href={uri}>{uri}</a>}
+                    {uri && (
+                        <a className="uri" href={uri}>
+                            {uri}
+                        </a>
+                    )}
                 </div>
             </div>
         );
