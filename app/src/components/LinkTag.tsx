@@ -15,7 +15,11 @@ export default function LinkTag({ data }: OwnProps) {
         const attr = data?.attributes;
         const child = data?.childNodes;
         const attrs: any = {};
-        attrs.href = attr[0].value;
+        let target: any = Object.values(attr).find(
+          (child: any) => child?.name === 'target'
+        );
+
+        attrs.href = target?.value;
         let value = '';
         if(child.length && child[0].data) value = child[0].data;
         if (!value) {
