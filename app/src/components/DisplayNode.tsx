@@ -54,6 +54,7 @@ import SectionAdmonition from './SectionAdmonition';
 import SectionFormula from './SectionFormula';
 import SectionTt from './SectionTt';
 import VerbalDefinition from './VerbalDefinition';
+import SectionFormmatedRef from './SectionFormattedRef';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 interface OwnProps {
     data: any;
@@ -242,6 +243,9 @@ export default function DisplayNode({ data }: OwnProps) {
 
                 case 'verbaldefinition':
                     return <VerbalDefinition data={item} key={index} />;
+
+                case 'formmatedref':
+                    return <SectionFormmatedRef data={item} key={index} />;
             }
         });
     }, [data]);
