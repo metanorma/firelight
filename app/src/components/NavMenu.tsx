@@ -488,6 +488,23 @@ export default function NavIMenu() {
                     menuItem[item.index] = item;
                 });
             }
+
+            //Bibliography part               
+            if (xmlJson[standard]['bibliography']) {
+                const bibliographyRow = Object.values(
+                    xmlJson[standard]['bibliography'][0]['references']
+                ).find((child: any) => {
+                    if (
+                        child?.title[0].toLowerCase() ===
+                        'Bibliography'.toLocaleLowerCase()
+                    )
+                        return true;
+                    return false;
+                });
+
+                let bibliographyReferences = getMenuItem(bibliographyRow); 
+                menuItem[bibliographyReferences.index] = bibliographyReferences;
+            }
         }
 
         return menuItem;
