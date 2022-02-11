@@ -169,6 +169,37 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                 </>
             );
         } else {
+            if (node?.tagName === 'annex') {
+                let title = `Annex ${titleIndex} (Normative) ` + xmlData.title[0];
+                
+                if (node) {
+                    Object.values(node?.childNodes).map(
+                        (child: any, index: number) => {
+                            if (child?.tagName === 'title')
+                                delete node.childNodes[index];
+                        }
+                    );
+                    return (
+                        <div className="content-section" id={id}>
+                            <h1 className="title title-3">{title}</h1>
+                            <DisplayNode data={node.childNodes} />
+                            {xmlData?.clause?.length > 0 &&
+                                xmlData.clause.map(
+                                    (child: any, index: number) => (
+                                        <ContentSection
+                                            key={index}
+                                            xmlData={child}
+                                            titleIndex={`${titleIndex}.${
+                                                index + 1
+                                            }`}
+                                        />
+                                    )
+                                )}
+                        </div>
+                    );
+                }
+            }
+
             if (titleIndex === '3' || titleIndex === '4') {
                 let title = xmlData.title[0];
                 title = `${titleIndex} ${title}`;
@@ -305,6 +336,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                                     ]
                                 </div>
                             )}
+
                         </div>
                     );
                 }
