@@ -31,6 +31,7 @@ export default function MainPage() {
         let index = 0;
         let count = 1;
         let roman = 1;
+        let annex = 0;
 
         const menuItem: any[] = [];
 
@@ -64,7 +65,8 @@ export default function MainPage() {
         const getMenuItem = (
             data: any,
             hasIndex: boolean | number = false,
-            hasRoman: boolean = false
+            hasRoman: boolean = false,
+            isAnnex: boolean = false
         ): any => {
             let returnData: any = {};
             // returnData.index = data['$']['displayorder']
@@ -80,7 +82,6 @@ export default function MainPage() {
                         index ++;
                     }
                     if (count === 4 && menuItem[roman + count - 2] !== undefined) {
-                        console.log(menuItem[roman + count], roman + count, 'undefined')
                         count ++;
                         index ++;
                     }
@@ -100,6 +101,11 @@ export default function MainPage() {
                 returnData.data = clone;
             } else {
                 returnData.data = data;
+            }
+
+            if (isAnnex) {
+                returnData.titleIndex = String.fromCharCode(65 + annex);
+                annex ++;
             }
 
             return returnData;
@@ -247,13 +253,8 @@ export default function MainPage() {
 
         if (standard === 'ogc-standard' && xmlJson[standard]) {
             if (xmlJson[standard]['preface']) {
-                console.log(xmlJson[standard]['preface'], 'preface');
                 //abstract part
                 if (xmlJson[standard]['preface'][0]?.abstract) {
-                    console.log(
-                        xmlJson[standard]['preface'][0]?.abstract,
-                        'abstract'
-                    );
                     const abstract = getMenuItem(
                         xmlJson[standard]['preface'][0].abstract[0],
                         false,
@@ -264,10 +265,6 @@ export default function MainPage() {
 
                 //keywords part
                 if (xmlJson[standard]['bibdata'][0]?.keyword) {
-                    console.log(
-                        xmlJson[standard]['bibdata'][0]?.keyword,
-                        'keyword'
-                    );
                     if (xmlJson[standard]['bibdata'][0]?.keyword?.length > 0) {
                         const keywords =
                             xmlJson[standard]['bibdata'][0]?.keyword.join(' ');
@@ -288,10 +285,6 @@ export default function MainPage() {
 
                 //preface part(foreword)
                 if (xmlJson[standard]['preface'][0]?.foreword) {
-                    console.log(
-                        xmlJson[standard]['preface'][0]?.foreword,
-                        'preface forward'
-                    );
                     const foreword = getMenuItem(
                         xmlJson[standard]['preface'][0].foreword[0],
                         false,
@@ -334,7 +327,6 @@ export default function MainPage() {
                                     false,
                                     true
                                 );
-                                console.log(revision, 'Revision');
                                 menuItem[revision.index] = revision;
                             }
                         }
@@ -343,10 +335,6 @@ export default function MainPage() {
 
                 //submitting organizations
                 if (xmlJson[standard]['bibdata'][0]?.contributor) {
-                    console.log(
-                        xmlJson[standard]['bibdata'][0]?.contributor,
-                        'contributor'
-                    );
 
                     if (
                         xmlJson[standard]['bibdata'][0]?.contributor?.length > 0
@@ -382,10 +370,6 @@ export default function MainPage() {
                 //submission part
                 if (xmlJson[standard]['preface']) {
                     if (xmlJson[standard]['preface'][0]?.submitters) {
-                        console.log(
-                            xmlJson[standard]['preface'][0]?.submitters,
-                            'submitters'
-                        );
                         const submitters = getMenuItem(
                             xmlJson[standard]['preface'][0].submitters[0],
                             false,
@@ -448,7 +432,7 @@ export default function MainPage() {
                         return false;
                     });
 
-                    let normativeReferences = getMenuItem(normativeRow, 3); console.log(normativeReferences, 'normativeReferences')
+                    let normativeReferences = getMenuItem(normativeRow, 3); 
                     menuItem[normativeReferences.index] = normativeReferences;
                 }
 
@@ -466,7 +450,6 @@ export default function MainPage() {
                         xmlJson[standard]['sections'][0].clause.map(
                             (child: any) => {
                                 let item = getMenuItem(child, true);
-                                console.log(item, 'section')
                                 menuItem[item.index] = item;
                             }
                         );
@@ -476,8 +459,7 @@ export default function MainPage() {
                 //annex part
                 if (xmlJson[standard]['annex']) {
                     xmlJson[standard]['annex'].map((child: any) => {
-                        // console.log(child, 'annex');
-                        let item = getMenuItem(child);
+                        let item = getMenuItem(child, false, false, true);
                         menuItem[item.index] = item;
                     });
                 }
@@ -489,7 +471,7 @@ export default function MainPage() {
         });
         return resultArray;
     }, [xmlJson]);
-    console.log(contentSections, 'content');
+    
     return (
         <div className="main-page">
             <Cover />
