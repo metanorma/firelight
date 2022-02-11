@@ -71,7 +71,7 @@ export default function NavIMenu() {
             return roman;
         };
 
-        const getMenuItem = (data: any, hasIndex: boolean | number = false, hasRoman: boolean = false): any => {
+        const getMenuItem = (data: any, hasIndex: boolean | number = false, hasRoman: boolean = false, isAnnex: boolean = false): any => {
             const returnData: any = {};
             if (data?.references) {
                 returnData.id = data.references[0]['$']['id'];
@@ -176,6 +176,8 @@ export default function NavIMenu() {
                         if (standard === 'ogc-standard') {
                             letter = String.fromCharCode(annexCount - 1);
                         }
+                    } else if (isAnnex) {
+                        letter = String.fromCharCode(annexCount);
                     }
 
                     if (letter)
@@ -188,6 +190,10 @@ export default function NavIMenu() {
 
             if (hasRoman) {
                 returnData.title = romanize(roman ++) + ". " + returnData.title;
+            }
+
+            if (isAnnex) {
+                returnData.title = 'Annex ' + String.fromCharCode(annexCount ++) + ' (Normative) ' + returnData.title;
             }
 
             return returnData;
@@ -319,10 +325,6 @@ export default function NavIMenu() {
                 if (xmlJson[standard]['preface'][0]?.clause) {
                     //abstract part
                     if (xmlJson[standard]['preface'][0]?.abstract) {
-                        console.log(
-                            xmlJson[standard]['preface'][0]?.abstract,
-                            'abstract'
-                        );
                         const abstract = getMenuItem(
                             xmlJson[standard]['preface'][0].abstract[0], false, true
                         );
@@ -331,10 +333,6 @@ export default function NavIMenu() {
 
                     //keywords part
                     if (xmlJson[standard]['bibdata'][0]?.keyword) {
-                        console.log(
-                            xmlJson[standard]['bibdata'][0]?.keyword,
-                            'keyword'
-                        );
                         if (
                             xmlJson[standard]['bibdata'][0]?.keyword?.length > 0
                         ) {
@@ -354,21 +352,15 @@ export default function NavIMenu() {
 
                     //preface part(foreword)
                     if (xmlJson[standard]['preface'][0]?.foreword) {
-                        console.log(
-                            xmlJson[standard]['preface'][0]?.foreword,
-                            'preface forward'
-                        );
                         const foreword = getMenuItem(
                             xmlJson[standard]['preface'][0].foreword[0], false, true
                         );
                         menuItem[foreword.index] = foreword;
-                        console.log(menuItem, 'menuITem');
                     }
 
                     //security considerations
                     xmlJson[standard]['preface'][0]?.clause.map(
                         (child: any) => {
-                            // console.log(child, 'child');
                             if (
                                 child?.title &&
                                 child.title[0] &&
@@ -399,10 +391,6 @@ export default function NavIMenu() {
 
             //submitting organizations
             if (xmlJson[standard]['bibdata'][0]?.contributor) {
-                console.log(
-                    xmlJson[standard]['bibdata'][0]?.contributor,
-                    'contributor'
-                );
 
                 if (xmlJson[standard]['bibdata'][0]?.contributor?.length > 0) {
                     let data = {
@@ -418,10 +406,6 @@ export default function NavIMenu() {
             //submission part
             if (xmlJson[standard]['preface']) {
                 if (xmlJson[standard]['preface'][0]?.submitters) {
-                    console.log(
-                        xmlJson[standard]['preface'][0]?.submitters,
-                        'submitters'
-                    );
                     const submitters = getMenuItem(
                         xmlJson[standard]['preface'][0].submitters[0], false, true
                     );
@@ -500,7 +484,7 @@ export default function NavIMenu() {
             //annex part
             if (xmlJson[standard]['annex']) {
                 xmlJson[standard]['annex'].map((child: any) => {
-                    let item = getMenuItem(child);
+                    let item = getMenuItem(child, false, false, true);
                     menuItem[item.index] = item;
                 });
             }
