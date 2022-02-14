@@ -400,6 +400,38 @@ span.doc-title {
     border-radius: 25px;
 }
 
+ogc-coverpage-metadata .ogc-value,
+.ogc-coverpage-alt-formats .ogc-value {
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+.ogc-coverpage-metadata,
+.ogc-coverpage-alt-formats {
+    font-size: 12px;
+    font-family: 'Overpass', sans-serif;
+    margin-left: 1em;
+    text-align: left;
+}
+
+.ogc-coverpage-metadata .ogc-label,
+.ogc-coverpage-alt-formats .ogc-label {
+    font-size: 12px;
+    padding: 0;
+}
+.ogc-coverpage-alt-formats span {
+    display: inline;
+    text-align: left;
+}
+
+.ogc-wrapper-top-bottom {
+    width: 0;
+    height: 0;
+    border-top: 100px solid #00335b;
+    border-right: 100px solid transparent;
+    position: absolute;
+}
+
 .ogc-coverpage-warning h1 {
     font-family: "Overpass",sans-serif;
     font-weight: 300;
