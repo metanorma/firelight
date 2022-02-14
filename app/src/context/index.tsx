@@ -9,6 +9,7 @@ export type XmlData = {
     title: string;
     figureIndex: number;
     setFigureIndex: (a: number) => void;
+    standard: string;
 };
 
 const contextDefaultValues: XmlData = {
@@ -16,7 +17,8 @@ const contextDefaultValues: XmlData = {
     xmlJson: {},
     title: '',
     figureIndex: 0,
-    setFigureIndex: (a: number) => {}
+    setFigureIndex: (a: number) => {},
+    standard: '',
 };
 
 export const XmlContext = createContext<XmlData>({} as XmlData);
@@ -45,6 +47,7 @@ const XmlProvider: React.FC = ({ children }) => {
     const [title, setTitle] = useState<string>('');
     const [xmlJson, setXmlJson] = useState<any>({});
     const [figureIndex, setFigureIndex] = useState<number>(0);
+    const [standard, setStandard] = useState<string>('iso-standard');
 
     useEffect(() => {
         axios
@@ -64,6 +67,8 @@ const XmlProvider: React.FC = ({ children }) => {
                         response.data,
                         'application/xml'
                     );
+
+                    
 
                     const bibdata: XMLNode =
                         xmlDoc.getElementsByTagName('bibdata')[0];
@@ -105,6 +110,9 @@ const XmlProvider: React.FC = ({ children }) => {
                     parseString(response.data, {}, function (err, result) {
                         console.log(result, 'jsonXml');
                         setXmlJson(result);
+                        if (result['iso-standard']) setStandard('iso-standard');
+                        else if (result['itu-standard']) setStandard('itu-standard');
+                        else if (result['ogc-standard']) setStandard('ogc-standard');
                     });
 
                     // set the index of figure to zero.
@@ -120,7 +128,7 @@ const XmlProvider: React.FC = ({ children }) => {
 
     return (
         <XmlContext.Provider
-            value={{ xml, xmlJson, title, figureIndex, setFigureIndex }}
+            value={{ xml, xmlJson, title, figureIndex, setFigureIndex, standard }}
         >
             {children}
         </XmlContext.Provider>
