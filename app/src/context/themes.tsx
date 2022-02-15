@@ -6,6 +6,7 @@ export const IsoTheme = {
     darkerRed: '#d72d18',
     itemColor: 'white',
     itemBoxShadow: 'inset -5px 0px 10px -5px #d72d18 !important',
+    titleFontWeight: '500',
 };
 
 export const ItuTheme = {
@@ -13,7 +14,8 @@ export const ItuTheme = {
     textColor: 'black',
     darkerRed: '#da1d52',
     itemColor: 'white',
-    itemBoxShadow: 'inset -5px 0px 10px -5px #da1d52 !important',  
+    itemBoxShadow: 'inset -5px 0px 10px -5px #da1d52 !important',
+    titleFontWeight: '400',  
 };
 
 export const OgcTheme = {
@@ -22,6 +24,7 @@ export const OgcTheme = {
     darkerRed: '#00335b',
     itemColor: 'white',
     itemBoxShadow: 'inset -5px 0px 10px -5px #00335b !important',
+    titleFontWeight: '300',
 };
 
 export const GlobalStyle = createGlobalStyle`
@@ -30,6 +33,7 @@ export const GlobalStyle = createGlobalStyle`
     --colour--bsi-darker-red: ${(props: any) => props.theme.darkerRed};
     --col--item-active: ${(props: any) => props.theme.itemColor};
     --col--item-active-boxshadow: ${(props: any) => props.theme.itemBoxShadow};
+    --title-font-weight: ${(props: any) => props.theme.titleFontWeight};
   }
 
   body {
