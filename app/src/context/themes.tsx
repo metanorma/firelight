@@ -2,7 +2,10 @@ import { createGlobalStyle } from 'styled-components';
 
 export const IsoTheme = {
     backgroundColor: 'white',
-    textColor: 'black'
+    textColor: 'black',
+    darkerRed: '#d72d18',
+    itemColor: 'white',
+    itemBoxShadow: 'inset -5px 0px 10px -5px #d72d18 !important',
 };
 
 export const ItuTheme = {
