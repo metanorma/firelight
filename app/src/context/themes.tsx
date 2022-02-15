@@ -13,7 +13,10 @@ export const IsoTheme = {
     
     //note part
     noteBGColor: '#fff495',
-    noteColor: 'black'
+    noteColor: 'black',
+
+    //table part
+    table: '',
 };
 
 export const ItuTheme = {
@@ -28,7 +31,11 @@ export const ItuTheme = {
     thBgColor: 'inherit',
     //note part
     noteBGColor: '#ffca3a',
-    noteColor: 'black'
+    noteColor: 'black',
+
+    //table part
+    // table: 'table:not(.biblio), table:not(.biblio) th, table:not(.biblio)table:not(.biblio) td, tr {border: none !important;} table:not(.biblio) tr:nth-child(odd) {background: #f6f8fa;} table:not(.biblio) tr:nth-child(even) {background: #f1f8ff;}',
+    table: 'table {border-collapse: collapse;border-spacing: 0;} table, table th, table td, tr {border: none !important;} table tr:nth-child(odd) {background: #f6f8fa;} table tr:nth-child(even) {background: #f1f8ff;}'
 };
 
 export const OgcTheme = {
@@ -43,7 +50,10 @@ export const OgcTheme = {
     thBgColor: '#5d99d6',
     //note part
     noteBGColor: '#fff8bb',
-    noteColor: '#7d760b'
+    noteColor: '#7d760b',
+
+    //table part
+    table: 'table, table th, table td { border: 1px solid black;font-size: 0.95em;}'
 };
 
 export const GlobalStyle = createGlobalStyle`
@@ -71,4 +81,8 @@ export const GlobalStyle = createGlobalStyle`
   table td, table th {
     padding: 1em;
   }
+
+  
+  ${(props: any) => props.theme.table}
+  
 `;
