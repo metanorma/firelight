@@ -1,6 +1,6 @@
 .title {
   font-size: 18px;
-  font-weight: bold;
+  font-weight: var(--title-font-weight);
   margin: 20px 0;
 }
 
