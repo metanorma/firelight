@@ -150,7 +150,7 @@ export default function NavIMenu() {
                 hasIndex &&
                 returnData?.title === 'Introduction'
             ) {
-                returnData.title = `${++count} ${returnData.title}`;
+                returnData.title = `${count} ${returnData.title}`;
             }
 
             returnData.children = [];
@@ -470,7 +470,7 @@ export default function NavIMenu() {
 
 
             //sections part
-            if (xmlJson[standard]['sections']) {
+            if (xmlJson[standard]['sections']) { console.log(xmlJson[standard]['sections'], 'clauses')
                 if (xmlJson[standard]['sections'][0]?.clause) {
                     xmlJson[standard]['sections'][0].clause.map(
                         (child: any) => {
@@ -506,7 +506,7 @@ export default function NavIMenu() {
                 menuItem[bibliographyReferences.index] = bibliographyReferences;
             }
         }
-
+console.log(menuItem, 'menuItem');
         return menuItem;
     }, [xmlJson]);
 
