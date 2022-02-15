@@ -1,21 +1,20 @@
 .term-note {
-    background-color: #fff495;
-    color: #47430c;
+    background-color: var(--note-bg-color);
+    color: var(--note-color);
     padding: 0.5em;
     margin: 1.5em 0 1.5em 0;
     text-align: left;
-  }
+}
 
-  .term-note > .p {
+.term-note > .p {
     margin-block-start: 0;
     margin-block-end: 0;
-  } 
-  
+}
 
-  .term > .term-note {
-    background-color: #fff495;
-    color: #47430c;
+.term > .term-note {
+    background-color: var(--note-bg-color);
+    color: var(--note-color);
     padding: 0.5em;
     margin: 0.5em 0 0.5em 0.5em;
     text-align: left;
-  }
+}
