@@ -30,6 +30,11 @@
 
 .active {
   background-color: var(--colour--bsi-darker-red);
+  color: 'white';
+}
+
+.active > .menu-text {
+  color: var(--color--ogc-item);
 }
 
 .item-active {

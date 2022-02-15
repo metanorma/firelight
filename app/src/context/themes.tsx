@@ -16,6 +16,12 @@ export const OgcTheme = {
 };
 
 export const GlobalStyle = createGlobalStyle`
+
+  :root {
+    --colour--bsi-darker-red: #00335b;
+    --color--ogc-item: white;
+  }
+
   body {
     color: ${(props: any) => props.theme.textColor};
     background-color: ${(props: any) => props.theme.backgroundColor};
