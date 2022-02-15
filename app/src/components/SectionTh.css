@@ -4,4 +4,5 @@
     padding-left: 15px;
     border: 1px solid black;
     border-collapse: collapse;
+    background-color: var(--th-bg-color);
 }
