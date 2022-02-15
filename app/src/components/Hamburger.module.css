@@ -46,7 +46,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .hamburger--active {
-    background-color: var(--colour--bsi-red);
+    background-color: var(--colour--bsi-darker-red);
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
