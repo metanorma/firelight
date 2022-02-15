@@ -34,7 +34,8 @@
 }
 
 .active > .menu-text {
-  color: var(--color--ogc-item);
+  color: var(--col--item-active);
+  box-shadow: var(--col--item-active-boxshadow);
 }
 
 .item-active {

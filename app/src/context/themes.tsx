@@ -7,19 +7,26 @@ export const IsoTheme = {
 
 export const ItuTheme = {
     backgroundColor: 'white',
-    textColor: 'black'
+    textColor: 'black',
+    darkerRed: '#da1d52',
+    itemColor: 'white',
+    itemBoxShadow: 'inset -5px 0px 10px -5px #da1d52 !important',  
 };
 
 export const OgcTheme = {
     backgroundColor: 'white',
-    textColor: '#00335b'
+    textColor: '#00335b',
+    darkerRed: '#00335b',
+    itemColor: 'white',
+    itemBoxShadow: 'inset -5px 0px 10px -5px #00335b !important',
 };
 
 export const GlobalStyle = createGlobalStyle`
 
   :root {
-    --colour--bsi-darker-red: #00335b;
-    --color--ogc-item: white;
+    --colour--bsi-darker-red: ${(props: any) => props.theme.darkerRed};
+    --col--item-active: ${(props: any) => props.theme.itemColor};
+    --col--item-active-boxshadow: ${(props: any) => props.theme.itemBoxShadow};
   }
 
   body {
