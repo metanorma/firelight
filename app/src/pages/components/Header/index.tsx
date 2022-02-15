@@ -27,7 +27,7 @@ const Header = ({ generatedDate, companyName, title }: Props) => {
             </div>
             <div className="title-section">
                 <div className="coverpage">
-                    <div className="wrapper-top">
+                    <div className="wrapper-top1">
                         <div className="coverpage-doc-identity">
                             <div className="coverpage-title">
                                 <span className="title-first">
