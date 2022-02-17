@@ -10,6 +10,8 @@ export type XmlData = {
     figureIndex: number;
     setFigureIndex: (a: number) => void;
     standard: string;
+    footnote: any[];
+    setFootnote: (a: any[])  => void;
 };
 
 const contextDefaultValues: XmlData = {
@@ -19,6 +21,8 @@ const contextDefaultValues: XmlData = {
     figureIndex: 0,
     setFigureIndex: (a: number) => {},
     standard: '',
+    footnote: [],
+    setFootnote: (a: any[]) => [],
 };
 
 export const XmlContext = createContext<XmlData>({} as XmlData);
@@ -48,19 +52,18 @@ const XmlProvider: React.FC = ({ children }) => {
     const [xmlJson, setXmlJson] = useState<any>({});
     const [figureIndex, setFigureIndex] = useState<number>(0);
     const [standard, setStandard] = useState<string>('iso-standard');
+    const [footnote, setFootnote] = useState<any[]>([]);
 
     useEffect(() => {
         axios
             .get(ogcUrl1, {
                 headers: {
-                    Accept: 'application/xml'
+                    Accept: 'application/xml'                                                                                           
                 }
             })
             .then((response) => {
-                console.log(response.data, 'xml');
                 if (response.data) {
                     localStorage.clear();
-                    // localStorage.setItem('xml', response.data);
                     setXml(response.data);
 
                     const xmlDoc = new DOMParser().parseFromString(
@@ -108,7 +111,6 @@ const XmlProvider: React.FC = ({ children }) => {
                     }
 
                     parseString(response.data, {}, function (err, result) {
-                        console.log(result, 'jsonXml');
                         setXmlJson(result);
                         if (result['iso-standard']) setStandard('iso-standard');
                         else if (result['itu-standard']) setStandard('itu-standard');
@@ -128,7 +130,7 @@ const XmlProvider: React.FC = ({ children }) => {
 
     return (
         <XmlContext.Provider
-            value={{ xml, xmlJson, title, figureIndex, setFigureIndex, standard }}
+            value={{ xml, xmlJson, title, figureIndex, setFigureIndex, standard, footnote, setFootnote }}
         >
             {children}
         </XmlContext.Provider>
