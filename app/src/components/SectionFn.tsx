@@ -13,6 +13,7 @@ interface OwnProps {
 
 export default function SectionFn({ data }: OwnProps) {
     const renderContent = useMemo(() => {
+        console.log(data, 'fn data');
         const attrs: any[] = data.attributes;
         const idRow = Object.values(attrs).find(
             (attr: any) => attr?.name === 'id'
@@ -24,9 +25,18 @@ export default function SectionFn({ data }: OwnProps) {
         );
         const reference = referenceRow?.value ? referenceRow.value : '';
 
-
         return (
-            <a className="fn" href={`#table${reference}`}>{reference}</a>
+            <>
+                <a className="fn" href={`#table${reference}`}>
+                    {reference}
+                </a>
+                <aside id={`table${reference}`} className="footnote">
+                    <p>
+                        <a className="foot-note-ref" href={`#table${reference}`}><sup>{reference ? reference: ''}</sup></a>
+                        <DisplayNode data={data.childNodes} />
+                    </p>                    
+                </aside>
+            </>
         );
     }, [data]);
 

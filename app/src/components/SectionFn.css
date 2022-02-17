@@ -3,3 +3,12 @@
     font-size: 0.8em;
     color: inherit;
 }
+
+.main-page {
+    position: relative;
+}
+
+.footnote {
+    position: absolute;
+    bottom: 0;
+}
