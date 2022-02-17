@@ -1,7 +1,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// import BackToTop from './BackToTop';
-// import SourceCode from './SourceCode';
+import { useState } from 'react';
+import TopButton from './TopButton';
 // import { Data } from '../data/data';
 
 // CSS is in `layout.css` because we need IDs for grid
@@ -21,6 +21,8 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 function Layout(props: OwnProps) {
+    const [visible, setVisible] = useState<boolean>(false);
+
     const {
         header,
         mainBar,
@@ -46,6 +48,23 @@ function Layout(props: OwnProps) {
     sidebarClasses.push(
         isSidebarOpen ? 'layout__sidebar--open' : 'layout__sidebar--closed'
     );
+
+    const scrolled = (e: React.UIEvent<HTMLElement, UIEvent>) => {
+        const current = e.currentTarget.scrollTop;
+
+        if (current > 300) {
+            setVisible(true);
+        } else {
+            setVisible(false);
+        }
+    };
+
+    const onClick = () => { 
+        document.getElementById('main_page')?.scrollIntoView({
+            behavior: 'smooth'
+        });
+    };
+
     return (
         <div id="layout" className={layoutClasses.join(' ')}>
             <header id="layout__header" className={headerClasses.join(' ')}>
@@ -55,7 +74,9 @@ function Layout(props: OwnProps) {
                 // onScroll={handleMainScroll}
                 id="layout__mainbar"
                 className="layout__mainbar"
+                onScroll={ e => {scrolled(e)}}
             >
+                <TopButton visible={visible} click={onClick} />
                 {/* <span id="main-top"></span> */}
                 {mainBar}
                 {/* <SourceCode code={Data.code} language="javascript" /> */}

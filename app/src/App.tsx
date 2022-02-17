@@ -27,7 +27,6 @@ function App() {
     const [isStealthTitleVisible, setStealthTitleVisible] = useState(true);
     const STEALTH_TITLE__SCROLL_THRESHOLD_PX = 500;
     const { title, standard } = useXmlData();
-console.log(standard, 'standard')
 
     const theme = useMemo(() => {  
       if (standard === 'itu-standard')

@@ -4,7 +4,6 @@ import React, { useMemo, useState, useRef } from 'react';
 import { useXmlData } from '../context';
 import ContentSection from './ContentSection';
 import Cover from './Cover';
-import TopButton from './TopButton';
 
 import { getChildsByTagname } from '../utility';
 
@@ -18,7 +17,6 @@ interface OwnProps {
 
 export default function MainPage() {
     const { xmlJson, xml, footnote } = useXmlData();
-    const [visible, setVisible] = useState<boolean>(true);
 
     // split the xml data by content section and save those as array
     const contentSections = useMemo(() => {
@@ -501,27 +499,10 @@ export default function MainPage() {
         });
         return resultArray;
     }, [xmlJson]);
-    
-    const scrolled = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-        const current = e.currentTarget.scrollTop;
-
-        if (current > 300) {
-            setVisible(true);
-        } else {
-            setVisible(false);
-        }
-    }
-
-    const onClick = () => {
-        document.getElementById('main_page')?.scrollIntoView({
-            behavior: 'smooth'
-        })
-    }
 
     return (
-        <div className="main-page" id="main_page" onScroll={ e => {scrolled(e)}}>
+        <div className="main-page" id="main_page">
             <Cover />
-            <TopButton visible={visible} click={onClick}/>
             {contentSections?.length > 0 &&
                 contentSections.map((item: any) =>
                     item?.data ? (
