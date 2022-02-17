@@ -5,6 +5,8 @@ import { useXmlData } from '../context';
 import ContentSection from './ContentSection';
 import Cover from './Cover';
 
+import { getChildsByTagname } from '../utility';
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 interface OwnProps {
@@ -14,7 +16,7 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function MainPage() {
-    const { xmlJson } = useXmlData();
+    const { xmlJson, xml, footnote } = useXmlData();
 
     // split the xml data by content section and save those as array
     const contentSections = useMemo(() => {
@@ -70,27 +72,33 @@ export default function MainPage() {
         ): any => {
             let returnData: any = {};
             // returnData.index = data['$']['displayorder']
-                
+
             if (hasIndex) {
                 if (typeof hasIndex === 'number') {
                     returnData.index = roman + hasIndex - 2;
                     returnData.titleIndex = hasIndex.toString();
                 } else {
                     //check whether the count is 3 or 4 and the value is available
-                    if (count === 3 && menuItem[roman + count - 2] !== undefined) {
-                        count ++;
-                        index ++;
+                    if (
+                        count === 3 &&
+                        menuItem[roman + count - 2] !== undefined
+                    ) {
+                        count++;
+                        index++;
                     }
-                    if (count === 4 && menuItem[roman + count - 2] !== undefined) {
-                        count ++;
-                        index ++;
+                    if (
+                        count === 4 &&
+                        menuItem[roman + count - 2] !== undefined
+                    ) {
+                        count++;
+                        index++;
                     }
                     returnData.titleIndex = count.toString();
-                    returnData.index = index ++;
+                    returnData.index = index++;
                     count++;
                 }
             } else {
-                returnData.index = index ++;
+                returnData.index = index++;
             }
 
             if (hasRoman) {
@@ -105,7 +113,7 @@ export default function MainPage() {
 
             if (isAnnex) {
                 returnData.titleIndex = String.fromCharCode(65 + annex);
-                annex ++;
+                annex++;
             }
 
             return returnData;
@@ -335,7 +343,6 @@ export default function MainPage() {
 
                 //submitting organizations
                 if (xmlJson[standard]['bibdata'][0]?.contributor) {
-
                     if (
                         xmlJson[standard]['bibdata'][0]?.contributor?.length > 0
                     ) {
@@ -432,14 +439,17 @@ export default function MainPage() {
                         return false;
                     });
 
-                    let normativeReferences = getMenuItem(normativeRow, 3); 
+                    let normativeReferences = getMenuItem(normativeRow, 3);
                     menuItem[normativeReferences.index] = normativeReferences;
                 }
 
                 // terms and definitions
                 if (xmlJson[standard]['sections']) {
                     if (xmlJson[standard]['sections'][0]?.terms) {
-                        let terms = getMenuItem(xmlJson[standard]['sections'][0]?.terms[0], 4);
+                        let terms = getMenuItem(
+                            xmlJson[standard]['sections'][0]?.terms[0],
+                            4
+                        );
                         menuItem[terms.index] = terms;
                     }
                 }
@@ -464,7 +474,7 @@ export default function MainPage() {
                     });
                 }
 
-                //Bibliography part               
+                //Bibliography part
                 if (xmlJson[standard]['bibliography']) {
                     const bibliographyRow = Object.values(
                         xmlJson[standard]['bibliography'][0]['references']
@@ -477,8 +487,9 @@ export default function MainPage() {
                         return false;
                     });
 
-                    let bibliographyReferences = getMenuItem(bibliographyRow); 
-                    menuItem[bibliographyReferences.index] = bibliographyReferences;
+                    let bibliographyReferences = getMenuItem(bibliographyRow);
+                    menuItem[bibliographyReferences.index] =
+                        bibliographyReferences;
                 }
             }
         }
@@ -487,8 +498,8 @@ export default function MainPage() {
             if (item?.data) resultArray.push(item);
         });
         return resultArray;
-    }, [xmlJson]);
-    
+    }, [xmlJson]);                                                                                                                                                                                                                                                                                                                                                                                        
+
     return (
         <div className="main-page">
             <Cover />
