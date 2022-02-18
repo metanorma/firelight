@@ -27,7 +27,7 @@ export const IsoTheme = {
 };
 
 export const ItuTheme = {
-    defaultSize: '14px',
+    defaultSize: '15x',
     backgroundColor: 'white',
     textColor: 'black',
 
