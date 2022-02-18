@@ -16,7 +16,7 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function MainPage() {
-    const { xmlJson, xml, footnote } = useXmlData();
+    const { xmlJson, xml } = useXmlData();
 
     // split the xml data by content section and save those as array
     const contentSections = useMemo(() => {

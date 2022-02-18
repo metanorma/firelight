@@ -11,3 +11,7 @@
 .footnote {
     padding: 0 15px;
 }
+
+.footnote > div > * {
+    display: inline;
+}
