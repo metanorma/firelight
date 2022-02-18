@@ -10,8 +10,6 @@ export type XmlData = {
     figureIndex: number;
     setFigureIndex: (a: number) => void;
     standard: string;
-    footnote: any[];
-    setFootnote: (a: any[])  => void;
 };
 
 const contextDefaultValues: XmlData = {
@@ -21,8 +19,6 @@ const contextDefaultValues: XmlData = {
     figureIndex: 0,
     setFigureIndex: (a: number) => {},
     standard: '',
-    footnote: [],
-    setFootnote: (a: any[]) => [],
 };
 
 export const XmlContext = createContext<XmlData>({} as XmlData);
@@ -52,11 +48,10 @@ const XmlProvider: React.FC = ({ children }) => {
     const [xmlJson, setXmlJson] = useState<any>({});
     const [figureIndex, setFigureIndex] = useState<number>(0);
     const [standard, setStandard] = useState<string>('iso-standard');
-    const [footnote, setFootnote] = useState<any[]>([]);
 
     useEffect(() => {
         axios
-            .get(ogcUrl1, {
+            .get(ogcUrl, {
                 headers: {
                     Accept: 'application/xml'                                                                                           
                 }
@@ -125,12 +120,11 @@ const XmlProvider: React.FC = ({ children }) => {
             // set the index of figure to zero.
             localStorage.setItem('figure', '0');
             localStorage.setItem('id', '');
-            console.log(localStorage.getItem('figure'), 'figure 1')
     }, []);
 
     return (
         <XmlContext.Provider
-            value={{ xml, xmlJson, title, figureIndex, setFigureIndex, standard, footnote, setFootnote }}
+            value={{ xml, xmlJson, title, figureIndex, setFigureIndex, standard }}
         >
             {children}
         </XmlContext.Provider>
