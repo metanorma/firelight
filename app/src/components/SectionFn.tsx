@@ -25,19 +25,13 @@ export default function SectionFn({ data }: OwnProps) {
         );
         const reference = referenceRow?.value ? referenceRow.value : '';
 
-        let footnote: any = localStorage.getItem('footnote');
-        
-        let num = 0;
-        if (!footnote) num = 1;
-        else num = parseInt(footnote) + 1;
-
         return (
             <>
                 <a className="fn" href={`#table${reference}`}>
                     {reference}
                 </a>
-                <aside id={`table${reference}`} className="footnote" style={{bottom:`${num  * -40 } px`}}>
-                    <p>
+                <aside id={`table${reference}`} style={{position: 'absolute', bottom:`${parseInt(reference) * -90}px`}}>
+                    <p className="footnote">
                         <a className="foot-note-ref" href={`#table${reference}`}><sup>{reference ? reference: ''}</sup></a>
                         <DisplayNode data={data.childNodes} />
                     </p>                    
