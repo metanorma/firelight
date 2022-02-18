@@ -1,37 +1,51 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const IsoTheme = {
+    defaultSize: '16px',
     backgroundColor: 'white',
     textColor: 'black',
-    
+
     //nav item part
     darkerRed: '#d72d18',
     itemColor: 'white',
     itemBoxShadow: 'inset -5px 0px 10px -5px #d72d18 !important',
     titleFontWeight: '500',
     thBgColor: 'inherit',
-    
+
     //note part
     noteBGColor: '#fff495',
     noteColor: 'black',
 
+    //title part
+    title1: '1.8em',
+    title1Weight: '300',
+    title2: '1.7em',
+    title2Weight: '400',
+
     //table part
-    table: '',
+    table: ''
 };
 
 export const ItuTheme = {
+    defaultSize: '14px',
     backgroundColor: 'white',
     textColor: 'black',
-    
+
     //nav item part
     darkerRed: '#da1d52',
     itemColor: 'white',
     itemBoxShadow: 'inset -5px 0px 10px -5px #da1d52 !important',
-    titleFontWeight: '400',  
+    titleFontWeight: '400',
     thBgColor: 'inherit',
     //note part
     noteBGColor: '#ffca3a',
     noteColor: 'black',
+
+    //title part
+    title1: '1.6em',
+    title1Weight: '300',
+    title2: '1.5em',
+    title2Weight: '400',
 
     //table part
     // table: 'table:not(.biblio), table:not(.biblio) th, table:not(.biblio)table:not(.biblio) td, tr {border: none !important;} table:not(.biblio) tr:nth-child(odd) {background: #f6f8fa;} table:not(.biblio) tr:nth-child(even) {background: #f1f8ff;}',
@@ -39,9 +53,10 @@ export const ItuTheme = {
 };
 
 export const OgcTheme = {
+    defaultSize: '16px',
     backgroundColor: 'white',
     textColor: '#00335b',
-    
+
     //nav item part
     darkerRed: '#00335b',
     itemColor: 'white',
@@ -51,6 +66,12 @@ export const OgcTheme = {
     //note part
     noteBGColor: '#fff8bb',
     noteColor: '#7d760b',
+
+    //title part
+    title1: '1.8em',
+    title1Weight: '300',
+    title2: '1.7em',
+    title2Weight: '400',
 
     //table part
     table: 'table, table th, table td { border: 1px solid black;font-size: 0.95em;}'
@@ -67,11 +88,17 @@ export const GlobalStyle = createGlobalStyle`
 
     --note-bg-color: ${(props: any) => props.theme.noteBGColor};
     --note-color: ${(props: any) => props.theme.noteColor};
+    
+    --title1-size: ${(props: any) => props.theme.title1};
+    --title1-weight: ${(props: any) => props.theme.title1Weight};
+    --title2-size: ${(props: any) => props.theme.title2};
+    --title2-weight: ${(props: any) => props.theme.title2Weight};
   }
 
-  body {
+  html, body {
     color: ${(props: any) => props.theme.textColor};
     background-color: ${(props: any) => props.theme.backgroundColor};
+    font-size: ${(props: any) => props.theme.defaultSize};
   }
 
   table {
