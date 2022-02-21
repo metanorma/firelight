@@ -101,6 +101,10 @@ export const GlobalStyle = createGlobalStyle`
     font-size: ${(props: any) => props.theme.defaultSize};
   }
 
+  main {
+    overflow-x: hidden;
+  }
+
   table {
     background-color: white !important;
   }
