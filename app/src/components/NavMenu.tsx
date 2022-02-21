@@ -119,11 +119,11 @@ export default function NavIMenu() {
                 returnData?.id.toLowerCase().includes('annex')
             ) {
                 if (standard === 'ogc-standard') {
-                    returnData.title =
-                        'Annex' +
-                        String.fromCharCode(annexCount++) +
-                        ' (Normative) ' +
-                        returnData.title;
+                    // returnData.title =
+                    //     'Annex' +
+                    //     String.fromCharCode(annexCount++) +
+                    //     ' (Normative) ' +
+                    //     returnData.title;
                 } else {
                     returnData.title =
                         returnData.id + ' (Normative) ' + returnData.title;
@@ -485,6 +485,7 @@ export default function NavIMenu() {
             if (xmlJson[standard]['annex']) {
                 xmlJson[standard]['annex'].map((child: any) => {
                     let item = getMenuItem(child, false, false, true);
+                    console.log(item, 'annex')
                     menuItem[item.index] = item;
                 });
             }
