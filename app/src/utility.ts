@@ -84,3 +84,11 @@ export const romanize = (num: number) => {
     }
     return roman;
 };
+
+export const insertSpace = (text: string): any => {
+    const matches: any = text.match(/[a-zA-Z]+/g);
+    const index: number = text.indexOf(matches[0]);
+    return index
+        ? text.substr(0, index) + '  ' + text.substr(index)
+        : text;
+};
