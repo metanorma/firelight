@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useXmlData } from '../context';
 // import classnames from "classnames";
 import NavItem from './NavItem';
-import { romanize } from '../utility';
+import { romanize, insertSpace } from '../utility';
 
 import './NavMenu.css';
 // import datas from "../data/sidebar.json";
@@ -36,14 +36,6 @@ export default function NavIMenu() {
         let annexCount = 65;
         let roman = 1;
 
-        const insertSpace = (text: string): any => {
-            const matches: any = text.match(/[a-zA-Z]+/g);
-            const index: number = text.indexOf(matches[0]);
-            return index
-                ? text.substr(0, index) + '  ' + text.substr(index)
-                : text;
-        };
-
         const getMenuItem = (data: any, hasIndex: boolean | number = false, hasRoman: boolean = false, isAnnex: boolean = false): any => {
             const returnData: any = {};
             if (data?.references) {
@@ -61,12 +53,12 @@ export default function NavIMenu() {
                 if (typeof hasIndex === 'number') {
                     returnData.index = roman + hasIndex - 1;
                 } else {
-                    if (count === 2 && menuItem[roman + count] !== undefined) {
+                    if (count === 2 && menuItem[index + roman + count] !== undefined) {
                         count ++;
                         index ++;
                         
                     }
-                    if (count === 3 && menuItem[roman + count ] !== undefined) {
+                    if (count === 3 && menuItem[index + roman + count ] !== undefined) {
                         count ++;
                         index ++;
                     }

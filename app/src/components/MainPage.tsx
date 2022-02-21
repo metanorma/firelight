@@ -52,16 +52,19 @@ export default function MainPage() {
                     returnData.titleIndex = hasIndex.toString();
                 } else {
                     //check whether the count is 3 or 4 and the value is available
+                    if (count === 3) {
+                        console.log(menuItem[index + roman + count -1], roman + count -1, '3')
+                    }
                     if (
                         count === 3 &&
-                        menuItem[roman + count - 2] !== undefined
+                        menuItem[index + roman + count - 1] !== undefined
                     ) {
                         count++;
                         index++;
                     }
                     if (
                         count === 4 &&
-                        menuItem[roman + count - 2] !== undefined
+                        menuItem[index + roman + count - 1] !== undefined
                     ) {
                         count++;
                         index++;
@@ -466,6 +469,7 @@ export default function MainPage() {
                 }
             }
         }
+        console.log(menuItem, 'menuItem')
         const resultArray: any[] = [];
         menuItem.map((item: any) => {
             if (item?.data) resultArray.push(item);

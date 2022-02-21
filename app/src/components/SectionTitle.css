@@ -27,3 +27,9 @@
   font-weight: var(--title2-weight);
   text-transform: none;
 }
+
+.content-section > .content-section > div.content-section > .title {
+  font-size: 17px;
+  font-weight: bold;
+  text-transform: none;
+}
