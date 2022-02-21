@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useXmlData } from '../context';
 // import classnames from "classnames";
 import NavItem from './NavItem';
-// import axios from 'axios';
+import { romanize } from '../utility';
 
 import './NavMenu.css';
 // import datas from "../data/sidebar.json";
@@ -42,33 +42,6 @@ export default function NavIMenu() {
             return index
                 ? text.substr(0, index) + '  ' + text.substr(index)
                 : text;
-        };
-
-        const romanize = (num: number) => {
-            let lookup: any = {
-                M: 1000,
-                CM: 900,
-                D: 500,
-                CD: 400,
-                C: 100,
-                XC: 90,
-                L: 50,
-                XL: 40,
-                X: 10,
-                IX: 9,
-                V: 5,
-                IV: 4,
-                I: 1
-            };
-            let roman: string = '';
-            let i: string = '';
-            for (let i in lookup) {
-                while (num >= lookup[i]) {
-                    roman += i;
-                    num -= lookup[i];
-                }
-            }
-            return roman;
         };
 
         const getMenuItem = (data: any, hasIndex: boolean | number = false, hasRoman: boolean = false, isAnnex: boolean = false): any => {

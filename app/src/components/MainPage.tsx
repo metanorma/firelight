@@ -5,7 +5,7 @@ import { useXmlData } from '../context';
 import ContentSection from './ContentSection';
 import Cover from './Cover';
 
-import { getChildsByTagname } from '../utility';
+import { getChildsByTagname, romanize } from '../utility';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -36,33 +36,6 @@ export default function MainPage() {
         let annex = 0;
 
         const menuItem: any[] = [];
-
-        const romanize = (num: number) => {
-            let lookup: any = {
-                M: 1000,
-                CM: 900,
-                D: 500,
-                CD: 400,
-                C: 100,
-                XC: 90,
-                L: 50,
-                XL: 40,
-                X: 10,
-                IX: 9,
-                V: 5,
-                IV: 4,
-                I: 1
-            };
-            let roman: string = '';
-            let i: string = '';
-            for (let i in lookup) {
-                while (num >= lookup[i]) {
-                    roman += i;
-                    num -= lookup[i];
-                }
-            }
-            return roman;
-        };
 
         const getMenuItem = (
             data: any,
