@@ -1,15 +1,42 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useXmlData } from '../../../context';
 
 import './style.css';
 
-interface DocumentType {
+export interface DocumentType {
     type?: string;
     title?: string;
     stage?: string;
     isStandard?: boolean;
+    html?: string;
+    pdf?: string;
+    word?: string;
+    xmlRelation?: string;
+    xml?: string;
 }
 
-const Document = ({ type, title, stage, isStandard }: DocumentType) => {
+const Document = ({
+    type,
+    title,
+    stage,
+    isStandard,
+    html,
+    pdf,
+    word,
+    xmlRelation,
+    xml
+}: DocumentType) => {
+    const { setSourceUrl } = useXmlData();
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        if (xml) {
+            setSourceUrl(xml);
+            navigate("/app");
+        }
+    };
+
     return (
         <div className="document">
             <div className="doc-line">
@@ -39,29 +66,28 @@ const Document = ({ type, title, stage, isStandard }: DocumentType) => {
                 </div>
                 <div className="doc-info-content">
                     <div className="doc-access1">
-                        <div className="doc-access-button-html">
-                            <a href="documents/T-RES-T.1-2016-MSW-E.html">
-                                HTML
-                            </a>
+                        <div
+                            className="doc-access-button-html"
+                            onClick={() => handleClick()}
+                        >
+                            <a>HTML</a>
                         </div>
 
                         <div className="doc-access-button-pdf">
-                            <a href="documents/T-RES-T.1-2016-MSW-E.pdf">PDF</a>
+                            <a href={pdf ? pdf : ''}>PDF</a>
                         </div>
 
                         <div className="doc-access-button-doc">
-                            <a href="documents/T-RES-T.1-2016-MSW-E.doc">
-                                Word
-                            </a>
+                            <a href={pdf ? pdf : ''}>Word</a>
                         </div>
 
                         <div className="doc-access-button-xml">
-                            <a href="documents/T-RES-T.1-2016-MSW-E.xml">XML</a>
+                            <a href={xml ? xml : ''}>XML</a>
                         </div>
                     </div>
                     <div className="doc-bib1">
                         <div className="doc-bib-relaton">
-                            <a href="documents/T-RES-T.1-2016-MSW-E.rxl">
+                            <a href={xmlRelation ? xmlRelation : ''}>
                                 Relaton XML
                             </a>
                         </div>

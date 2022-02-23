@@ -102,6 +102,10 @@ a, a:visited {
     padding-left: 10px;
 }
 
+.doc-access-button-html {
+    cursor: pointer;
+}
+
 @media (max-width: 600px) {
     .doc-info-content {
         flex-direction: column;
