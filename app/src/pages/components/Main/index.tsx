@@ -7,16 +7,18 @@ const Main = () => {
     const data = [
         {
             type: '1',
-            title: 'Rules of procedure of the ITU Telecommunica',
+            title: 'Counterfeit ICT equipment',
             stage: 'IN-FORCE',
             isStandard: true,
+            date: '2015-12-11',
             xml: 'https://metanorma.github.io/mn-samples-itu/documents/T-TUT-CCIT-2015-E.xml'
         },
         {
             type: '1',
-            title: 'Rules of procedure of the ITU Telecommunica',
+            title: 'Guide on the use of ITU-T L-series Recommendations related to optical technologies for outside plant',
             stage: 'IN-FORCE',
             isStandard: true,
+            date: '2020-02-01',
             xml: 'https://metanorma.github.io/mn-samples-itu/documents/T-TUT-L-2020-GLR.xml'
         }
     ];

@@ -14,6 +14,7 @@ export interface DocumentType {
     word?: string;
     xmlRelation?: string;
     xml?: string;
+    date?: string;
 }
 
 const Document = ({
@@ -21,6 +22,7 @@ const Document = ({
     title,
     stage,
     isStandard,
+    date,
     html,
     pdf,
     word,
@@ -61,7 +63,7 @@ const Document = ({
                 <div className="doc-info in-force">
                     <div className="doc-stage in-force">{stage}</div>
                     <div className="doc-dates">
-                        <div className="doc-updated"></div>
+                        <div className="doc-updated">{date}</div>
                     </div>
                 </div>
                 <div className="doc-info-content">
