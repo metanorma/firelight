@@ -1,14 +1,7 @@
 import React from 'react';
-import Document from '../Document';
+import Document, { DocumentType } from '../Document';
 
 import './style.css';
-
-interface DocumentType {
-    type?: string;
-    title?: string;
-    stage?: string;
-    isStandard?: boolean;
-}
 
 const Main = () => {
     const data = [
@@ -16,21 +9,25 @@ const Main = () => {
             type: '1',
             title: 'Rules of procedure of the ITU Telecommunica',
             stage: 'IN-FORCE',
-            isStandard: true
+            isStandard: true,
+            xml: 'https://metanorma.github.io/mn-samples-itu/documents/T-TUT-CCIT-2015-E.xml'
         },
         {
             type: '1',
             title: 'Rules of procedure of the ITU Telecommunica',
             stage: 'IN-FORCE',
-            isStandard: true
+            isStandard: true,
+            xml: 'https://metanorma.github.io/mn-samples-itu/documents/T-TUT-L-2020-GLR.xml'
         }
-    ]; 
-    
-    return <main className="main-section">
-        {data?.map(
-            (child: DocumentType, index: number) => <Document key={index} {...child}/>
-        )}
-    </main>;
+    ];
+
+    return (
+        <main className="main-section">
+            {data?.map((child: DocumentType, index: number) => (
+                <Document key={index} {...child} />
+            ))}
+        </main>
+    );
 };
 
 export default Main;
