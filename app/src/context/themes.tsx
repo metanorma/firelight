@@ -113,6 +113,9 @@ export const GlobalStyle = createGlobalStyle`
     padding: 1em;
   }
 
+  .loader {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
   
   ${(props: any) => props.theme.table}
   

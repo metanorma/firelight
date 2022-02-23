@@ -15,7 +15,7 @@ import { ButtonType } from './Enums';
 import NavIMenu from './components/NavMenu';
 import MainPage from './components/MainPage';
 
-import { ThemeProvider, createGlobalStyle, } from 'styled-components';
+import { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { IsoTheme, ItuTheme, OgcTheme, GlobalStyle } from './context/themes';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -26,14 +26,12 @@ function App() {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [isStealthTitleVisible, setStealthTitleVisible] = useState(true);
     const STEALTH_TITLE__SCROLL_THRESHOLD_PX = 500;
-    const { title, standard } = useXmlData();
+    const { title, standard, } = useXmlData();
 
-    const theme = useMemo(() => {  
-      if (standard === 'itu-standard')
-        return ItuTheme;
-      if (standard === 'ogc-standard')
-        return OgcTheme;
-      return IsoTheme;
+    const theme = useMemo(() => {
+        if (standard === 'itu-standard') return ItuTheme;
+        if (standard === 'ogc-standard') return OgcTheme;
+        return IsoTheme;
     }, [standard]);
 
     const bonusElements = [];
@@ -93,7 +91,7 @@ function App() {
     }
 
     return (
-        <ThemeProvider theme={ theme }>
+        <ThemeProvider theme={theme}>
             <div className="App">
                 <Layout
                     handleMainScroll={(

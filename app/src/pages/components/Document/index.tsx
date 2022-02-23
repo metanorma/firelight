@@ -29,11 +29,12 @@ const Document = ({
     xmlRelation,
     xml
 }: DocumentType) => {
-    const { setSourceUrl } = useXmlData();
+    const { setSourceUrl, setLoading } = useXmlData();
     const navigate = useNavigate();
 
     const handleClick = () => {
         if (xml) {
+            setLoading(false);
             setSourceUrl(xml);
             navigate("/app");
         }
@@ -56,7 +57,7 @@ const Document = ({
             </div>
             <div className="doc-title">
                 <h3>
-                    <a href="documents/T-RES-T.1-2016-MSW-E.html">{title}</a>
+                    <a onClick={e => handleClick()}>{title}</a>
                 </h3>
             </div>
             <div className="doc-info-container">

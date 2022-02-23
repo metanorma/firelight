@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import TopButton from './TopButton';
+import CustomLoader from '../pages/components/CustomLoader';
 // import { Data } from '../data/data';
 
 // CSS is in `layout.css` because we need IDs for grid
@@ -67,6 +68,7 @@ function Layout(props: OwnProps) {
 
     return (
         <div id="layout" className={layoutClasses.join(' ')}>
+            <CustomLoader/>
             <header id="layout__header" className={headerClasses.join(' ')}>
                 {header}
             </header>

@@ -10,6 +10,10 @@ export type XmlData = {
     figureIndex: number;
     setFigureIndex: (a: number) => void;
     standard: string;
+    sourceUrl: string;
+    setSourceUrl: (a: string) => void;
+    loading: boolean;
+    setLoading: (a: boolean) => void;
 };
 
 const contextDefaultValues: XmlData = {
@@ -19,28 +23,13 @@ const contextDefaultValues: XmlData = {
     figureIndex: 0,
     setFigureIndex: (a: number) => {},
     standard: '',
+    sourceUrl: '',
+    setSourceUrl: (a: string) => {},
+    loading: true,
+    setLoading: (a: boolean) => {}
 };
 
 export const XmlContext = createContext<XmlData>({} as XmlData);
-
-// const xmlUrl = "/presentation.xml";
-// const xmlUrl = "https://metanorma.github.io/mn-samples-iso/documents/international-workshop-agreement/document.xml";
-// const xmlUrl = "/iso.xml";
-// const xmlUrl = "https://metanorma.github.io/mn-samples-iso/documents/international-standard/rice-en.wd.xml";
-const xmlUrl0 = '/rice.xml';
-const xmlUrl =
-    'https://metanorma.github.io/mn-samples-itu/documents/T-TUT-CCIT-2015-E.xml';
-const localXmlUrl = '/a2015.xml';
-const xmlUrl1 =
-    'https://metanorma.github.io/mn-samples-itu/documents/T-TUT-L-2020-GLR.xml';
-const localXmlUrl1 = '/2020.xml';
-const xmlUrl2 =
-    'https://metanorma.github.io/mn-samples-itu/documents/T-REC-A.8-200810-I!!MSW-E.xml';
-const localXmlUrl2 = '/2008.xml';
-const ogcUrl =
-    'https://metanorma.github.io/mn-samples-ogc/documents/12-077r1/document.xml';
-
-const ogcUrl1 = "https://metanorma.github.io/mn-samples-ogc/documents/15-104r5/document.xml";
 
 const XmlProvider: React.FC = ({ children }) => {
     const [xml, setXml] = useState<string>('');
@@ -48,10 +37,16 @@ const XmlProvider: React.FC = ({ children }) => {
     const [xmlJson, setXmlJson] = useState<any>({});
     const [figureIndex, setFigureIndex] = useState<number>(0);
     const [standard, setStandard] = useState<string>('iso-standard');
+    const [sourceUrl, setSourceUrl] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
+        if (!sourceUrl) {
+            return;
+        }
+
         axios
-            .get(ogcUrl, {
+            .get(sourceUrl, {
                 headers: {
                     Accept: 'application/xml'                                                                                           
                 }
@@ -64,9 +59,7 @@ const XmlProvider: React.FC = ({ children }) => {
                     const xmlDoc = new DOMParser().parseFromString(
                         response.data,
                         'application/xml'
-                    );
-
-                    
+                    );                    
 
                     const bibdata: XMLNode =
                         xmlDoc.getElementsByTagName('bibdata')[0];
@@ -116,15 +109,16 @@ const XmlProvider: React.FC = ({ children }) => {
                     localStorage.setItem('figure', '0');
                     localStorage.setItem('id', '');
                 }
+                setLoading(true);
             });
             // set the index of figure to zero.
             localStorage.setItem('figure', '0');
             localStorage.setItem('id', '');
-    }, []);
+    }, [sourceUrl]);
 
     return (
         <XmlContext.Provider
-            value={{ xml, xmlJson, title, figureIndex, setFigureIndex, standard }}
+            value={{ xml, xmlJson, title, figureIndex, setFigureIndex, standard, sourceUrl, setSourceUrl, loading, setLoading }}
         >
             {children}
         </XmlContext.Provider>
