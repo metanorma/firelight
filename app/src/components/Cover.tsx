@@ -2,6 +2,7 @@
 import { getChildsByTagname } from '../utility';
 import { XMLNode } from './DisplayNode';
 import { useXmlData } from '../context';
+import classNames from 'classnames';
 import './Cover.css';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -372,6 +373,9 @@ export default function Cover() {
                 }
             } 
 
+            if (approvalDate) publishedState = 'Approved';
+            if (publicationDate) publishedState = 'Published';
+
             return (
                 <header>
                     <div className="ogc-coverpage">
@@ -454,7 +458,7 @@ export default function Cover() {
                             <div className="ogc-coverpage-stage-block">
                                 <p>
                                     <span
-                                        className="coverpage-maturity"
+                                        className={classNames("coverpage-maturity", {'ogc-color-blue': publishedState === 'Approved'})}
                                         id="published"
                                     >
                                         {publishedState}
