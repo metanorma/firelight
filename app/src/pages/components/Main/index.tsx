@@ -20,6 +20,22 @@ const Main = () => {
             isStandard: true,
             date: '2020-02-01',
             xml: 'https://metanorma.github.io/mn-samples-itu/documents/T-TUT-L-2020-GLR.xml'
+        },
+        {
+            type: '1',
+            title: 'Guide on c 21: Discrete Global Grid Systems Abstract Specification',
+            stage: 'APPROVED',
+            isStandard: true,
+            date: '2017-08-01',
+            xml: 'https://metanorma.github.io/mn-samples-ogc/documents/15-104r5/document.xml'
+        },
+        {
+            type: '1',
+            title: 'A Primer for Dissemination Services for Wide Area Motion Imagery',
+            stage: 'APPROVED',
+            isStandard: true,
+            date: '2012-12-18',
+            xml: 'https://metanorma.github.io/mn-samples-ogc/documents/12-077r1/document.xml'
         }
     ];
 
