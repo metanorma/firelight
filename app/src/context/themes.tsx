@@ -4,6 +4,7 @@ export const IsoTheme = {
     defaultSize: '16px',
     backgroundColor: 'white',
     textColor: 'black',
+    lineHeight: 1.5,
 
     //nav item part
     darkerRed: '#d72d18',
@@ -30,6 +31,7 @@ export const ItuTheme = {
     defaultSize: '15x',
     backgroundColor: 'white',
     textColor: 'black',
+    lineHeight: '1.6em',
 
     //nav item part
     darkerRed: '#da1d52',
@@ -56,6 +58,7 @@ export const OgcTheme = {
     defaultSize: '16px',
     backgroundColor: 'white',
     textColor: '#00335b',
+    lineHeight: 1.5,
 
     //nav item part
     darkerRed: '#00335b',
@@ -99,6 +102,7 @@ export const GlobalStyle = createGlobalStyle`
     color: ${(props: any) => props.theme.textColor};
     background-color: ${(props: any) => props.theme.backgroundColor};
     font-size: ${(props: any) => props.theme.defaultSize};
+    line-height: ${(props: any) => props.theme.lineHeight};
   }
 
   main {
