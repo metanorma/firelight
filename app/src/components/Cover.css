@@ -570,6 +570,59 @@ ogc-coverpage-metadata .ogc-value,
     padding-left: 15px;
 }
 
+
+
+.ogc-coverpage-data {
+    margin-top: 35px;
+    padding-top: 15px;
+    margin-right: 25px;
+    border-top: solid 1px white;
+}
+
+.ogc-coverpage-data,
+.ogc-coverpage-alt-formats {
+    font-size: 12px;
+    font-family: 'Overpass', sans-serif;
+    margin-left: 1em;
+    text-align: left;
+}
+
+.ogc-coverpage-data span,
+.ogc-coverpage-alt-formats span {
+    display: block;
+    text-align: left;
+}
+
+.ogc-coverpage-data .ogc-label,
+.ogc-coverpage-alt-formats .ogc-label {
+    font-size: 12px;
+    padding: 0;
+}
+
+.ogc-coverpage-data .ogc-value,
+.ogc-coverpage-alt-formats .ogc-value {
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+.ogc-coverpage-data,
+.ogc-coverpage-alt-formats {
+    font-size: 12px;
+    font-family: 'Overpass', sans-serif;
+    margin-left: 1em;
+    text-align: left;
+}
+
+.ogc-coverpage-data .ogc-label,
+.ogc-coverpage-alt-data-formats .ogc-label {
+    font-size: 12px;
+    padding: 0;
+}
+.ogc-coverpage-alt-data--formats span {
+    display: inline;
+    text-align: left;
+}
+
 .ogc-intro-title {
     font-size: 1.8em;
     text-transform: uppercase;
