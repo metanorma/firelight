@@ -301,7 +301,6 @@ export default function Cover() {
 
                 if (publishedRow) {
                     publicationDate = publishedRow?.on[0];
-                    // console.log(publicationDate, 'publicationDate');
                 }
 
                 //get the submission date
@@ -314,7 +313,6 @@ export default function Cover() {
 
                 if (submissionRow) {
                     submissionDate = submissionRow?.on[0];
-                    // console.log(submissionDate, 'submissionDate');
                 }
             }
 
@@ -323,7 +321,6 @@ export default function Cover() {
                 let externalRow: any = Object.values(
                     bibdata.docidentifier
                 ).find((child: any) => {
-                    // console.log(child, 'child');
                     if (child?.$?.type && child?.$?.type === 'ogc-external')
                         return true;
                     return false;
@@ -331,7 +328,6 @@ export default function Cover() {
 
                 if (externalRow) {
                     externalIdentifier = externalRow._;
-                    // console.log(externalIdentifier, 'externalIdentifier');
                 }
 
                 //get the internal identiier
@@ -345,31 +341,25 @@ export default function Cover() {
 
                 if (internalRow) {
                     internalIdentifier = internalRow._;
-                    // console.log(internalIdentifier, 'internalIdentifier');
                 }
             }
 
             //get the version for document
             if (bibdata?.edition) {
                 version = bibdata.edition[0];
-                // console.log(version, 'version');
             }
 
             //get the doc type
             if (bibdata?.ext) {
-                // console.log(bibdata?.ext, 'ext');
                 if (bibdata.ext[0]?.doctype && bibdata.ext[0]?.doctype[0]) {
                     doctype = bibdata.ext[0].doctype[0];
-                    // console.log(doctype, 'doctype');
                 }
             }
 
             //get the published state
             if (bibdata?.status) {
-                // console.log(bibdata.status, 'status')
                 if (bibdata.status[0]?.stage[0]) {
                     publishedState = bibdata.status[0]?.stage[0];
-                    // console.log(publishedState, 'state')
                 }
             } 
 
