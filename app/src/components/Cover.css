@@ -438,6 +438,11 @@ span.doc-title {
 #published {
     color: #9abd48;
 }
+        
+.ogc-color-blue {
+    color: #00335b !important;
+    border: 0;
+}
 
 .ogc-coverpage-warning {
     border: #f36f36 solid 2px;
