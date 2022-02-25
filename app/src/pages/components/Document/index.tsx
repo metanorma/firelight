@@ -8,7 +8,7 @@ export interface DocumentType {
     type?: string;
     title?: string;
     stage?: string;
-    isStandard?: boolean;
+    isStandard?: string;
     html?: string;
     pdf?: string;
     word?: string;
@@ -46,13 +46,13 @@ const Document = ({
                 <div className="doc-identifier1">
                     <h2>
                         <a href="documents/T-RES-T.1-2016-MSW-E.html">
-                            ITU-T {type}
+                            {type}
                         </a>
                     </h2>
                 </div>
 
                 <div className="doc-type-wrap">
-                    <div className="doc-type1 standard">standard</div>
+                    <div className="doc-type1 standard">{isStandard}</div>
                 </div>
             </div>
             <div className="doc-title">
