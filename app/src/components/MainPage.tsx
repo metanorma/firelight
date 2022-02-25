@@ -50,21 +50,25 @@ export default function MainPage() {
                 if (typeof hasIndex === 'number') {
                     returnData.index = roman + hasIndex - 2;
                     returnData.titleIndex = hasIndex.toString();
+                    if (hasIndex === 3) {
+                        menuItem[roman] = {};
+                        menuItem[roman - 1] = {};
+                    }
                 } else {
                     //check whether the count is 3 or 4 and the value is available
                     if (count === 3) {
-                        console.log(menuItem[index + roman + count -1], roman + count -1, '3')
+                        console.log(menuItem[roman + count -2], roman + count -2, index, '3')
                     }
                     if (
                         count === 3 &&
-                        menuItem[index + roman + count - 1] !== undefined
+                        menuItem[roman + count - 2] !== undefined
                     ) {
                         count++;
                         index++;
                     }
                     if (
                         count === 4 &&
-                        menuItem[index + roman + count - 1] !== undefined
+                        menuItem[roman + count - 2] !== undefined
                     ) {
                         count++;
                         index++;
@@ -414,9 +418,9 @@ export default function MainPage() {
                             return true;
                         return false;
                     });
-
-                    let normativeReferences = getMenuItem(normativeRow, 3);
-                    menuItem[normativeReferences.index] = normativeReferences;
+                    
+                    let normativeReferences = getMenuItem(normativeRow, 3);console.log(normativeReferences, 'normative');
+                    menuItem[normativeReferences.index] = normativeReferences; console.log(menuItem, 'include normatie')
                 }
 
                 // terms and definitions
