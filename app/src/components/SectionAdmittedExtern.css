@@ -1,0 +1,9 @@
+.extern {
+    display: inline;
+    margin-left: 0.5em;
+}
+
+.extern > .strong > .terminology {
+    text-decoration: none;
+    padding: 0;
+}
