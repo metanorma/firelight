@@ -52,13 +52,17 @@ export default function NavIMenu() {
             if (hasIndex) {
                 if (typeof hasIndex === 'number') {
                     returnData.index = roman + hasIndex - 1;
+                    if (hasIndex === 3) {
+                        menuItem[roman + 1] = {}
+                        menuItem[roman] = {}
+                    }
                 } else {
-                    if (count === 2 && menuItem[index + roman + count] !== undefined) {
+                    if (count === 2 && menuItem[roman + count] !== undefined) {
                         count ++;
                         index ++;
                         
                     }
-                    if (count === 3 && menuItem[index + roman + count ] !== undefined) {
+                    if (count === 3 && menuItem[roman + count ] !== undefined) {
                         count ++;
                         index ++;
                     }
