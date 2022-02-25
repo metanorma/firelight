@@ -1,0 +1,9 @@
+.example {
+    display: inline;
+    margin-left: 0.5em;
+}
+
+.example > .strong > .terminology {
+    text-decoration: none;
+    padding: 0;
+}
