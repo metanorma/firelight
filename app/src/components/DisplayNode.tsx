@@ -55,6 +55,8 @@ import SectionFormula from './SectionFormula';
 import SectionTt from './SectionTt';
 import VerbalDefinition from './VerbalDefinition';
 import SectionFormmatedRef from './SectionFormattedRef';
+import SectionExample from './SectionExample';
+import SectionSourcecode from './SectionSourcecode';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 interface OwnProps {
     data: any;
@@ -184,6 +186,9 @@ export default function DisplayNode({ data }: OwnProps) {
                 case 'input':
                     return <InputTag data={item} key={index} />;
 
+                case 'example':
+                    return <SectionExample data={item} key={index} />;
+
                 case 'references':
                     return <SectionReference data={item} key={index} />;
 
@@ -240,6 +245,9 @@ export default function DisplayNode({ data }: OwnProps) {
 
                 case 'formula':
                     return <SectionFormula data={item} key={index} />;
+                    
+                case 'sourcecode':
+                    return <SectionSourcecode data={item} key={index} />;
 
                 case 'verbaldefinition':
                     return <VerbalDefinition data={item} key={index} />;
