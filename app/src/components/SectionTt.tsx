@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import DisplayNode, { XMLNode } from "./DisplayNode";
-import "./SectionTd.css";
+import "./SectionTt.css";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 interface OwnProps {
