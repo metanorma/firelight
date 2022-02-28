@@ -22,8 +22,11 @@ export default function SectionAdmonition({ data }: OwnProps) {
     const typeRow = Object.values(attrs).find(
       (attr: any) => attr?.name === "type"
     );
-    const type = typeRow?.value ? typeRow.value : "";
-    return <div className="admonition" id={id}>{type ? `${type.toUpperCase()}` : ''}<DisplayNode data={data.childNodes} /></div>
+    const type = typeRow?.value ? typeRow.value : "";console.log(data, 'adnomition data')
+    return <div className="admonition" id={id}>
+      <p className="admonitionTitle">{type ? `${type.toUpperCase()}` : ''}</p>
+      <DisplayNode data={data.childNodes} />
+    </div>
   }, [data]);
 
   return <>{renderContent}</>;

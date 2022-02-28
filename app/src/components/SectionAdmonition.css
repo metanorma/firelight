@@ -1,7 +1,13 @@
 .admonition {
-    background-color: #ffb3b3;
-    /* color: #47430c; */
-    padding: 0.5em;
-    margin: 1.5em 0 1.5em 0;
-    text-align: left;
+    padding: 1em 1.2em 1.2em 1.2em;
+    margin: 1em 0 1em 0;
+    background-color: #fcad88;
+    border-top: 10px solid #eb5a06;
+    color: #290404;
+}
+
+.admonition .admonitionTitle {
+    font-weight: 700;
+    font-size: 1em;
+    text-align: center;
 }
