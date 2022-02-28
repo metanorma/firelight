@@ -11,7 +11,7 @@ interface OwnProps {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-export default function Section Example({ data }: OwnProps) {
+export default function SectionExample({ data }: OwnProps) {
   const renderContent = useMemo(() => {
     const attrs: any[] = data.attributes;
     const idRow = Object.values(attrs).find(
