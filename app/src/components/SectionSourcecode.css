@@ -1,0 +1,57 @@
+.extern {
+    display: inline;
+    margin-left: 0.5em;
+}
+
+.extern > .strong > .terminology {
+    text-decoration: none;
+    padding: 0;
+}
+
+.extern,
+.ogc-coverpage-alt-formats {
+    font-size: 12px;
+    font-family: 'Overpass', sans-serif;
+    margin-left: 1em;
+    text-align: left;
+}
+
+.extern .ogc-label,
+.ogc-coverpage-alt-data-formats .ogc-label {
+    font-size: 12px;
+    padding: 0;
+}
+.extern .ogc-coverpage-alt-data--formats span {
+    display: inline;
+    text-align: left;
+}
+
+.extern .ogc-intro-title {
+    font-size: 1.8em;
+    text-transform: uppercase;
+    margin-top: 2em;
+    font-weight: 400;
+    margin-bottom: 0.3em;
+}
+
+.extern .ogc-link,
+.extern .ogc-link:visited {
+    text-decoration: none;
+    color: #2e81c2;
+}
+
+.extern .ogc-license {
+    padding: 0 3em 0 6em;
+    color: #00335b;
+    margin-bottom: 3em;
+}
+
+.extern .ogc-boilorplate-license p {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.sourcecode {
+    padding: 2px;
+    border: 1px solid #888;
+}
