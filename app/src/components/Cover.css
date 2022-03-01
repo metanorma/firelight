@@ -26,6 +26,26 @@
     background-size: 100px;
 }
 
+.ogc-color-blue {
+    color: #00335b !important;
+    border: 0;
+}
+
+.ogc-coverpage-warning {
+    border: #f36f36 solid 2px;
+    color: #f36f36 !important;
+    margin: 1em 2em;
+    color: #2e81c2;
+    padding: 2em 1em 1em 1em;
+    border-radius: 25px;
+}
+
+ogc-coverpage-metadata .ogc-value,
+.ogc-coverpage-alt-formats .ogc-value {
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
 .WordSection11 {
     padding: 0 2em 0 3em;
 }
@@ -81,6 +101,25 @@ span.doc-title {
     height: 100px;
     padding-top: 60px;
     position: relative;
+}
+
+
+.ogc-coverpage {
+    margin: -1em;
+    position: relative;
+}
+
+.ogc-wrapper-top {
+    background: #00335b;
+    background: linear-gradient(130deg, #00335b 45%, #f1f8ff 100%);
+    color: #ffffff;
+    padding: 5em 0;
+    width: 100%;
+}
+
+.ogc-coverpage-doc-identity {
+    font-size: 2em;
+    line-height: 2em;
 }
 
 .doc-type {
@@ -268,23 +307,6 @@ span.doc-title {
         margin-top: 90px;
     }
 }
-.ogc-coverpage {
-    margin: -1em;
-    position: relative;
-}
-
-.ogc-wrapper-top {
-    background: #00335b;
-    background: linear-gradient(130deg, #00335b 45%, #f1f8ff 100%);
-    color: #ffffff;
-    padding: 5em 0;
-    width: 100%;
-}
-
-.ogc-coverpage-doc-identity {
-    font-size: 2em;
-    line-height: 2em;
-}
 
 .ogc-coverpage-title {
     padding-bottom: 0.5em;
@@ -437,26 +459,6 @@ span.doc-title {
 #standard,
 #published {
     color: #9abd48;
-}
-        
-.ogc-color-blue {
-    color: #00335b !important;
-    border: 0;
-}
-
-.ogc-coverpage-warning {
-    border: #f36f36 solid 2px;
-    color: #f36f36 !important;
-    margin: 1em 2em;
-    color: #2e81c2;
-    padding: 2em 1em 1em 1em;
-    border-radius: 25px;
-}
-
-ogc-coverpage-metadata .ogc-value,
-.ogc-coverpage-alt-formats .ogc-value {
-    font-size: 15px;
-    margin-bottom: 15px;
 }
 
 .ogc-coverpage-metadata,

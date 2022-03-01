@@ -1,0 +1,509 @@
+<itu-standard xmlns="https://www.metanorma.org/ns/itu" type="semantic" version="1.3.5">
+<bibdata type="standard">
+...
+</bibdata>
+<boilerplate>
+...
+</boilerplate>
+<preface>
+<abstract id="_summary">
+<title>Abstract</title>
+<p id="_09216abb-63ca-4834-8915-4b465b099b84">This Recommendation provides working methods and procedures for approving draft new and revised ITU-T Recommendations using the alternative approval process.</p>
+</abstract>
+<clause id="_source" type="source" inline-header="false" obligation="informative">
+<title>Source</title>
+<p id="_3aa0b157-1782-479d-ad28-5cca6a51c914">Recommendation ITU-T A.8 was prepared by TSAG (2005-2008) and approved by the World Telecommunication Standardization Assembly (Johannesburg, 21-30 October 2008).</p>
+</clause>
+</preface>
+<sections>
+<clause id="general" inline-header="false" obligation="normative">
+<title>General</title>
+<clause id="approval" inline-header="true" obligation="normative">
+<p id="_560356d8-9f7b-4bd0-9fee-d98780f9e7a3">Recommendations of the ITU Telecommunication Standardization Sector (ITU-T) will be approved using this alternative approval process (AAP), except Recommendations that have policy or regulatory implications, which will be approved using the traditional approval process (TAP) found in Resolution 1 of the World Telecommunication Standardization Assembly (WTSA).</p>
+<p id="_c8944fda-544d-4125-82a5-6957c6f00f38">The competent study group may also seek approval at a WTSA.</p>
+</clause>
+<clause id="recommendation_status" inline-header="true" obligation="normative">
+<p id="_209ba396-6fa7-4d3f-a585-8111c3b51769">In accordance with the ITU Convention, the status of Recommendations approved is the same for both AAP and TAP methods of approval.</p>
+</clause>
+</clause>
+<clause id="process" inline-header="false" obligation="normative">
+<title>Process</title>
+<clause id="study_groups_aap" inline-header="true" obligation="normative">
+<p id="_21a7ddb7-cf9f-4d68-ae52-6b719615fdb0">
+Study groups should apply the AAP described below for seeking the approval of draft new and revised Recommendations as soon as they have been developed to a sufficiently mature state. See
+<xref target="fig1"/>
+for the sequence of events.
+</p>
+</clause>
+</clause>
+<clause id="prerequisites" inline-header="false" obligation="normative">
+<title>Prerequisites</title>
+<clause id="intention_to_apply_aap" inline-header="true" obligation="normative">
+<p id="_dce89c04-3548-4f4a-84aa-ba3bbc562efd">
+Upon request of the study group chairman, the Director of the Telecommunication Standardization Bureau (TSB) shall announce the intention to apply AAP and to initiate the last call set out in this Recommendation (see
+<xref target="last_call_and_additional_review"/>
+below). Such action shall be based upon consent at a study group or working party meeting or, exceptionally, at a WTSA, that a draft Recommendation is sufficiently mature for such action. At this stage, the draft Recommendation is considered to have "CONSENT". The Director shall include a summary of the draft Recommendation in the announcement. Reference shall be provided to the documentation where the text of the draft new or revised Recommendation to be considered may be found. This information shall be made available to all Member States and Sector Members.
+</p>
+</clause>
+<clause id="draft_availability" inline-header="true" obligation="normative">
+<p id="_7917dc88-ec28-428c-b5e8-e5239ba26e30">
+The text of the draft new or revised Recommendation must be available to TSB in a final edited form at the time that the Director makes the announcement of the intended application of the AAP set out in this Recommendation. Any associated electronic material included in the Recommendation (e.g., software, test vectors, etc.) must also be made available to TSB at the same time. A summary that reflects the final edited text of the draft Recommendation must also be provided to TSB, in accordance with
+<xref target="prerequisites_summary"/>
+below.
+</p>
+</clause>
+<clause id="prerequisites_summary" inline-header="true" obligation="normative">
+<p id="_46f1c381-1b0c-4d8e-9ea2-a5ac6c779c6e">Such a summary should be prepared in accordance with the Author's Guide for drafting ITU-T Recommendations. This summary is a brief outline of the purpose and content of the new or revised draft Recommendation and, where appropriate, the intent of the revisions. No Recommendation shall be considered as complete and ready for approval without this summary statement.</p>
+</clause>
+<clause id="approval_seeking" inline-header="true" obligation="normative">
+<p id="_1e0e8528-f989-4a47-a18f-dfa8a950059e">Approval may only be sought for a draft new or revised Recommendation within the study group's mandate as defined by the Questions allocated to it, in accordance with No. 192 of the Convention. Alternatively, or additionally, approval may be sought for amendment of an existing Recommendation within the study group's responsibility and mandate.</p>
+</clause>
+<clause id="draft_multiple_mandates" inline-header="true" obligation="normative">
+<p id="_23cb557b-5fc2-4ba1-a847-8416a012a3fe">Where a draft new or revised Recommendation falls within the mandate of more than one study group, the chairman of the study group proposing the approval should consult and take into account the views of any other study group chairmen concerned before proceeding with the application of this approval procedure.</p>
+</clause>
+<clause id="elaborating_recommendations" inline-header="true" obligation="normative">
+<p id="_5364be07-337c-401d-b236-e3191f9c919c">
+Recommendations are to be elaborated in accordance with the Common Patent Policy for
+<br/>
+ITU-T/ITU-R/ISO/IEC available at
+<link target="http://www.itu.int/ITU-T/ipr/"/>
+. For example:
+</p>
+<clause id="patent_statement_and_licensing_declaration_itu_member" inline-header="true" obligation="normative">
+<p id="_1766f454-9a21-4c1d-ab16-731cac612dcf">Any party participating in the work of ITU-T should, from the outset, draw the attention of the Director of TSB to any known patent or to any known pending patent application, either of their own or of other organizations. The "Patent Statement and Licensing Declaration" form from the ITU-T website is to be used.</p>
+</clause>
+<clause id="patent_statement_and_licensing_declaration_itu_non_member" inline-header="true" obligation="normative">
+<p id="_fcb4137f-12cb-4ac2-a17e-2a7d4c20ffc6">ITU-T non-member organizations that hold patent(s) or pending patent application(s), the use of which may be required in order to implement an ITU-T Recommendation, can submit a "Patent Statement and Licensing Declaration" to TSB using the form available at the ITU-T website.</p>
+</clause>
+</clause>
+<clause id="revised_recommendation_approval" inline-header="true" obligation="normative">
+<p id="_6d1c25c6-bcef-44f8-830b-8652446e5c15">In the interests of stability, once a new or revised Recommendation has been approved, approval should not normally be sought within a reasonable period of time for any further amendment of that new text or that revised portion, respectively, unless the proposed amendment complements rather than changes the agreement reached in the previous approval process, or a significant error or omission is discovered. As a guideline, in this context "a reasonable period of time" would be at least two years, in most cases.</p>
+<p id="_08d2d3d2-066a-43dd-88c6-8d02383b250f">
+Amendments that correct defects may be approved, in accordance with
+<xref target="defects_in_recommendation"/>
+.
+</p>
+</clause>
+</clause>
+<clause id="last_call_and_additional_review" inline-header="false" obligation="normative">
+<title>Last call and additional review</title>
+<clause id="last_call_period" inline-header="true" obligation="normative">
+<p id="_81a39981-1f42-4aef-ab20-8350ed1ce9b2">
+The last call encompasses the four-week time period and procedures beginning with the Director's announcement of the intention to apply the alternative approval process (
+<xref target="intention_to_apply_aap"/>
+).
+</p>
+</clause>
+<clause id="intelectual_property" inline-header="true" obligation="normative">
+<p id="_8f334aa7-dcb4-4199-b791-ed15461bcd8c">If TSB has received a statement(s) indicating that the use of intellectual property, protected by one or more copyright(s) or patent(s), issued or pending, may be required in order to implement a draft Recommendation, the Director shall post this information on the ITU-T website.</p>
+</clause>
+<clause id="comment_on_the_approval" inline-header="true" obligation="normative">
+<p id="_ba317d9e-3e0c-42a6-948c-ba4d1e10b843">The Director of TSB shall advise the Directors of the other two Bureaux that Member States and Sector Members are being asked to comment on the approval of a proposed new or revised Recommendation.</p>
+</clause>
+<clause id="revised_recommendation_disapproval" inline-header="true" obligation="normative">
+<p id="_9071cc76-636a-403a-bde6-ed80a9282e4e">During the last call, should any Member State or Sector Member be of the opinion that the draft new or revised Recommendation should not be approved, they should advise their reasons for disapproving and indicate the possible changes that would facilitate further consideration and approval of the draft new or revised Recommendation. TSB will make the comments available to the membership of ITU-T.</p>
+<clause id="disapproval_due_to_typographical_errors" inline-header="true" obligation="normative">
+<p id="_caff12dc-f619-4687-962e-32b4b450041b">If no comments, other than comments indicating typographical error(s) (misspelling, syntactical and punctuation mistakes, etc.), are received by the end of the last call, the draft new or revised Recommendation is considered as approved, and the typographical errors are corrected.</p>
+</clause>
+<clause id="disapproval_due_to_non_typographical_errors" inline-header="true" obligation="normative">
+<p id="_dc2fc5ca-8d74-4987-bd4b-826cbf88fc6e">If comments, other than those indicating typographical errors, are received by the end of the last call, the study group chairman, in consultation with TSB, makes the judgement whether:</p>
+<ol id="_95e25c5e-77a2-4a95-8adf-5a58ae2931d9">
+<li>
+<p id="_24ff31af-749a-4745-a6b8-82587591d6d8">
+a planned study group meeting is sufficiently close to consider the draft Recommendation for approval, in which case the procedures in
+<xref target="announcing_attention_of_draft_approval"/>
+regarding approval at a study group meeting are applied; or
+</p>
+</li>
+<li>
+<p id="_578de698-6df1-4579-8ead-389c6561b0a8">
+to save time and/or because of the nature and maturity of the work, comment resolution should be initiated under the direction of the study group chairman. This will be accomplished by appropriate study group experts, via electronic correspondence or at meetings. Revised, edited draft text is prepared, as appropriate, and the procedures beginning in
+<xref target="actions_after_completion_of_comment_resolution"/>
+are applied.
+</p>
+</li>
+</ol>
+</clause>
+<clause id="actions_after_completion_of_comment_resolution" inline-header="true" obligation="normative">
+<p id="_1df65576-bad7-4166-b5cc-7f456eb5390b">After comment resolution is completed, and the revised and edited draft text is made available, the study group chairman, in consultation with TSB, makes the judgement whether:</p>
+<ol id="_75a096fa-de55-401b-b447-60f76f12a582">
+<li>
+<p id="_a20ddb3e-fd23-48b7-b158-8ceaaeeaede3">
+a planned study group meeting is sufficiently close to consider the draft Recommendation for approval, in which case the procedures in
+<xref target="announcing_attention_of_draft_approval"/>
+are applied; or
+</p>
+</li>
+<li>
+<p id="_a7859437-4900-431a-97cd-73a637931e03">
+to save time and/or because of the nature and maturity of the work, an additional review should be initiated, in which case the procedures in
+<xref target="additional_review_procedure"/>
+are applied.
+</p>
+</li>
+</ol>
+</clause>
+</clause>
+<clause id="additional_review_procedure" inline-header="true" obligation="normative">
+<p id="_c4e6d17b-306a-468a-a993-917e68793889">The additional review encompasses a three-week time period and will be announced by the Director. The text (including any revisions as a result of comment resolution) of the draft Recommendation in a final edited form and comments from the last call must be made available to TSB at the time that the Director makes the announcement of the additional review. Reference shall be provided to the documentation where the text of the draft Recommendation and last call comments to be considered may be found.</p>
+<clause id="additional_review_procedure_typographical_errors" inline-header="true" obligation="normative">
+<p id="_9562dbfb-7679-41d2-a5b5-930110f55744">If no comments, other than comments indicating typographical error(s) (misspelling, syntactical and punctuation mistakes, etc.), are received by the end of the additional review, the Recommendation is considered as approved, and the typographical errors are corrected by TSB.</p>
+</clause>
+<clause id="additional_review_procedure_non_typographical_errors" inline-header="true" obligation="normative">
+<p id="_ca43d63b-c3a4-4652-b9da-e4cf9b51a20e">
+If comments, other than comments indicating typographical errors(s), are received by the end of the additional review, then the procedures in
+<xref target="announcing_attention_of_draft_approval"/>
+regarding approval at a study group meeting are applied.
+</p>
+</clause>
+</clause>
+<clause id="announcing_attention_of_draft_approval" inline-header="true" obligation="normative">
+<p id="_15414607-9c8d-4cee-979f-3e766e6acb6f">
+The Director shall explicitly announce the intention to approve the draft Recommendation at least three weeks prior to the study group meeting. The Director shall include the specific intent of the proposal in summarized form. Reference shall be provided to the documentation where the draft text and comments from the last call (and additional review, if relevant) may be found. The edited text of the draft Recommendation from the additional review (or last call if there is no additional review) is submitted for approval by the study group meeting in accordance with
+<xref target="procedure_at_study_group_meetings"/>
+below.
+</p>
+</clause>
+</clause>
+<clause id="procedure_at_study_group_meetings" inline-header="false" obligation="normative">
+<title>Procedure at study group meetings</title>
+<clause id="draft_review_by_the_study_group" inline-header="true" obligation="normative">
+<p id="_cf2d63a4-fc34-44dc-a325-db09637cd41d">
+The study group should review the text of the draft new or revised Recommendation and the associated comments referred to in
+<xref target="announcing_attention_of_draft_approval"/>
+above. The meeting may then accept any corrections or amendments to the draft new or revised Recommendation. The study group should reassess the summary statement in terms of its completeness.
+</p>
+</clause>
+<clause id="procedure_for_changes" inline-header="true" obligation="normative">
+<p id="_c6b6555c-a019-443c-9208-62715a792044">Changes may only be made during the meeting as a consequence of written comments as a result of the last call, additional review, contributions, or temporary documents including liaison statements. Where proposals for such revisions are found to be justified but to have a major impact on the intent of the Recommendation or to depart from points of principle agreed at the previous study group or working party meeting, consideration of this approval procedure should not be applied at this meeting. However, in justified circumstances, the approval procedure may still be applied if the chairman of the study group, in consultation with TSB, considers:</p>
+<ul id="_9fa5a468-22c9-41cb-b111-7a9a0448af9e">
+<li>
+<p id="_92307e69-e354-42fc-8760-c0909fe0421d">that the proposed changes are reasonable (in the context of the documentation described in this clause) for those Member States and Sector Members not represented at the meeting, or not represented adequately under the changed circumstances; and</p>
+</li>
+<li>
+<p id="_089cccef-0723-46b1-97a8-e163f6ddc7b2">that the proposed text is stable.</p>
+</li>
+</ul>
+<p id="_d328c9cc-372c-4ca9-8f43-640e7a1730cb">
+However, if a Member State present declares that this text has policy or regulatory implications or there is a doubt, the approval procedure shall proceed according to Resolution 1, clause 9.3 or
+<xref target="draft_not_approved"/>
+below.
+</p>
+</clause>
+<clause id="unopposed_approval_procedure" inline-header="true" obligation="normative">
+<p id="_8df7f4db-b165-4510-9c6c-9501f1e343ca">
+After debate at the study group meeting, the decision of the meeting to approve the Recommendation under this approval procedure must be unopposed (but see
+<xref target="no_election_to_oppose_approval"/>
+,
+<xref target="abstaining_from_the_application_of_the_procedure"/>
+and
+<xref target="draft_not_approved"/>
+). Every effort should be made to reach unopposed agreement.
+</p>
+</clause>
+<clause id="not_reaching_unopposed_approval" inline-header="true" obligation="normative">
+<p id="_22d9c5aa-7e24-4424-985d-25b3b60b13db">
+If, despite these attempts, unopposed agreement has not been reached, the Recommendation is considered as approved if, following consultation with their Sector Members present, no more than one Member State present in the meeting opposes the decision to approve the Recommendation (but see
+<xref target="no_election_to_oppose_approval"/>
+,
+<xref target="reaching_decision_during_the_meeting"/>
+and
+<xref target="draft_not_approved"/>
+). Otherwise, the study group may authorize additional work to address the remaining issues.
+</p>
+</clause>
+<clause id="no_election_to_oppose_approval" inline-header="true" obligation="normative">
+<p id="_7a80fd8d-2f8d-4ba7-8177-215936777048">In cases where a Member State or Sector Member does not elect to oppose approval of a text, but would like to register a degree of concern on one or more aspects, this shall be noted in the report of the meeting. Such concerns shall be mentioned in a concise note appended to the text of the Recommendation concerned.</p>
+</clause>
+<clause id="reaching_decision_during_the_meeting" inline-header="true" obligation="normative">
+<p id="_ad860ee4-17fa-467f-9c09-3876a31c3c2c">
+A decision must be reached during the meeting on the basis of a text available in its final form to all participants at the meeting. Exceptionally, but only during the meeting, a Member State may request more time to consider its position for
+<xref target="not_reaching_unopposed_approval"/>
+above. Unless the Director of TSB is advised of their opposition within a period of four weeks from the end of the meeting, the Recommendation is approved and the Director shall proceed in accordance with
+<xref target="notification_of_the_results"/>
+.
+</p>
+<clause id="reaching_decision_during_the_meeting_request_for_more_time" inline-header="true" obligation="normative">
+<p id="_cc9b8114-a4ce-4719-89c4-327d722d9465">
+A Member State that requested more time to consider its position and that then indicates disapproval within the four-week interval specified in
+<xref target="reaching_decision_during_the_meeting"/>
+above is requested to include its reasons and to indicate the possible changes that would facilitate further consideration, if required, for future approval of the draft new or revised Recommendation.
+</p>
+</clause>
+</clause>
+<clause id="abstaining_from_the_application_of_the_procedure" inline-header="true" obligation="normative">
+<p id="_be419427-1486-4605-88c7-2bfb17ff1cb5">
+A Member State or Sector Member may advise at the meeting that it is abstaining from the application of the procedure. Their presence shall then be ignored for the purposes of
+<xref target="unopposed_approval_procedure"/>
+above. Such an abstention may subsequently be revoked, but only during the course of the meeting.
+</p>
+</clause>
+<clause id="draft_not_approved" inline-header="true" obligation="normative">
+<p id="_22cd6e4f-a2fc-4426-9c4a-b6fe1f597a50">
+If the draft new or revised Recommendation is not approved, the study group chairman, after consultation with the parties concerned, may proceed according to
+<xref target="intention_to_apply_aap"/>
+above, without further CONSENT at a subsequent working party or study group meeting.
+</p>
+</clause>
+</clause>
+<clause id="notification" inline-header="false" obligation="normative">
+<title>Notification</title>
+<clause id="notification_of_the_results" inline-header="true" obligation="normative">
+<p id="_fa1e1de5-69e2-434f-ba66-f95e5900f4ec">The Director of TSB shall promptly notify the membership of the results (indicating approval or non-approval) of the last call and additional review.</p>
+</clause>
+<clause id="notification_of_the_results_timeframe" inline-header="true" obligation="normative">
+<p id="_8f4056cd-5568-4e64-89a1-0338beec8185">
+Within two weeks of the closing date of the study group meeting described in
+<xref target="unopposed_approval_procedure"/>
+to
+<xref target="no_election_to_oppose_approval"/>
+above or, exceptionally, two weeks after the period described in
+<xref target="reaching_decision_during_the_meeting"/>
+, the Director shall notify whether the text is approved or not by a circular. The Director shall arrange for this information to also be included in the next available ITU Operational Bulletin. Within this same time period, the Director shall also ensure that any Recommendation approved is available online, with an indication that the Recommendation may not be in its final publication form.
+</p>
+</clause>
+<clause id="editorial_amendments" inline-header="true" obligation="normative">
+<p id="_dec65529-4fc9-4659-9bf5-c16d845e36b8">Should minor, purely editorial amendments or correction of evident oversights or inconsistencies in the text as presented for approval be necessary, TSB may correct these with the approval of the chairman of the study group.</p>
+</clause>
+<clause id="publishing_recommendations" inline-header="true" obligation="normative">
+<p id="_3952ee37-1ca7-4a4c-8b85-c8971dfbc63a">The Secretary-General shall publish the approved new or revised Recommendations as soon as practicable, indicating, as necessary, a date of entry into effect. However, in accordance with Recommendation ITU-T A.11, minor amendments may be covered by corrigenda rather than a complete reissue. Also, where appropriate, texts may be grouped to suit market needs.</p>
+</clause>
+<clause id="cover_sheet_urging_to_consult_databases" inline-header="true" obligation="normative">
+<p id="_b2291c27-06e9-4b44-9cc8-4eb51ead5de4">Text shall be added to the cover sheets of all new and revised Recommendations urging users to consult the ITU-T patent database and the ITU-T software copyright database. Suggested wording is:</p>
+<ul id="_ad4fcbc5-0e3c-4e9a-bf66-42391252d6c3">
+<li>
+<p id="_bfbe776e-133a-4794-90df-9a481c1db4a6">"ITU draws attention to the possibility that the practice or implementation of this Recommendation may involve the use of a claimed intellectual property right. ITU takes no position concerning the evidence, validity or applicability of claimed intellectual property rights, whether asserted by ITU Member States and Sector Members or by others outside of the Recommendation development process."</p>
+</li>
+<li>
+<p id="_79c59b01-b8e6-46e0-9f64-5861cf820880">"As of the date of approval of this Recommendation, ITU had/had not received notice of intellectual property, protected by patents/software copyrights, which may be required to implement this Recommendation. However, implementers are cautioned that this may not represent the latest information and are therefore strongly urged to consult the appropriate ITU-T databases available at the ITU-T website."</p>
+</li>
+</ul>
+</clause>
+<clause id="publication_of_new_and_revised_recommendations" inline-header="true" obligation="normative">
+<p id="_da1101c1-29c5-43d7-86a5-6745bb123d62">See Recommendation ITU-T A.11 concerning the publication of new and revised Recommendations.</p>
+</clause>
+</clause>
+<clause id="correction_of_defects" inline-header="false" obligation="normative">
+<title>Correction of defects</title>
+<clause id="defects_in_recommendation" inline-header="true" obligation="normative">
+<p id="_1c71e608-5c1c-415e-bac1-9e434bfa3ccb">When a study group identifies the need for implementers to be made aware of defects (e.g.,typographical errors, editorial errors, ambiguities, omissions or inconsistencies and technical errors) in a Recommendation, one mechanism that may be employed is an implementers' guide. This guide is a historical document recording all identified defects and their status of correction, from their identification to final resolution. Implementers' guides shall be agreed by the study group, or agreed by one of its working parties with the concurrence of the study group chairman. Implementers' guides shall be made available by posting on the ITU-T website with open access.</p>
+</clause>
+</clause>
+<clause id="deletion_of_recommendations" inline-header="false" obligation="normative">
+<title>Deletion of Recommendations</title>
+<p id="_5b1df26b-a5ec-4595-b96b-0b7271b3a8fb">Study groups may decide in each individual case which of the following alternatives is the most appropriate one.</p>
+<clause id="deletion_of_recommendations_by_wtsa" inline-header="false" obligation="normative">
+<title>Deletion of Recommendations by WTSA</title>
+<p id="_b0565dc6-b979-49fa-93e8-1e7c39c8ec68">Upon the decision of the study group, the chairman shall include in his report to WTSA the request to delete a Recommendation. WTSA may approve this request.</p>
+</clause>
+<clause id="deletion_of_recommendations_between_wtsas" inline-header="false" obligation="normative">
+<title>Deletion of Recommendations between WTSAs</title>
+<clause id="deletion_of_superseded_and_obsolete_recommendations_between_wtsas" inline-header="true" obligation="normative">
+<p id="_1fe3dc6d-ede2-4ccc-af87-ee0a9b942758">
+At a study group meeting it may be agreed to delete a Recommendation, i.e. because it has been superseded by another Recommendation or because it has become obsolete. This agreement by the Member States and Sector Members present at the meeting must be unopposed. If unopposed agreement has not been reached, the same criteria as in
+<xref target="not_reaching_unopposed_approval"/>
+above are applied. Information about this agreement, including an explanatory summary about the reasons for the deletion, shall be provided by a circular. If no objection to the deletion is received from a Member State or a Sector Member within three months, the deletion will come into force. In the case of objection, the matter will be referred back to the study group.
+</p>
+</clause>
+<clause id="deletion_of_recommendations_between_wtsas_notification" inline-header="true" obligation="normative">
+<p id="_62d2bf93-9585-48c4-9564-4e7360b55bb5">Notification of the result will be given in another circular, and TSAG will be informed by a report from the Director of TSB. In addition, the Director shall publish a list of deleted Recommendations whenever appropriate, but at least once by the middle of a study period.</p>
+<figure id="fig1">
+<name>Sequence of events</name>
+<image src="data:image/gif;base64,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" id="_9c5db559-c879-44fa-8333-fb375a19681e" mimetype="image/gif" height="292" width="724" alt=""/>
+</figure>
+<p id="_c7f4854e-c4c9-45dc-bffe-83c8ef7a1e1e">
+<strong>Notes to Figure 1 – AAP sequence of events</strong>
+</p>
+<ol id="_9a6e933a-f3c2-48f1-98c1-17f2e8615530" class="steps">
+<li>
+<p id="_fda3f0de-f5c5-4cf1-b1fd-c6154a100960">
+<em>SG or WP consent</em>
+– The study group or working party concludes that the work on a draft Recommendation is sufficiently mature to begin the alternative approval process and to initiate the last call (
+<xref target="intention_to_apply_aap"/>
+).
+</p>
+</li>
+<li>
+<p id="_ef20f3d6-d4d7-4f73-85f1-e990c7efbc5d">
+<em>Edited text available</em>
+– The final, edited, draft text, including summary, is provided to TSB, and the study group chairman requests the Director to initiate the last call (
+<xref target="draft_availability"/>
+). Any associated electronic material included in the Recommendation must also be made available to TSB at the same time.
+</p>
+</li>
+<li>
+<p id="_c4f331ec-181d-460f-8481-82047b7bf724">
+<em>Director's last call announcement and posting</em>
+– The Director announces the beginning of the last call to all Member States, Sector Members and Associates, with reference to the summary and complete text. If the draft Recommendation has not already been electronically posted, it is done at this time (
+<xref target="intention_to_apply_aap"/>
+).
+</p>
+</li>
+<li>
+<p id="_0de8a5cd-5b16-46a2-a345-e5d551f74bfd">
+<em>Last call judgement</em>
+– The study group chairman, in consultation with TSB, makes the judgement whether:
+</p>
+<ol id="_b09183a2-9143-43de-a5cd-681241d0615f">
+<li>
+<p id="_0ea6dd9c-cd02-4d90-b0dc-5400d2bc11d2">
+no comments other than those indicating typographical errors have been received. In this case, the Recommendation is considered as approved (
+<xref target="disapproval_due_to_typographical_errors"/>
+);
+</p>
+</li>
+<li>
+<p id="_4f204cab-b83b-4024-ac44-b49db84090c0">
+a planned study group meeting is sufficiently close to consider the comments received (
+<xref target="disapproval_due_to_non_typographical_errors"/>
+); or
+</p>
+</li>
+<li>
+<p id="_3a1c65db-84d0-4c90-9eb4-6930007cf53c">
+to save time and/or because of the nature and maturity of the work, comment resolution should be initiated leading to the preparation of edited texts (
+<xref target="disapproval_due_to_non_typographical_errors"/>
+).
+</p>
+</li>
+</ol>
+</li>
+<li>
+<p id="_806789ad-482f-4a5e-bf84-f243fbeb186e">
+<em>Director's study group announcement and posting</em>
+– The Director announces that the next study group meeting will consider the draft Recommendation for approval and will include reference to either:
+</p>
+<ol id="_4f639a9e-836b-4806-ad63-9e615c124e32">
+<li>
+<p id="_c4854cc2-74dd-4571-8c52-069dfc428a39">
+the draft Recommendation (the edited text (LC) version) plus the comments received from the last call (
+<xref target="announcing_attention_of_draft_approval"/>
+); or
+</p>
+</li>
+<li>
+<p id="_0608345b-823e-4de3-9983-4e5f79f1ccbb">
+if comment resolution has been carried out, the revised draft Recommendation text. If the revised draft Recommendation has not already been electronically posted, it is done at this time (
+<xref target="announcing_attention_of_draft_approval"/>
+).
+</p>
+</li>
+</ol>
+</li>
+<li>
+<p id="_0fb94cfe-bcc2-430a-8d94-873a3e849300">
+<em>Study group decision meeting</em>
+– The study group meeting reviews and addresses all written comments and either:
+</p>
+<ol id="_091f0c08-0387-4cd2-8a77-92dc4886ae50">
+<li>
+<p id="_067b8373-1b40-41b4-829d-dddf94dd476d">
+proceeds under WTSA Resolution 1 or
+<xref target="draft_not_approved"/>
+, as appropriate, if there might be policy or regulatory implications (
+<xref target="procedure_for_changes"/>
+); or
+</p>
+</li>
+<li>
+<p id="_94f7f1ad-4eca-49e6-98c7-83892d436a5e">
+approves the draft Recommendation (
+<xref target="unopposed_approval_procedure"/>
+or
+<xref target="not_reaching_unopposed_approval"/>
+); or
+</p>
+</li>
+<li>
+<p id="_74b43ac6-471c-4b16-b28c-2d006f25c6dd">
+does not approve the draft Recommendation. If it is concluded that a further attempt at addressing comments received is appropriate, then additional work should be done and the process returns to step 2 (without further CONSENT at a working party or study group meeting) (
+<xref target="draft_not_approved"/>
+).
+</p>
+</li>
+</ol>
+</li>
+<li>
+<p id="_bdd668c4-4cc5-4a34-a693-9f8ba6be139d">
+<em>Comment resolution</em>
+– The study group chairman, with assistance from TSB and experts, via electronic correspondence and rapporteur and working party meetings, where appropriate, addresses the comments and prepares a new edited draft Recommendation text (
+<xref target="disapproval_due_to_non_typographical_errors"/>
+).
+</p>
+</li>
+<li>
+<p id="_0c98d37d-59db-4f4c-902d-a43e5b3b4064">
+<em>Edited text available</em>
+– The revised edited text, including summary, is provided to TSB (
+<xref target="disapproval_due_to_non_typographical_errors"/>
+).
+</p>
+</li>
+<li>
+<p id="_4a4ab73a-5e5a-44cd-8bc1-a9a1eba7f39b">
+<em>Next step judgement</em>
+– The study group chairman, in consultation with TSB, makes the judgement whether:
+</p>
+<ol id="_bebdd128-f0fb-4209-8e13-430521e31f57">
+<li>
+<p id="_aa3c7e46-def9-4c3c-a940-9791cc5e05be">
+a planned study group meeting is sufficiently close to consider the draft Recommendation for approval (
+<xref target="actions_after_completion_of_comment_resolution"/>
+a); or
+</p>
+</li>
+<li>
+<p id="_4b68af68-bc88-4e69-a900-13a6b4852fc9">
+to save time and/or because of the nature and maturity of the work, an additional review should be initiated (
+<xref target="actions_after_completion_of_comment_resolution"/>
+b).
+</p>
+</li>
+</ol>
+</li>
+<li>
+<p id="_18a6d530-b022-491f-87f7-4a0e6d23760a">
+<em>Director's additional review announcement and posting</em>
+– The Director announces the beginning of the additional review to all Member States and Sector Members, with reference to the summary and complete text of the revised draft Recommendation. If the revised draft Recommendation has not already been electronically posted, it is done at this time (
+<xref target="additional_review_procedure"/>
+).
+</p>
+</li>
+<li>
+<p id="_89a650f6-f2b6-444b-a39a-c4fc3250431d">
+<em>Additional review judgement</em>
+– The study group chairman, in consultation with TSB, makes the judgement whether:
+</p>
+<ol id="_cbe373e7-a316-4da7-b8dd-4e89d449881f">
+<li>
+<p id="_3acd40bf-ce8d-4b96-ab85-95704f32c7f1">
+no comments other than those indicating typographical errors have been received. In this case, the Recommendation is considered approved (
+<xref target="additional_review_procedure_typographical_errors"/>
+); or
+</p>
+</li>
+<li>
+<p id="_4c314274-5e0e-4701-9457-363609123b0a">
+comments other than those indicating typographical errors have been received. In this case, the process proceeds to the study group meeting (
+<xref target="additional_review_procedure_non_typographical_errors"/>
+).
+</p>
+</li>
+</ol>
+</li>
+<li>
+<p id="_23dd4c1a-9491-43cf-a7a2-55a982423df2">
+<em>Director's notification</em>
+– The Director notifies the members that the draft Recommendation has been approved (
+<xref target="notification_of_the_results"/>
+or
+<xref target="notification_of_the_results_timeframe"/>
+).
+</p>
+</li>
+</ol>
+</clause>
+</clause>
+</clause>
+</sections>
+</itu-standard>
