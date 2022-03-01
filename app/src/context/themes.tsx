@@ -24,7 +24,11 @@ export const IsoTheme = {
     title2Weight: '400',
 
     //table part
-    table: ''
+    table: '',
+
+    exampleFontSize: '17px',
+    exampleColor: 'black',
+    exampleBackground: 'inherit;',
 };
 
 export const ItuTheme = {
@@ -51,7 +55,10 @@ export const ItuTheme = {
 
     //table part
     // table: 'table:not(.biblio), table:not(.biblio) th, table:not(.biblio)table:not(.biblio) td, tr {border: none !important;} table:not(.biblio) tr:nth-child(odd) {background: #f6f8fa;} table:not(.biblio) tr:nth-child(even) {background: #f1f8ff;}',
-    table: 'table {border-collapse: collapse;border-spacing: 0;} table, table th, table td, tr {border: none !important;} table tr:nth-child(odd) {background: #f6f8fa;} table tr:nth-child(even) {background: #f1f8ff;}'
+    table: 'table {border-collapse: collapse;border-spacing: 0;} table, table th, table td, tr {border: none !important;} table tr:nth-child(odd) {background: #f6f8fa;} table tr:nth-child(even) {background: #f1f8ff;}',
+    exampleFontSize: 'inherit',
+    exampleColor: 'black',
+    exampleBackground: 'white;',
 };
 
 export const OgcTheme = {
@@ -77,7 +84,10 @@ export const OgcTheme = {
     title2Weight: '400',
 
     //table part
-    table: 'table, table th, table td { border: 1px solid black;font-size: 0.95em;}'
+    table: 'table, table th, table td { border: 1px solid black;font-size: 0.95em;}',
+    exampleFontSize: '17px',
+    exampleColor: 'black',
+    exampleBackground: '#fcad88;',
 };
 
 export const GlobalStyle = createGlobalStyle`
@@ -96,6 +106,11 @@ export const GlobalStyle = createGlobalStyle`
     --title1-weight: ${(props: any) => props.theme.title1Weight};
     --title2-size: ${(props: any) => props.theme.title2};
     --title2-weight: ${(props: any) => props.theme.title2Weight};
+
+    --example1-size: ${(props: any) => props.theme.exampleFontSize};
+    --example1-weight: ${(props: any) => props.theme.title1Weight};
+    --example2-size: ${(props: any) => props.theme.title2};
+    --example2-weight: ${(props: any) => props.theme.title2Weight};
   }
 
   html, body {
