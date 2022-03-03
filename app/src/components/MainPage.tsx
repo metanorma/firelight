@@ -17,7 +17,7 @@ interface OwnProps {
 
 export default function MainPage() {
     const { xmlJson, xml } = useXmlData();
-
+console.log(xmlJson, 'xmlJson')
     // split the xml data by content section and save those as array
     const contentSections = useMemo(() => {
         //verify the type of document.
@@ -25,7 +25,7 @@ export default function MainPage() {
         if (xmlJson['itu-standard']) {
             standard = 'itu-standard';
         } else if (xmlJson['iso-standard']) {
-            standard = 'itu-standarad';
+            standard = 'iso-standard';
         } else if (xmlJson['ogc-standard']) {
             standard = 'ogc-standard';
         }
