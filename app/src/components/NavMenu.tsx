@@ -57,14 +57,16 @@ export default function NavIMenu() {
                         menuItem[roman] = {}
                     }
                 } else {
-                    if (count === 2 && menuItem[roman + count] !== undefined) {
-                        count ++;
-                        index ++;
-                        
-                    }
-                    if (count === 3 && menuItem[roman + count ] !== undefined) {
-                        count ++;
-                        index ++;
+                    if (standard === 'ogc-standard') {
+                        if (count === 2 && menuItem[roman + count] !== undefined) {
+                            count ++;
+                            index ++;
+                            
+                        }
+                        if (count === 3 && menuItem[roman + count ] !== undefined) {
+                            count ++;
+                            index ++;
+                        }
                     }
                     returnData.index = index ++;
                     count ++;
