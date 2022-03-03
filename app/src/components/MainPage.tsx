@@ -54,24 +54,26 @@ console.log(xmlJson, 'xmlJson')
                         menuItem[roman] = {};
                         menuItem[roman - 1] = {};
                     }
-                } else {
+                } else{
                     //check whether the count is 3 or 4 and the value is available
-                    if (count === 3) {
-                        console.log(menuItem[roman + count -2], roman + count -2, index, '3')
-                    }
-                    if (
-                        count === 3 &&
-                        menuItem[roman + count - 2] !== undefined
-                    ) {
-                        count++;
-                        index++;
-                    }
-                    if (
-                        count === 4 &&
-                        menuItem[roman + count - 2] !== undefined
-                    ) {
-                        count++;
-                        index++;
+                    if (standard === 'ogc-standard') {
+                        if (count === 3) {
+                            console.log(menuItem[roman + count -2], roman + count -2, index, '3')
+                        }
+                        if (
+                            count === 3 &&
+                            menuItem[roman + count - 2] !== undefined
+                        ) {
+                            count++;
+                            index++;
+                        }
+                        if (
+                            count === 4 &&
+                            menuItem[roman + count - 2] !== undefined
+                        ) {
+                            count++;
+                            index++;
+                        }
                     }
                     returnData.titleIndex = count.toString();
                     returnData.index = index++;
@@ -473,7 +475,7 @@ console.log(xmlJson, 'xmlJson')
                 }
             }
         }
-        console.log(menuItem, 'menuItem')
+        console.log(menuItem, 'menuItem1')
         const resultArray: any[] = [];
         menuItem.map((item: any) => {
             if (item?.data) resultArray.push(item);
