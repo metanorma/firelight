@@ -1,6 +1,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 import { useMemo } from 'react';
+import { createImportSpecifier } from 'typescript';
 import DisplayNode, { XMLNode } from './DisplayNode';
 import './SectionFn.css';
 
@@ -24,6 +25,11 @@ export default function SectionFn({ data }: OwnProps) {
             (attr: any) => attr?.name === 'reference'
         );
         const reference = referenceRow?.value ? referenceRow.value : '';
+
+        let isReference = parseInt(reference);
+        if (isNaN(isReference)) {
+            return <></>
+        }
 
         return (
             <>
