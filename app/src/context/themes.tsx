@@ -2,9 +2,10 @@ import { createGlobalStyle } from 'styled-components';
 
 export const IsoTheme = {
     defaultSize: '16px',
+    fontFamiliy: '"Cambria",serif',
     backgroundColor: 'white',
     textColor: 'black',
-    lineHeight: 1.5,
+    lineHeight: 1.3,
 
     //nav item part
     darkerRed: '#d72d18',
@@ -33,6 +34,7 @@ export const IsoTheme = {
 
 export const ItuTheme = {
     defaultSize: '15x',
+    fontFamiliy: '"Times New Roman",serif',
     backgroundColor: 'white',
     textColor: 'black',
     lineHeight: '1.6em',
@@ -63,6 +65,7 @@ export const ItuTheme = {
 
 export const OgcTheme = {
     defaultSize: '16px',
+    fontFamiliy: '"Overpass",sans-serif',
     backgroundColor: 'white',
     textColor: '#00335b',
     lineHeight: 1.5,
@@ -118,6 +121,7 @@ export const GlobalStyle = createGlobalStyle`
     background-color: ${(props: any) => props.theme.backgroundColor};
     font-size: ${(props: any) => props.theme.defaultSize};
     line-height: ${(props: any) => props.theme.lineHeight};
+    font-family: ${(props: any) => props.theme.fontFamiliy};
   }
 
   main {

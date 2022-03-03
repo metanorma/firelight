@@ -14,7 +14,6 @@ interface OwnProps {
 
 export default function SectionFn({ data }: OwnProps) {
     const renderContent = useMemo(() => {
-        console.log(data, 'fn data');
         const attrs: any[] = data.attributes;
         const idRow = Object.values(attrs).find(
             (attr: any) => attr?.name === 'id'
