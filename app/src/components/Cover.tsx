@@ -97,6 +97,17 @@ export default function Cover() {
                 }
             }
 
+            let cover = '';
+            if (bibdata?.cover) {
+                let coverRow: any = bibdata.cover.find(
+                    (child: any) => {
+                        return child.tagName === 'cover'
+                    }
+                )
+
+                cover = coverRow.data[0];
+            }
+
             if (bibdata?.title) {
                 let titleRow = bibdata.title.find(
                     (child: any) => child?.$?.type === 'main'
