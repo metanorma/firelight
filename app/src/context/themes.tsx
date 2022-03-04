@@ -33,7 +33,7 @@ export const IsoTheme = {
 };
 
 export const ItuTheme = {
-    defaultSize: '15x',
+    defaultSize: '15px',
     fontFamiliy: '"Times New Roman",serif',
     backgroundColor: 'white',
     textColor: 'black',
