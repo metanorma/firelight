@@ -5,3 +5,20 @@
     margin-inline-start: 0px;
     margin-inline-end: 0px;
 }
+
+.p > .small {
+    display: inline;
+    padding: 15px 0;
+    font-size: var(--defualt-size);
+    font-family: inherit;
+    word-spacing: inherit;
+}
+
+.p > .extended-small {
+    display: block;
+    padding: 15px 0;
+    font-size: var(--defualt-size);
+    font-family: inherit;
+    word-spacing: inherit;
+    background-color: var(--note-bg-color);
+}
