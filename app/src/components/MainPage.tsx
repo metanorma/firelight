@@ -150,6 +150,23 @@ console.log(xmlJson, 'xmlJson')
                         }
                     );
                 }
+
+                //binary part
+                if (xmlJson[standard]['binary']) {
+                    xmlJson[standard]['binary'].map((child: any) => {
+                        let item = getMenuItem(child, false, false, true);
+                        menuItem[item.index] = item;
+                    });
+                }
+
+                //context part
+                if (xmlJson[standard]['context']) {
+                    xmlJson[standard]['context'].map((child: any) => {
+                        let item = getMenuItem(child, false, false, true);
+                        menuItem[item.index] = item;
+                    });
+                }
+                
                 //annex part
                 if (xmlJson[standard]['annex']) {
                     xmlJson[standard]['annex'].map((data: any) => {
@@ -446,6 +463,22 @@ console.log(xmlJson, 'xmlJson')
                             }
                         );
                     }
+                }
+
+                //binary part
+                if (xmlJson[standard]['binary']) {
+                    xmlJson[standard]['binary'].map((child: any) => {
+                        let item = getMenuItem(child, false, false, true);
+                        menuItem[item.index] = item;
+                    });
+                }
+
+                //context part
+                if (xmlJson[standard]['context']) {
+                    xmlJson[standard]['context'].map((child: any) => {
+                        let item = getMenuItem(child, false, false, true);
+                        menuItem[item.index] = item;
+                    });
                 }
 
                 //annex part
