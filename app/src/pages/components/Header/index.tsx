@@ -1,30 +1,20 @@
 import React from 'react';
+import { useXmlData } from '../../../context';
 
 import './style.css';
 
-interface Props {
-    generatedDate?: Date;
-    type?: string;
-    title?: string;
-    version?: string;
-}
+const Header = () => {
+    const { documentDetail } = useXmlData();
 
-const Header = ({ generatedDate, type, title, version }: Props) => {
     return (
         <header className="header">
             <div className="topbar-inner">
                 <div className="title-bar">
                     <div className="doc-access">
-                        {generatedDate
-                            ? 'Generated: ' + generatedDate
-                            : ''}
-                        {version ? ' Metanorma ' + version : ''}
+                        {documentDetail?.generateDate ? 'Generated: ' + documentDetail?.generateDate : ''}
+                        {documentDetail?.version ? ' Metanorma ' + documentDetail?.version : ''}
                     </div>
-                    <span>
-                        {type
-                            ? type
-                            : 'International Telecommunications Union'}
-                    </span>
+                    <span>{documentDetail?.type ? documentDetail?.type : 'Metanorma'}</span>
                 </div>
             </div>
             <div className="title-section">
@@ -33,9 +23,7 @@ const Header = ({ generatedDate, type, title, version }: Props) => {
                         <div className="coverpage-doc-identity">
                             <div className="coverpage-title">
                                 <span className="title-first">
-                                    {title
-                                        ? title
-                                        : 'ITU Documents in Metanorma'}
+                                    {documentDetail?.title ? documentDetail?.title : 'Metanorma Documents'}
                                 </span>
                             </div>
                         </div>
