@@ -8,6 +8,36 @@ export const url =
 //     return localStorage.getItem('xml') || ' ';
 // };
 
+export const documentMockData = [
+    {
+        type: 'International Telecommunications Union',
+        generateDate: '2021-06-29',
+        version: '1.3.5',
+        title: 'ITU Documents in Metanorma',
+        data: {
+
+        }
+    },
+    {
+        type: 'Metanorma : Standards for standards',
+        generateDate: '2022-03-01',
+        version: '1.4.5',
+        title: 'ISO sample documents in Metanorma (Metanorma AsciiDoc syntax)',
+        data: {
+
+        }
+    },
+    {
+        type: 'OGC: The Open Geospatial Consortium',
+        generateDate: '2021-11-24',
+        version: '1.4.1',
+        title: 'OGC Publications in Metanorma',
+        data: {
+
+        }
+    },
+];
+
 export const getChildsById = (id: string, xml: string) => {
     const xmlDoc = new DOMParser().parseFromString(
         xml,
