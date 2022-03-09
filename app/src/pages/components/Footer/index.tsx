@@ -1,23 +1,22 @@
 import React from 'react';
+import { useXmlData } from '../../../context';
 
 import './style.css';
 
-interface Props {
-    generatedDate?: Date;
-    copyRight?: string;
-    message?: string;
-}
+const Footer = () => {
+    const { documentDetail } = useXmlData();
 
-const Footer = ({ generatedDate, copyRight, message }: Props) => {
     return (
         <footer className="footer">
             <div className="copyright">
                 <div className="doc-access">
-                    Generated: {generatedDate ? generatedDate: '2021-06-29 Metanorma 1.3.5'}
+                    {documentDetail?.generateDate ? 'Generated: ' + documentDetail?.generateDate: ''}
+                    {documentDetail?.version ? ' Metanorma ' + documentDetail?.version: ''}
+                    
                 </div>
-                <p className="year">{copyRight ? copyRight : '© International Telecommunications Union'}</p>
+                <p className="year">©{documentDetail?.type ? documentDetail?.type : ' Metanorma'}</p>
                 <p className="message">
-                    {message ? message : 'All rights reserved. Unless otherwise specified, no part of this publication may be reproduced or utilized otherwise in any form or by any means, electronic or mechanical, including photocopying, or posting on the internet or an intranet, without prior written permission.'}
+                    {documentDetail?.message ? documentDetail?.message : 'All rights reserved. Unless otherwise specified, no part of this publication may be reproduced or utilized otherwise in any form or by any means, electronic or mechanical, including photocopying, or posting on the internet or an intranet, without prior written permission.'}
                 </p>
             </div>
         </footer>
