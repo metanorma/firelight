@@ -4,23 +4,25 @@ import './style.css';
 
 interface Props {
     generatedDate?: Date;
-    companyName?: string;
+    type?: string;
     title?: string;
+    version?: string;
 }
 
-const Header = ({ generatedDate, companyName, title }: Props) => {
+const Header = ({ generatedDate, type, title, version }: Props) => {
     return (
         <header className="header">
             <div className="topbar-inner">
                 <div className="title-bar">
                     <div className="doc-access">
                         {generatedDate
-                            ? generatedDate
-                            : 'Generated: 2021-06-29 Metanorma 1.3.5'}
+                            ? 'Generated: ' + generatedDate
+                            : ''}
+                        {version ? ' Metanorma ' + version : ''}
                     </div>
                     <span>
-                        {companyName
-                            ? companyName
+                        {type
+                            ? type
                             : 'International Telecommunications Union'}
                     </span>
                 </div>
