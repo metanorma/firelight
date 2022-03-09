@@ -14,6 +14,8 @@ export type XmlData = {
     setSourceUrl: (a: string) => void;
     loading: boolean;
     setLoading: (a: boolean) => void;
+    documentDetail: any;
+    setDocumentDetail: (a: any) => void;
 };
 
 const contextDefaultValues: XmlData = {
@@ -26,7 +28,9 @@ const contextDefaultValues: XmlData = {
     sourceUrl: '',
     setSourceUrl: (a: string) => {},
     loading: true,
-    setLoading: (a: boolean) => {}
+    setLoading: (a: boolean) => {},
+    documentDetail: {},
+    setDocumentDetail: (a: any) => {}
 };
 
 export const XmlContext = createContext<XmlData>({} as XmlData);
@@ -39,6 +43,7 @@ const XmlProvider: React.FC = ({ children }) => {
     const [standard, setStandard] = useState<string>('iso-standard');
     const [sourceUrl, setSourceUrl] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
+    const [documentDetail, setDocumentDetail] = useState<any>({});
 
     useEffect(() => {
         if (!sourceUrl) {
@@ -118,7 +123,7 @@ const XmlProvider: React.FC = ({ children }) => {
 
     return (
         <XmlContext.Provider
-            value={{ xml, xmlJson, title, figureIndex, setFigureIndex, standard, sourceUrl, setSourceUrl, loading, setLoading }}
+            value={{ xml, xmlJson, title, figureIndex, setFigureIndex, standard, sourceUrl, setSourceUrl, loading, setLoading, documentDetail, setDocumentDetail }}
         >
             {children}
         </XmlContext.Provider>
