@@ -30,6 +30,10 @@ export const IsoTheme = {
     exampleFontSize: '17px',
     exampleColor: 'black',
     exampleBackground: 'inherit;',
+
+    contentFontSize: '16px',
+    contentColor: 'white',
+    contentBackground: '#33eeff',
 };
 
 export const ItuTheme = {
@@ -61,6 +65,10 @@ export const ItuTheme = {
     exampleFontSize: 'inherit',
     exampleColor: 'black',
     exampleBackground: 'white;',
+
+    contentFontSize: '16px',
+    contentColor: 'white',
+    contentBackground: '#33eeff',
 };
 
 export const OgcTheme = {
@@ -91,6 +99,10 @@ export const OgcTheme = {
     exampleFontSize: '17px',
     exampleColor: 'black',
     exampleBackground: '#fcad88;',
+
+    contentFontSize: '16px',
+    contentColor: 'white',
+    contentBackground: '#33eeff',
 };
 
 export const GlobalStyle = createGlobalStyle`
@@ -114,6 +126,10 @@ export const GlobalStyle = createGlobalStyle`
     --example1-weight: ${(props: any) => props.theme.title1Weight};
     --example2-size: ${(props: any) => props.theme.title2};
     --example2-weight: ${(props: any) => props.theme.title2Weight};
+
+    --content-weight: ${(props: any) => props.theme.contentFontSize};
+    --content-color: ${(props: any) => props.theme.contentColor};
+    --content-background: ${(props: any) => props.theme.contentBackground};
   }
 
   html, body {

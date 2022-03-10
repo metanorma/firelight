@@ -223,6 +223,15 @@ span.doc-title {
     right: 0;
 }
 
+#published {
+    border-bottom: solid 3px #9abd48;
+}
+
+#standard,
+#published {
+    color: #9abd48;
+}
+
 .cls-1 {
     fill: #16a0db;
 }
