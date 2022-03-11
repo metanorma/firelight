@@ -3,6 +3,7 @@ import { getChildsByTagname } from '../utility';
 import { XMLNode } from './DisplayNode';
 import { useXmlData } from '../context';
 import classNames from 'classnames';
+import DisplayNode from './DisplayNode';
 import './Cover.css';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -39,12 +40,39 @@ export default function Cover() {
             (child: any) => child.tagName === 'copyright'
         );
 
+        //copyright part
+        let title = '';
+        let node: any = {};
+        const copyRightContent = getChildsByTagname('copyright-statement', xml);
+
+        if (copyRightContent && copyRightContent[0]?.childNodes) {
+            let data: any = Object.values(copyRightContent[0].childNodes).find(
+                (child: any) => child?.tagName === 'clause'
+            );
+
+            if (data?.childNodes) {
+                Object.values(data.childNodes).map(
+                    (child: any, index: number) => {
+                        if (child?.tagName === 'title') {
+                            title = child?.childNodes[0]?.data;
+                            delete data.childNodes[index];
+                        }
+                    }
+                );
+                node = data.childNodes;
+            }
+        }
+
         return (
             <div className="cover">
                 <p className="doc-identifier">
                     {docIdentifier?.childNodes[0].data}
                 </p>
                 <h1 className="main-title">{mainTitle?.childNodes[0].data}</h1>
+                <div className="content-section">
+                    {title && <h1 className="title title-3">{title}</h1>}
+                    {node && <DisplayNode data={node} />}
+                </div>
             </div>
         );
     } else if (xmlJson['itu-standard']) {
@@ -99,11 +127,9 @@ export default function Cover() {
 
             let cover = '';
             if (bibdata?.cover) {
-                let coverRow: any = bibdata.cover.find(
-                    (child: any) => {
-                        return child.tagName === 'cover'
-                    }
-                )
+                let coverRow: any = bibdata.cover.find((child: any) => {
+                    return child.tagName === 'cover';
+                });
 
                 cover = coverRow.data[0];
             }
@@ -255,7 +281,6 @@ export default function Cover() {
 
             // get the title
             if (bibdata?.title) {
-            
                 let titleRow = bibdata.title.find(
                     (child: any) => child?.$?.type === 'main'
                 );
@@ -264,7 +289,6 @@ export default function Cover() {
 
                 if (titleRow?._) {
                     title = titleRow._;
-                    
                 }
             }
             //get the editor
@@ -283,7 +307,6 @@ export default function Cover() {
 
                 if (editorRow) {
                     editor = editorRow?.person[0]?.name[0]?.completename[0];
-                    
                 }
             }
             //submission date
@@ -299,7 +322,6 @@ export default function Cover() {
 
                 if (approveRow) {
                     approvalDate = approveRow?.on[0];
-                    
                 }
 
                 //get the published date
@@ -320,7 +342,7 @@ export default function Cover() {
                         if (child?.$?.type === 'received') return true;
                         return false;
                     }
-                )
+                );
 
                 if (submissionRow) {
                     submissionDate = submissionRow?.on[0];
@@ -372,7 +394,7 @@ export default function Cover() {
                 if (bibdata.status[0]?.stage[0]) {
                     publishedState = bibdata.status[0]?.stage[0];
                 }
-            } 
+            }
 
             if (approvalDate) publishedState = 'Approved';
             if (publicationDate) publishedState = 'Published';
@@ -406,7 +428,9 @@ export default function Cover() {
                                 <span className="ogc-label">
                                     Submission Date:{' '}
                                 </span>{' '}
-                                <span className="ogc-value">{submissionDate ? submissionDate : 'XXX'}</span>
+                                <span className="ogc-value">
+                                    {submissionDate ? submissionDate : 'XXX'}
+                                </span>
                                 <span className="ogc-label">
                                     Approval Date:{' '}
                                 </span>{' '}
@@ -459,7 +483,14 @@ export default function Cover() {
                             <div className="ogc-coverpage-stage-block">
                                 <p>
                                     <span
-                                        className={classNames("coverpage-maturity", {'ogc-color-blue': publishedState === 'Approved'})}
+                                        className={classNames(
+                                            'coverpage-maturity',
+                                            {
+                                                'ogc-color-blue':
+                                                    publishedState ===
+                                                    'Approved'
+                                            }
+                                        )}
                                         id="published"
                                     >
                                         {publishedState}
@@ -520,7 +551,11 @@ export default function Cover() {
                                     </tr>
                                     <tr>
                                         <td align="right">Document stage:</td>
-                                        <td align="right">{publishedState ? publishedState : ''}</td>
+                                        <td align="right">
+                                            {publishedState
+                                                ? publishedState
+                                                : ''}
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td align="right">
@@ -610,7 +645,6 @@ export default function Cover() {
                                     </div>
                                     <div className="ogc-rule"></div>
                                 </div>
-                                
                             </div>
                         </div>
                         <div className="ogc-license">
