@@ -74,7 +74,7 @@ export const ItuTheme = {
 export const OgcTheme = {
     defaultSize: '16px',
     fontFamiliy: '"Overpass",sans-serif',
-    backgroundColor: 'white',
+    backgroundColor: '#f6f8fa;',
     textColor: '#00335b',
     lineHeight: 1.5,
 

@@ -10,19 +10,19 @@ export const url =
 
 export const documentMockData = [
     {
-        type: 'International Telecommunications Union',
-        generateDate: '2021-06-29',
-        version: '1.3.5',
-        title: 'ITU Documents in Metanorma',
+        type: 'Metanorma : Standards for standards',
+        generateDate: '2022-03-01',
+        version: '1.4.5',
+        title: 'ISO sample documents in Metanorma (Metanorma AsciiDoc syntax)',
         data: {
 
         }
     },
     {
-        type: 'Metanorma : Standards for standards',
-        generateDate: '2022-03-01',
-        version: '1.4.5',
-        title: 'ISO sample documents in Metanorma (Metanorma AsciiDoc syntax)',
+        type: 'International Telecommunications Union',
+        generateDate: '2021-06-29',
+        version: '1.3.5',
+        title: 'ITU Documents in Metanorma',
         data: {
 
         }
