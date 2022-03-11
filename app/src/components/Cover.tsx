@@ -5,6 +5,7 @@ import { useXmlData } from '../context';
 import classNames from 'classnames';
 import DisplayNode from './DisplayNode';
 import './Cover.css';
+import { SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER } from 'constants';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -15,37 +16,106 @@ export default function Cover() {
         const bibdata: XMLNode = getChildsByTagname('bibdata', xml)[0];
         const childs = bibdata.childNodes;
 
-        const mainTitle: any[] = Object.values(childs).filter(
-            (child: any) => {
-                if (child.tagName === 'title') {
-                    let attrs = child.attributes;
-                    let result = false;
-                    Object.values(attrs).map((attr: any) => {
-                        if (attr.name === 'type' && attr.value === 'main') {
-                            result = true;
-                        }
-                    });
-                    return result;
-                } else {
-                    return false;
-                }
+        const mainTitle: any[] = Object.values(childs).filter((child: any) => {
+            if (child.tagName === 'title') {
+                let attrs = child.attributes;
+                let result = false;
+                Object.values(attrs).map((attr: any) => {
+                    if (attr.name === 'type' && attr.value === 'main') {
+                        result = true;
+                    }
+                });
+                return result;
+            } else {
+                return false;
             }
+        });
+
+        const docNumberRow: XMLNode | any = Object.values(childs).find(
+            (child: any) => child.tagName === 'docnumber'
         );
 
-        const docIdentifier: XMLNode | any = Object.values(childs).find(
-            (child: any) => child.tagName === 'docidentifier'
-        );
+        let docNum = '';
+        if (docNumberRow && docNumberRow?.childNodes) {
+            docNum = docNumberRow?.childNodes[0].data;
+        }
 
-        const copyRight: XMLNode | any = Object.values(childs).find(
-            (child: any) => child.tagName === 'copyright'
+        const versionRow: any = Object.values(childs).find(
+            (child: any) => child?.tagName === 'version'
         );
+        
+        let versionDate = '';
+        if (versionRow && versionRow?.childNodes) {
+            const versionDateRow: any = Object.values(versionRow.childNodes).find(
+                (child: any) => child?.tagName === 'revision-date'
+            );
+            
+            if (versionDateRow && versionDateRow?.childNodes) {
+                versionDate = versionDateRow.childNodes[0]?.data;
+            }
+        }
 
+        let technical = '';
+        let sc = '';
+        let wg = '';
+        let secretariat = '';
         let ics = '';
         const extRow: any = Object.values(childs).find(
             (child: any) => child?.tagName === 'ext'
         );
-        
+
         if (extRow && extRow?.childNodes) {
+            const editorGroup: any = Object.values(extRow.childNodes).find(
+                (child: any) => child?.tagName === 'editorialgroup'
+            );
+
+            if (editorGroup && editorGroup?.childNodes) {
+                const technicalRow: any = Object.values(editorGroup.childNodes).find(
+                    (child: any) => child?.tagName === 'technical-committee'
+                );
+                    
+                if (technicalRow && technicalRow?.attributes) {
+                    const attr: any = Object.values(technicalRow?.attributes).find((child: any) => child?.nodeName === 'number' )
+                    
+                    if (attr) {
+                        technical = attr?.value;
+                    }
+                }
+
+                const scRow: any = Object.values(editorGroup.childNodes).find(
+                    (child: any) => child?.tagName === 'sc-committee'
+                );
+                    
+                if (scRow && scRow?.attributes) {
+                    const attr: any = Object.values(scRow?.attributes).find((child: any) => child?.nodeName === 'subcommittee' )
+                    
+                    if (attr) {
+                        sc = attr?.value;
+                    }
+                }
+
+                const wgRow: any = Object.values(editorGroup.childNodes).find(
+                    (child: any) => child?.tagName === 'workgroup'
+                );
+                    
+                if (wgRow && wgRow?.attributes) {
+                    const attr: any = Object.values(wgRow?.attributes).find((child: any) => child?.nodeName === 'number' )
+                    
+                    if (attr) {
+                        wg = attr?.value;
+                    }
+                }
+
+                const secretariatRow: any = Object.values(editorGroup.childNodes).find(
+                    (child: any) => child?.tagName === 'secretariat'
+                );
+                    
+                if (secretariatRow && secretariatRow?.childNodes) {
+                    secretariat = secretariatRow?.childNodes[0]?.data;
+                    console.log(secretariat, 'secre')
+                }
+            }
+
             const icsRow: XMLNode | any = Object.values(extRow.childNodes).find(
                 (child: any) => child?.tagName === 'ics'
             );
@@ -59,6 +129,12 @@ export default function Cover() {
                 }
             }
         }
+
+        let isoTc = (technical ? technical : '');
+        isoTc = (isoTc ? isoTc + '/': '') + (sc ? 'SC ' + sc: '');
+        isoTc = (isoTc ? isoTc + '/': '') + (wg ? 'WG ' + wg: '');
+        isoTc = 'ISO/TC ' + isoTc;
+
 
         //copyright part
         let title = '';
@@ -82,15 +158,20 @@ export default function Cover() {
                 node = data.childNodes;
             }
         }
-console.log(mainTitle, 'main')
+
         return (
             <div className="cover">
-                <p className="doc-identifier">
-                    {/* {docIdentifier?.childNodes[0].data} */}
-                </p>
+                {docNum && <p className="coverpage_docnumber">{docNum}</p>}
+                {versionDate && <p className="coverpage_docnumber">
+                    Date: {versionDate}</p>}
+                <p className="coverpage_docnumber">ISO/PWI 17301-1(E)</p>
+                {isoTc && <p className="coverpage_docnumber">{isoTc}</p>}
+                {secretariat && <p className="coverpage_docnumber">Secretariat: {secretariat}</p>}
                 {mainTitle?.length &&
                     Object.values(mainTitle).map((child: any) => (
-                        <h1 className="main-title">{child?.childNodes[0]?.data}</h1>
+                        <h1 className="main-title">
+                            {child?.childNodes[0]?.data}
+                        </h1>
                     ))}
                 {ics && (
                     <p className="doc-ics">
