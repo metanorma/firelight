@@ -15,7 +15,7 @@ export default function Cover() {
         const bibdata: XMLNode = getChildsByTagname('bibdata', xml)[0];
         const childs = bibdata.childNodes;
 
-        const mainTitle: XMLNode | any = Object.values(childs).find(
+        const mainTitle: any[] = Object.values(childs).filter(
             (child: any) => {
                 if (child.tagName === 'title') {
                     let attrs = child.attributes;
@@ -27,7 +27,7 @@ export default function Cover() {
                     });
                     return result;
                 } else {
-                    return;
+                    return false;
                 }
             }
         );
@@ -39,6 +39,26 @@ export default function Cover() {
         const copyRight: XMLNode | any = Object.values(childs).find(
             (child: any) => child.tagName === 'copyright'
         );
+
+        let ics = '';
+        const extRow: any = Object.values(childs).find(
+            (child: any) => child?.tagName === 'ext'
+        );
+        
+        if (extRow && extRow?.childNodes) {
+            const icsRow: XMLNode | any = Object.values(extRow.childNodes).find(
+                (child: any) => child?.tagName === 'ics'
+            );
+
+            if (icsRow && icsRow?.childNodes) {
+                const codeRow: any = Object.values(icsRow.childNodes).find(
+                    (child: any) => child?.tagName === 'code'
+                );
+                if (codeRow && codeRow?.childNodes) {
+                    ics = codeRow.childNodes[0]?.data;
+                }
+            }
+        }
 
         //copyright part
         let title = '';
@@ -62,13 +82,21 @@ export default function Cover() {
                 node = data.childNodes;
             }
         }
-
+console.log(mainTitle, 'main')
         return (
             <div className="cover">
                 <p className="doc-identifier">
-                    {docIdentifier?.childNodes[0].data}
+                    {/* {docIdentifier?.childNodes[0].data} */}
                 </p>
-                <h1 className="main-title">{mainTitle?.childNodes[0].data}</h1>
+                {mainTitle?.length &&
+                    Object.values(mainTitle).map((child: any) => (
+                        <h1 className="main-title">{child?.childNodes[0]?.data}</h1>
+                    ))}
+                {ics && (
+                    <p className="doc-ics">
+                        <b>ICS:</b> {ics}
+                    </p>
+                )}
                 <div className="content-section">
                     {title && <h1 className="title title-3">{title}</h1>}
                     {node && <DisplayNode data={node} />}
