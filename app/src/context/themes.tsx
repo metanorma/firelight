@@ -19,9 +19,9 @@ export const IsoTheme = {
     noteColor: 'black',
 
     //title part
-    title1: '1.8em',
+    title1: '1.5em',
     title1Weight: '300',
-    title2: '1.7em',
+    title2: '1.3em',
     title2Weight: '400',
 
     //table part

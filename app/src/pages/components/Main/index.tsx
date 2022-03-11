@@ -7,6 +7,14 @@ const Main = () => {
     const data = [
         {
             type: 'ISO 17301-1:2016',
+            title: 'Ceals and pulses - Specifications and test methods—Rice (PRF)',
+            stage: 'IS-60.60',
+            isStandard: 'INTERNATIONAL-STANDARD',
+            date: '2016-05-01',
+            xml: 'https://metanorma.github.io/mn-samples-iso/documents/international-standard/rice-en.prf.xml'
+        },
+        {
+            type: 'ISO 17301-1:2016',
             title: 'Ceals and pulses - Specifications and test methods—Rice (Final)',
             stage: 'IS-60.60',
             isStandard: 'INTERNATIONAL-STANDARD',
