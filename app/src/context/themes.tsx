@@ -27,9 +27,9 @@ export const IsoTheme = {
     //table part
     table: '',
 
-    exampleFontSize: '17px',
-    exampleColor: 'black',
-    exampleBackground: 'inherit;',
+    exFontSize: '17px',
+    exleColor: 'black',
+    exBackground: 'inherit;',
 
     contentFontSize: '16px',
     contentColor: 'white',
@@ -62,9 +62,9 @@ export const ItuTheme = {
     //table part
     // table: 'table:not(.biblio), table:not(.biblio) th, table:not(.biblio)table:not(.biblio) td, tr {border: none !important;} table:not(.biblio) tr:nth-child(odd) {background: #f6f8fa;} table:not(.biblio) tr:nth-child(even) {background: #f1f8ff;}',
     table: 'table {border-collapse: collapse;border-spacing: 0;} table, table th, table td, tr {border: none !important;} table tr:nth-child(odd) {background: #f6f8fa;} table tr:nth-child(even) {background: #f1f8ff;}',
-    exampleFontSize: 'inherit',
-    exampleColor: 'black',
-    exampleBackground: 'white;',
+    exFontSize: 'inherit',
+    exleColor: 'black',
+    exBackground: 'white;',
 
     contentFontSize: '16px',
     contentColor: 'white',
@@ -96,9 +96,9 @@ export const OgcTheme = {
 
     //table part
     table: 'table, table th, table td { border: 1px solid black;font-size: 0.95em;}',
-    exampleFontSize: '17px',
-    exampleColor: 'black',
-    exampleBackground: '#fcad88;',
+    exFontSize: '17px',
+    exleColor: 'black',
+    exBackground: '#fcad88;',
 
     contentFontSize: '16px',
     contentColor: 'white',
@@ -122,10 +122,7 @@ export const GlobalStyle = createGlobalStyle`
     --title2-size: ${(props: any) => props.theme.title2};
     --title2-weight: ${(props: any) => props.theme.title2Weight};
 
-    --example1-size: ${(props: any) => props.theme.exampleFontSize};
-    --example1-weight: ${(props: any) => props.theme.title1Weight};
-    --example2-size: ${(props: any) => props.theme.title2};
-    --example2-weight: ${(props: any) => props.theme.title2Weight};
+    --example1-size: ${(props: any) => props.theme.exFontSize};
 
     --content-weight: ${(props: any) => props.theme.contentFontSize};
     --content-color: ${(props: any) => props.theme.contentColor};
