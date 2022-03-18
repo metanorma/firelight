@@ -3,11 +3,6 @@ import { DOMParser } from 'xmldom';
 export const url =
     'https://github.com/metanorma/bs-l3-ux/files/7626440/document-l3.presentation.xml.zip';
 
-// export const presentationData = () => {
-//     const {xml} = useXmlData();
-//     return localStorage.getItem('xml') || ' ';
-// };
-
 export const documentMockData = [
     {
         type: 'Metanorma : Standards for standards',
