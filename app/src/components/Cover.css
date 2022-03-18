@@ -687,6 +687,26 @@ span.doc-title {
     line-height: 2em;
 }
 
+span.doc-title-ogc,
+span.doc-annextitle-ogc {
+    font-size: 26px;
+    font-weight: 800;
+    margin-top: 20px;
+    margin-right: 42px;
+}
+
+span.doc-title-ogc,
+span.doc-annextitle-ogc {
+    font-size: 26px;
+    font-weight: 800;
+    margin-top: 20px;
+    margin-right: 42px;
+}
+
+span.doc-title-ogc {
+    border-top: 2px solid #da1d52;
+}
+
 @media (max-width: 799px) {
     .cover {
         margin-top: 90px;
