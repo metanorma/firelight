@@ -669,6 +669,24 @@ span.doc-title {
     margin-bottom: 15px;
 }
 
+.ogc-coverpage {
+    margin: -1em;
+    position: relative;
+}
+
+.ogc-wrapper-top {
+    background: #00335b;
+    background: linear-gradient(130deg, #00335b 45%, #f1f8ff 100%);
+    color: #ffffff;
+    padding: 5em 0;
+    width: 100%;
+}
+
+.ogc-coverpage-doc-identity {
+    font-size: 2em;
+    line-height: 2em;
+}
+
 @media (max-width: 799px) {
     .cover {
         margin-top: 90px;
