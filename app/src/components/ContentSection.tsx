@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { getChildsById } from '../utility';
 import DisplayNode from './DisplayNode';
 import SectionTerm from './SectionTerm';
+import './ContentSection.css';
 
 import { useXmlData } from '../context';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -286,14 +287,37 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                 if (xmlData?.termsource) {
                     if (xmlData.termsource.length > 0) {
                         xmlData.termsource.map((child: any, index: number) => {
+                            let bibitem = '';
+                            let citeas = '';
+                            let text = '';
+                            let version = '';
+
                             if (child?.origin) {
-                                let bibitem = child.origin[0]?.$?.bibitem;
-                                let text = child.origin[0]?._;
-                                termSource.push({
-                                    bibitem: bibitem,
-                                    text: text
-                                });
+                                bibitem = child.origin[0]?.$?.bibitemid;
+                                citeas = child.origin[0]?.$?.citeas;
+                                text = child.origin[0]?._;
+                                version = '';
+                                if (child.origin[0]?.localityStack && child.origin[0].localityStack[0]?.locality && child.origin[0].localityStack[0].locality[0]?.referenceFrom) {
+                                    version = child.origin[0].localityStack[0].locality[0].referenceFrom[0];
+                                }
                             }
+
+                            let modification = '';
+                            if (child?.modification) {
+                                if (child.modification[0]?.p && child.modification[0].p[0]?._) {
+                                    modification = child.modification[0].p[0]._;
+                                }
+                            }
+
+                            let resultText = '';
+                            resultText += citeas;
+                            resultText += resultText ? (version ? ", " + version : '') : version;
+
+                            termSource.push({
+                                bibitem,
+                                text: text ? text : resultText,
+                                modification
+                            })
                         });
                     }
                 }
@@ -308,7 +332,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                                 delete node.childNodes[index];
                         }
                     );
-
+console.log(termSource, 'termSource123' )
                     return (
                         <div className="content-section" id={id}>
                             <h1 className="title title-3">{title}</h1>
@@ -323,12 +347,13 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                                                 <a
                                                     className="bibtext"
                                                     href={
-                                                        child?.bibitemid
-                                                            ? `#${child.bibitemid}`
+                                                        child?.bibitem
+                                                            ? `#${child.bibitem}`
                                                             : ''
                                                     }
                                                 >
-                                                    {child?.text ?  child?.text : ''}
+                                                    <span className="underline">{child?.text ? child.text : ''}</span>
+                                                    {child?.modification ? ", modified - " + child.modification : ''}
                                                 </a>
                                             </>
                                         )
