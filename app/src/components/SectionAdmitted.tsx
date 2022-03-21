@@ -17,7 +17,7 @@ export default function SectionAdmitted({ data }: OwnProps) {
     const idRow = Object.values(attrs).find(
       (attr: any) => attr?.name === "id"
     );
-    const id = idRow?.value ? idRow.value : "";
+    const id = idRow?.value ? idRow.value : ""; console.log(data, 'admited')
     return <div className="admitted" id={id}><DisplayNode data={data.childNodes} /></div>
   }, [data]);
 
