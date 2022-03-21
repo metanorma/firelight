@@ -34,6 +34,9 @@ export const IsoTheme = {
     contentFontSize: '16px',
     contentColor: 'white',
     contentBackground: '#33eeff',
+
+    adnomitionBackground: '#ffb3b3',
+    adnomitionColor: '#ffb3b3', 
 };
 
 export const ItuTheme = {
@@ -69,6 +72,9 @@ export const ItuTheme = {
     contentFontSize: '16px',
     contentColor: 'white',
     contentBackground: '#33eeff',
+
+    adnomitionBackground: '#ffb3b3',
+    adnomitionColor: '#ffb3b3', 
 };
 
 export const OgcTheme = {
@@ -103,6 +109,9 @@ export const OgcTheme = {
     contentFontSize: '16px',
     contentColor: 'white',
     contentBackground: '#33eeff',
+
+    adnomitionBackground: '#fcad88',
+    adnomitionColor: '#eb5a06', 
 };
 
 export const GlobalStyle = createGlobalStyle`
@@ -127,6 +136,9 @@ export const GlobalStyle = createGlobalStyle`
     --content-weight: ${(props: any) => props.theme.contentFontSize};
     --content-color: ${(props: any) => props.theme.contentColor};
     --content-background: ${(props: any) => props.theme.contentBackground};
+
+    --adnomition-color: ${(props: any) => props.theme.adnomitionColor};
+    --adnomition-background: ${(props: any) => props.theme.adnomitionBackground};
   }
 
   html, body {
