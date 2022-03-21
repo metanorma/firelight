@@ -250,7 +250,7 @@ export default function DisplayNode({ data }: OwnProps) {
                 case 'sourcecode':
                     return <SectionSourcecode data={item} key={index} />;
 
-                case 'verbaldefinition':
+                case 'verbal-definition':
                     return <VerbalDefinition data={item} key={index} />;
 
                 case 'formmatedref':

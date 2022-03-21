@@ -12,7 +12,7 @@ interface OwnProps {
 
 export default function VerbalDefinition({ data }: OwnProps) {
     const renderContent = useMemo(() => {
-        if (typeof data === 'string') return <strong>{data}</strong>
+        if (typeof data === 'string') return <strong>{data}</strong>;
         return <div className="verbal-definition"><DisplayNode data={data.childNodes} /></div>;
       }, [data]);
 
