@@ -45,7 +45,6 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
         node = getChildsById(id, xml);
 
         if (xmlData?.id && xmlData.id === '_keywords') {
-            // console.log(xmlData, 'xmlData');
             return (
                 <div className="content-section" id={xmlData?.id}>
                     <h1 className="title title-3">
@@ -60,7 +59,6 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
         }
 
         if (xmlData?.id && xmlData.id === '_organizations') {
-            // console.log(xmlData, 'xmlData');
             return (
                 <div className="content-section" id={xmlData?.id}>
                     <h1 className="title title-3">
@@ -247,17 +245,6 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                 }
             }
 
-            // if (titleIndex.includes('3.')) {
-            // console.log(xmlData, 'xmldata123')
-            //     return (
-            //         <div className="content-section term" id={id}>
-            //             <div className="term-index">{titleIndex}</div>
-            //             <DisplayNode data={[node]} />
-            //         </div>
-            //     );
-            // }
-
-            // if (xmlData?.title && xmlData?.title[0]) {
             let title = titleIndex;
             if (xmlData?.title && xmlData?.title[0]) {
                 if (typeof xmlData.title[0] !== 'object')
@@ -332,7 +319,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
                                 delete node.childNodes[index];
                         }
                     );
-console.log(termSource, 'termSource123' )
+
                     return (
                         <div className="content-section" id={id}>
                             <h1 className="title title-3">{title}</h1>
@@ -389,7 +376,6 @@ console.log(termSource, 'termSource123' )
                     </div>
                 );
             }
-            // }
         }
     }, [xmlData]);
 
