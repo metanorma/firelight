@@ -3,9 +3,10 @@ import { useMemo } from 'react';
 import { getChildsById } from '../utility';
 import DisplayNode from './DisplayNode';
 import SectionTerm from './SectionTerm';
-import './ContentSection.css';
-
 import { useXmlData } from '../context';
+import ContentSectionWithKeywords from './ContentSectionWithKeywords';
+
+import './ContentSection.css';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 interface OwnProps {
@@ -45,17 +46,7 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
         node = getChildsById(id, xml);
 
         if (xmlData?.id && xmlData.id === '_keywords') {
-            return (
-                <div className="content-section" id={xmlData?.id}>
-                    <h1 className="title title-3">
-                        {xmlData?.romanNum ? xmlData?.romanNum + '. ' : ''}
-                        Keywords
-                    </h1>
-                    {xmlData?.p?.map((child: any) => (
-                        <div className="p">{child}</div>
-                    ))}
-                </div>
-            );
+            return <ContentSectionWithKeywords xmlData={xmlData} />;
         }
 
         if (xmlData?.id && xmlData.id === '_organizations') {
