@@ -14,7 +14,7 @@ export default function ContentSectionWithTitleIndex({
     node,
     titleIndex
 }: Props) {
-    console.log('Content Section with Tittle index', node?.tagName, titleIndex)
+    
     if (node?.tagName === 'annex') {
         return <ContentSectionWithAnnex xmlData={xmlData} node={node} titleIndex={titleIndex} />
     }

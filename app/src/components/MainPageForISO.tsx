@@ -10,13 +10,13 @@ import { romanize } from '../utility';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 interface OwnProps {
-    xmlData: any;
+    xmlJson: any;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-export default function MainPageForITU() {
-    const { xmlJson, xml } = useXmlData();
+export default function MainPageForITU({ xmlJson }: OwnProps) {
+    // const { xmlJson, xml } = useXmlData();
 
     // split the xml data by content section and save those as array
     const contentSections = useMemo(() => {
@@ -54,11 +54,16 @@ export default function MainPageForITU() {
                         menuItem[roman] = {};
                         menuItem[roman - 1] = {};
                     }
-                } else{
+                } else {
                     //check whether the count is 3 or 4 and the value is available
                     if (standard === 'ogc-standard') {
                         if (count === 3) {
-                            console.log(menuItem[roman + count -2], roman + count -2, index, '3')
+                            console.log(
+                                menuItem[roman + count - 2],
+                                roman + count - 2,
+                                index,
+                                '3'
+                            );
                         }
                         if (
                             count === 3 &&
@@ -169,15 +174,15 @@ export default function MainPageForITU() {
             //     );
             //     menuItem[references.index] = references;
             // }
-        }    
-        
+        }
+
         const resultArray: any[] = [];
         menuItem.map((item: any) => {
             if (item?.data) resultArray.push(item);
         });
         return resultArray;
     }, [xmlJson]);
-    
+
     return (
         <div className="main-page" id="main_page">
             <Cover />

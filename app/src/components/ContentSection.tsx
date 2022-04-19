@@ -21,7 +21,7 @@ interface OwnProps {
 
 export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
     const { xml } = useXmlData();
-    console.log('Content Section', xmlData?.$?.id)
+    
     const renderContent = useMemo(() => {
         const id = xmlData?.$?.id ? xmlData.$.id : '';
         let node: any = '';

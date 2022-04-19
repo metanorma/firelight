@@ -6,12 +6,12 @@ import MainPageForOGC from './MainPageForOGC';
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function MainPage() {
-    const { xmlJson, xml } = useXmlData();
+    const { xmlJson } = useXmlData();
 
     if (xmlJson['itu-standard']) {
         return <MainPageForITU />;
     } else if (xmlJson['iso-standard']) {
-        return <MainPageForISO />;
+        return <MainPageForISO xmlJson={xmlJson} />;
     } else if (xmlJson['ogc-standard']) {
         return <MainPageForOGC />;
     }

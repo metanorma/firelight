@@ -32,11 +32,19 @@ const Document = ({
     const { setSourceUrl, setLoading } = useXmlData();
     const navigate = useNavigate();
 
-    const handleClick = () => {
+    const handleClick = (title?: string) => {
         if (xml) {
+            // if (!title) {
+            //     setLoading(false);
+            //     setSourceUrl(xml);
+            //     navigate('/app');
+            // } else {
+            //     // setLoading(false);
+            //     navigate('/app_iso', { state: { xml: xml } });
+            // }
             setLoading(false);
             setSourceUrl(xml);
-            navigate("/app");
+            navigate('/app');
         }
     };
 
@@ -45,9 +53,7 @@ const Document = ({
             <div className="doc-line">
                 <div className="doc-identifier1">
                     <h2>
-                        <a href="documents/T-RES-T.1-2016-MSW-E.html">
-                            {type}
-                        </a>
+                        <a href="documents/T-RES-T.1-2016-MSW-E.html">{type}</a>
                     </h2>
                 </div>
 
@@ -57,7 +63,7 @@ const Document = ({
             </div>
             <div className="doc-title">
                 <h3>
-                    <a onClick={e => handleClick()}>{title}</a>
+                    <a onClick={(e) => handleClick()}>{title}</a>
                 </h3>
             </div>
             <div className="doc-info-container">
@@ -71,7 +77,7 @@ const Document = ({
                     <div className="doc-access1">
                         <div
                             className="doc-access-button-html"
-                            onClick={() => handleClick()}
+                            onClick={() => handleClick(title)}
                         >
                             <a>HTML</a>
                         </div>

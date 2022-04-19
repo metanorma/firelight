@@ -18,7 +18,7 @@ interface OwnProps {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export default function NavIMenu() {
-    const { xmlJson } = useXmlData(); console.log(xmlJson, 'xmlJson');
+    const { xmlJson } = useXmlData();
     const [selectedItem, setSelectedItem] = useState<string>('');
     const menuItem = useMemo(() => {
         //verify the type of document.
