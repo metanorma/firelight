@@ -19,7 +19,7 @@ const Main = () => {
             stage: 'IS-60.60',
             isStandard: 'INTERNATIONAL-STANDARD',
             date: '2016-05-01',
-            xml: 'https://metanorma.github.io/mn-samples-iso/documents/international-standard/rice-en.final.xml'
+            xml: '/iso-10303-2.xml'
         },
         {
             type: 'ITU-T 1',

@@ -27,17 +27,12 @@ export default function SectionTerm({ data }: OwnProps) {
         let modified = '';
         let bibitemid = '';
         let bibitemText = '';
-        let referenceIndex = '';
-        let indexNumber = '';
 
         if (termSource?.childNodes) {
-          console.log(termSource.childNodes, 'term child')
+          // console.log(termSource.childNodes, 'term child')
             let origin: any = Object.values(termSource?.childNodes).find(
               (child: any) => child?.tagName === 'origin'
             )
-            
-            
-            let attr = origin?.attributes;
             
             let reference: any = Object.values(origin?.attributes).find(
               (attr: any) => attr?.nodeName === 'bibitemid'

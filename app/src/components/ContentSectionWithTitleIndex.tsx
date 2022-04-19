@@ -1,6 +1,4 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-import DisplayNode from './DisplayNode';
-import ContentSection from './ContentSection';
 import ContentSectionWithAnnex from './ContentSectionWithAnnex';
 import ContentSectionWith34 from './ContentSectionWith34';
 import ContentSectionWithPrefered from './ContentSectionWithPrefered';
@@ -16,7 +14,7 @@ export default function ContentSectionWithTitleIndex({
     node,
     titleIndex
 }: Props) {
-    const id = xmlData?.$?.id ? xmlData.$.id : '';
+    console.log('Content Section with Tittle index', node?.tagName, titleIndex)
     if (node?.tagName === 'annex') {
         return <ContentSectionWithAnnex xmlData={xmlData} node={node} titleIndex={titleIndex} />
     }

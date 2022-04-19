@@ -65,9 +65,9 @@ const XmlProvider: React.FC = ({ children }) => {
                         response.data,
                         'application/xml'
                     );                    
-
                     const bibdata: XMLNode =
                         xmlDoc.getElementsByTagName('bibdata')[0];
+                    // console.log(bibdata.childNodes.length)
                     if (bibdata?.childNodes) {
                         const childs = bibdata.childNodes;
 

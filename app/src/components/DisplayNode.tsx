@@ -76,187 +76,187 @@ export default function DisplayNode({ data }: OwnProps) {
     const renderContent = useMemo(() => {
         return Object.values(data).map((item: XMLNode | any, index: number) => {
             // if (!item?.tagName)
-            //     return <TermText text={item.data} key={index} />;
+            //     return <TermText text={item.data} key={`${item.tagName}-${index}`} />;
             if (!item?.tagName) return item.data;
 
             switch (item.tagName) {
                 case 'link':
-                    return <LinkTag data={item} key={index} />;
+                    return <LinkTag data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'br':
                     return <br />;
 
                 case 'strong':
-                    return <StrongTag data={item} key={index} />;
+                    return <StrongTag data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'em':
-                    return <EmTag data={item} key={index} />;
+                    return <EmTag data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'xref':
-                    return <XrefTag data={item} key={index} />;
+                    return <XrefTag data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'eref':
-                    return <ErefTag data={item} key={index} />;
+                    return <ErefTag data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'tab':
-                    return <span key={index}>{'    '}</span>;
+                    return <span key={`${item.tagName}-${index}`}>{'    '}</span>;
 
                 case '\n':
                     return <></>;
 
                 case 'name':
-                    return <NameTag data={item} key={index} />;
+                    return <NameTag data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'image':
-                    return <ImgTag data={item} key={index} />;
+                    return <ImgTag data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'title':
-                    return <SectionTitle title={item} key={index} />;
+                    return <SectionTitle title={item} key={`${item.tagName}-${index}`} />;
 
                 case 'p':
-                    return <SectionP data={item} key={index} />;
+                    return <SectionP data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'note':
-                    return <SectionNote data={item} key={index} />;
+                    return <SectionNote data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'ol':
-                    return <SectionOl data={item} key={index} />;
+                    return <SectionOl data={item} key={`${item.tagName}-${index}`} />;
                 case 'ul':
-                    return <SectionUl data={item} key={index} />;
+                    return <SectionUl data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'figure':
-                    return <SectionFigure data={item} key={index} />;
+                    return <SectionFigure data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'term':
-                    return <SectionTerm data={item} key={index} />;
+                    return <SectionTerm data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'preferred':
-                    return <SectionPreferred data={item} key={index} />;
+                    return <SectionPreferred data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'definition':
-                    return <SectionDefinition data={item} key={index} />;
+                    return <SectionDefinition data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'termnote':
-                    return <SectionTermnote data={item} key={index} />;
+                    return <SectionTermnote data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'form':
-                    return <SectionForm data={item} key={index} />;
+                    return <SectionForm data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'table':
-                    return <SectionTable data={item} key={index} />;
+                    return <SectionTable data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'colgroup':
-                    return <SectionColgroup data={item} key={index} />;
+                    return <SectionColgroup data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'col':
-                    return <SectionCol data={item} key={index} />;
+                    return <SectionCol data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'thead':
-                    return <SectionThead data={item} key={index} />;
+                    return <SectionThead data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'tbody':
-                    return <SectionTbody data={item} key={index} />;
+                    return <SectionTbody data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'tfoot':
-                    return <SectionTfoot data={item} key={index} />;
+                    return <SectionTfoot data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'tr':
-                    return <SectionTr data={item} key={index} />;
+                    return <SectionTr data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'th':
-                    return <SectionTh data={item} key={index} />;
+                    return <SectionTh data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'td':
-                    return <SectionTd data={item} key={index} />;
+                    return <SectionTd data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'tt':
-                    return <SectionTt data={item} key={index} />;
+                    return <SectionTt data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'dl':
-                    return <SectionDl data={item} key={index} />;
+                    return <SectionDl data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'dt':
-                    return <SectionDt data={item} key={index} />;
+                    return <SectionDt data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'dd':
-                    return <SectionDd data={item} key={index} />;
+                    return <SectionDd data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'label':
-                    return <LabelTag data={item} key={index} />;
+                    return <LabelTag data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'input':
-                    return <InputTag data={item} key={index} />;
+                    return <InputTag data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'example':
-                    return <SectionExample data={item} key={index} />;
+                    return <SectionExample data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'references':
-                    return <SectionReference data={item} key={index} />;
+                    return <SectionReference data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'bibitem':
-                    return <SectionBibitem data={item} key={index} />;
+                    return <SectionBibitem data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'formattedref':
-                    return <SectionFormattedDoc data={item} key={index} />;
+                    return <SectionFormattedDoc data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'docidentifier':
-                    return <SectionDocidentifier data={item} key={index} />;
+                    return <SectionDocidentifier data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'admitted':
-                    return <SectionAdmitted data={item} key={index} />;
+                    return <SectionAdmitted data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'termexample':
-                    return <SectionTermexample data={item} key={index} />;
+                    return <SectionTermexample data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'domain':
-                    return <SectionDomain data={item} key={index} />;
+                    return <SectionDomain data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'concept':
-                    return <SectionConcept data={item} key={index} />;
+                    return <SectionConcept data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'stem':
-                    return <SectionStem data={item} key={index} />;
+                    return <SectionStem data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'math':
-                    return <SectionMath data={item} key={index} />;
+                    return <SectionMath data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'msub':
-                    return <SectionMsub data={item} key={index} />;
+                    return <SectionMsub data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'mrow':
-                    return <SectionMrow data={item} key={index} />;
+                    return <SectionMrow data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'mi':
-                    return <SectionMi data={item} key={index} />;
+                    return <SectionMi data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'mn':
-                    return <SectionMn data={item} key={index} />;
+                    return <SectionMn data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'mo':
-                    return <SectionMo data={item} key={index} />;
+                    return <SectionMo data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'mfrac':
-                    return <SectionMfrac data={item} key={index} />;
+                    return <SectionMfrac data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'fn':
-                    return <SectionFn data={item} key={index} />;
+                    return <SectionFn data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'admonition':
-                    return <SectionAdmonition data={item} key={index} />;
+                    return <SectionAdmonition data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'formula':
-                    return <SectionFormula data={item} key={index} />;
+                    return <SectionFormula data={item} key={`${item.tagName}-${index}`} />;
                     
                 case 'sourcecode':
-                    return <SectionSourcecode data={item} key={index} />;
+                    return <SectionSourcecode data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'verbal-definition':
-                    return <VerbalDefinition data={item} key={index} />;
+                    return <VerbalDefinition data={item} key={`${item.tagName}-${index}`} />;
 
                 case 'formmatedref':
-                    return <SectionFormmatedRef data={item} key={index} />;
+                    return <SectionFormmatedRef data={item} key={`${item.tagName}-${index}`} />;
                 case 'expression':
-                    return <SectionFormmatedRef data={item} key={index} />;
+                    return <SectionFormmatedRef data={item} key={`${item.tagName}-${index}`} />;
             }
         });
     }, [data]);

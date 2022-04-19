@@ -14,7 +14,7 @@ interface OwnProps {
 export default function NameTag({ data }: OwnProps) {
     const renderContent = useMemo(() => {
         const child = data?.childNodes;
-        const value = child[0].data; console.log(data, 'name', value) 
+        const value = child[0].data;
         return <span className="name">{value}</span>;
       }, [data]);
 

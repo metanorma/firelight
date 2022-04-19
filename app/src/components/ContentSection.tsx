@@ -1,8 +1,6 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 import { useMemo } from 'react';
 import { getChildsById } from '../utility';
-import DisplayNode from './DisplayNode';
-import SectionTerm from './SectionTerm';
 import { useXmlData } from '../context';
 import ContentSectionWithKeywords from './ContentSectionWithKeywords';
 import ContentSectionWithoutID from './ContentSectionWithoutID';
@@ -23,7 +21,7 @@ interface OwnProps {
 
 export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
     const { xml } = useXmlData();
-
+    console.log('Content Section', xmlData?.$?.id)
     const renderContent = useMemo(() => {
         const id = xmlData?.$?.id ? xmlData.$.id : '';
         let node: any = '';
@@ -48,10 +46,11 @@ export default function ContentSection({ xmlData, titleIndex }: OwnProps) {
         }
 
         if (!titleIndex) {
-            return <ContentSectionWithoutTitleIndex xmlData={xmlData} node={node} />;
+            return <ContentSectionWithoutTitleIndex xmlData={xmlData} node={node} />
         } else {
             return <ContentSectionWithTitleIndex xmlData={xmlData} node={node} titleIndex={titleIndex} />
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [xmlData]);
 
     return <>{renderContent}</>;
