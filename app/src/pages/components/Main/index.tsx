@@ -6,23 +6,23 @@ import './style.css';
 const Main = () => {
     const data = [
         {
-            type: 'ISO 17301-1:2016',
-            title: 'Ceals and pulses - Specifications and test methods—Rice (PRF)',
+            type: 'ISO 17301-1:2016 (remote)',
+            title: 'Cereals and pulses - Specifications and test methods—Rice (PRF)',
             stage: 'IS-60.60',
             isStandard: 'INTERNATIONAL-STANDARD',
             date: '2016-05-01',
             xml: 'https://metanorma.github.io/mn-samples-iso/documents/international-standard/rice-en.prf.xml'
         },
         {
-            type: 'ISO 17301-1:2016',
-            title: 'Ceals and pulses - Specifications and test methods—Rice (Final)',
+            type: 'ISO 10303-2:2022 (local)',
+            title: 'STEP - Vocabulary',
             stage: 'IS-60.60',
             isStandard: 'INTERNATIONAL-STANDARD',
-            date: '2016-05-01',
+            date: '2022-05-01',
             xml: '/iso-10303-2.xml'
         },
         {
-            type: 'ITU-T 1',
+            type: 'ITU-T TUT-CCIT-2015',
             title: 'Counterfeit ICT equipment',
             stage: 'IN-FORCE',
             isStandard: 'standard',
@@ -30,7 +30,7 @@ const Main = () => {
             xml: 'https://metanorma.github.io/mn-samples-itu/documents/T-TUT-CCIT-2015-E.xml'
         },
         {
-            type: 'ITU-T 1',
+            type: 'ITU-T TUT-L-2020-GLR',
             title: 'Guide on the use of ITU-T L-series Recommendations related to optical technologies for outside plant',
             stage: 'IN-FORCE',
             isStandard: 'standard',
@@ -38,23 +38,23 @@ const Main = () => {
             xml: 'https://metanorma.github.io/mn-samples-itu/documents/T-TUT-L-2020-GLR.xml'
         },
         {
-            type: 'ITU-T 1',
-            title: 'Guide on c 21: Discrete Global Grid Systems Abstract Specification',
+            type: 'OGC 15-104r5',
+            title: 'OGC: Discrete Global Grid Systems Abstract Specification',
             stage: 'APPROVED',
             isStandard: 'standard',
             date: '2017-08-01',
             xml: 'https://metanorma.github.io/mn-samples-ogc/documents/15-104r5/document.xml'
         },
         {
-            type: 'ITU-T 1',
-            title: 'A Primer for Dissemination Services for Wide Area Motion Imagery',
+            type: 'OGC 12-077r1',
+            title: 'OGC: A Primer for Dissemination Services for Wide Area Motion Imagery',
             stage: 'APPROVED',
             isStandard: 'standard',
             date: '2012-12-18',
             xml: 'https://metanorma.github.io/mn-samples-ogc/documents/12-077r1/document.xml'
         },
         {
-            type: '17-069',
+            type: 'OGC 17-069',
             title: 'OGC Web Feature Service 3.0: Part 1 - Core',
             stage: 'CANDIDATE',
             isStandard: 'standard',
