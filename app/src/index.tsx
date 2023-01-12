@@ -10,7 +10,7 @@ import ITUStandard from './pages/ITUStandard';
 import Home from './pages/Home';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-import './css/fireball.css';
+import './css/firelight.css';
 ReactDOM.render(
     <React.StrictMode>
         <XmlProvider>
