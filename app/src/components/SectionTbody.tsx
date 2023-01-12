@@ -47,10 +47,10 @@ export default function SectionTbody({ data }: OwnProps) {
 
     return <tbody className="tbody" id={id}>
       <DisplayNode data={data.childNodes} />
-      {fns?.length > 0 && fns.map((child: any, index: number) => 
+      {fns?.length > 0 && fns.map((child: any, index: number) =>
         <tr className="table-reference">
-          <td colSpan={10}><DisplayNode data={child.childNodes}/></td>          
-        </tr>       
+          <td colSpan={10}><DisplayNode data={child.childNodes}/></td>
+        </tr>
       )}
       </tbody>
   }, [data]);

@@ -16,8 +16,8 @@ ReactDOM.render(
         <XmlProvider>
             <Router>
                 <Routes>
-                    <Route path="/app" element={<App />} />                    
-                    <Route path="/app_iso" element={<AppIso />} />                    
+                    <Route path="/app" element={<App />} />
+                    <Route path="/app_iso" element={<AppIso />} />
                     <Route path="/documents" element={<ITUStandard/>} />
                     <Route path="/" element={<Home/>} />
                 </Routes>
