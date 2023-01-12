@@ -39,7 +39,7 @@
     "xmldom": "^0.6.0"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"
