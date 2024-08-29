@@ -53,7 +53,11 @@ const Document = ({
             <div className="doc-line">
                 <div className="doc-identifier1">
                     <h2>
-                        <a href="documents/T-RES-T.1-2016-MSW-E.html">{type}</a>
+                        <a
+                            href="javascript: void 0"
+                            onClick={(e) => handleClick()}
+                            // href="documents/T-RES-T.1-2016-MSW-E.html"
+                        >{type}</a>
                     </h2>
                 </div>
 
