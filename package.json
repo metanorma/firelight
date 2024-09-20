@@ -1,0 +1,38 @@
+{
+  "name": "firelight",
+  "type": "module",
+  "packageManager": "yarn@4.5.0",
+  "bin": {
+    "build-site": "./site-builder.mjs"
+  },
+  "scripts": {
+    "compile": "tsc --outdir compiled",
+    "clean": "rm -f ./site-builder-builder.mjs ./site-builder.mjs",
+    "build-site-builder-builder": "yarn esbuild site-builder-builder.mts --packages=external --platform=node --target=node18 --minify=false --bundle --format=esm --outfile=site-builder-builder.mjs",
+    "build-site-builder": "yarn node site-builder-builder.mjs",
+    "build-self": "yarn compile; yarn clean && yarn build-site-builder-builder && yarn build-site-builder"
+  },
+  "files": [
+    "README.rst",
+    "site-builder.mjs"
+  ],
+  "workspaces": [
+    "flavours/plateau"
+  ],
+  "devDependencies": {
+    "@effect/cli": "^0.44.4",
+    "@effect/platform": "^0.65.4",
+    "@effect/platform-node": "^0.60.4",
+    "@effect/printer": "^0.36.2",
+    "@effect/printer-ansi": "^0.36.2",
+    "@effect/schema": "^0.73.3",
+    "@effect/typeclass": "^0.27.2",
+    "@types/node": "^22.5.5",
+    "effect": "^3.8.2",
+    "esbuild": "^0.23.1",
+    "fast-check": "^3.22.0",
+    "typescript": "^5.6.2",
+    "typescript-language-server": "~3.3.2",
+    "yaml": "^2.5.1"
+  }
+}
