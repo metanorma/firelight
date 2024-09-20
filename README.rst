@@ -34,7 +34,7 @@ and look from there as well::
 
     npx firelight <path/to/Metanorma/document.xml>
       --layout git://github.com/metanorma/firelight#12345/contrib/plateau/layout
-      --layout git://github.com/metanorma/firelight#12345/contrib/plateau/look
+      --look git://github.com/metanorma/firelight#12345/contrib/plateau/look
 
 Note the duplication required.
 
