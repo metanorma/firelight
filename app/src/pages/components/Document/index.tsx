@@ -56,7 +56,6 @@ const Document = ({
                         <a
                             href="javascript: void 0"
                             onClick={(e) => handleClick()}
-                            // href="documents/T-RES-T.1-2016-MSW-E.html"
                         >{type}</a>
                     </h2>
                 </div>
