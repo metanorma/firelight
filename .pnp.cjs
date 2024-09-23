@@ -227,6 +227,14 @@ const RAW_RUNTIME_STATE =
       "npm:22.5.5"\
     ],\
     [\
+      "@types/prop-types",\
+      "npm:15.7.13"\
+    ],\
+    [\
+      "@types/react",\
+      "npm:18.3.8"\
+    ],\
+    [\
       "abbrev",\
       "npm:2.0.0"\
     ],\
@@ -281,6 +289,10 @@ const RAW_RUNTIME_STATE =
     [\
       "cross-spawn",\
       "npm:7.0.3"\
+    ],\
+    [\
+      "csstype",\
+      "npm:3.1.3"\
     ],\
     [\
       "debug",\
@@ -681,6 +693,7 @@ const RAW_RUNTIME_STATE =
           ["@effect/schema", "virtual:e6c431a6619ee6fd8bcd39ba5d938feac4f463c26b1c2bd63d8ca1319b111dbff117537a4fb5295f69d6faa883e0c5edf64d7c4217224d2258b0df6aa6751f16#npm:0.73.4"],\
           ["@effect/typeclass", "virtual:e6c431a6619ee6fd8bcd39ba5d938feac4f463c26b1c2bd63d8ca1319b111dbff117537a4fb5295f69d6faa883e0c5edf64d7c4217224d2258b0df6aa6751f16#npm:0.27.3"],\
           ["@types/node", "npm:22.5.5"],\
+          ["@types/react", "npm:18.3.8"],\
           ["effect", "npm:3.8.3"],\
           ["esbuild", "npm:0.23.1"],\
           ["fast-check", "npm:3.22.0"],\
@@ -1333,6 +1346,26 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@types/prop-types", [\
+      ["npm:15.7.13", {\
+        "packageLocation": "./.yarn/cache/@types-prop-types-npm-15.7.13-ac81cbe352-1b20fc6728.zip/node_modules/@types/prop-types/",\
+        "packageDependencies": [\
+          ["@types/prop-types", "npm:15.7.13"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@types/react", [\
+      ["npm:18.3.8", {\
+        "packageLocation": "./.yarn/cache/@types-react-npm-18.3.8-ce16d7624f-367312c9fe.zip/node_modules/@types/react/",\
+        "packageDependencies": [\
+          ["@types/react", "npm:18.3.8"],\
+          ["@types/prop-types", "npm:15.7.13"],\
+          ["csstype", "npm:3.1.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["abbrev", [\
       ["npm:2.0.0", {\
         "packageLocation": "./.yarn/cache/abbrev-npm-2.0.0-0eb38a17e5-f742a5a107.zip/node_modules/abbrev/",\
@@ -1491,6 +1524,15 @@ const RAW_RUNTIME_STATE =
           ["path-key", "npm:3.1.1"],\
           ["shebang-command", "npm:2.0.0"],\
           ["which", "npm:2.0.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["csstype", [\
+      ["npm:3.1.3", {\
+        "packageLocation": "./.yarn/cache/csstype-npm-3.1.3-e9a1c85013-80c089d6f7.zip/node_modules/csstype/",\
+        "packageDependencies": [\
+          ["csstype", "npm:3.1.3"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -1673,6 +1715,7 @@ const RAW_RUNTIME_STATE =
           ["@effect/schema", "virtual:e6c431a6619ee6fd8bcd39ba5d938feac4f463c26b1c2bd63d8ca1319b111dbff117537a4fb5295f69d6faa883e0c5edf64d7c4217224d2258b0df6aa6751f16#npm:0.73.4"],\
           ["@effect/typeclass", "virtual:e6c431a6619ee6fd8bcd39ba5d938feac4f463c26b1c2bd63d8ca1319b111dbff117537a4fb5295f69d6faa883e0c5edf64d7c4217224d2258b0df6aa6751f16#npm:0.27.3"],\
           ["@types/node", "npm:22.5.5"],\
+          ["@types/react", "npm:18.3.8"],\
           ["effect", "npm:3.8.3"],\
           ["esbuild", "npm:0.23.1"],\
           ["fast-check", "npm:3.22.0"],\
