@@ -19,7 +19,8 @@ import type { PlatformError } from '@effect/platform/Error';
 import { FileSystem } from '@effect/platform';
 import { Options, Command } from '@effect/cli';
 
-import type { Layout, Look, Renderer } from './layout.jsx';
+import type { Layout, Look, Renderer, Dependency } from './deps.jsx';
+import { resolveDependency } from './deps.jsx';
 
 import {
   type LogLevel as _LogLevel,
@@ -105,83 +106,7 @@ Effect.gen(function * (_) {
 });
 
 
-function resolveDependency (
-  identifier: string,
-  param: string | undefined,
-  tmpdir: string,
-  opts?: { devModeExtensionDirectory?: string | undefined },
-) {
-  return Effect.gen(function * (_) {
-    const fs = yield * _(FileSystem.FileSystem);
-
-    yield * _(fs.access(tmpdir, { writable: true }));
-
-    const source = 'foobar';
-
-    // const data = yield * _(
-    //   fs.readFileString(datasetMetaPath),
-    //   Effect.map(parseYAML),
-    //   Effect.flatMap(f => S.decodeUnknown(PaneronDataset)(f)),
-    // );
-
-    // const devModeExtensionDir = opts?.devModeExtensionDirectory;
-    // const extensionURLs = getExtensionURLs(data.type.id, devModeExtensionDir);
-
-    // const packageJsonOut = join(outdir, 'package.json');
-    // const esbuiltSourceOut = join(outdir, 'extension.js');
-
-    // yield * _(
-    //   Effect.all([
-    //     Console.withTime(`Fetch extension code from ${extensionURLs.esbuiltSource} to ${esbuiltSourceOut}`)(
-    //       pipe(
-    //         fetchMaybeLocalDependency(extensionURLs.esbuiltSource),
-    //         Effect.flatMap(S.decodeUnknown(S.String)),
-    //         Effect.flatMap(source =>
-    //           fs.writeFileString(join(outdir, 'extension.js'), source)),
-    //       )
-    //     ),
-    //     Console.withTime(`Fetch package.json from ${extensionURLs.packageJson} to ${packageJsonOut}`)(
-    //       pipe(
-    //         fetchMaybeLocalDependency(extensionURLs.packageJson),
-    //         Effect.flatMap(S.decodeUnknown(S.String)),
-    //         Effect.flatMap(S.decodeUnknown(S.parseJson(BasicExtensionMeta))),
-    //         Effect.tap(extInfo => Effect.logDebug(`Read extension data: ${JSON.stringify(extInfo)}`)),
-    //         Effect.map(basicExtMeta => JSON.stringify({
-    //           ...basicExtMeta,
-    //           version: devModeExtensionDir
-    //             ? `file:${devModeExtensionDir}`
-    //             : basicExtMeta.version,
-    //         })),
-    //         Effect.tap(extInfo => Effect.logDebug(`Extension data to write: ${JSON.stringify(extInfo)}`)),
-    //         Effect.flatMap(source =>
-    //           fs.writeFileString(join(outdir, 'package.json'), source)),
-    //       )
-    //     ),
-    //   ]),
-    // );
-
-    const dependency: Dependency =
-      yield * _(Effect.try(() => new Function(source)(param ?? '')));
-
-    yield * _(Effect.try(() => dependency.validateParams()));
-
-    return yield * _(Effect.succeed(dependency));
-
-    //yield * _(Effect.tryPromise(() =>
-    //  esbuild({
-    //    entryPoints: [extensionPathInOutdir],
-    //    entryNames: '[dir]/[name]',
-    //    assetNames: '[dir]/[name]',
-    //    format: 'esm',
-    //    target: ['esnext'],
-    //    bundle: true,
-    //  })
-    //));
-  });
-};
-
-
-const fetchMaybeLocalDependency = (url: string) => Effect.gen(function * (_) {
+const resolveMaybeLocalDependency = (url: string) => Effect.gen(function * (_) {
   const fs = yield * _(FileSystem.FileSystem);
   const result = (!url.startsWith('file://'))
     ? yield *_(
@@ -305,20 +230,34 @@ function readSource(sourcePath: string) {
   return Effect.gen(function * (_) {
     const fs = yield * _(FileSystem.FileSystem);
     yield * _(
-      Console.withTime(`Reading source at ${sourcePath}`)
+      Console.withTime(`Checking source is accessible at ${sourcePath}`)
         (fs.access(sourcePath, { readable: true })),
+      Effect.tapError(err =>
+        Effect.logError(`Failed to check source accessibility: ${String(err)}`)
+      ),
+    );
+    const buf = yield * _(
+      fs.readFile(sourcePath),
       Effect.tapError(err =>
         Effect.logError(`Failed to read source: ${String(err)}`)
       ),
     );
-    return yield * _(Effect.succeed(sourcePath));
+    const xml = yield * _(
+      Effect.try(() => (new TextDecoder).decode(buf)),
+      Effect.tapError(err =>
+        Effect.logError(`Failed to decode source buffer into string: ${String(err)}`)
+      ),
+      Effect.flatMap(data =>
+        Effect.try(() => (new DOMParser()).parseFromString(data, 'text/xml'))
+      ),
+      Effect.tapError(err =>
+        Effect.logError(`Failed to deserialize source string into XML: ${String(err)}`)
+      ),
+    );
+    return xml;
   });
 }
 
-
-interface Dependency {
-  validateParams: () => boolean;
-}
 
 
 function prepareLayout(dep: Dependency) {
