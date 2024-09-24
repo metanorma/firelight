@@ -1,0 +1,15 @@
+.docTitle {
+  transform: rotate(-90deg) translateX(-50%);
+  position: sticky;
+  top: 0;
+}
+
+.docContent {
+  overflow: auto;
+  padding: 2em;
+}
+
+.docNav {
+  position: sticky;
+  top: 0;
+}

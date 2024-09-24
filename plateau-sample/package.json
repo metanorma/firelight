@@ -1,0 +1,27 @@
+{
+  "name": "plateau-sample",
+  "version": "0.0.1",
+  "packageManager": "yarn@4.5.0",
+  "scripts": {
+    "compile": "yarn tsc",
+    "build": "yarn esbuild build.mts --packages=external --platform=node --target=node18 --minify=false --bundle --format=esm --outfile=build.mjs && yarn node build.mjs"
+  },
+  "dependencies": {
+    "@adobe/react-spectrum": "3.36.3",
+    "@effect/platform": "^0.66.0",
+    "@effect/platform-browser": "^0.45.0",
+    "@effect/schema": "^0.74.0",
+    "@react-spectrum/tree": "3.0.0-alpha.3",
+    "effect": "^3.8.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@effect/cli": "^0.45.0",
+    "@effect/platform-node": "^0.61.0",
+    "@types/react": "18.3.8",
+    "@types/react-dom": "18.3.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.2"
+  }
+}
