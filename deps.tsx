@@ -39,12 +39,22 @@ export interface Layout {
 
 export interface Renderer {
   /**
-   * Renders the tree as a side-effect. Where and how it is rendered
-   * depends on renderer and its user-supplied configuration.
+   * Transforms document’s JSX tree into objects keyed by paths.
+   *
+   * Each yielded value would contain one or more paths,
+   * mapped to respective object data.
+   *
+   * Object data is a binary array of arbitrary contents,
+   * and its path a POSIX-style slash-separated string.
+   *
+   * Consumers can stream result into files on local filesystem
+   * (assuming paths don’t contain unsupported characters),
+   * pack it into an archive and initiate a download
+   * when complete, etc.
    */
   render: (
     documentRoot: JSX.Element,
-  ) => Promise<void>;
+  ) => AsyncIterator<Record<string, Uint8Array>>;
 }
 
 
