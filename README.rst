@@ -1,106 +1,103 @@
-Firelight renderer for Metanorma
-================================
-
-.. note:: Currently used rewrite is in the ``next`` branch, about to be merged shortly.
-          Docs below are for the ``next`` branch.
+Firelight monorepo
+==================
 
 Firelight renders Metanorma XML
 (usually produced from Metanorma-flavoured AsciiDoc)
 in a way that is readable and easy to navigate by default
 while also being customizable and extensible.
 
+Anafero build system implements the orchestration
+of Firelight’s MN XML parsing & site content rendering extensions.
+
 Usage
 -----
 
+This does not yet work—please stand by while we publish packages
+and provide a better out of the box development experience::
+
+    npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli \
+      --target-dir <path/to/target/dir> \
+      --current-rev <main-revision> \
+      [--path-prefix </slash-prepended-path-prefix>]
+      [--rev <other-revision-or-spec>]
+      [--debug]
+
+Each version should have an ``anafero-config.json``,
+which points to the entry point within versioned repository tree,
+as well as store/content adapter and layout.
+
+Anafero config
+--------------
+
+This file, named ``anafero-config.json``, must reside in the root
+of the repository with the data being built.
+
+Example::
+
+    {
+      "version": "0.1",
+      "entryPoint": "file:documents/001-v4/document.presentation.xml",
+      "storeAdapters": [
+        "git+https://github.com/metanorma/firelight#next/packages/metanorma-xml-store"
+      ],
+      "contentAdapters": [
+        "git+https://github.com/metanorma/firelight#next/packages/metanorma-site-content"
+      ],
+      "resourceLayouts": [
+        "git+https://github.com/metanorma/firelight#next/packages/plateau-layout"
+      ]
+    }
+
+For extension module reference format (adapters & layouts)
+see module identifier shape below.
+
+
+Module identifier shape
+~~~~~~~~~~~~~~~~~~~~~~~
+
 ::
 
-    npx firelight <path/to/Metanorma/document.xml>
-      [--layout <layout>]
-      [--look <library>]
-      [--renderer <renderer>]
-
-If layout, library or renderer specifies identifier without a namespace
-(e.g., ``--layout plateau``) then it is resolved
-in Ribose/Metanorma’s contrib Firelight package namespace.
-
-Otherwise, identifier can be a URL of the shape::
-
-    git://example.com/path/to/repo#<OID>[/subdirectory/within/repo]
+    git+https://example.com/path/to/repo#<OID>[/subdirectory/within/repo]
 
 .. important:: It is required to specify OID (Git commit hash, tag, or branch).
                HEAD can be provided, but that is not recommended.
-               Pinning by hash or tag is recommended.
+               Pinning by commit hash or tag is recommended.
 
-Example specifying ``metanorma/firelight`` Github repo at hash ``12345``,
-layout under Plateau contrib plugin (there’s only one there),
-and look from there as well::
-
-    npx firelight <path/to/Metanorma/document.xml>
-      --layout git://github.com/metanorma/firelight#12345/contrib/plateau/layout
-      --look git://github.com/metanorma/firelight#12345/contrib/plateau/look
-
-Note the duplication required.
-
-Configuring via file
---------------------
-
-TBD.
-
-A YAML(?) configuration file is intended to cover cases
-where providing command-line flags is not convenient.
+Example specifying ``metanorma/firelight`` Github repo at hash ``12345``
+and layout under a subdirectory:
+``git://github.com/metanorma/firelight#12345/packages/plateau-layout``.
 
 Architecture
 ------------
 
-Three layers are designed to be swappable out independently,
-though may have some degree of inter-dependency:
+- Firelight implements:
 
-* Layout
-  defines the general aspects of resource presentation
-  (e.g., it’s a document, a document collection, etc.),
-  specifies flexibility points
-  and provides components that form its default look.
-* Look is a component library
-  determines how parts of the core content,
-  as well as surrounding elements like navigation and branding,
-  look and behave.
-* Renderer
-  controls how the combined result of layout + components,
-  which is a JSX tree,
-  is serialised into the final deliverable
-  (e.g., a static single-page site/webapp).
+  - Metanorma XML store adapter that transforms between MN presentation
+    XML and a set of resources representing document structure.
 
-At runtime, user specifies a layout, optionally a component library,
-and a renderer.
+  - A content adapter that expects a set of resources representing
+    a MN document or document collection.
 
-Firelight’s builder (which *is*, as of now, NodeJS-based) will:
+  - Layout for PLATEAU documents.
 
-1. Download anything required (mainly layout and component library,
-   as renderers are currently bundled with Firelight).
-2. Validate document tree, if specified by layout.
-3. Obtain a JSX tree by calling layout with document source
-   (serialised into)
-   and (if provided) component library.
-4. Obtain the final deliverable by passing the JSX tree to the renderer.
+  - The main GUI entry point.
 
-Packaging dependencies
-----------------------
+- Anafero: implements the engine for transforming between various data sources
+  and resource hierarchy, using the following pluggable components.
 
-Layout, component library, and renderer may come from outside Firelight.
-They should expose API endpoints as expected by Firelight
-(packagers/validators will help ensure that).
-Firelight will build them using esbuild at runtime.
-The esbuild version used during the build depends on Firelight version.
+  - Store adapter module: provides API for transforming
+    between certain source (currently, a blob in Git repository)
+    and a set of resource relations.
 
-A single Firelight plugin can provide a mix of layouts/components/renderers,
-or focus on providing just one.
+  - Content adapter module: determines how resources form website hierarchy.
 
-If there’s only layout/component/renderer, it can be specified purely via
-plugin name (``--layout plateau`` will pick layout, if there’s only one),
-otherwise
+  - Layout module: allows some custom CSS to control resource rendering.
 
-- Any pluggable component is designed to work in a standards-compatible
-  browser-compatible JS runtime and can not have any NodeJS-specific code.
+  - App shell: the high-level React component that renders the content.
+    (Provisional—for now Firelight GUI is hard-coded as the only option.)
 
-- Components cannot specify external dependencies.
-  Everything must be vendored in the package.
+Known issues
+------------
+
+- Language support is limited, for now just Japanese, English
+  and possibly French work.
