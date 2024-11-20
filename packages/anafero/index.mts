@@ -11,6 +11,7 @@
 // };
 
 export * from './Layout.mjs';
+export * from './search.mjs';
 export * from './TitleSchema.mjs';
 export * from './ContentGenerator.mjs';
 export * from './ResourceReader.mjs';
