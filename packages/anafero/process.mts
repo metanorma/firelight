@@ -620,7 +620,13 @@ export async function * generateStaticSiteAssets(
     const versionAssetGenerator = generateVersion(
       cfg,
       fetchBlobAtThisVersion,
-      { getDOMStub, decodeXML, fetchDependency, getDependencyCSS, getDependencySource },
+      {
+        getDOMStub,
+        decodeXML,
+        fetchDependency,
+        getDependencyCSS,
+        getDependencySource,
+      },
       function expandPath(versionRelativePath) {
         return versionID === currentVersionID
           ? versionRelativePath
