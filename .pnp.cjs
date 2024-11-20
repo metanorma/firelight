@@ -728,6 +728,10 @@ const RAW_RUNTIME_STATE =
       "npm:5.3.2"\
     ],\
     [\
+      "immer",\
+      "npm:10.1.1"\
+    ],\
+    [\
       "import-mapper",\
       "npm:0.0.4"\
     ],\
@@ -9033,6 +9037,7 @@ const RAW_RUNTIME_STATE =
           ["effect", "npm:3.8.4"],\
           ["esbuild", "npm:0.24.0"],\
           ["esbuild-wasm", "npm:0.24.0"],\
+          ["immer", "npm:10.1.1"],\
           ["import-mapper", "npm:0.0.4"],\
           ["ink", "virtual:274a3d1acce25dc2f37a895cf3a91e83935757f8e031955203682aff2719c092cda14cc9ed48b45a5aa448e43b85c16d767eed38f998d24a85b033ff86e99c73#npm:5.0.1"],\
           ["isomorphic-git", "npm:1.27.1"],\
@@ -10127,6 +10132,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/ignore-npm-5.3.2-346d3ba017-f9f652c957.zip/node_modules/ignore/",\
         "packageDependencies": [\
           ["ignore", "npm:5.3.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["immer", [\
+      ["npm:10.1.1", {\
+        "packageLocation": "./.yarn/cache/immer-npm-10.1.1-973ae10d09-b749e10d13.zip/node_modules/immer/",\
+        "packageDependencies": [\
+          ["immer", "npm:10.1.1"]\
         ],\
         "linkType": "HARD"\
       }]\
