@@ -4093,6 +4093,7 @@ __metadata:
     effect: "npm:^3.8.4"
     esbuild: "npm:^0.24.0"
     esbuild-wasm: "npm:^0.24.0"
+    immer: "npm:^10.1.1"
     import-mapper: "npm:0.0.4"
     ink: "npm:5.0.1"
     isomorphic-git: "npm:^1.27.1"
@@ -5191,6 +5192,13 @@ __metadata:
   version: 5.3.2
   resolution: "ignore@npm:5.3.2"
   checksum: 10c0/f9f652c957983634ded1e7f02da3b559a0d4cc210fca3792cb67f1b153623c9c42efdc1c4121af171e295444459fc4a9201101fb041b1104a3c000bccb188337
+  languageName: node
+  linkType: hard
+
+"immer@npm:^10.1.1":
+  version: 10.1.1
+  resolution: "immer@npm:10.1.1"
+  checksum: 10c0/b749e10d137ccae91788f41bd57e9387f32ea6d6ea8fd7eb47b23fd7766681575efc7f86ceef7fe24c3bc9d61e38ff5d2f49c2663b2b0c056e280a4510923653
   languageName: node
   linkType: hard
 

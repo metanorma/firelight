@@ -17,6 +17,7 @@
   "dependencies": {
     "@effect/schema": "^0.74.0",
     "esbuild-wasm": "^0.24.0",
+    "immer": "^10.1.1",
     "node-fetch": "^3.3.2",
     "xpath": "^0.0.34"
   },
