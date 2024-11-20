@@ -13,11 +13,13 @@ import enableLunrStemmer from 'lunr-languages/lunr.stemmer.support';
 import enableTinyLunrSegmenter from 'lunr-languages/tinyseg';
 import enableLunrFr from 'lunr-languages/lunr.fr';
 import enableLunrJa from 'lunr-languages/lunr.ja';
+import { enableNewLunrJaTokenizer } from './search.mjs';
 
 enableLunrStemmer(lunr);
 enableTinyLunrSegmenter(lunr);
 enableLunrFr(lunr);
 enableLunrJa(lunr);
+enableNewLunrJaTokenizer(lunr);
 // End initialize search
 
 
