@@ -4108,6 +4108,7 @@ __metadata:
     react-helmet: "npm:^6.1.0"
     typescript: "npm:^5.6.2"
     xpath: "npm:^0.0.34"
+    yoga-wasm-web: "npm:0.3.3"
   bin:
     build-site: build-site.mjs
   languageName: unknown
@@ -7017,7 +7018,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yoga-wasm-web@npm:~0.3.3":
+"yoga-wasm-web@npm:0.3.3, yoga-wasm-web@npm:~0.3.3":
   version: 0.3.3
   resolution: "yoga-wasm-web@npm:0.3.3"
   checksum: 10c0/d46ae3a436409e89eb0ea3b8c7624dafaf2c846d9038fdf8aa0cc839f73a2577b679bdc22997596177de74c580a6cdc3206c98fd2acd91b66f85462d9d9d260a

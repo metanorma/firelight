@@ -9051,7 +9051,8 @@ const RAW_RUNTIME_STATE =
           ["react-dom", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:18.3.1"],\
           ["react-helmet", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:6.1.0"],\
           ["typescript", "patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=8c6c40"],\
-          ["xpath", "npm:0.0.34"]\
+          ["xpath", "npm:0.0.34"],\
+          ["yoga-wasm-web", "npm:0.3.3"]\
         ],\
         "linkType": "SOFT"\
       }]\
