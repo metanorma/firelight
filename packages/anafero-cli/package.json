@@ -7,7 +7,7 @@
     "build-site": "build-site.mjs"
   },
   "scripts": {
-    "cbp": "yarn clean-all; yarn compile; yarn build-generator-builder && yarn build-generator -- --debug && npm pack",
+    "cbp": "yarn clean-all; yarn compile; yarn build-generator-builder && yarn build-generator -- --debug && sed -i '' 's#^import devtools#//import devtools#' build-site.mjs && npm pack",
     "bp": "rm -f anafero-*.tgz; yarn build-generator -- --debug && npm pack",
     "build-generator-builder": "yarn esbuild build-generator.mts --log-level=debug --packages=external --platform=node --target=node18 --minify=false --bundle --format=esm --outfile=build-generator.mjs",
     "build-generator": "yarn node build-generator.mjs --",
@@ -19,7 +19,8 @@
     "esbuild-wasm": "^0.24.0",
     "immer": "^10.1.1",
     "node-fetch": "^3.3.2",
-    "xpath": "^0.0.34"
+    "xpath": "^0.0.34",
+    "yoga-wasm-web": "0.3.3"
   },
   "devDependencies": {
     "@effect/cli": "^0.44.4",

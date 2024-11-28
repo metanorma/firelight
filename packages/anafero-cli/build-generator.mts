@@ -120,6 +120,10 @@ async function buildSiteBuilder(opts: ReportingOptions) {
       // JSDOM thing?
       'canvas',
       'esbuild-wasm',
+
+      // Ink thing :/
+      'yoga-wasm-web',
+      'react-devtools-core',
     ],
     
     loader: {
@@ -130,6 +134,9 @@ async function buildSiteBuilder(opts: ReportingOptions) {
     treeShaking: true,
     sourcemap: false,
     platform: 'node',
+    banner: {
+      js: "import { createRequire as _createRequire } from \"node:module\"; const require = _createRequire(import.meta.url);",
+    },
     outfile: 'build-site.mjs',
     write: true,
     //loader: {
