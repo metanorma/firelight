@@ -53,8 +53,8 @@ export const Search: React.FC<{
     if (debouncedQuery.trim() !== '') {
       try {
         return [
-          index.
-            search(debouncedQuery).
+          index?.
+            search(debouncedQuery)?.
             map(res => ({ ...res, id: res.ref, name: res.ref })),
           null,
         ];
