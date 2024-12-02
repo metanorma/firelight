@@ -92,7 +92,16 @@ Promise<T> {
       stdin: {
         contents: await readFile(join(buildDir, 'index.mts')),
         loader: 'ts',
+
+        // TODO: This means we use filesystem when resolving
+        // imports in the entry point. That’s not great, if we
+        // want to build e.g. in the browser.
+        // It may be possible to avoid this by writing a custom
+        // resolver plugin for esbuild. See
+        // - https://github.com/evanw/esbuild/issues/591#issuecomment-742962090
+        // - https://esbuild.github.io/plugins/#on-resolve-arguments
         resolveDir: buildDir,
+
         sourcefile: 'index.mts',
       },
       loader: {
