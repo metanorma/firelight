@@ -1,13 +1,20 @@
 import { join, basename } from 'node:path';
-import { rmdir, readFile, cp, mkdtemp } from 'node:fs/promises';
+import { rmdir, readFile, cp, mkdtemp, stat } from 'node:fs/promises';
+import * as S from 'effect/Schema';
 import vm, { type Module as VMModule } from 'node:vm';
 import { tmpdir } from 'node:os';
+import fs from 'node:fs';
+
+import http from 'isomorphic-git/http/node';
+import git, { type CommitObject } from 'isomorphic-git';
 
 import fetch from 'node-fetch';
 import { build as esbuild } from 'esbuild-wasm';
 
 import { JSDOM } from 'jsdom';
 import xpath from 'xpath';
+
+import { GitModuleRefSchema } from 'anafero/index.mjs';
 
 // Made available to fetched dependencies but for now
 // we don’t leave it up to import because of workspace packaging hassle.
@@ -32,12 +39,86 @@ const dependencySources: Record<string, string> = {};
 const dependencySupportingFiles: Record<string, Record<string, Uint8Array>> = {};
 
 
+const tmpRoot = tmpdir();
+
+
 
 const getDoc = () => {
   const doc = (new JSDOM('<html></html>')).window.document;
   doc.evaluate = (xpath as any).evaluate;
   return doc;
 };
+
+/**
+ * Maps module refs (without subdirectories)
+ * to paths on local filesystem, to avoid cloning the same
+ * repo multiple times if it contains multiple dependencies
+ * in use by the project.
+ */
+const dependencyRepositories: Record<string, string> = {} as const;
+
+/** Should be called after all is done. */
+export async function cleanUpRepositories() {
+  for (const dir of Object.values(dependencyRepositories)) {
+    if (dir.startsWith(tmpRoot)) {
+      await rmdir(dir);
+    } else {
+      console.warn("Not cleaning up dir (not a child of temporary root)", dir);
+    }
+  }
+}
+
+/**
+ * Retrieves module from a Git repository based on specified
+ * URL & OID & subdir. Returns path to module source on local filesystem.
+ */
+async function fetchSourceFromGit(
+  moduleRef: string,
+): Promise<string> {
+  const parts = S.decodeUnknownSync(GitModuleRefSchema)(moduleRef);
+  const url = `https://${parts[1]}`;
+  const refAndMaybeSubdir = parts[3];
+  const [ref, subdir]: [string, string | undefined] = refAndMaybeSubdir.indexOf('/') > 0
+    ? [refAndMaybeSubdir.split('/')[0]!, refAndMaybeSubdir.slice(refAndMaybeSubdir.indexOf('/'))]
+    : [refAndMaybeSubdir, undefined];
+
+  const alreadyClonedKey = [url, ref].join('#');
+  if (!dependencyRepositories[alreadyClonedKey]) {
+    const dir = await mkdtemp(join(
+      tmpRoot,
+      `anafero-source-${moduleRef.replace(/[^a-z0-9]/gi, '_')}-`,
+    ));
+
+    console.debug("Cloning moduleRef", moduleRef, "to dir", dir);
+
+    await git.clone({
+      fs,
+      http,
+      dir,
+      url,
+      ref,
+      depth: 1,
+    });
+
+    dependencyRepositories[alreadyClonedKey] = dir;
+  } else {
+    console.debug("Already cloned", moduleRef);
+  }
+  const clonePath = dependencyRepositories[alreadyClonedKey];
+
+  if (subdir) {
+    const presumedSubdir = join(clonePath, `/${subdir}`);
+    console.debug("STATTING SUBDIR", presumedSubdir);
+    const subdirStat = await stat(presumedSubdir);
+    if (subdirStat.isDirectory()) {
+      return presumedSubdir;
+    } else {
+      throw new Error("Fetched Git repository doesn’t have the subdirectory in module ref");
+    }
+  } else {
+    return clonePath;
+  }
+}
 
 
 export function getDependencySources() {
@@ -55,7 +136,11 @@ const decoder = new TextDecoder();
 /**
  * Given a module reference (URI), fetches and provides a tuple
  * with instantiated module and a map of any other generated files.
- * Doesn’t really do validation of T.
+ * NOTE: Doesn’t really do validation of T.
+ *
+ * This currently relies on Node, and is therefore in the CLI module,
+ * see TODO about resolveDir about making dependencies buildable
+ * in the browser.
  */
 export async function fetchDependency<T>(moduleRef: string):
 Promise<T> {
@@ -63,22 +148,31 @@ Promise<T> {
     return await depRegistry[moduleRef] as T;
   }
   depRegistry[moduleRef] = async function resolveDep() {
+    let sourceDir: string;
+
     const localPath = moduleRef.split('file:')[1];
     if (!localPath) {
-      throw new Error("Only dependencies on local filesystem are supported for now.");
+      //throw new Error("Only dependencies on local filesystem are supported for now.");
+      sourceDir = await fetchSourceFromGit(moduleRef);
+      console.debug("Fetched to path", localPath);
+    } else {
+      sourceDir = localPath;
     }
 
-    const buildDir = await mkdtemp(join(tmpdir(), 'firelight-dependency'));
+    const buildDir = await mkdtemp(join(
+      tmpRoot,
+      `anafero-dist-${moduleRef.replace(/[^a-z0-9]/gi, '_')}-`,
+    ));
 
     console.debug(
-      "Building dependency from local path",
-      localPath);
+      "Building dependency from source dir",
+      sourceDir);
 
     console.debug(
       "Copying into build dir",
       buildDir);
 
-    await cp(localPath, buildDir, { recursive: true });
+    await cp(sourceDir, buildDir, { recursive: true });
 
     //const outfile = join(buildDir, 'out.mjs');
     //await esbuildTransform('oi');
