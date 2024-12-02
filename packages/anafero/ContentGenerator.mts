@@ -173,7 +173,11 @@ export interface ContentAdapterModule {
    * then site will acquire a path …/X/2.
    * However, “seeAlso someSection” would return null.
    *
-   * If a relation does not contribute to hierarchy, then it is
+   * If subject’s relation does not contribute to hierarchy,
+   * then none of related object’s further relations should contribute
+   * to hierarchy, obviously.
+   *
+   * A relation that does not contribute to hierarchy is
    * considered part of implied resource’s content (machine-readable data
    * and page). If such relation target is an URI, its relations should be
    * resolved recursively, until relation whose target is in hierarchy
@@ -183,10 +187,6 @@ export interface ContentAdapterModule {
    * “someCaption hasPart someLink” resolves someLink’s relations,
    * but “someLink seeAlso Y” would not obtain further relations
    * since Y is already in the hierarchy through other means.
-   *
-   * If subject’s relation does not contribute to hierarchy,
-   * then none of related object’s further relations should contribute
-   * to hierarchy, obviously.
    *
    * To avoid circularity, two passes are required:
    * 1. Collect all relations that contribute to hierarchy and skip others.
