@@ -1,4 +1,20 @@
 import { type Index as LunrIndex } from 'lunr';
+
+// TODO: Check whether this is necessary to do on the client
+import lunr from 'lunr';
+
+import enableLunrStemmer from 'lunr-languages/lunr.stemmer.support';
+import enableTinyLunrSegmenter from 'lunr-languages/tinyseg';
+import enableLunrFr from 'lunr-languages/lunr.fr';
+import enableLunrJa from 'lunr-languages/lunr.ja';
+import { enableNewLunrJaTokenizer } from 'anafero/index.mjs';
+
+enableLunrStemmer(lunr);
+enableTinyLunrSegmenter(lunr);
+enableLunrFr(lunr);
+enableLunrJa(lunr);
+enableNewLunrJaTokenizer(lunr);
+
 import { useDebounce, useDebouncedCallback } from 'use-debounce';
 import React, { useCallback, useMemo, useState } from 'react';
 import { SearchField, ActionGroup, ListView, Item, Text } from '@adobe/react-spectrum';
