@@ -65,6 +65,7 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
                       : onDeactivate?.()}
                     isDisabled={!onActivateBrowsingMode || (activeBrowsingMode === 'hierarchy' && !onDeactivate)}>
                   {/* https://github.com/adobe/react-spectrum/issues/6752#issuecomment-2444076769 */}
+                  {/* @ts-expect-error */}
                   <HierarchyIcon size={TB_SIZE} />
                 </ToggleButton>
                 <ToggleButton
@@ -74,6 +75,7 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
                       ? onActivateBrowsingMode?.('search')
                       : onDeactivate?.()}
                     isDisabled={!onActivateBrowsingMode || (activeBrowsingMode === 'search' && !onDeactivate)}>
+                  {/* @ts-expect-error */}
                   <Search size={TB_SIZE} />
                 </ToggleButton>
                 <ToggleButton
@@ -83,6 +85,7 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
                       ? onActivateBrowsingMode?.('bookmarks')
                       : onDeactivate?.()}
                     isDisabled={!onActivateBrowsingMode || (activeBrowsingMode === 'bookmarks' && !onDeactivate)}>
+                  {/* @ts-expect-error */}
                   <Bookmark size={TB_SIZE} />
                 </ToggleButton>
                 {Object.keys(versioning?.versions ?? {}).length > 1
@@ -90,6 +93,7 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
                   ? <ToggleButton
                         isDisabled
                         aria-label="Other versions">
+                      {/* @ts-expect-error */}
                       <Branch1 size={TB_SIZE} />
                     </ToggleButton>
                   : null}
@@ -99,6 +103,7 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
                 <ToggleButton
                     isDisabled
                     aria-label="Settings">
+                  {/* @ts-expect-error */}
                   <Settings size={TB_SIZE} />
                 </ToggleButton>
               </Group>
