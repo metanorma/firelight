@@ -17,3 +17,18 @@ export const GitModuleRefSchema = S.TemplateLiteralParser(
 );
 
 export type GitModuleRef = S.Schema.Type<typeof GitModuleRefSchema>;
+
+
+export function parseModuleRef(moduleRef: string): [
+  url: string,
+  oid: string,
+  subdir: string | undefined,
+] {
+  const parts = S.decodeUnknownSync(GitModuleRefSchema)(moduleRef);
+  const url = `https://${parts[1]}`;
+  const refAndMaybeSubdir = parts[3];
+  const [ref, subdir]: [string, string | undefined] = refAndMaybeSubdir.indexOf('/') > 0
+    ? [refAndMaybeSubdir.split('/')[0]!, refAndMaybeSubdir.slice(refAndMaybeSubdir.indexOf('/'))]
+    : [refAndMaybeSubdir, undefined];
+  return [url, ref, subdir];
+}
