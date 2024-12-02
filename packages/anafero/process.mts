@@ -1,3 +1,5 @@
+// TODO: This file needs splitting
+
 import * as S from '@effect/schema/Schema';
 
 import { renderToString } from 'react-dom/server';
@@ -51,6 +53,7 @@ import { type LayoutModule, type NavLink } from './Layout.mjs';
 import { isURIString } from './URI.mjs';
 import { BrowserBar } from 'firelight-gui/BrowseBar.jsx';
 import { Resource, type ResourceProps } from 'firelight-gui/Resource.jsx';
+import { type TaskProgressCallback } from './progress.mjs';
 
 
 const encoder = new TextEncoder();
@@ -73,6 +76,7 @@ interface GeneratorHelpers {
   getDependencySource: (modID: string) => string;
   decodeXML: (data: Uint8Array) => Document;
   getDOMStub: () => Document;
+  reportProgress: TaskProgressCallback;
 }
 
 /**
@@ -192,10 +196,12 @@ export function * generateResourceAssets(
 export async function * generateVersion(
   cfg: BuildConfig,
   fetchBlobAtThisVersion: (objectPath: string) => Promise<Uint8Array>,
-  { getDOMStub, fetchDependency, getDependencyCSS, getDependencySource, decodeXML }:
-    Pick<GeneratorHelpers, 'getDOMStub' | 'fetchDependency' | 'getDependencySource' | 'getDependencyCSS' | 'decodeXML'>,
+  { getDOMStub, fetchDependency, getDependencyCSS, getDependencySource, decodeXML, reportProgress }:
+    Pick<GeneratorHelpers, 'getDOMStub' | 'fetchDependency' | 'getDependencySource' | 'getDependencyCSS' | 'decodeXML' | 'reportProgress'>,
   expandPath: (versionRelativePath: string) => string,
 ): AsyncGenerator<Record<string, Uint8Array>> {
+
+  const [dependencyProgress, ] = reportProgress('loading extensions');
 
   // For every specified reader module, instantiate it in advance
   const storeAdapters =
@@ -262,6 +268,9 @@ export async function * generateVersion(
       yield { [cssURLWithLeadingSlash]: supportingCSS };
     }
   }
+
+  dependencyProgress(null);
+
   const dependencyHTMLHead = supportingCSSLinks.map(link =>
     `<link rel="stylesheet" href="${expandPath(link)}" />`
   ).join('\n')
@@ -297,6 +306,8 @@ export async function * generateVersion(
     //return null;
   }
 
+  const [contentReaderInitProgress, contentReaderSubtask] =
+    reportProgress('loading content reader');
   const reader = await makeContentReader(
     cfg.entryPoint,
     storeAdapters,
@@ -307,12 +318,12 @@ export async function * generateVersion(
     {
       fetchBlob: fetchBlobAtThisVersion,
       decodeXML,
+      reportProgress: contentReaderSubtask,
     },
   );
+  contentReaderInitProgress(null);
 
-  console.debug(
-    "Initialized content reader with total paths:",
-    reader.countPaths());
+  const totalPaths = reader.countPaths();
 
   function getDependency<T>(moduleID: string) {
     return (contentAdapters[moduleID] ?? storeAdapters[moduleID]) as T;
@@ -347,9 +358,15 @@ export async function * generateVersion(
       map(([k, v]) => [v, k]));
   }
 
+  let done = 0;
+  const [allPathProgress, pathSubtask] =
+    reportProgress('generating pages', { total: totalPaths, done });
   const hierarchicalResources = reader.generatePaths();
   for await (const { path, resourceURI, parentChain, directDescendants } of hierarchicalResources) {
-    console.debug("Got resource", resourceURI, path);
+    //console.debug("Got resource", resourceURI, path);
+
+    done += 1;
+    allPathProgress({ total: totalPaths, done });
 
     if (path.startsWith('/')) {
       console.error("Hierarchy generated a slash-prepended path, this is not allowed");
@@ -359,6 +376,9 @@ export async function * generateVersion(
       console.error("Hierarchy generated a path with hash fragment, this is not allowed");
       throw new Error("Malformed resource URL while processing resources: hash fragment");
     }
+
+    const [pathProgress, ] =
+      pathSubtask(`${[path, resourceURI].join(' for ').replaceAll('/', '->')}`, { state: 'resolving relations' });
 
     const relations = await reader.resolve(resourceURI);
 
@@ -381,7 +401,9 @@ export async function * generateVersion(
     }
     resourceDescriptions[resourceURI] = resourceMeta;
 
-    // Process resources on the page
+    pathProgress({ state: 'processing referenced files' });
+
+    // Process assets on the page
     for (const [, , o] of relations) {
       if (o.startsWith('file:')) {
         // Some resource on the page is referencing a file.
@@ -399,6 +421,8 @@ export async function * generateVersion(
         }
       }
     }
+
+    pathProgress({ state: 'generating page content & assets' });
 
     const resourceAssetGenerator = generateResourceAssets(
       resourceURI,
@@ -480,7 +504,11 @@ export async function * generateVersion(
         yield { [assetBlobPath]: blob };
       }
     }
+
+    pathProgress(null);
   }
+
+  allPathProgress(null);
 
   for (const [filename, blob] of Object.entries(assetsToWrite)) {
     yield { [`/${filename}`]: blob };
@@ -491,10 +519,12 @@ export async function * generateVersion(
 
   yield { '/resource-descriptions.json': encoder.encode(JSON.stringify(resourceDescriptions, null, 4)) };
 
+  const [indexProgress, ] = reportProgress('building search index');
   const lunrIndex = lunr(function () {
     this.ref('name');
     this.field('body');
     for (const [uri, content] of Object.entries(contentCache)) {
+      indexProgress({ state: `adding entry for ${uri}` });
       const lang = resourceDescriptions[uri]?.primaryLanguageID ?? maybePrimaryLanguageID;
       if (lang && lunr.hasOwnProperty(lang)) {
         this.use((lunr as any)[lang]);
@@ -509,6 +539,7 @@ export async function * generateVersion(
       }
     }
   });
+  indexProgress(null);
   yield { '/search-index.json': encoder.encode(JSON.stringify(lunrIndex, null, 4)) };
 }
 
@@ -575,6 +606,8 @@ export async function * generateStaticSiteAssets(
     );
   }
 
+  const [configProgress, ] = opts.reportProgress('checking config override');
+
   const configOverride = await getConfigOverride();
 
   // Unless config file was explicitly overridden, we read it from source.
@@ -584,6 +617,8 @@ export async function * generateStaticSiteAssets(
   // use currentConfig left over from the oldest version that has one.
   // TODO: Rename build config to something more suitable
   let currentConfig: BuildConfig = configOverride ?? await readConfig(currentVersionID);
+
+  configProgress(null);
 
   const baseVersioning = {
     versions,
@@ -595,11 +630,14 @@ export async function * generateStaticSiteAssets(
   };
 
   for (const versionID of versionIDsSorted) {
+    const [versionProgress, versionSubtask] =
+      opts.reportProgress(`building version ${versionID}`);
 
     function fetchBlobAtThisVersion(objectPath: string) {
       return fetchBlob(objectPath, { atVersion: versionID });
     }
 
+    const [versionConfigProgress, ] = versionSubtask('reading version config');
     // Prefer in order:
     //   config override
     //     > config in given version tree
@@ -618,6 +656,7 @@ export async function * generateStaticSiteAssets(
         cfg = currentConfig;
       }
     }
+    versionConfigProgress(null);
 
     const versionAssetGenerator = generateVersion(
       cfg,
@@ -628,6 +667,7 @@ export async function * generateStaticSiteAssets(
         fetchDependency,
         getDependencyCSS,
         getDependencySource,
+        reportProgress: versionSubtask,
       },
       function expandPath(versionRelativePath) {
         return versionID === currentVersionID
@@ -650,6 +690,8 @@ export async function * generateStaticSiteAssets(
         yield { [assetBlobPath]: blob };
       }
     }
+
+    versionProgress(null);
   }
 }
 
@@ -687,7 +729,7 @@ async function makeContentReader(
   ) => null | string | string[][],
   // /** Whether content adapter thinks this should contribute to content. */
   //relationContributesToContent: (relation: ResourceRelation) => boolean,
-  { fetchBlob, decodeXML }: Pick<GeneratorHelpers, 'fetchBlob' | 'decodeXML'>,
+  { fetchBlob, decodeXML, reportProgress }: Pick<GeneratorHelpers, 'fetchBlob' | 'decodeXML' | 'reportProgress'>,
 ): Promise<ContentReader> {
 
   const readerHelpers = { fetchBlob, decodeXML } as const;
@@ -736,13 +778,23 @@ async function makeContentReader(
   };
   const immediateRelations: { [resourceURI: string]: ResourceRelation[] } = {};
   let totalPaths = 0;
-  for await (const [path, resourceURI, relations] of generateHierarchy(entryPointURI, '')) {
-    console.debug("Generating hierarchical resource", path, resourceURI);
+
+  const [hierarchyProgress, hierarchySubtask] = reportProgress('determining resource hierarchy');
+
+  for await (const [path, resourceURI, relations] of generateHierarchy(
+    entryPointURI,
+    '',
+    undefined,
+    hierarchySubtask,
+  )) {
+    //console.debug("Generating hierarchical resource", path, resourceURI);
+    hierarchyProgress({ state: `${path} for resource ${resourceURI}` });
     pathsByResourceURI[resourceURI] = path;
     immediateRelations[resourceURI] = relations;
     resourceURIsByPath[path] = resourceURI;
     totalPaths += 1;
   }
+  hierarchyProgress(null);
 
   // Utils
 
@@ -938,6 +990,7 @@ async function makeContentReader(
     if (relationChain.length < 1) {
       return null;
     }
+    hierarchyProgress({ state: `resolving ${resourceURI}: ${relationChain.join(',')}` });
     const reader = entryPointReaders[resourceURI]?.reader
       ?? findReaderWithResource(resourceURI)?.reader;
     if (!reader) {
@@ -965,8 +1018,9 @@ async function makeContentReader(
     return null;
   }
 
-  async function _contributesToHierarchy(relation: ResourceRelation):
-  Promise<string | null> {
+  async function _contributesToHierarchy(
+    relation: ResourceRelation,
+  ): Promise<string | null> {
     if (!isURIString(relation.target)) {
       return null;
     } else {
@@ -1039,7 +1093,8 @@ async function makeContentReader(
      * If a new blob reader is created, its entry point URI
      * will be computed relative to this.
      */
-    entryPointURI?: string,
+    entryPointURI: string | undefined,
+    reportProgress: TaskProgressCallback,
   ):
   AsyncGenerator<[
     /** Root-relative path with leading slash but no trailing slash. */
@@ -1047,6 +1102,9 @@ async function makeContentReader(
     resourceURI: string,
     relations: ResourceRelation[],
   ]> {
+    const [progress, subtask] =
+      reportProgress(`${urlPrefix}: ${resourceURI.replaceAll('/', '->')}`);
+
     // Try any of the preexisting readers, if any report existing resource
     // then resolve through that.
     //
@@ -1061,10 +1119,12 @@ async function makeContentReader(
       //url = `${urlPrefix}${reader.toURL(resourceURI)}`;
       //const relations = yield * reader.resolveRelations(resourceURI);
       const root = entryPointURI === resourceURI ? '' : resourceURI;
+      progress({ state: `resolving relations at ${root}` });
       for await (const relation of reader.resolveRelations(root, 1)) {
         relations.push(relation);
       }
     } else {
+      progress({ state: `starting a reader for ${resourceURI}` });
       const [newCurrentEntryPointURI, relations_] =
         await startReader(resourceURI, entryPointURI);
       currentEntryPointURI = newCurrentEntryPointURI;
@@ -1078,6 +1138,7 @@ async function makeContentReader(
 
     yield [urlPrefix, resourceURI, relations];
 
+    progress({ state: 'checking relations' });
     for (const relation of dedupeResourceRelationList(relations)) {
       let pathComponent = await _contributesToHierarchy(relation);
       if (!pathComponent && relation.target.startsWith('file:')) {
@@ -1101,10 +1162,12 @@ async function makeContentReader(
             relation.target,
             newPath,
             currentEntryPointURI,
+            reportProgress,
           );
         }
       }
     }
+    progress(null);
   }
 
   async function startReader(resourceURI: string, entryPointURI?: string) {

@@ -107,7 +107,7 @@ async function buildSiteBuilder(opts: ReportingOptions) {
   const { logLevel } = opts;
   return await esbuild({
     entryPoints: [
-      'generate-to-filesystem.mts',
+      'generate-to-filesystem.tsx',
       //join(PACKAGE_ROOT, 'site', 'index.tsx'),
     ],
     entryNames: '[dir]/[name]',
