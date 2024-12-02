@@ -14,7 +14,7 @@ import { build as esbuild } from 'esbuild-wasm';
 import { JSDOM } from 'jsdom';
 import xpath from 'xpath';
 
-import { GitModuleRefSchema } from 'anafero/index.mjs';
+import { parseModuleRef, GitModuleRefSchema } from 'anafero/index.mjs';
 
 // Made available to fetched dependencies but for now
 // we don’t leave it up to import because of workspace packaging hassle.
@@ -75,12 +75,7 @@ export async function cleanUpRepositories() {
 async function fetchSourceFromGit(
   moduleRef: string,
 ): Promise<string> {
-  const parts = S.decodeUnknownSync(GitModuleRefSchema)(moduleRef);
-  const url = `https://${parts[1]}`;
-  const refAndMaybeSubdir = parts[3];
-  const [ref, subdir]: [string, string | undefined] = refAndMaybeSubdir.indexOf('/') > 0
-    ? [refAndMaybeSubdir.split('/')[0]!, refAndMaybeSubdir.slice(refAndMaybeSubdir.indexOf('/'))]
-    : [refAndMaybeSubdir, undefined];
+  const [url, ref, subdir] = parseModuleRef(moduleRef);
 
   const alreadyClonedKey = [url, ref].join('#');
   if (!dependencyRepositories[alreadyClonedKey]) {
