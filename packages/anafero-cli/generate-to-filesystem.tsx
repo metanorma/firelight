@@ -19,6 +19,11 @@ import { NodeContext, NodeRuntime } from '@effect/platform-node';
 import { FileSystem } from '@effect/platform';
 import { Options, Command } from '@effect/cli';
 
+import React from 'react';
+import { render } from 'ink';
+import { Processor } from './CLI.jsx';
+import { type TaskProgressCallback } from 'anafero/progress.mjs';
+
 import { JSDOM } from 'jsdom';
 import xpath from 'xpath';
 
@@ -85,17 +90,23 @@ const build = Command.
       Effect.try(() => parseReportingConfig({ verbose, debug })),
       Effect.flatMap(reportingConfig => pipe(
         Effect.tryPromise({
-          try: async () => {
-            const generator = generateSite({
-              revision: unpackOption(revision)!,
-              omitRevisionsNewerThanCurrent: unpackOption(omitRevisionsNewerThanCurrent)!,
-              currentRevision: unpackOption(currentRevision)!,
-            });
-            for await (const blobchunk of generator) {
-              await writeBlobs(targetDirectoryPath, blobchunk);
-            }
-            return;
-          },
+          try: () => new Promise((resolve, reject) => {
+            render(<Processor rootTaskName="build site" onStart={async function ({ onProgress }) {
+              const generator = generateSite({
+                revision: unpackOption(revision)!,
+                omitRevisionsNewerThanCurrent: unpackOption(omitRevisionsNewerThanCurrent)!,
+                currentRevision: unpackOption(currentRevision)!,
+              }, (task, progress) => onProgress(`build site/${task}`, progress));
+              const [writeProgress, ] = onProgress('build site/write to disk');
+              for await (const blobchunk of generator) {
+                writeProgress({ state: Object.keys(blobchunk).join(',') });
+                await writeBlobs(targetDirectoryPath, blobchunk);
+              }
+              writeProgress(null);
+              onProgress('build site', null);
+              resolve(void 0);
+            }} />);
+          }),
           catch: (e) => {
             console.error(e);
             return new Error(`Error generating site: ${e}`);
@@ -197,7 +208,7 @@ const dev = Command.
         })
   ).
   pipe(
-    Command.withDescription('watch for changes'),
+    Command.withDescription('dev mode (watching for changes & copying client-side JS)'),
   );
 
 
@@ -206,7 +217,7 @@ const main = build.
   pipe(
     Command.withSubcommands([dev]),
     Command.run({
-      name: "Firelight site builder (WIP)",
+      name: "Anafero builder",
       version: "N/A",
     }),
   );
@@ -308,14 +319,19 @@ async function getRefsToBuild(revisionsToBuild: VersionBuildConfig) {
 
 
 async function * generateSite(
-  revisionsToBuild?: VersionBuildConfig,
+  revisionsToBuild: VersionBuildConfig | undefined,
+  onProgress: TaskProgressCallback,
 ) {
   if (revisionsToBuild !== undefined) {
+
+    const [versionProgress, ] = onProgress('determine versions to build', {});
     if (!(await areWeInGitRepoRoot())) {
       console.error("Cannot see Git repo, unversioned build is not supported");
       throw new Error("Can’t use revisions outside of Git repo root");
     }
     const refsToBuild = await getRefsToBuild(revisionsToBuild);
+    versionProgress(null);
+
     async function readObject(path: string, opts?: { atVersion?: string }) {
       const ref = opts?.atVersion || revisionsToBuild!.currentRevision;
       const oid = refsToBuild[ref]?.oid;
@@ -339,6 +355,7 @@ async function * generateSite(
       refsToBuild,
       revisionsToBuild.currentRevision,
       {
+        reportProgress: onProgress,
         fetchBlob: readObject,
         fetchDependency,
         getDependencyCSS: (modID) => {
