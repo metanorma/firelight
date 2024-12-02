@@ -4090,7 +4090,7 @@ __metadata:
     "@types/react-helmet": "npm:^6"
     "@xmldom/xmldom": "npm:^0.9.3"
     anafero: "workspace:~"
-    effect: "npm:^3.8.4"
+    effect: "npm:^3.10.15"
     esbuild: "npm:^0.24.0"
     esbuild-wasm: "npm:^0.24.0"
     immer: "npm:^10.1.1"
@@ -4128,6 +4128,7 @@ __metadata:
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18"
     "@types/react-helmet": "npm:^6"
+    effect: "npm:^3.10.15"
     firelight-gui: "workspace:~"
     framer-motion: "npm:11.11.9"
     import-mapper: "npm:0.0.4"
@@ -4593,17 +4594,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"effect@npm:^3.8.2":
-  version: 3.8.3
-  resolution: "effect@npm:3.8.3"
-  checksum: 10c0/b8288f322a232e31a4ebfce6886805b789c12a7a4e989fafb4bfeecd782290a8dbed60999838e19585f8e8064b9a2c40694a30adc3e5226647e86fc02b1f828f
-  languageName: node
-  linkType: hard
-
-"effect@npm:^3.8.4":
-  version: 3.8.4
-  resolution: "effect@npm:3.8.4"
-  checksum: 10c0/471c2b3ef930e702591bfaffcef22bfd7680306b319a59ad7c75aae0fe7a6179b138b511717ae17edcd08fa6fde3011b506e43ceaba1f5cc35eebd97fddd5758
+"effect@npm:^3.10.15":
+  version: 3.11.0
+  resolution: "effect@npm:3.11.0"
+  dependencies:
+    fast-check: "npm:^3.21.0"
+  checksum: 10c0/a756a45fa98a45f1d1283909bac1995d8e160378be4fe1e3a16f469b5a78b3ac198f385f94626e344e4fc414220be511c396ff07d7bcc473bdf29d3fb6341eae
   languageName: node
   linkType: hard
 
@@ -4989,7 +4985,7 @@ __metadata:
     "@types/react": "npm:^18.3.8"
     "@types/react-dom": "npm:^18"
     "@yarnpkg/types": "npm:^4.0.0"
-    effect: "npm:^3.8.2"
+    effect: "npm:^3.10.15"
     esbuild: "npm:^0.23.1"
     fast-check: "npm:^3.22.0"
     prosemirror-model: "npm:^1.22.3"
