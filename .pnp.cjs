@@ -56,6 +56,58 @@ const RAW_RUNTIME_STATE =
       "npm:0.1.3"\
     ],\
     [\
+      "@aws-crypto/ie11-detection",\
+      "npm:2.0.2"\
+    ],\
+    [\
+      "@aws-crypto/sha256-browser",\
+      "npm:2.0.2"\
+    ],\
+    [\
+      "@aws-crypto/sha256-js",\
+      "npm:2.0.2"\
+    ],\
+    [\
+      "@aws-crypto/sha256-universal",\
+      "npm:2.0.2"\
+    ],\
+    [\
+      "@aws-crypto/supports-web-crypto",\
+      "npm:2.0.2"\
+    ],\
+    [\
+      "@aws-crypto/util",\
+      "npm:2.0.2"\
+    ],\
+    [\
+      "@aws-sdk/hash-node",\
+      "npm:3.370.0"\
+    ],\
+    [\
+      "@aws-sdk/is-array-buffer",\
+      "npm:3.310.0"\
+    ],\
+    [\
+      "@aws-sdk/types",\
+      "npm:3.696.0"\
+    ],\
+    [\
+      "@aws-sdk/util-buffer-from",\
+      "npm:3.310.0"\
+    ],\
+    [\
+      "@aws-sdk/util-locate-window",\
+      "npm:3.693.0"\
+    ],\
+    [\
+      "@aws-sdk/util-utf8",\
+      "npm:3.310.0"\
+    ],\
+    [\
+      "@aws-sdk/util-utf8-browser",\
+      "npm:3.259.0"\
+    ],\
+    [\
       "@babel/runtime",\
       "npm:7.25.6"\
     ],\
@@ -298,6 +350,14 @@ const RAW_RUNTIME_STATE =
     [\
       "@react-stately/flags",\
       "npm:3.0.4"\
+    ],\
+    [\
+      "@riboseinc/isogit-lfs",\
+      "virtual:274a3d1acce25dc2f37a895cf3a91e83935757f8e031955203682aff2719c092cda14cc9ed48b45a5aa448e43b85c16d767eed38f998d24a85b033ff86e99c73#npm:0.2.0"\
+    ],\
+    [\
+      "@smithy/types",\
+      "npm:3.7.1"\
     ],\
     [\
       "@swc/helpers",\
@@ -1239,7 +1299,7 @@ const RAW_RUNTIME_STATE =
     ],\
     [\
       "tslib",\
-      "npm:2.7.0"\
+      "npm:2.8.1"\
     ],\
     [\
       "type-fest",\
@@ -1554,6 +1614,165 @@ const RAW_RUNTIME_STATE =
           ["@alcalzone/ansi-tokenize", "npm:0.1.3"],\
           ["ansi-styles", "npm:6.2.1"],\
           ["is-fullwidth-code-point", "npm:4.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-crypto/ie11-detection", [\
+      ["npm:2.0.2", {\
+        "packageLocation": "./.yarn/cache/@aws-crypto-ie11-detection-npm-2.0.2-58e49ef996-72671bc2e9.zip/node_modules/@aws-crypto/ie11-detection/",\
+        "packageDependencies": [\
+          ["@aws-crypto/ie11-detection", "npm:2.0.2"],\
+          ["tslib", "npm:1.14.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-crypto/sha256-browser", [\
+      ["npm:2.0.2", {\
+        "packageLocation": "./.yarn/cache/@aws-crypto-sha256-browser-npm-2.0.2-fa588dbea2-e618e8e5dd.zip/node_modules/@aws-crypto/sha256-browser/",\
+        "packageDependencies": [\
+          ["@aws-crypto/sha256-browser", "npm:2.0.2"],\
+          ["@aws-crypto/ie11-detection", "npm:2.0.2"],\
+          ["@aws-crypto/sha256-js", "npm:2.0.2"],\
+          ["@aws-crypto/supports-web-crypto", "npm:2.0.2"],\
+          ["@aws-crypto/util", "npm:2.0.2"],\
+          ["@aws-sdk/types", "npm:3.696.0"],\
+          ["@aws-sdk/util-locate-window", "npm:3.693.0"],\
+          ["@aws-sdk/util-utf8-browser", "npm:3.259.0"],\
+          ["tslib", "npm:1.14.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-crypto/sha256-js", [\
+      ["npm:2.0.2", {\
+        "packageLocation": "./.yarn/cache/@aws-crypto-sha256-js-npm-2.0.2-09dc003206-c1636d357e.zip/node_modules/@aws-crypto/sha256-js/",\
+        "packageDependencies": [\
+          ["@aws-crypto/sha256-js", "npm:2.0.2"],\
+          ["@aws-crypto/util", "npm:2.0.2"],\
+          ["@aws-sdk/types", "npm:3.696.0"],\
+          ["tslib", "npm:1.14.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-crypto/sha256-universal", [\
+      ["npm:2.0.2", {\
+        "packageLocation": "./.yarn/cache/@aws-crypto-sha256-universal-npm-2.0.2-ebee04405a-a2da9f9446.zip/node_modules/@aws-crypto/sha256-universal/",\
+        "packageDependencies": [\
+          ["@aws-crypto/sha256-universal", "npm:2.0.2"],\
+          ["@aws-crypto/sha256-browser", "npm:2.0.2"],\
+          ["@aws-sdk/hash-node", "npm:3.370.0"],\
+          ["@aws-sdk/types", "npm:3.696.0"],\
+          ["tslib", "npm:1.14.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-crypto/supports-web-crypto", [\
+      ["npm:2.0.2", {\
+        "packageLocation": "./.yarn/cache/@aws-crypto-supports-web-crypto-npm-2.0.2-8a95e196ac-9c25f3c1d2.zip/node_modules/@aws-crypto/supports-web-crypto/",\
+        "packageDependencies": [\
+          ["@aws-crypto/supports-web-crypto", "npm:2.0.2"],\
+          ["tslib", "npm:1.14.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-crypto/util", [\
+      ["npm:2.0.2", {\
+        "packageLocation": "./.yarn/cache/@aws-crypto-util-npm-2.0.2-aebd3ca6c4-9b6f903fdf.zip/node_modules/@aws-crypto/util/",\
+        "packageDependencies": [\
+          ["@aws-crypto/util", "npm:2.0.2"],\
+          ["@aws-sdk/types", "npm:3.696.0"],\
+          ["@aws-sdk/util-utf8-browser", "npm:3.259.0"],\
+          ["tslib", "npm:1.14.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-sdk/hash-node", [\
+      ["npm:3.370.0", {\
+        "packageLocation": "./.yarn/cache/@aws-sdk-hash-node-npm-3.370.0-1f144a2eca-afd7b3a932.zip/node_modules/@aws-sdk/hash-node/",\
+        "packageDependencies": [\
+          ["@aws-sdk/hash-node", "npm:3.370.0"],\
+          ["@aws-sdk/types", "npm:3.370.0"],\
+          ["@aws-sdk/util-buffer-from", "npm:3.310.0"],\
+          ["@aws-sdk/util-utf8", "npm:3.310.0"],\
+          ["tslib", "npm:2.8.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-sdk/is-array-buffer", [\
+      ["npm:3.310.0", {\
+        "packageLocation": "./.yarn/cache/@aws-sdk-is-array-buffer-npm-3.310.0-1a5a04a172-9e409bbdcf.zip/node_modules/@aws-sdk/is-array-buffer/",\
+        "packageDependencies": [\
+          ["@aws-sdk/is-array-buffer", "npm:3.310.0"],\
+          ["tslib", "npm:2.8.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-sdk/types", [\
+      ["npm:3.370.0", {\
+        "packageLocation": "./.yarn/cache/@aws-sdk-types-npm-3.370.0-25e9f06cca-6a9d94014a.zip/node_modules/@aws-sdk/types/",\
+        "packageDependencies": [\
+          ["@aws-sdk/types", "npm:3.370.0"],\
+          ["@smithy/types", "npm:1.2.0"],\
+          ["tslib", "npm:2.8.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:3.696.0", {\
+        "packageLocation": "./.yarn/cache/@aws-sdk-types-npm-3.696.0-2a56842dcb-3721939d5d.zip/node_modules/@aws-sdk/types/",\
+        "packageDependencies": [\
+          ["@aws-sdk/types", "npm:3.696.0"],\
+          ["@smithy/types", "npm:3.7.1"],\
+          ["tslib", "npm:2.8.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-sdk/util-buffer-from", [\
+      ["npm:3.310.0", {\
+        "packageLocation": "./.yarn/cache/@aws-sdk-util-buffer-from-npm-3.310.0-c31752fc9c-48b7aa3041.zip/node_modules/@aws-sdk/util-buffer-from/",\
+        "packageDependencies": [\
+          ["@aws-sdk/util-buffer-from", "npm:3.310.0"],\
+          ["@aws-sdk/is-array-buffer", "npm:3.310.0"],\
+          ["tslib", "npm:2.8.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-sdk/util-locate-window", [\
+      ["npm:3.693.0", {\
+        "packageLocation": "./.yarn/cache/@aws-sdk-util-locate-window-npm-3.693.0-e35f54ae34-68630e3b6e.zip/node_modules/@aws-sdk/util-locate-window/",\
+        "packageDependencies": [\
+          ["@aws-sdk/util-locate-window", "npm:3.693.0"],\
+          ["tslib", "npm:2.8.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-sdk/util-utf8", [\
+      ["npm:3.310.0", {\
+        "packageLocation": "./.yarn/cache/@aws-sdk-util-utf8-npm-3.310.0-f1575cc359-aa275ca273.zip/node_modules/@aws-sdk/util-utf8/",\
+        "packageDependencies": [\
+          ["@aws-sdk/util-utf8", "npm:3.310.0"],\
+          ["@aws-sdk/util-buffer-from", "npm:3.310.0"],\
+          ["tslib", "npm:2.8.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@aws-sdk/util-utf8-browser", [\
+      ["npm:3.259.0", {\
+        "packageLocation": "./.yarn/cache/@aws-sdk-util-utf8-browser-npm-3.259.0-343a1dba08-ff56ff252c.zip/node_modules/@aws-sdk/util-utf8-browser/",\
+        "packageDependencies": [\
+          ["@aws-sdk/util-utf8-browser", "npm:3.259.0"],\
+          ["tslib", "npm:2.8.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -8651,6 +8870,50 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@riboseinc/isogit-lfs", [\
+      ["npm:0.2.0", {\
+        "packageLocation": "./.yarn/cache/@riboseinc-isogit-lfs-npm-0.2.0-dfd51ce5d6-d40cf4bcc9.zip/node_modules/@riboseinc/isogit-lfs/",\
+        "packageDependencies": [\
+          ["@riboseinc/isogit-lfs", "npm:0.2.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:274a3d1acce25dc2f37a895cf3a91e83935757f8e031955203682aff2719c092cda14cc9ed48b45a5aa448e43b85c16d767eed38f998d24a85b033ff86e99c73#npm:0.2.0", {\
+        "packageLocation": "./.yarn/__virtual__/@riboseinc-isogit-lfs-virtual-2cb3317c72/0/cache/@riboseinc-isogit-lfs-npm-0.2.0-dfd51ce5d6-d40cf4bcc9.zip/node_modules/@riboseinc/isogit-lfs/",\
+        "packageDependencies": [\
+          ["@riboseinc/isogit-lfs", "virtual:274a3d1acce25dc2f37a895cf3a91e83935757f8e031955203682aff2719c092cda14cc9ed48b45a5aa448e43b85c16d767eed38f998d24a85b033ff86e99c73#npm:0.2.0"],\
+          ["@aws-crypto/sha256-universal", "npm:2.0.2"],\
+          ["@types/aws-crypto__sha256-universal", null],\
+          ["@types/isomorphic-git", null],\
+          ["isomorphic-git", "npm:1.27.1"]\
+        ],\
+        "packagePeers": [\
+          "@aws-crypto/sha256-universal",\
+          "@types/aws-crypto__sha256-universal",\
+          "@types/isomorphic-git",\
+          "isomorphic-git"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@smithy/types", [\
+      ["npm:1.2.0", {\
+        "packageLocation": "./.yarn/cache/@smithy-types-npm-1.2.0-678ce3a66b-fd82b07fe9.zip/node_modules/@smithy/types/",\
+        "packageDependencies": [\
+          ["@smithy/types", "npm:1.2.0"],\
+          ["tslib", "npm:2.8.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:3.7.1", {\
+        "packageLocation": "./.yarn/cache/@smithy-types-npm-3.7.1-b1c70d7c64-c82ad86087.zip/node_modules/@smithy/types/",\
+        "packageDependencies": [\
+          ["@smithy/types", "npm:3.7.1"],\
+          ["tslib", "npm:2.8.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@spectrum-icons/ui", [\
       ["npm:3.6.10", {\
         "packageLocation": "./.yarn/cache/@spectrum-icons-ui-npm-3.6.10-bae04731a7-4e7bbcb353.zip/node_modules/@spectrum-icons/ui/",\
@@ -8971,6 +9234,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./packages/anafero-cli/",\
         "packageDependencies": [\
           ["anafero-cli", "workspace:packages/anafero-cli"],\
+          ["@aws-crypto/sha256-universal", "npm:2.0.2"],\
           ["@effect/cli", "virtual:274a3d1acce25dc2f37a895cf3a91e83935757f8e031955203682aff2719c092cda14cc9ed48b45a5aa448e43b85c16d767eed38f998d24a85b033ff86e99c73#npm:0.44.5"],\
           ["@effect/platform", "virtual:274a3d1acce25dc2f37a895cf3a91e83935757f8e031955203682aff2719c092cda14cc9ed48b45a5aa448e43b85c16d767eed38f998d24a85b033ff86e99c73#npm:0.65.5"],\
           ["@effect/platform-node", "virtual:274a3d1acce25dc2f37a895cf3a91e83935757f8e031955203682aff2719c092cda14cc9ed48b45a5aa448e43b85c16d767eed38f998d24a85b033ff86e99c73#npm:0.60.5"],\
@@ -8980,6 +9244,7 @@ const RAW_RUNTIME_STATE =
           ["@effect/typeclass", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:0.27.3"],\
           ["@hyrious/esbuild-plugin-commonjs", "virtual:274a3d1acce25dc2f37a895cf3a91e83935757f8e031955203682aff2719c092cda14cc9ed48b45a5aa448e43b85c16d767eed38f998d24a85b033ff86e99c73#npm:0.2.4"],\
           ["@inkjs/ui", "virtual:274a3d1acce25dc2f37a895cf3a91e83935757f8e031955203682aff2719c092cda14cc9ed48b45a5aa448e43b85c16d767eed38f998d24a85b033ff86e99c73#npm:2.0.0"],\
+          ["@riboseinc/isogit-lfs", "virtual:274a3d1acce25dc2f37a895cf3a91e83935757f8e031955203682aff2719c092cda14cc9ed48b45a5aa448e43b85c16d767eed38f998d24a85b033ff86e99c73#npm:0.2.0"],\
           ["@types/jsdom", "npm:20.0.1"],\
           ["@types/node", "npm:20.16.10"],\
           ["@types/react", "npm:18.3.11"],\
@@ -11965,10 +12230,24 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["tslib", [\
+      ["npm:1.14.1", {\
+        "packageLocation": "./.yarn/cache/tslib-npm-1.14.1-102499115e-69ae09c49e.zip/node_modules/tslib/",\
+        "packageDependencies": [\
+          ["tslib", "npm:1.14.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:2.7.0", {\
         "packageLocation": "./.yarn/cache/tslib-npm-2.7.0-21668f5c21-469e1d5bf1.zip/node_modules/tslib/",\
         "packageDependencies": [\
           ["tslib", "npm:2.7.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:2.8.1", {\
+        "packageLocation": "./.yarn/cache/tslib-npm-2.8.1-66590b21b8-9c4759110a.zip/node_modules/tslib/",\
+        "packageDependencies": [\
+          ["tslib", "npm:2.8.1"]\
         ],\
         "linkType": "HARD"\
       }]\

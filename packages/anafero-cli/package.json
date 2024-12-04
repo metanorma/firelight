@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@effect/schema": "^0.74.0",
+    "@riboseinc/isogit-lfs": "0.2.0",
     "esbuild-wasm": "^0.24.0",
     "immer": "^10.1.1",
     "node-fetch": "^3.3.2",
@@ -23,6 +24,7 @@
     "yoga-wasm-web": "0.3.3"
   },
   "devDependencies": {
+    "@aws-crypto/sha256-universal": "^2.0.0",
     "@effect/cli": "^0.44.4",
     "@effect/platform": "^0.65.4",
     "@effect/platform-node": "^0.60.4",
