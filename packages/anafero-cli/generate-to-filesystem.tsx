@@ -226,6 +226,8 @@ const main = build.
     }),
   );
 
+
+// TODO: Refactor gitdir handling, avoid the globa
 const gitdir = join(process.cwd(), '.git');
 
 async function areWeInGitRepoRoot(): Promise<boolean> {
