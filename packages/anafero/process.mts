@@ -933,8 +933,8 @@ async function makeContentReader(
   };
 
   /**
-   * Given two `file:` URIs a base and part, makes a new one where
-   * part is joined with base, unless part starts with slash in which
+   * Given two `file:` URIs, makes a new one where
+   * they are joined, unless the second one starts with slash in which
    * case it’s returned as is.
    *
    * Guarantees to return a `file:` URI or throw.
