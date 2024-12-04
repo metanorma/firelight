@@ -106,6 +106,153 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-crypto/ie11-detection@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@aws-crypto/ie11-detection@npm:2.0.2"
+  dependencies:
+    tslib: "npm:^1.11.1"
+  checksum: 10c0/72671bc2e9636b43d1ceb9674305af499b101a21d7bc174023800e20fe2e4dd27011a25c20412c374e50a35eaa21d31fb4599f8413f4909bac473b1341eb4712
+  languageName: node
+  linkType: hard
+
+"@aws-crypto/sha256-browser@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@aws-crypto/sha256-browser@npm:2.0.2"
+  dependencies:
+    "@aws-crypto/ie11-detection": "npm:^2.0.2"
+    "@aws-crypto/sha256-js": "npm:^2.0.2"
+    "@aws-crypto/supports-web-crypto": "npm:^2.0.2"
+    "@aws-crypto/util": "npm:^2.0.2"
+    "@aws-sdk/types": "npm:^3.110.0"
+    "@aws-sdk/util-locate-window": "npm:^3.0.0"
+    "@aws-sdk/util-utf8-browser": "npm:^3.0.0"
+    tslib: "npm:^1.11.1"
+  checksum: 10c0/e618e8e5dd27cc221746f2daecde2f9c78c6118ef6adc4465674744fdee72e8b48f20b364304c9021c072c4b61b60f4e811d107f108bdc031b96841199e45eb1
+  languageName: node
+  linkType: hard
+
+"@aws-crypto/sha256-js@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@aws-crypto/sha256-js@npm:2.0.2"
+  dependencies:
+    "@aws-crypto/util": "npm:^2.0.2"
+    "@aws-sdk/types": "npm:^3.110.0"
+    tslib: "npm:^1.11.1"
+  checksum: 10c0/c1636d357e30a4c074aadc08dcea04d7beb129297cefb951b111263af405c72980108d7f2b28b888350ad8f3854d91f25bbabc88da0a1a8a57e6616899d11d6f
+  languageName: node
+  linkType: hard
+
+"@aws-crypto/sha256-universal@npm:^2.0.0":
+  version: 2.0.2
+  resolution: "@aws-crypto/sha256-universal@npm:2.0.2"
+  dependencies:
+    "@aws-crypto/sha256-browser": "npm:^2.0.2"
+    "@aws-sdk/hash-node": "npm:^3.110.0"
+    "@aws-sdk/types": "npm:^3.110.0"
+    tslib: "npm:^1.11.1"
+  checksum: 10c0/a2da9f9446233121a7d10b492e16b161824706e4310673331acc393612bfb70c37feea3f9582842f677b1c1f353818fec00d47b5fc30ea6ef1bc92c8219f9d01
+  languageName: node
+  linkType: hard
+
+"@aws-crypto/supports-web-crypto@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@aws-crypto/supports-web-crypto@npm:2.0.2"
+  dependencies:
+    tslib: "npm:^1.11.1"
+  checksum: 10c0/9c25f3c1d273accfd3806c5746acee4e23eccee8fdaa2d6c79fbf5e1d85a7dcddc68161dc09a1c95cb50be0439853652625a6f0fa0ab6f100280a12cd54da63a
+  languageName: node
+  linkType: hard
+
+"@aws-crypto/util@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@aws-crypto/util@npm:2.0.2"
+  dependencies:
+    "@aws-sdk/types": "npm:^3.110.0"
+    "@aws-sdk/util-utf8-browser": "npm:^3.0.0"
+    tslib: "npm:^1.11.1"
+  checksum: 10c0/9b6f903fdfce26e41cdccb643cc38b27f9929f6b72a2a6b461208f38e65174117b6a7f5c75310d3afc84d3ec16177f2252ec8ad0c95c416db5b090fcb3e35be0
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/hash-node@npm:^3.110.0":
+  version: 3.370.0
+  resolution: "@aws-sdk/hash-node@npm:3.370.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.370.0"
+    "@aws-sdk/util-buffer-from": "npm:3.310.0"
+    "@aws-sdk/util-utf8": "npm:3.310.0"
+    tslib: "npm:^2.5.0"
+  checksum: 10c0/afd7b3a932f883264883db2e91085ff38f08d1ac22e98118506ff30c05cb02c2284110dcb905875b88af891eb286f4c75cde24de0094618f164c39928200f9f7
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/is-array-buffer@npm:3.310.0":
+  version: 3.310.0
+  resolution: "@aws-sdk/is-array-buffer@npm:3.310.0"
+  dependencies:
+    tslib: "npm:^2.5.0"
+  checksum: 10c0/9e409bbdcf40aba872cdaa573adebd1bfebd0af4afedd1645d6782a8e0f942aeb53cb65da510ec52a8291682187f6b7091fd7d2631193a747c211ef6efae7960
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/types@npm:3.370.0":
+  version: 3.370.0
+  resolution: "@aws-sdk/types@npm:3.370.0"
+  dependencies:
+    "@smithy/types": "npm:^1.1.0"
+    tslib: "npm:^2.5.0"
+  checksum: 10c0/6a9d94014a83b4e1682529a36ef98f177ece93d2a738559c5bfc670df65c63315d183dcb7aa6c36dd0981a830094d83aa20e3c15afa8a4651fcbdf8f9f669184
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/types@npm:^3.110.0":
+  version: 3.696.0
+  resolution: "@aws-sdk/types@npm:3.696.0"
+  dependencies:
+    "@smithy/types": "npm:^3.7.1"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/3721939d5dd2a68fa4aee89d56b4817dd6c020721e2b2ea5b702968e7055826eb37e1924bc298007686304bf9bb6623bfec26b5cfd0663f2dba9d1b48437bb91
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-buffer-from@npm:3.310.0":
+  version: 3.310.0
+  resolution: "@aws-sdk/util-buffer-from@npm:3.310.0"
+  dependencies:
+    "@aws-sdk/is-array-buffer": "npm:3.310.0"
+    tslib: "npm:^2.5.0"
+  checksum: 10c0/48b7aa3041607527c0f0b0e27ede2522b3f79555bd541b62ed44dea64ac443442139040d3a7d65cc3f81210567e8e7b1a77a5bd7bfecf70564b51b8d2a9fd972
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-locate-window@npm:^3.0.0":
+  version: 3.693.0
+  resolution: "@aws-sdk/util-locate-window@npm:3.693.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/68630e3b6e7f47ec05c92a7f2369464f5fcd218d4dc5c4103465681424b64072d290ab565938449c0afa312cfce200e553e4a14d6a411542069d95880f3434f5
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-utf8-browser@npm:^3.0.0":
+  version: 3.259.0
+  resolution: "@aws-sdk/util-utf8-browser@npm:3.259.0"
+  dependencies:
+    tslib: "npm:^2.3.1"
+  checksum: 10c0/ff56ff252c0ea22b760b909ba5bbe9ca59a447066097e73b1e2ae50a6d366631ba560c373ec4e83b3e225d16238eeaf8def210fdbf135070b3dd3ceb1cc2ef9a
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-utf8@npm:3.310.0":
+  version: 3.310.0
+  resolution: "@aws-sdk/util-utf8@npm:3.310.0"
+  dependencies:
+    "@aws-sdk/util-buffer-from": "npm:3.310.0"
+    tslib: "npm:^2.5.0"
+  checksum: 10c0/aa275ca273ca7590947d4134aa4745e2724683b44bc5cd9837bd481a31f3d44e3a017909603b079171edb576b73889e9cd9de5bf8cac1bfce746673311a992e4
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.7":
   version: 7.25.6
   resolution: "@babel/runtime@npm:7.25.6"
@@ -3843,6 +3990,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@riboseinc/isogit-lfs@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@riboseinc/isogit-lfs@npm:0.2.0"
+  peerDependencies:
+    "@aws-crypto/sha256-universal": ^2.0.0
+    isomorphic-git: ^1.7.8
+  checksum: 10c0/d40cf4bcc9c15cdc63829e48b088bf557dc495070d59f0cbe7367d285d7bd06e7c7fbc32eab0bb7330e8d88bc3d346b976dff521ee7a96e04a747cd103982c79
+  languageName: node
+  linkType: hard
+
+"@smithy/types@npm:^1.1.0":
+  version: 1.2.0
+  resolution: "@smithy/types@npm:1.2.0"
+  dependencies:
+    tslib: "npm:^2.5.0"
+  checksum: 10c0/fd82b07fe9e3d6fe0877a3bba7d4e93aa0d9d2b64762509ef8235a8b0d0e41631a2eb0c55678aad1d6ff1c59a443fe9647d1b79bf0ec52f78c46040bb1d8ffb9
+  languageName: node
+  linkType: hard
+
+"@smithy/types@npm:^3.7.1":
+  version: 3.7.1
+  resolution: "@smithy/types@npm:3.7.1"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/c82ad86087b6e0d2261f581a8cca1694a0af31458d7789ff5d8787973b4940a6d035082005dfc87857f266ee9cb512f7eb80535917e6dd6eb3d7d70c45d0f9aa
+  languageName: node
+  linkType: hard
+
 "@spectrum-icons/ui@npm:^3.6.10":
   version: 3.6.10
   resolution: "@spectrum-icons/ui@npm:3.6.10"
@@ -4074,6 +4249,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "anafero-cli@workspace:packages/anafero-cli"
   dependencies:
+    "@aws-crypto/sha256-universal": "npm:^2.0.0"
     "@effect/cli": "npm:^0.44.4"
     "@effect/platform": "npm:^0.65.4"
     "@effect/platform-node": "npm:^0.60.4"
@@ -4083,6 +4259,7 @@ __metadata:
     "@effect/typeclass": "npm:^0.27.2"
     "@hyrious/esbuild-plugin-commonjs": "npm:^0.2.4"
     "@inkjs/ui": "npm:2.0.0"
+    "@riboseinc/isogit-lfs": "npm:0.2.0"
     "@types/jsdom": "npm:^20.0.0"
     "@types/node": "npm:^20.0.0"
     "@types/react": "npm:^18"
@@ -6657,6 +6834,20 @@ __metadata:
   dependencies:
     punycode: "npm:^2.1.1"
   checksum: 10c0/cdc47cad3a9d0b6cb293e39ccb1066695ae6fdd39b9e4f351b010835a1f8b4f3a6dc3a55e896b421371187f22b48d7dac1b693de4f6551bdef7b6ab6735dfe3b
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^1.11.1":
+  version: 1.14.1
+  resolution: "tslib@npm:1.14.1"
+  checksum: 10c0/69ae09c49eea644bc5ebe1bca4fa4cc2c82b7b3e02f43b84bd891504edf66dbc6b2ec0eef31a957042de2269139e4acff911e6d186a258fb14069cd7f6febce2
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.3.1, tslib@npm:^2.5.0, tslib@npm:^2.6.2":
+  version: 2.8.1
+  resolution: "tslib@npm:2.8.1"
+  checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
   languageName: node
   linkType: hard
 

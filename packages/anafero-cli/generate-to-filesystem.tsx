@@ -12,7 +12,11 @@ import { createServer } from 'node:http';
 import { watch } from 'node:fs/promises';
 
 import fs from 'node:fs';
+import http from 'isomorphic-git/http/node';
 import git, { type CommitObject } from 'isomorphic-git';
+
+import { pointsToLFS } from '@riboseinc/isogit-lfs/util.js';
+import { readPointer, downloadBlobFromPointer } from '@riboseinc/isogit-lfs';
 
 import { pipe, Effect, Layer, Logger, Runtime, LogLevel, Option, Stream, Console } from 'effect';
 import { NodeContext, NodeRuntime } from '@effect/platform-node';
@@ -339,7 +343,21 @@ async function * generateSite(
         throw new Error("Failed to read object: no OID for specified version");
       }
       const gitObject = await git.readBlob({ fs, gitdir, oid, filepath: path });
-      return gitObject.blob;
+      if (pointsToLFS(gitObject.blob)) {
+        console.debug("Retrieving blob from LFS", path);
+        const pointer = readPointer({
+          gitdir,
+          content: gitObject.blob,
+        });
+        const remoteURL = await git.getConfig({ fs, gitdir, path: 'remote.origin.url' });
+        return await downloadBlobFromPointer({
+          fs,
+          url: remoteURL,
+          http,
+        }, pointer);
+      } else {
+        return gitObject.blob;
+      }
     }
 
     yield {
