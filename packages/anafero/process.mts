@@ -729,10 +729,10 @@ async function makeContentReader(
   ) => null | string | string[][],
   // /** Whether content adapter thinks this should contribute to content. */
   //relationContributesToContent: (relation: ResourceRelation) => boolean,
-  { fetchBlob, reportProgress }: Pick<GeneratorHelpers, 'fetchBlob' | 'reportProgress'>,
+  { fetchBlob, decodeXML, reportProgress }: Pick<GeneratorHelpers, 'fetchBlob' | 'decodeXML' | 'reportProgress'>,
 ): Promise<ContentReader> {
 
-  const readerHelpers = { fetchBlob } as const;
+  const readerHelpers = { fetchBlob, decodeXML } as const;
 
   function findStoreAdapter(resourceURI: string): StoreAdapterModule | null {
     for (const [, adapter] of Object.entries(storeAdapters)) {
