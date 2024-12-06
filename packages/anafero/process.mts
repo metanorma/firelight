@@ -15,13 +15,13 @@ import enableLunrStemmer from 'lunr-languages/lunr.stemmer.support';
 import enableTinyLunrSegmenter from 'lunr-languages/tinyseg';
 import enableLunrFr from 'lunr-languages/lunr.fr';
 import enableLunrJa from 'lunr-languages/lunr.ja';
-import { enableNewLunrJaTokenizer } from './search.mjs';
+import enableLunrMultiLanguage from 'lunr-languages/lunr.multi';
 
 enableLunrStemmer(lunr);
 enableTinyLunrSegmenter(lunr);
 enableLunrFr(lunr);
 enableLunrJa(lunr);
-enableNewLunrJaTokenizer(lunr);
+enableLunrMultiLanguage(lunr);
 // End initialize search
 
 
@@ -520,14 +520,29 @@ export async function * generateVersion(
   yield { '/resource-descriptions.json': encoder.encode(JSON.stringify(resourceDescriptions, null, 4)) };
 
   const [indexProgress, ] = reportProgress('building search index');
+
+  // Required to avoid breakage due to something about global.console:
+  (lunr as any).utils.warn = console.warn;
+
   const lunrIndex = lunr(function () {
+    if (maybePrimaryLanguageID && lunr.hasOwnProperty(maybePrimaryLanguageID)) {
+      console.debug(`Primary language is “${maybePrimaryLanguageID}”, enabling multi-language Lunr mode & mixed tokenizer`);
+      this.use((lunr as any).multiLanguage('en', maybePrimaryLanguageID));
+      (this as any).tokenizer = function(x: any) {
+        return lunr.tokenizer(x).concat((lunr as any)[maybePrimaryLanguageID].tokenizer(x));
+      };
+    }
+
     this.ref('name');
     this.field('body');
+
     for (const [uri, content] of Object.entries(contentCache)) {
       indexProgress({ state: `adding entry for ${uri}` });
-      const lang = resourceDescriptions[uri]?.primaryLanguageID ?? maybePrimaryLanguageID;
-      if (lang && lunr.hasOwnProperty(lang)) {
-        this.use((lunr as any)[lang]);
+      const lang = resourceDescriptions[uri]?.primaryLanguageID;
+
+      if (lang && lang !== maybePrimaryLanguageID && lang !== 'en' && lunr.hasOwnProperty(lang)) {
+        console.warn("Resource language is different from primary language, this may not work");
+        this.use((lunr as any).multiLanguage('en', lang));
       }
       if (content?.content) {
         const { contentDoc, labelInPlainText } = content.content;

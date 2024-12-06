@@ -1,19 +1,4 @@
-import { type Index as LunrIndex } from 'lunr';
-
-// TODO: Check whether this is necessary to do on the client
-import lunr from 'lunr';
-
-import enableLunrStemmer from 'lunr-languages/lunr.stemmer.support';
-import enableTinyLunrSegmenter from 'lunr-languages/tinyseg';
-import enableLunrFr from 'lunr-languages/lunr.fr';
-import enableLunrJa from 'lunr-languages/lunr.ja';
-import { enableNewLunrJaTokenizer } from 'anafero/index.mjs';
-
-enableLunrStemmer(lunr);
-enableTinyLunrSegmenter(lunr);
-enableLunrFr(lunr);
-enableLunrJa(lunr);
-enableNewLunrJaTokenizer(lunr);
+import lunr, { type Index as LunrIndex } from 'lunr';
 
 import { useDebounce, useDebouncedCallback } from 'use-debounce';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -67,10 +52,11 @@ export const Search: React.FC<{
   const [debouncedQuery] = useDebounce(query.text, 200);
   const [results, error] = useMemo(() => {
     if (debouncedQuery.trim() !== '') {
+      const queryTokenized = lunr.tokenizer(debouncedQuery);
       try {
         return [
           index?.
-            search(debouncedQuery)?.
+            search(queryTokenized.map(t => `+${t}`).join(' '))?.
             map(res => ({ ...res, id: res.ref, name: res.ref })),
           null,
         ];
