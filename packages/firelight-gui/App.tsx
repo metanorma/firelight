@@ -16,6 +16,29 @@ import interceptNav from './intercept-nav.mjs';
 import { Hierarchy, Bookmarks, Search, pathListToHierarchy, findMatchingItemParents } from './Nav.jsx';
 import classNames from './style.module.css';
 
+
+// Initialize search
+import enableLunrStemmer from 'lunr-languages/lunr.stemmer.support';
+import enableTinyLunrSegmenter from 'lunr-languages/tinyseg';
+import enableLunrFr from 'lunr-languages/lunr.fr';
+import enableLunrJa from 'lunr-languages/lunr.ja';
+import enableLunrMultiLanguage from 'lunr-languages/lunr.multi';
+
+enableLunrStemmer(lunr);
+enableTinyLunrSegmenter(lunr);
+enableLunrFr(lunr);
+// XXX: Conditionally initialize languages!
+enableLunrJa(lunr);
+enableLunrMultiLanguage(lunr);
+// End initialize search
+
+((lunr as any).multiLanguage('en', 'ja'));
+const lunrTokenizer = lunr.tokenizer;
+(lunr as any).tokenizer = function(x: any) {
+  return lunrTokenizer(x).concat((lunr as any).ja.tokenizer(x));
+};
+
+
 export const BrowsingContext = createContext({
   bookmarkedResources: new Set<string>(),
   bookmarkResource: (uri: string) => void 0,
