@@ -188,7 +188,7 @@ export const Resource = React.forwardRef(function ({
           if (bbox.y >= 0 && bbox.x >= 0) {
             setVisibleResourceLinks({
               [el.getAttribute('id')!]: [
-                bbox.x + window.scrollX,
+                bbox.x + window.scrollX - 20,
                 bbox.y + window.scrollY,
                 locateResource(el.getAttribute('about')!),
               ] as [number, number, string],
