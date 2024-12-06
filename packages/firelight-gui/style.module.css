@@ -232,6 +232,9 @@
           border-radius: 5px;
 
           background: white;
+          > img {
+            margin: .5em;
+          }
           > figcaption {
             color: var(--spectrum-global-color-static-black);
           }
