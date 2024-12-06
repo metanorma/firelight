@@ -488,6 +488,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'span': 'span',
       'dl': 'definition_list',
       'dd': 'dd',
+      'dt': 'dt',
       'tt': 'code',
       //'tableCell': 'table_cell',
     };
