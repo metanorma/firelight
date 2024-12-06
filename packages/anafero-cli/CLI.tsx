@@ -106,7 +106,7 @@ function ({ task, progress, error, subtasks }) {
   return (
     <Box flexDirection="column">
       {progress
-        ? <Box>
+        ? <Box height={1}>
             <Spinner label={`${task}: ${progress.state ?? 'working…'}`} />
             {progress.total !== undefined && progress.done !== undefined
               ? <ProgressBar value={100 / progress.total * progress.done} />
