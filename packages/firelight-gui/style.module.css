@@ -227,7 +227,7 @@
         margin-right: 1em; /* Good for aesthetics when tables overflow and scroll… */
         padding: 0;
 
-        figure:has(> img) {
+        &:has(> img) {
           padding: 1em;
           border-radius: 5px;
 
