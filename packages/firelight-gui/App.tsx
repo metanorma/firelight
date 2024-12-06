@@ -24,19 +24,14 @@ import enableLunrFr from 'lunr-languages/lunr.fr';
 import enableLunrJa from 'lunr-languages/lunr.ja';
 import enableLunrMultiLanguage from 'lunr-languages/lunr.multi';
 
+const lunrLanguageSupport = {
+  ja: enableLunrJa,
+  fr: enableLunrFr,
+};
+
 enableLunrStemmer(lunr);
 enableTinyLunrSegmenter(lunr);
-enableLunrFr(lunr);
-// XXX: Conditionally initialize languages!
-enableLunrJa(lunr);
-enableLunrMultiLanguage(lunr);
 // End initialize search
-
-((lunr as any).multiLanguage('en', 'ja'));
-const lunrTokenizer = lunr.tokenizer;
-(lunr as any).tokenizer = function(x: any) {
-  return lunrTokenizer(x).concat((lunr as any).ja.tokenizer(x));
-};
 
 
 export const BrowsingContext = createContext({
@@ -279,11 +274,34 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     );
   }, [fetchJSON, getVersionedPath, getUnversionedPath]);
 
+  const primaryLanguage = useMemo((
+    () => resourceMap && resourceMap[''] && resourceDescriptions[resourceMap['']]
+      ? resourceDescriptions[resourceMap['']]?.primaryLanguageID ?? 'en'
+      : 'en'
+  ), [resourceDescriptions, resourceMap]); 
+
+  const [lunrInitialized, markLunrAsInitialized] = useState(false);
+
+  useEffect(() => {
+    if (primaryLanguage && lunrLanguageSupport[primaryLanguage as string]) {
+      lunrLanguageSupport[primaryLanguage as string](lunr);
+      enableLunrMultiLanguage(lunr);
+
+      ((lunr as any).multiLanguage('en', primaryLanguage));
+
+      const lunrTokenizer = lunr.tokenizer;
+      (lunr as any).tokenizer = function(x: any) {
+        return lunrTokenizer(x).concat((lunr as any)[primaryLanguage].tokenizer(x));
+      };
+      markLunrAsInitialized(true);
+    }
+  }, [primaryLanguage]);
+
   const lunrIndex = useMemo(() => (
-    versionDeps?.['/search-index.json']
+    versionDeps?.['/search-index.json'] && lunrInitialized
       ? lunr.Index.load(versionDeps['/search-index.json'])
       : undefined
-    ), [versionDeps?.['/search-index.json']]);
+    ), [lunrInitialized, versionDeps?.['/search-index.json']]);
 
 
   // Persisting state crudely
@@ -495,7 +513,7 @@ export const VersionWorkspace: React.FC<{
     (uri: string) => resourceDescriptions[uri]?.labelInPlainText ?? uri
   ), [resourceDescriptions]);
 
-  const getResourceLanguage = useCallback((
+  const getResourceLocale = useCallback((
     (uri: string) => fillInLocale(resourceDescriptions[uri]?.primaryLanguageID ?? 'en')
   ), [resourceDescriptions]);
 
@@ -701,9 +719,12 @@ export const VersionWorkspace: React.FC<{
     dispatch({ type: 'activated_resource_by_scrolling', uri });
   }, 100, { trailing: true });
 
-  const locale = state.visibleResourceURIs.length > 0
-    ? getResourceLanguage(state.visibleResourceURIs[0])
-    : 'en-US';
+  const locale = useMemo((
+    // Empty string in resource map refers to site’s root resource.
+    () => resourceMap && resourceMap['']
+      ? getResourceLocale(resourceMap[''])
+      : 'en-US'
+  ), [getResourceLocale, resourceMap]);
 
   return (
     <>
