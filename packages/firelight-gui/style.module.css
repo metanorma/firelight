@@ -209,6 +209,11 @@
         margin-top: 1em;
       }
 
+      dl {
+        display: grid;
+        grid-template-columns: 25% 75%;
+      }
+
       /*
       ul {
         ::marker {
