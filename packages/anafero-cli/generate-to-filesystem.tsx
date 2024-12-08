@@ -406,12 +406,12 @@ async function * generateSite(
 
 
 async function writeBlobs(root: string, blobs: Record<string, Uint8Array>) {
-  for (const [filePath, fileBlob] of Object.entries(blobs)) {
+  await Promise.all(Object.entries(blobs).map(async ([filePath, fileBlob]) => {
     const fullPath = join(root, filePath);
     //console.debug("Want to write blob", root, filePath, fullPath, dirname(fullPath));
     await mkdir(dirname(fullPath), { recursive: true });
     await writeFile(join(root, filePath), fileBlob);
-  }
+  }));
 }
 
 
