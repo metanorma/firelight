@@ -27,7 +27,6 @@ export interface ReportingOptions extends S.Schema.Type<typeof ReportingConfigSc
 export function parseReportingConfig(
   values: Types.Simplify<CommandType.ParseConfig<typeof reportingOptions>>,
 ) {
-  console.debug("Parsing resporting config", values);
   return S.decodeUnknownSync(ReportingConfigSchema)({
     logLevel: values.debug
       ? 'debug'
