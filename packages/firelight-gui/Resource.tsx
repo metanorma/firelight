@@ -341,7 +341,7 @@ function processAttributes(
         try {
           resolvedResourcePath = locateResource(attr.value);
         } catch (e) {
-          onIntegrityViolation(`Attribute ${attr.name} is neither an external link nor a resource link`);
+          onIntegrityViolation(`Attribute ${attr.name} is neither an external link nor a resource link: ${attr.value}`);
           resolvedResourcePath = null;
         }
         if (resolvedResourcePath) {
