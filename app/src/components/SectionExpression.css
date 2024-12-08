@@ -1,9 +1,0 @@
-.preferred {
-    display: inline;
-    margin-left: 0.5em;
-}
-
-.preferred > .strong > .terminology {
-    text-decoration: none;
-    padding: 0;
-}

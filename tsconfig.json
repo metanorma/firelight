@@ -4,7 +4,7 @@
     "target": "es2020",
     "module": "node16",
 
-    "lib": ["es2022", "dom"],
+    "lib": ["es2023", "dom", "ESNext.Array", "esnext"],
 
     "resolveJsonModule": true,
 
