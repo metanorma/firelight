@@ -346,7 +346,7 @@ async function * generateSite(
       }
       const gitObject = await git.readBlob({ fs, gitdir, oid, filepath: path });
       if (pointsToLFS(gitObject.blob)) {
-        console.debug("Retrieving blob from LFS", path);
+        //console.debug("Retrieving blob from LFS", path);
         const pointer = readPointer({
           gitdir,
           content: gitObject.blob,
