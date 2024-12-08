@@ -125,6 +125,10 @@ async function buildSiteBuilder(opts: ReportingOptions) {
       'yoga-wasm-web',
       'react-devtools-core',
     ],
+
+    define: {
+     'process.env.DEV': 'false',
+    },
     
     loader: {
       '.css': 'local-css',
