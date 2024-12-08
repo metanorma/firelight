@@ -152,7 +152,8 @@ export const Resource = React.forwardRef(function ({
 
   const [contentElement, setContentElement] = useState<HTMLElement | null>(null);
   const [layoutElement, setLayoutElement] = useState<HTMLElement | null>(null);
-  const [visibleResourceLinks, setVisibleResourceLinks] = useState<Record<string, [x: number, y: number, url: string]>>({});
+  const [visibleResourceLinks, setVisibleResourceLinks] =
+    useState<Record<string, [x: number, y: number, url: string]>>({});
 
   /** IDs of resources described on the page, sorted. */
   const describedResources = useMemo(() => {
