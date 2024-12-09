@@ -20,6 +20,17 @@ Each version should have an ``anafero-config.json``,
 which points to the entry point within versioned repository tree,
 as well as store/content adapter and layout.
 
+Note on versioned files
+-----------------------
+
+anafero-cli versions build artifacts:
+
+* bootstrap.{css,css.map,js,js.map}
+* build-site.css
+* build-site.mjs
+
+The aim it to support easier NPX invocation, but it’s to be seen.
+
 Anafero config spec
 -------------------
 

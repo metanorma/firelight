@@ -83,7 +83,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
         if (!unprefixed.startsWith('/')) {
           console.error("Non-slash-prepended path after getSiteRootRelativePath!", unprefixed, slashPrependedPath);
         }
-        console.debug("Unprefixed path", slashPrependedPath, unprefixed);
+        //console.debug("Unprefixed path", slashPrependedPath, unprefixed);
         return unprefixed;
       }), [pathPrefix]);
 
@@ -154,7 +154,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     versionPrefix !== undefined
       ? function (slashPrependedPath: string): string {
           const versioned = `${pathPrefix}${versionPrefix}${slashPrependedPath}`;
-          console.debug("getVersionedPath", slashPrependedPath, versioned);
+          //console.debug("getVersionedPath", slashPrependedPath, versioned);
           return versioned;
         }
       : undefined
@@ -175,7 +175,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
           if (!unversioned.startsWith('/')) {
             console.error("Non-slash-prepended path in getUnversionedPath!");
           }
-          console.debug("Version-relative path", slashPrependedPath, unversioned);
+          //console.debug("Version-relative path", slashPrependedPath, unversioned);
           return unversioned;
         }
       : undefined
@@ -652,7 +652,7 @@ export const VersionWorkspace: React.FC<{
       const url = new URL(href, document.baseURI);
       const absoluteHref = url.pathname;
       const resourceURI = reverseResource(absoluteHref);
-      console.debug("Intercepted", resourceURI);
+      //console.debug("Intercepted", resourceURI);
       if (resourceURI) {
         dispatch({ type: 'activated_resource', uri: resourceURI });
         // Selecting non-structural (in-page) resource is semi-broken

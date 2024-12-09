@@ -2,14 +2,25 @@ import xpath from 'xpath';
 
 import {
   dedupeGraph,
+  ROOT_SUBJECT,
   type ResourceRelation,
   type RelationTriple,
   type RelationGraphAsList,
   type StoreAdapterModule,
 } from 'anafero/index.mjs';
 
+import {
+  estimateRelationCount,
+  processResources,
+  type CustomElementProcessor,
+} from './util.mjs';
+
 
 const evaluate: typeof document['evaluate'] = (xpath as any).evaluate;
+
+function urnFromID(id: string): string {
+  return `urn:x-metanorma-xml-id:${id}`;
+}
 
 type ChildRelationHook = (parent: Element, child: Element) => {
   /**
@@ -135,6 +146,7 @@ const sectionLikeElements = [
   'clause',
   'abstract',
   'references',
+  'definitions',
   'terms',
 ] as const;
 
@@ -188,9 +200,6 @@ const mod: StoreAdapterModule = {
 
 
     //const docidentifierURN = dom.querySelector('docidentifier[type="URN"]')?.textContent;
-    function urnFromID(id: string): string {
-      return `urn:metanorma-xml-id:${id}`;
-    }
 
     function makeUpAURN(el: Element) {
       // fix for 10303
@@ -471,7 +480,6 @@ const mod: StoreAdapterModule = {
     };
 
     const rootTag = dom.documentElement.tagName;
-    console.debug("Got doc", rootTag);
 
     // Smoke test
     const bibdata = dom.querySelector('bibdata');
@@ -481,9 +489,7 @@ const mod: StoreAdapterModule = {
       throw new Error("Missing bibdata or a proper docidentifier");
     }
 
-    console.debug("Got bibdata with docidentifier", docidentifierText);
-
-
+    //console.debug("Got bibdata with docidentifier", docidentifierText);
 
     const entryRoot = dom.querySelector('entry');
 
@@ -531,9 +537,9 @@ const mod: StoreAdapterModule = {
       // High-level sections
       const parts = Array.from(Object.entries(elementsByURI));
 
-      console.debug(
-        "Got top-level sections",
-        parts.map(([uri, el]) => [el.tagName, el.getAttribute('id'), uri]));
+      //console.debug(
+      //  "Got top-level sections",
+      //  parts.map(([uri, el]) => [el.tagName, el.getAttribute('id'), uri]));
 
       //// Pre-process doc
       //for (const [, el] of parts) {
@@ -541,14 +547,8 @@ const mod: StoreAdapterModule = {
       //    elementsByURI[subpartURI] = subpartEl;
       //  }
       //}
-      //for (const el of Array.from(iterateElements('./*', dom.documentElement))) {
-      //  const uri = getURI(el);
-      //  console.debug("Processing part contents", el.tagName, el.getAttribute('id'), uri);
-      //  Array.from(
-      //    parseElement(el, uri, getURI, 5000));
-      //}
 
-      console.debug("Outputting root relations for document", parts.map(([partURI, ]) => ({ predicate: 'hasPart', target: partURI })));
+      //console.debug("Outputting root relations for document", parts.map(([partURI, ]) => ({ predicate: 'hasPart', target: partURI })));
       
       return [
         [
@@ -562,7 +562,6 @@ const mod: StoreAdapterModule = {
     const bibdataURI = `urn:relaton:${encodeURIComponent(docidentifierText)}`;
     rootRelations.splice(0, 0, { predicate: 'hasBibdata', target: bibdataURI });
     elementsByURI[bibdataURI] = bibdata!;
-
 
     function getURI(el: Element): string {
       // We can do this because DOM elements compare by reference,
@@ -582,62 +581,168 @@ const mod: StoreAdapterModule = {
       }
     }
 
+    const processClauseLike: CustomElementProcessor =
+    function processClauseLike(el: Element) {
+      return [
+        [[
+          ROOT_SUBJECT,
+          'hasClauseIdentifier',
+          mangleXMLIdentifier(
+            el.getAttribute('id')
+            ?? `unidentified-section-${crypto.randomUUID()}`
+          ),
+        ], [
+          ROOT_SUBJECT,
+          'type',
+          'section',
+        ]],
+        {
+          getChildPredicate: () => 'hasPart',
+        },
+      ];
+    }
+
+    const processAsGenericContainer: CustomElementProcessor =
+    function processGeneric() {
+      return [[], { getChildPredicate: () => 'hasPart' }];
+    }
+
+    function tagNameToHasPredicate(tagName: string): string {
+      return `has${dekebab(tagNameAliases[tagName] ?? tagName)}`;
+    }
+
+    /**
+     * For these tags, children are output
+     * not via hasPart but via has<child tag name>.
+     */
+    const TAGS_WITH_DIRECT_CHILDREN_NOT_AS_GENERIC_PARTS: string[] = [
+      'bibdata',
+      'bibitem',
+      'figure',
+      'image',
+      'table',
+      'colgroup',
+      'thead',
+      'tbody',
+      'tr',
+    ];
+
+    const TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS: string[] = [
+      'bibdata',
+      'bibitem',
+    ];
+    const TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS_SELECTOR =
+      TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS.join(', ');
+
     return [
       rootRelations,
       {
         resourceExists: (uri) => elementsByURI[uri] !== undefined,
-        resolveRelations: async function * resolveRelations (uri, recurseUpTo) {
-          if (uri === '') {
-            for (const rel of rootRelations) {
-              yield rel;
-            }
-          } else {
-            const el = elementsByURI[uri];
-            if (el) {
-              const rels = parseElement(el, uri, getURI, undefined, recurseUpTo);
-              //console.debug("Resolve relations", uri);
-              //const rels = uriRelations[uri]!
-              for (const [s, p, o] of rels) {
-                if (s === uri) {
-                  //console.debug("Emitting relation", s, p, o);
-                  yield { predicate: p, target: o };
+        estimateRelationCount: () => estimateRelationCount(dom),
+        discoverAllResources: (onRelationChunk, opts) => {
+          processResources(dom, onRelationChunk, {
+            getResourceURIFromID: urnFromID,
+            getChildPredicate: function getChildPredicate(el: Element, childEl: Element) {
+              if (TAGS_WITH_DIRECT_CHILDREN_NOT_AS_GENERIC_PARTS.includes(el.tagName)
+                  || childEl.closest(TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS_SELECTOR)) {
+                return tagNameToHasPredicate(childEl.tagName);
+              }
+              return undefined;
+            },
+            resourceTypesByTagName: tagNameAliases,
+            processTag: {
+              [dom.documentElement.tagName]: function processRootTag() {
+                return [
+                  [[ROOT_SUBJECT, 'type', 'document']],
+                  {
+                    getChildPredicate: (_, childEl) =>
+                      childEl.tagName === 'bibdata'
+                        ? tagNameToHasPredicate(childEl.tagName)
+                        : 'hasPart',
+                  },
+                ];
+              },
+              abstract: function processAbstract(el, getURI) {
+                if (!el.closest('bibdata')) {
+                  return processClauseLike(el, getURI);
+                } else {
+                  return processAsGenericContainer(el, getURI);
                 }
-              }
-            } else {
-              console.error("Cannot resolve relations: no such element", uri);
-              return;
-            }
-          }
-        },
-        resolveRelation: async (uri, pred) => {
-          //console.debug("Resolving relation", uri, pred);
-          if (uri === '') {
-            return rootRelations.
-              filter(rel => rel.predicate === pred).
-              map(rel => rel.target)
-              ?? [];
-          }
-          const el = elementsByURI[uri];
-          if (el) {
-            const rels = parseElement(el, uri, getURI, undefined);
-            //console.debug("Resolve relation", uri);
-            //const rels = uriRelations[uri]!;
-            const values: string[] = [];
-            for (const [s, p, o] of rels) {
-              if (s === uri && p === pred) {
-                values.push(o);
-              }
-            }
-            if (values.length < 1) {
-              //console.warn("No values found for predicate", uri, pred);
-            } else {
-              //console.warn("Values found for predicate", uri, pred, values);
-            }
-            return values;
-          } else {
-            console.error("Cannot resolve relation: no such element", uri);
-            return [];
-          }
+              },
+              formattedref: processAsGenericContainer,
+              span: processAsGenericContainer,
+              clause: function processClause(el, getURI) {
+                if (el.getAttribute('type') === 'toc') {
+                  return [[], false];
+                } else {
+                  return processClauseLike(el, getURI);
+                }
+              },
+              introduction: processClauseLike,
+              foreword: processClauseLike,
+              references: processClauseLike,
+              terms: processClauseLike,
+              definitions: processClauseLike,
+              xref: function processXref(el) {
+                const maybeTarget = el.getAttribute('target');
+                const graph: RelationGraphAsList = [];
+                if (!maybeTarget) {
+                  console.warn("Xref with no target", el);
+                } else {
+                  graph.push([ROOT_SUBJECT, 'hasTarget', urnFromID(maybeTarget)]);
+                }
+                return [graph, { processAttribute: { target: 'skip' } }];
+              },
+              stem: function processStem(el) {
+                return [
+                  [[ROOT_SUBJECT, 'hasMathML', el.querySelector('math')!.outerHTML]],
+                  { skipChildren: () => true },
+                ];
+              },
+              title: function processTitle(el, getURI) {
+                if (el.parentElement
+                    && sectionLikeElements.includes(el.parentElement.tagName as any)) {
+                  const sectionURI = getURI(el.parentElement);
+                  const clauseNumber = el.querySelector('tab')
+                    ? el.childNodes[0]?.textContent ?? ''
+                    : '';
+                  const graph: RelationGraphAsList = [];
+                  if (clauseNumber.trim() !== '') {
+                    graph.push([sectionURI, 'hasClauseNumber', clauseNumber]);
+                  }
+
+                  const parts = Array.from(el.childNodes).
+                  filter(n => n.nodeType === 3).
+                  map(n => n.textContent ?? '').
+                  filter(content => content !== '' && content !== clauseNumber);
+
+                  if (parts.length > 0) {
+                    for (const part of parts) {
+                      graph.push([ROOT_SUBJECT, 'hasPart', part]);
+                    }
+                  } else {
+                    throw new Error("Processing title: no content found!");
+                  }
+                  return [graph, { skipChildren: () => true }];
+                } else {
+                  return [[], true];
+                }
+              },
+              svg: function processSVG(el) {
+                return [
+                  [[ROOT_SUBJECT, 'hasSVGContents', el.outerHTML]],
+                  { skipChildren: () => true },
+                ];
+              },
+              preface: 'bypass',
+              sections: 'bypass',
+              annex: 'bypass',
+              bibliography: 'bypass',
+              metanorma: 'ignore',
+              'localized-strings': 'ignore',
+              'presentation-metadata': 'ignore',
+            },
+          }, opts);
         },
       },
     ];

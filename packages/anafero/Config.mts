@@ -3,6 +3,7 @@ import * as S from '@effect/schema/Schema';
 import { type StoreAdapterModule } from './ResourceReader.mjs';
 import { type ContentAdapterModule } from './ContentGenerator.mjs';
 import { type LayoutModule } from './Layout.mjs';
+import { type Progress as TaskProgress } from './progress.mjs';
 
 
 /**
@@ -13,7 +14,10 @@ export type SyncDependencyGetter = <T>(moduleID: string) => T
 /**
  * Retrieves and loads a dependency asynchronously.
  */
-export type DependencyResolver = <T>(module: string) => Promise<T>;
+export type DependencyResolver = <T>(
+  moduleRef: string,
+  onProgress: (progress: TaskProgress) => void,
+) => Promise<T>;
 
 /** Determines how to handle versions. */
 export interface VersionBuildConfig {

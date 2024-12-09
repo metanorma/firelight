@@ -1,5 +1,15 @@
 import * as S from '@effect/schema/Schema';
+import { type RelationTriple } from './relations.mjs';
 
+
+type GrowToSize<T, N extends number, A extends T[]> = 
+  A['length'] extends N ? A : GrowToSize<T, N, [...A, T]>;
+
+
+type FixedArray<T, N extends number> = GrowToSize<T, N, []>;
+
+
+// Old
 
 /**
  * Responsible for mapping some entry point to resources and relations.
@@ -67,44 +77,47 @@ export interface StoreAdapterModule {
 
 export interface ResourceReader {
 
-  // TODO: Combine resourceExists and toURL()?
-  // Say we return a friendly URL for given resource, or nothing
-  // if resource does not exist?
-
   resourceExists: (resourceURI: string) => boolean;
 
+  /** This should be fast. Doesn’t have to be exact. */
+  estimateRelationCount: () => number;
+
   /**
-   * Can be used to traverse resources.
-   * In case of a document, relations can be between a document and a section
-   * or a section and its paragraph. In case of a source file, relations
-   * represent its AST.
+   * Parses all resources & calls specified callback
+   * with each relation chunk.
    *
-   * Content generators CAN rely on the order of relations emitted
-   * by resource readers.
-   *
-   * A relation’s target URI can be resolved with a different reader
-   * (whatever responds to canResolve() and resourceExists()).
-   * It can use the `file:` scheme, which means another blob reader
-   * would have to be constructed.
-   *
-   * If recurseUpTo is not specified, recursively resolves relations
-   * and it’s up to the caller to stop it. Otherwise, will only resolve
-   * up to that many levels.
+   * Chunk size currently can be any reasonable number.
    */
-  resolveRelations: (resourceURI: string, recurseUpTo?: number) =>
-    AsyncGenerator<ResourceRelation>;
+  discoverAllResources: (
+    onRelationChunk: (rel: readonly RelationTriple<any, any>[]) => void,
+    opts: { onProgress: (msg: string) => void },
+  ) => void;
 
-  resolveRelation: (resourceURI: string, predicate: string, recurseUpTo?: number) =>
-    Promise<string[]>;
+  ///**
+  // * Can be used to traverse resources incrementally.
+  // *
+  // * In case of a document, relations can be between a document and a section
+  // * or a section and its paragraph. In case of a source file, relations
+  // * represent its AST.
+  // *
+  // * Content generators CAN rely on the order of relations emitted
+  // * by resource readers.
+  // *
+  // * A relation’s target URI can be resolved with a different reader
+  // * (whatever responds to canResolve() and resourceExists()).
+  // * It can use the `file:` scheme, which means another blob reader
+  // * would have to be constructed.
+  // *
+  // * If recurseUpTo is not specified, recursively resolves relations
+  // * and it’s up to the caller to stop it. Otherwise, will only resolve
+  // * up to that many levels.
+  // */
+  //resolveRelations: (resourceURI: string, recurseUpTo?: number) =>
+  //  AsyncGenerator<ResourceRelation>;
 
-  //generateResources: ResourceGenerator;
+  //resolveRelation: (resourceURI: string, predicate: string, recurseUpTo?: number) =>
+  //  Promise<string[]>;
 
-  // /**
-  //  * Given some generated resource URI, convert it to a suitable Web URL
-  //  * relative to its own root entry point.
-  //  * Leading slash, no trailing slash.
-  //  */
-  // toURL: (resourceURI: string) => string;
 };
 
 
@@ -130,10 +143,10 @@ interface BlobReader extends ResourceReader {
  * as their implementation may differ across environments.
  */
 export interface ReaderHelpers {
-  /**
-   * For `file:` URIs, callers should take care to resolve them securely.
-   */
-  fetchBlob: (uri: string) => Promise<Uint8Array>;
+  ///**
+  // * For `file:` URIs, callers should take care to resolve them securely.
+  // */
+  //fetchBlob: (uri: string) => Promise<Uint8Array>;
 
   /**
    * JSON decoding is available across environments,
@@ -198,70 +211,35 @@ export type ResourceRelation = S.Schema.Type<typeof ResourceRelationSchema>;
 
 
 
-// const ParsedResourceSchema = S.Struct({
-//   meta: ResourceMetaSchema,
-//   content: ResourceContentSchema.pipe(S.optional),
-//   relations: S.Array(ResourceRelationSchema),
-// });
-// export type ParsedResource = S.Schema.Type<typeof ParsedResourceSchema>;
+// // New
 // 
+// export abstract class StoreAdapter {
+//   static get name(): string;
+//   static get version(): string;
 // 
+//   abstract estimateRelationCount(): Promise<number | undefined>;
 // 
+//   /**
+//    * Returns whether given resourceURI is supported at first look
+//    * (e.g., based on filename extension or protocol).
+//    */
+//   static recognizes(resourceURI: string): boolean {
+//     return false;
+//   }
 // 
-
-
-
-
-
-
-// type ResourceReadResult = RecursiveParsedResource | ResourceForAnotherReader;
+//   abstract has(resourceURI: string): boolean;
 // 
+//   /**
+//    * Can fail if store adapter cannot read given resource,
+//    * even if it can recognize it (recognizes() returns true).
+//    */
+//   constructor(private resourceURI: string) {}
 // 
-// export interface RecursiveParsedResource {
-//   resource: ParsedResource;
-//   // /** Generates direct descendants. */
-//   // generateChildren: AsyncGenerator<ResourceReadResult>;
+//   /**
+//    * Processes the entry point to find all relations,
+//    * calling the provided callback with each chunk of relations.
+//    */
+//   abstract discoverRelations
+//   (onRelationsDiscovered: (relations: Array<readonly [string, string, string]>) => void):
+//   void;
 // }
-// 
-// 
-// export const ResourceForAnotherReaderSchema = S.Struct({
-//   /**
-//    * The blob to be given to resolved reader.
-//    */
-//   blob: S.Uint8Array,
-// 
-//   /**
-//    * Reader module reference.
-//    * The module is supposed to resolve to ResourceReaderModule.
-//    * Caller is supposed to handle resolution
-//    * (caching readers as necessary), note any new schemas
-//    * and invoke the new reader with the blob, continuing to generate
-//    * RecursiveParsedResources.
-//    */
-//   readerModuleReference: S.String.pipe(S.nonEmptyString()),
-// });
-// type ResourceForAnotherReader = S.Schema.Type<typeof ResourceForAnotherReaderSchema>;
-
-
-// /**
-//  * Resource generator is called with a blob and some fetcher
-//  * helpers, and should generate RecursiveParsedResources.
-//  *
-//  * If it is the main entry point of root, outputting multiple
-//  * direct subresources will result in an error: the first overall emitted
-//  * resource is the root, and there can be only one.
-//  *
-//  * The order of generated resources matters, navigation is sorted
-//  * based on it and users may see previous/next links.
-//  *
-//  * If it encounters a reference to a resource that is stored
-//  * as another physical object referenced by path,
-//  * it can `fetchBlob()` and continue.
-//  *
-//  * If it encounters a subresource which it cannot handle,
-//  * but knows another reader module that can handle it,
-//  * it should dump resource into a blob and generate a ResourceForAnotherReader
-//  * instead of RecursiveParsedResource.
-//  */
-// type ResourceGenerator = (entryPointBlob: Uint8Array, helpers: ReaderHelpers) =>
-//   AsyncGenerator<ResourceReadResult>;

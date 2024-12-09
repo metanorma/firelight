@@ -1,24 +1,33 @@
 import {
+  ROOT_SUBJECT,
   type RelationGraphAsList,
   type RelationTriple,
 } from './relations.mjs';
+
 import {
   type ResourceReader,
   type ResourceRelation,
   type StoreAdapterModule,
 } from './ResourceReader.mjs';
+
 import {
   type ContentAdapterModule,
 } from './ContentGenerator.mjs';
 
+import {
+  type Cache,
+} from './cache.mjs';
+
+import {
+  type TaskProgressCallback,
+  type Progress,
+} from './progress.mjs';
+
 import { isURIString } from './URI.mjs';
-
-import { type TaskProgressCallback } from './progress.mjs';
-
 
 
 export interface ContentReader {
-  resolve: (resourceURI: string) => Promise<RelationGraphAsList>;
+  resolve: (resourceURI: string) => Readonly<RelationGraphAsList>;
   generatePaths: (fromSubpath?: string) => Generator<{
     /** Path with leading but no trailing slash. Empty string for root. */
     path: string;
@@ -28,9 +37,10 @@ export interface ContentReader {
      * and it is expected to be emitted under that path
      */
     resourceURI: string;
-    parentChain: [path: string, uri: string, graph: RelationGraphAsList][];
-    directDescendants: [path: string, uri: string, graph: RelationGraphAsList][];
+    parentChain: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
+    directDescendants: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
   }>;
+  getUnresolvedRelations: () => Readonly<RelationGraphAsList>;
   findURL: (resourceURI: string) => string;
   countPaths: () => number;
   //traverseHierarchy: (subpath?: string) => AsyncGenerator<ResourceWithRelations>,
@@ -47,33 +57,14 @@ type ContentReaderFactory = (
 
     fetchBlob: (path: string, opts?: { atVersion?: string }) => Promise<Uint8Array>;
 
+    decodeXML: (data: Uint8Array) => Document;
+
     reportProgress: TaskProgressCallback;
 
     /**
      * Allows to offload data from memory if source is large.
-     *
-     * This is geared towards relations, so each key stores an array
-     * (of say edges/relation triples or resource URIs).
-     *
-     * Browser wrapper can supply something using IndexedDB or OPFS,
-     * Node can supply something based on DuckDB.
-     * DuckDB-WASM could cover both, but currently can’t persist in browser.
      */
-    cache: {
-      //set: (keyValueMap: Record<string, unknown>) => void;
-
-      /** Append given values to key, preserving order. */
-      add: <T>(key: string, values: readonly T[]) => void;
-
-      /** Return all values at given key in order of addition. */
-      get: <T>(key: string, page?: { start: number, size: number }) => readonly T[];
-
-      /** Emit values at given key in order of addition. */
-      iterate: <T>(key: string) => Generator<T>;
-
-      /** Returns true if given key exists. */
-      has: (key: string) => boolean;
-    };
+    cache: Cache;
 
   },
 ) => Promise<ContentReader>;
@@ -91,10 +82,27 @@ export const makeContentReader: ContentReaderFactory = async function (
   entryPointURI,
   storeAdapters,
   contentAdapter,
-  { fetchBlob, reportProgress, cache },
+  { fetchBlob, reportProgress, decodeXML, cache },
 ): Promise<ContentReader> {
 
-  await processRelations(entryPointURI);
+  let totalPathCount = 0;
+
+  let totalRelationCount = 0;
+  let doneRelationCount = 0;
+
+  async function process() {
+    const [relationsProgress] = reportProgress('read resources');
+    await processRelations(entryPointURI, relationsProgress);
+    relationsProgress(null);
+
+    const [hierarchyProgress] = reportProgress('prepare site structure');
+    processHierarchy(entryPointURI, '', function reportHierarchyProgress(state) {
+      hierarchyProgress({ state });
+    });
+    hierarchyProgress(null);
+  }
+
+  await process();
 
   ///**
   // * Captures which entry point resides under which
@@ -105,7 +113,10 @@ export const makeContentReader: ContentReaderFactory = async function (
 
   //const entryPointPrefixes: Record<string, string> = {};
 
-  async function processRelations(entryPointURI: string) {
+  async function processRelations(
+    entryPointURI: string,
+    onProgress: (prog: Progress) => void,
+  ) {
     function handleRelations(triples: readonly RelationTriple<any, any>[]) {
       //cache.add(`${entryPointURI}/edges`, triples);
       const subjectRelations: Record<string, ResourceRelation[]> = {};
@@ -113,7 +124,7 @@ export const makeContentReader: ContentReaderFactory = async function (
 
         // Resource reader would indicate topmost relations
         // as being from the _:root blank node.
-        const subject = s === '_:root' ? entryPointURI : s;
+        const subject = s === ROOT_SUBJECT ? entryPointURI : s;
 
         subjectRelations[subject] ??= [];
         subjectRelations[subject].push({ predicate, target });
@@ -124,10 +135,21 @@ export const makeContentReader: ContentReaderFactory = async function (
         cache.add(`edges-from/${subject}`, relations);
         cache.add(`${entryPointURI}/subjects`, [subject]);
       }
+      doneRelationCount += triples.length;
+      onProgress({ done: doneRelationCount, total: totalRelationCount });
     }
 
     const reader = await startReader(entryPointURI);
-    reader.discoverAllResources(handleRelations);
+    totalRelationCount += reader.estimateRelationCount();
+
+    onProgress({ total: totalRelationCount });
+    reader.discoverAllResources(handleRelations, {
+      onProgress: function (msg) {
+        onProgress({
+          state: `${entryPointURI}->…->${msg}`,
+        });
+      }
+    });
 
     // Init storage adapters for any newly related targets and read them
     // recursively
@@ -145,12 +167,13 @@ export const makeContentReader: ContentReaderFactory = async function (
               // Process this resource as new entry point.
               //
               // NOTE: Allow recursion here for now,
-              // but re-assess if related resource stack gets too deep
-              // (unlikely for our needs).
-              processRelations(fullFileURI);
+              // but re-assess if we have very deep reader chains.
+              processRelations(fullFileURI, onProgress);
             } else {
               // TODO: Implement storage adapter for for non-file: URIs
-              console.debug("Not following relation target (unsupported)", relation.target);
+              //console.warn("Unable to follow relation", relation.target);
+              cache.add('unresolved-relations', [[subject, relation.predicate, relation.target]]);
+              //cache.add(`unresolved-relations-from/${subject}`, [relation]);
             }
           }
         }
@@ -159,7 +182,7 @@ export const makeContentReader: ContentReaderFactory = async function (
   }
 
   function maybeGetPathComponent(relation: ResourceRelation) {
-    if (isURIString(relation.target)) {
+    if (!isURIString(relation.target)) {
       // If this is not a relation to another resource but a primitive value,
       // it cannot generate hierarchy.
       return null;
@@ -217,7 +240,11 @@ export const makeContentReader: ContentReaderFactory = async function (
       return [];
     }
     const nextPredicate = chain[0];
-    const nextValues = cache.get<string>(`edges-from/${resourceURI}/${nextPredicate}`);
+    const key = `edges-from/${resourceURI}/${nextPredicate}`;
+    if (!cache.has(key)) {
+      return [];
+    }
+    const nextValues = cache.list<string>(key);
     if (chain.length === 1) {
       // We’ve reached end of the chain, and these are the values.
       return nextValues;
@@ -237,44 +264,188 @@ export const makeContentReader: ContentReaderFactory = async function (
     let finished = false;
     let cursor = 0;
     while (!finished) {
-      const relations = cache.get<ResourceRelation>(
+      const relations = cache.list<ResourceRelation>(
         `edges-from/${resourceURI}`,
         { start: cursor, size: chunkSize },
       );
       if (relations.length > 0) {
         yield * relations;
+        cursor += chunkSize;
       } else {
         finished = true;
       }
     }
   }
 
-  function * generatePaths(
+  /**
+   * Gets resource graph, following relations
+   * unless related resource is in hierarchy.
+   *
+   * Prefers cached graph, if already requested before.
+   */
+  function getResourceGraph(
+    resourceURI: string,
+  ): Readonly<RelationGraphAsList> {
+    if (!cache.has(`graphs/${resourceURI}`)) {
+      const resourcePath = cache.get<string>(`path-for/${resourceURI}`);
+      const queue: string[] = [resourceURI];
+      while (queue.length > 0) {
+        const currentResource = queue.pop()!;
+        if (!cache.has(`edges-from/${currentResource}`)) {
+          //console.warn("No graph for", currentResource);
+        } else {
+          const relations = cache.list<ResourceRelation>(`edges-from/${currentResource}`);
+          cache.add(
+            `graphs/${resourceURI}`,
+            relations.map(({ predicate, target }) => [
+              currentResource === resourceURI
+                ? ROOT_SUBJECT
+                : currentResource,
+              predicate,
+              target,
+            ]),
+          );
+
+          if (currentResource !== resourceURI) {
+            cache.set({
+              [`path-for/${currentResource}`]: `${resourcePath}#${currentResource}`,
+            });
+          }
+
+          const newTargets = relations.
+          map(({ target }) => target).
+          // Do not queue target if related resource is not a URI
+          filter(isURIString).
+          // Do not queue target if related resource is already in path hierarchy
+          // (it should not be part of this graph, then)
+          filter(target =>
+            !cache.has(`path-for/${target}`)
+          ).
+          // Do not queue target if it was already queued
+          filter(target => !queue.includes(target));
+
+          queue.push(...newTargets);
+        }
+      }
+    }
+    return cache.list<RelationTriple<any, any>>(`graphs/${resourceURI}`);
+  }
+
+  function processHierarchy(
     resourceURI: string,
 
     /** Empty string for root. */
     pathPrefix: string,
-  ): Generator<[string, string]> {
-    yield [pathPrefix, resourceURI];
+
+    onProgress: (msg: string) => void,
+  ) {
+
+    cache.add('all-paths', [pathPrefix]);
+    cache.set({ [pathPrefix]: resourceURI });
+    cache.set({ [`path-for/${resourceURI}`]: pathPrefix });
+
+    onProgress(`${pathPrefix ?? '/'}: ${resourceURI}`);
+
+    totalPathCount += 1;
+
+    const parentPath = pathPrefix !== ''
+      ? pathPrefix.includes('/')
+        ? pathPrefix.slice(0, pathPrefix.lastIndexOf('/'))
+        : ''
+      : null;
+
+    if (parentPath !== null) {
+      cache.add(`${parentPath}/direct-descendants`, [pathPrefix]);
+      const parentPathParts = parentPath.split('/');
+      const parentPaths = parentPathParts.map((_, idx) =>
+        `${parentPathParts.slice(0, idx + 1).join('/')}`
+      );
+      parentPaths.reverse();
+      // This is awkward, but the above logic means the root entry
+      // may be missing from parents for nested paths.
+      if (!parentPaths.includes('')) {
+        parentPaths.push('');
+      }
+      cache.set({
+        [`${pathPrefix}/parents`]: parentPaths,
+      });
+    }
+
     for (const rel of generateRelations(resourceURI)) {
       const maybePathComponent = maybeGetPathComponent(rel);
       if (maybePathComponent) {
         if (!isValidPathComponent(maybePathComponent)) {
           throw new Error("Generated path component is not valid");
         }
-        yield * generatePaths(resourceURI, maybePathComponent);
+        const encodedComponent = maybePathComponent.replace(':', '_');
+        const newPath = pathPrefix
+          ? `${pathPrefix}/${encodedComponent}`
+          : encodedComponent;
+        // NOTE: Allow recursion, since no sane hierarchy
+        // is expected to be too large for that to become an issue.
+        processHierarchy(rel.target, newPath, onProgress);
       }
     }
   }
 
-  /** Generates pages, starting from topmost entryPointURI. */
-  function * generatePages() {
-    for (const [path, resourceURI] of generatePaths(entryPointURI, '')) {
-      const relations = cache.get(`edges-from/${resourceURI}`);
-      const content = contentAdapter.generateContent(relations);
-      // yield page
+  function * generateAllPaths(): Generator<{
+    /** Path with leading but no trailing slash. Empty string for root. */
+    path: string;
+    /**
+     * URI identifying a resource.
+     * A file: URI means there was no reader that could resolve it,
+     * and it is expected to be emitted under that path
+     */
+    resourceURI: string;
+    parentChain: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
+    directDescendants: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
+  }> {
+    for (const path of cache.iterate<string>('all-paths')) {
+      const resourceURI = cache.get<string>(path);
+      if (!resourceURI) {
+        throw new Error("Have path, but not its resource URI during processing");
+      }
+      yield {
+        path,
+        resourceURI,
+        directDescendants: cache.has(`${path}/direct-descendants`)
+          ? cache.list<string>(`${path}/direct-descendants`).map(path => {
+              const res = cache.get<string>(path);
+              return [`/${path}`, res, getResourceGraph(res)];
+            })
+          : [],
+        parentChain: path !== ''
+          ? cache.list<string>(`${path}/parents`).map(path => {
+              const res = cache.get<string>(path);
+              return [`/${path}`, res, getResourceGraph(res)];
+            })
+          : [],
+      }
     }
   }
+
+  return {
+    countPaths: () => totalPathCount,
+    generatePaths: generateAllPaths,
+    getUnresolvedRelations: function getUnresolvedRelations() {
+      if (cache.has('unresolved-relations')) {
+        return cache.get<RelationGraphAsList>('unresolved-relations');
+      } else {
+        return [];
+      }
+    },
+    findURL: function findURL (resourceURI) {
+      const maybePath = cache.get<string>(`path-for/${resourceURI}`);
+      if (maybePath) {
+        return maybePath;
+      } else {
+        throw new Error("Unable to find URL for resource");
+      }
+    },
+    resolve: function resolveGraph (resourceURI) {
+      return getResourceGraph(resourceURI);
+    },
+  };
 
   async function startReader(
     resourceURI: string,
@@ -288,9 +459,9 @@ export const makeContentReader: ContentReaderFactory = async function (
       mod.canResolve(resourceURI) && mod.readerFromBlob !== undefined);
     for (const mod of validAdapters) {
       try {
-        return (await mod.readerFromBlob!(blob))[1];
+        return (await mod.readerFromBlob!(blob, { decodeXML }))[1];
       } catch (e) {
-        console.warn("Failed to create resource reader for URI", mod.name, resourceURI, baseURI);
+        console.warn("Failed to create resource reader for URI", mod.name, resourceURI);
       }
     }
     throw new Error("Failed to initialize resource reader");
@@ -299,7 +470,7 @@ export const makeContentReader: ContentReaderFactory = async function (
 
 
 function isValidPathComponent(val: string): boolean {
-  return val.indexOf('/') < 0;
+  return val.indexOf('/') < 0 && val.indexOf('#') < 0;
 }
 
 
