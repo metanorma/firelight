@@ -77,8 +77,6 @@ export interface StoreAdapterModule {
 
 export interface ResourceReader {
 
-  resourceExists: (resourceURI: string) => boolean;
-
   /** This should be fast. Doesn’t have to be exact. */
   estimateRelationCount: () => number;
 

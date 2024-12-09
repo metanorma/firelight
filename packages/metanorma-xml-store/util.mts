@@ -325,7 +325,7 @@ function getURIDefault(
 
 
 /** CamelCase (with first letter capitalized) from possibly kebab-style */
-function dekebab(str: string): string {
+export function dekebab(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).replace(/-./g, x => x[1]?.toUpperCase() ?? '');
 }
 
