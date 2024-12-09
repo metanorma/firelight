@@ -121,7 +121,7 @@ Known issues
   and possibly French work.
 
 - GHA only: LFS resolution for version other than current may be broken.
-  It is required to specify `with: { lfs: true }` at the checkout step,
+  It is required to specify ``with: { lfs: true }`` for the checkout step,
   and building any version other than the one checked out may lead to
   broken results if any objects are stored with LFS.
 
