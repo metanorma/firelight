@@ -21,7 +21,7 @@ Usage
       [--rev <other-revision-or-spec>]
       [--debug]
 
-The command must be run from the root of the repository that has
+The command must be run from the root of a repository that has
 Anafero config file in the root.
 
 Anafero config
