@@ -20,3 +20,4 @@ export * from './versioning.mjs';
 export * from './Config.mjs';
 export * from './ResourceNavigationContext.mjs';
 export * from './moduleRef.mjs';
+export * from './cache.mjs';

@@ -6,6 +6,8 @@ import { type NodeViewComponentProps } from '@nytimes/react-prosemirror';
 import { type ResourceRelation } from './ResourceReader.mjs';
 import { type RelationTriple, type RelationGraphAsList } from './relations.mjs';
 
+// Old
+
 
 export type ReactProseMirrorNodeView =
   React.ForwardRefExoticComponent<NodeViewComponentProps & React.RefAttributes<any>>;
@@ -134,25 +136,35 @@ export interface ContentAdapterModule {
   describe: (relations: RelationGraphAsList | Readonly<RelationGraphAsList>) => ResourceMetadata;
 
 
-  // TODO: WIP: Unify hierarchy API, umbrella for conditions + schema + transforms
-  // between relations & PM node?
-  pages?: {
-    /**
-     * A list of relation specs to get a path fragment for this page.
-     * If a spec is satisfied, then resolved value is used as path fragment.
-     * Chains are interpreted relative to subject being considered
-     * (if the first item is 'hasPart' then current subject must have hasPart).
-     */
-    pathFragmentFrom: string[][];
+  // // TODO: WIP: Unify hierarchy API, umbrella for conditions + schema + transforms
+  // // between relations & PM node?
+  // contentNodes?: {
+  //   /**
+  //    * A list of relation specs to get a path fragment for this page.
+  //    * If a spec is satisfied, then resolved value is used as path fragment.
+  //    * Chains are interpreted relative to subject being considered
+  //    * (if the first item is 'hasPart' then current subject must have hasPart).
+  //    */
+  //   matches: (predicate: string, resolveChain: (chain: string[]) => string | null) => boolean;
 
-    // id: string?
-    // schemaId: string?
+  //   identifierFromChain: string[],
 
-    schema: ProseMirrorDocumentSchema;
+  //   getManifest: (predicate: string, resolveChain: (chain: string[]) => string | null) => {
+  //     identifier: string;
+  //     plainTextLabel: string;
+  //     generatesPage: boolean;
+  //   };
 
-    generateContent: RelationsToContent;
+  //   getContent: (predicate: string, resolveChain: (chain: string[]) => string | null) => ResourceContent | null;
 
-  }[];
+  //   // id: string?
+  //   // schemaId: string?
+
+  //   schema: ProseMirrorDocumentSchema;
+
+  //   generateContent: RelationsToContent;
+
+  // }[];
 
 
   /**
@@ -192,9 +204,6 @@ export interface ContentAdapterModule {
    * 1. Collect all relations that contribute to hierarchy and skip others.
    * 2. For all resources of the hierarchy, collect relations stopping when
    *    a reference is to a resource in hierarchy (or cannot be resolved).
-   *
-   * // resolve Y’s relations but not further
-   * // because Y is in the hierarchy. This way, content can format
    */
   contributesToHierarchy?: (
     relation: ResourceRelation,
@@ -422,3 +431,124 @@ export const AdapterGeneratedResourceContentSchema = S.Struct({
   content: S.Union(S.Null, ResourceContentSchema),
 });
 export type AdapterGeneratedResourceContent = S.Schema.Type<typeof AdapterGeneratedResourceContentSchema>;
+
+
+// // New
+// 
+// abstract class ContentAdapter {
+//   abstract get name(): string;
+//   abstract get version(): string;
+// 
+//   constructor() {};
+// 
+//   /**
+//    * Given a predicate,
+//    * and means to resolve other resources’ relations,
+//    * it can return a content node for this resource
+//    * or nothing if this resource does not generate an identifiable node.
+//    *
+//    * If based on this graph the resource does not generate an identifable node,
+//    * then the graph and any relations become part of 
+//    * .
+//    */
+//   abstract getContentNode(
+//     predicate: string,
+//     resolver: (uri: string) => Promise<RelationTripleAsList>,
+//   ): Promise<ContentNode | null> {
+//   }
+// 
+//   abstract get recognizedPredicates(): {
+//     // E.g., hasPart
+//     [predicate: string]: ContentGeneratingPredicate;
+//   }
+// }
+// 
+// 
+// interface ContentGeneratingPredicate {
+//   /**
+//    * Predicate chains that should be resolved in order to generate
+//    * a node (or not).
+//    *
+//    * Example:
+//    *
+//    * If we have some resources related via hasPart,
+//    * and we generate content nodes for all clauses,
+//    * clauses are indicated by relation “type” with value “clause”,
+//    * this can return [['type'], ...], because type will be necessary.
+//    *
+//    * In addition, if 1) we need clause title and ID to describe the node,
+//    * 2) title is an object of type “title” related via “hasPart”
+//    * specifying actual title text is value of its “hasPart” relation,
+//    * and 3) clause ID is value of “hasClauseIdentifier” relation,
+//    * then this could return [..., ['hasPart', 'type'], ['hasClauseIdentifier']].
+//    *
+//    * This can be simplified to omit the initial ['type'] if all resources
+//    * of “type” “clause” can be assumed to also specify “hasClauseIdentifier”,
+//    */
+//   predicateChains: readonly string[][]
+// 
+//   /**
+//    * Called when a relation through this predicate is encountered,
+//    * is given a graph with the object related via this relation as '_:root'
+//    * and all predicate chains indicated in `predicateChains` are resolved,
+//    * is expected to produce a content node
+//    * if relation should generate a node in hierarchy or null otherwise.
+//    *
+//    * Example:
+//    *
+//    * Continuing from `predicateChains` example, if we are generating
+//    * a node for each clause, this would receive a graph where
+//    * _:root is some object related to via hasPart and where the
+//    * chains are resolved.
+//    *
+//    * The graph can look like:
+//    *
+//    *   - _:root hasPart X
+//    *   - X type title
+//    *   - X hasPart "Hey, this is a clause title"
+//    *   - _:root hasClauseIdentifier clause123
+//    *
+//    * It is not guaranteed to contain any of that, which may indicate that
+//    * this part is not a clause and so the function would return null.
+//    *
+//    * But *if* those relations were found in source data,
+//    * then they would be included in the graph and can be used
+//    * by this function to return something like:
+//    *
+//    * {
+//    *    path: getValues(root, hasClauseIdentifier)[0],
+//    *    plainTextLabel: getValues(root, X, hasPart).join(' '),
+//    * }
+//    */
+//   async getContentNodeManifest(graph: RelationGraphAsList):
+//   Promise<ContentNodeManifest | null>;
+// 
+//   /**
+//    * Assuming there was a content node manifest generated for some relation,
+//    * this function will later be called to generate node content.
+//    * It should throw, if it can’t generate content, since that’s abnormal.
+//    */
+//   async generateNodeContent(graph: RelationGraphAsList, helpers: { domStub: Document }):
+//   Promise<NodeContent>;
+// }
+// 
+// /**
+//  * A content node represents an identifiable part of site hierarchy.
+//  */
+// interface ContentNodeManifest {
+//   /**
+//    * The id of this node within the scope of its parent content node.
+//    * Must not contain slashes.
+//    *
+//    * If isPage === false, then this ID would be prefixed with '#',
+//    * and made part of the parent node where isPage === true.
+//    *
+//    * Otherwise, it should generate a whole page with this as its path.
+//    */
+//   id: string;
+// 
+//   isPage: boolean;
+// 
+//   /** Identifies this node in plain text. */
+//   plainTextLabel: string;
+// }

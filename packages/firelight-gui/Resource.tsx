@@ -29,7 +29,7 @@ import classNames from './style.module.css';
 
 
 export interface ResourceData {
-  graph: RelationGraphAsList;
+  graph: Readonly<RelationGraphAsList>;
   content: AdapterGeneratedResourceContent;
   nav: ResourceNav;
 }
@@ -266,7 +266,7 @@ export const Resource = React.forwardRef(function ({
 
 /** Returns relations classified by whether each contributes to content. */
 function useCategorizedRelations(
-  relations: RelationTriple<string, string>[],
+  relations: readonly RelationTriple<string, string>[],
   adapter: ContentAdapterModule | undefined,
 ): { content: RelationTriple<string, string>[]; nonContent: RelationTriple<string, string>[] } {
   return useMemo(() => {
@@ -329,7 +329,8 @@ function processAttributes(
   for (const attr of Array.from(el.attributes)) {
     if (attr.name === 'about') {
       const preexistingID = el.getAttribute('id');
-      const inferredID = encodeURIComponent(attr.value);
+      const inferredID = attr.value;
+      //const inferredID = encodeURIComponent(attr.value);
       if (preexistingID && preexistingID !== inferredID) {
         onIntegrityViolation(`Element’s pre-existing ID “${preexistingID}” was changed to match resource ID, to facilitate navigation`);
       }
@@ -337,6 +338,7 @@ function processAttributes(
     } else if (['href', 'src'].includes(attr.name)) {
       const isHTTPHref = attr.name === 'href' && attr.value.startsWith('http');
       const isDataSrc = attr.name === 'src' && attr.value.startsWith('data:');
+
       if (!isHTTPHref && !isDataSrc) {
         let resolvedResourcePath: string | null;
         try {

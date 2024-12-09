@@ -2,6 +2,9 @@ import * as S from '@effect/schema/Schema';
 import { type ResourceRelation } from './ResourceReader.mjs';
 
 
+export const ROOT_SUBJECT = '_:root';
+
+
 export const RelationTripleSchema = S.Tuple(
   // TODO: Named tuple elements with Effect Schema—possible?
   // These annotations do not carry to typing hints.

@@ -33,8 +33,6 @@ import {
 } from './Config.mjs';
 import {
   type StoreAdapterModule,
-  type ResourceRelation,
-  type ResourceReader,
 } from './ResourceReader.mjs';
 import {
   type ContentAdapterModule,
@@ -45,22 +43,23 @@ import {
   fillInLocale,
 } from './ContentGenerator.mjs';
 import {
+  ROOT_SUBJECT,
   type RelationGraphAsList,
-  dedupeGraph,
-  dedupeResourceRelationList,
 } from './relations.mjs';
 import { type LayoutModule, type NavLink } from './Layout.mjs';
-import { isURIString } from './URI.mjs';
 import { BrowserBar } from 'firelight-gui/BrowseBar.jsx';
 import { Resource, type ResourceProps } from 'firelight-gui/Resource.jsx';
-import { type TaskProgressCallback } from './progress.mjs';
+import {
+  type TaskProgressCallback,
+  type TaskNoticeCallback,
+} from './progress.mjs';
+
+import { makeContentReader } from './ContentReader.mjs';
+import { type Cache } from './cache.mjs';
 
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
-
-
-const ROOT_SUBJECT = '_:root';
 
 
 interface LunrIndexEntry {
@@ -77,6 +76,8 @@ interface GeneratorHelpers {
   decodeXML: (data: Uint8Array) => Document;
   getDOMStub: () => Document;
   reportProgress: TaskProgressCallback;
+  reportNotice: TaskNoticeCallback;
+  cache: Cache;
 }
 
 /** Arbitrary stuff to inject in HTML. */
@@ -99,11 +100,11 @@ type ResourceContentCache = Record<string, AdapterGeneratedResourceContent>;
 /** Emits blobs keyed by resource-relative paths. */
 export function * generateResourceAssets(
   resourceURI: string,
-  relations: RelationGraphAsList,
+  relations: Readonly<RelationGraphAsList>,
   /** Graphs for parents, starting with nearest parent up. */
-  parentChain: [path: string, uri: string, graph: RelationGraphAsList][],
+  parentChain: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][],
   /** Graphs for descendants (probably in order). */
-  directDescendants: [path: string, uri: string, graph: RelationGraphAsList][],
+  directDescendants: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][],
   resourceProps: Omit<ResourceProps, 'nav' | 'graph' | 'content' | 'document'>,
 
   /**
@@ -121,32 +122,23 @@ export function * generateResourceAssets(
   primaryLanguageID: string,
 
   /** Called to describe a related resource. */
-  describe: (graph: RelationGraphAsList, uri: string) =>
+  describe: (graph: Readonly<RelationGraphAsList>, uri: string) =>
     ResourceMetadata | null,
   /** Called to generate page content. */
-  generateContent: (graph: RelationGraphAsList, uri: string) =>
+  generateContent: (graph: Readonly<RelationGraphAsList>, uri: string) =>
     AdapterGeneratedResourceContent | null,
 ): Generator<Record<string, Uint8Array>> {
-
-  yield {
-    '/resource.json': encoder.encode(
-      JSON.stringify(relations, null, 4),
-    ),
-  };
 
   const generatedContent = generateContent(relations, resourceURI);
   if (!generatedContent) {
     console.warn("Resource has no content", resourceURI);
     return;
   }
-  yield {
-    '/resource-content.json': encoder.encode(JSON.stringify(generatedContent, null, 4)),
-  };
 
   const generateNavLink = function generateNavLink(
     path: string,
     uri: string,
-    graph: RelationGraphAsList,
+    graph: Readonly<RelationGraphAsList>,
   ): NavLink {
     return {
       path: expandVersionedPath(path),
@@ -159,7 +151,10 @@ export function * generateResourceAssets(
     children: directDescendants.map(([path, uri, graph]) =>
       generateNavLink(path, uri, graph)),
   };
+
   yield {
+    '/resource.json': encoder.encode(JSON.stringify(relations, null, 4)),
+    '/resource-content.json': encoder.encode(JSON.stringify(generatedContent, null, 4)),
     '/resource-nav.json': encoder.encode(JSON.stringify(resourceNav, null, 4)),
   };
 
@@ -216,65 +211,75 @@ export function * generateResourceAssets(
 export async function * generateVersion(
   cfg: BuildConfig,
   fetchBlobAtThisVersion: (objectPath: string) => Promise<Uint8Array>,
-  { getDOMStub, fetchDependency, getDependencyCSS, getDependencySource, decodeXML, reportProgress }:
-    Pick<GeneratorHelpers, 'getDOMStub' | 'fetchDependency' | 'getDependencySource' | 'getDependencyCSS' | 'decodeXML' | 'reportProgress'>,
+  {
+    cache,
+    getDOMStub,
+    fetchDependency,
+    getDependencyCSS,
+    getDependencySource,
+    decodeXML,
+    reportProgress,
+    reportNotice,
+  }:
+    Pick<GeneratorHelpers, 'cache' | 'getDOMStub' | 'fetchDependency' | 'getDependencySource' | 'getDependencyCSS' | 'decodeXML' | 'reportProgress' | 'reportNotice'>,
+  inject: StringsToInjectIntoHTML,
+  /**
+   * Used to expand a version-relative path to an absolute domain-relative
+   * (includnig site root prefix, if any).
+   */
   expandVersionedPath: (versionRelativePath: string) => string,
 ): AsyncGenerator<Record<string, Uint8Array>> {
 
-  const [dependencyProgress, ] = reportProgress('loading extensions');
+  const [dependencyProgress, , dependencyNotice] = reportProgress('load extensions');
 
   // For every specified reader module, instantiate it in advance
   const storeAdapters =
     (await Promise.all(cfg.storeAdapters.map(async (moduleRef) =>
-      ({ [moduleRef]: await fetchDependency<StoreAdapterModule>(moduleRef) })
+      ({ [moduleRef]: await fetchDependency<StoreAdapterModule>(moduleRef, dependencyProgress) })
     ))).reduce((prev, curr) => ({ ...prev, ...curr }), {});
 
   const contentAdapters =
     (await Promise.all(cfg.contentAdapters.map(async (moduleRef) =>
-      ({ [moduleRef]: await fetchDependency<ContentAdapterModule>(moduleRef) })
+      ({ [moduleRef]: await fetchDependency<ContentAdapterModule>(moduleRef, dependencyProgress) })
     ))).reduce((prev, curr) => ({ ...prev, ...curr }), {});
 
   const layoutModules =
     (await Promise.all(cfg.resourceLayouts.map(async (moduleRef) =>
-      ({ [moduleRef]: await fetchDependency<LayoutModule>(moduleRef) })
+      ({ [moduleRef]: await fetchDependency<LayoutModule>(moduleRef, dependencyProgress) })
     ))).reduce((prev, curr) => ({ ...prev, ...curr }), {});
+
+  dependencyProgress(null);
 
   const layouts = layoutModules[cfg.resourceLayouts[0]]!.layouts;
   const defaultLayout = layouts[0]!.layout;
 
-  console.debug(
-    "Using store adapters:",
-    Object.values(storeAdapters).map(m => m.name).join(', '));
-
-  console.debug(
-    "Using content adapters:",
-    Object.values(contentAdapters).map(m => m.name).join(', '));
-
-  console.debug(
-    "Using layouts:",
-    Object.values(layoutModules).map(m => m.name).join(', '));
+  dependencyNotice(`Building with:
+  Store adapters: ${Object.values(storeAdapters).map(m => m.name).join(', ')}
+  Content adapters: ${Object.values(contentAdapters).map(m => m.name).join(', ')}
+  Layouts: ${Object.values(layoutModules).map(m => m.name).join(', ')}
+  `, 'info');
 
   if (!defaultLayout || cfg.storeAdapters.length < 1 || cfg.contentAdapters.length < 1) {
     throw new Error("Missing configuration: need at least one each module: layout, store adapter, content adapter");
   }
 
-  // Emit this version’s dependency index
+  // Prepare this version’s dependency index
   /** Sorts dependency module ID by category. */
   const dependencyIndex = {
     storeAdapters: Object.keys(storeAdapters),
     contentAdapters: Object.keys(contentAdapters),
     layouts: cfg.resourceLayouts,
   } as const;
-  yield {
-    '/dependency-index.json': encoder.encode(JSON.stringify(dependencyIndex, null, 4)),
-  };
 
-  // Emit this version’s dependency sources
+  // Prepare this version’s dependency sources
   const dependencySources: Record<string, string> = {};
   for (const modID of [...cfg.storeAdapters, ...cfg.contentAdapters, ...cfg.resourceLayouts]) {
     dependencySources[modID] = getDependencySource(modID);
   }
+
+  // Emit the above
   yield {
+    '/dependency-index.json': encoder.encode(JSON.stringify(dependencyIndex, null, 4)),
     '/dependencies.json': encoder.encode(JSON.stringify(dependencySources, null, 4)),
   };
 
@@ -283,13 +288,12 @@ export async function * generateVersion(
   for (const modID of [...cfg.resourceLayouts, ...cfg.contentAdapters]) {
     const supportingCSS = getDependencyCSS(modID);
     if (supportingCSS) {
-      const cssURLWithLeadingSlash = `${modID.slice(modID.lastIndexOf('/') + 1)}.css`;
+      const cssURLWithLeadingSlash = `${modID.slice(modID.lastIndexOf('/'))}.css`;
       supportingCSSLinks.push(cssURLWithLeadingSlash);
       yield { [cssURLWithLeadingSlash]: supportingCSS };
     }
   }
 
-  dependencyProgress(null);
   // Stuff to inject in HTML
   const dependencyCSS = supportingCSSLinks.map(url =>
     `<link rel="stylesheet" href="${expandVersionedPath(url)}" />`
@@ -307,7 +311,7 @@ export async function * generateVersion(
    * that finds any content-contributing relations, or null.
    */
   const findContentAdapter = function (
-    relations: RelationGraphAsList,
+    relations: Readonly<RelationGraphAsList>,
   ): [string, ContentAdapterModule] | null {
     return [cfg.contentAdapters[0], contentAdapter];
 
@@ -329,17 +333,15 @@ export async function * generateVersion(
   }
 
   const [contentReaderInitProgress, contentReaderSubtask] =
-    reportProgress('loading content reader');
+    reportProgress('read source data');
   const reader = await makeContentReader(
     cfg.entryPoint,
-    storeAdapters,
-    contentAdapter.contributingToHierarchy ?? [],
-    function contributesToHierarchy(relation, targetRelations) {
-      return contentAdapter.contributesToHierarchy?.(relation, targetRelations) ?? null;
-    },
+    Object.values(storeAdapters),
+    contentAdapter,
     {
       fetchBlob: fetchBlobAtThisVersion,
       decodeXML,
+      cache,
       reportProgress: contentReaderSubtask,
     },
   );
@@ -380,9 +382,18 @@ export async function * generateVersion(
       map(([k, v]) => [v, k]));
   }
 
+  const unresolved = reader.getUnresolvedRelations();
+  if (unresolved.length > 0) {
+    yield {
+      '/unresolved-relations.json':
+        encoder.encode(JSON.stringify(unresolved, null, 4)),
+    };
+    reportNotice("Some relations could not be resolved. See “unresolved-relations.json”.", 'warning');
+  }
+
   let done = 0;
   const [allPathProgress, pathSubtask] =
-    reportProgress('generating pages', { total: totalPaths, done });
+    reportProgress('build page content', { total: totalPaths, done });
   const hierarchicalResources = reader.generatePaths();
   for await (const { path, resourceURI, parentChain, directDescendants } of hierarchicalResources) {
     //console.debug("Got resource", resourceURI, path);
@@ -400,7 +411,7 @@ export async function * generateVersion(
     }
 
     const [pathProgress, ] =
-      pathSubtask(`${[path, resourceURI].join(' for ').replaceAll('/', '->')}`, { state: 'resolving relations' });
+      pathSubtask(`${resourceURI.replaceAll('|', ':')}`, { state: 'resolving relations' });
 
     const relations = await reader.resolve(resourceURI);
 
@@ -524,11 +535,11 @@ export async function * generateVersion(
     );
 
     for (const blobChunk of resourceAssetGenerator) {
-      for (const [subpath, blob] of Object.entries(blobChunk)) {
+      yield Object.entries(blobChunk).map(([subpath, blob]) => {
         const assetBlobPath = `/${path}${subpath}`;
         //console.debug("Outputting resource blob at path", path, subpath, assetBlobPath);
-        yield { [assetBlobPath]: blob };
-      }
+        return { [assetBlobPath]: blob };
+      }).reduce((prev, curr) => ({ ...prev, ...curr }));
     }
 
     pathProgress(null);
@@ -540,12 +551,13 @@ export async function * generateVersion(
     yield { [`/${filename}`]: blob };
   }
 
-  yield { '/resource-map.json': encoder.encode(JSON.stringify(resourceMap, null, 4)) };
-  yield { '/resource-graph.json': encoder.encode(JSON.stringify(resourceGraph, null, 4)) };
+  yield {
+    '/resource-map.json': encoder.encode(JSON.stringify(resourceMap, null, 4)),
+    '/resource-graph.json': encoder.encode(JSON.stringify(resourceGraph, null, 4)),
+    '/resource-descriptions.json': encoder.encode(JSON.stringify(resourceDescriptions, null, 4)),
+  };
 
-  yield { '/resource-descriptions.json': encoder.encode(JSON.stringify(resourceDescriptions, null, 4)) };
-
-  const [indexProgress, ] = reportProgress('building search index');
+  const [indexProgress, ] = reportProgress('build search index');
 
   // Required to avoid breakage due to something about global.console:
   (lunr as any).utils.warn = console.warn;
@@ -575,7 +587,7 @@ export async function * generateVersion(
         const entry: LunrIndexEntry = {
           name: uri,
           body: `${labelInPlainText} — ${gatherTextFromJsonifiedProseMirrorNode(contentDoc)}`,
-        }
+        };
         this.add(entry);
       }
     }
@@ -619,7 +631,7 @@ function gatherTextFromJsonifiedProseMirrorNode(jsonifiedNode: any): string {
 export async function * generateStaticSiteAssets(
   versions: Record<string, VersionMeta>,
   currentVersionID: string,
-  opts: GeneratorHelpers & {
+  opts: Omit<GeneratorHelpers, 'reportNotice'> & {
     getConfigOverride: (forVersionID?: string) => Promise<BuildConfig | null>;
     pathPrefix?: string | undefined;
     //resolveConfig: (cfg: BuildConfig) => ResolvedBuildConfig;
@@ -633,7 +645,7 @@ export async function * generateStaticSiteAssets(
   ).
   map(([vID, ]) => vID);
 
-  const { decodeXML, getDOMStub, fetchDependency, fetchBlob, getConfigOverride, getDependencyCSS, getDependencySource } = opts;
+  const { cache, decodeXML, getDOMStub, fetchDependency, fetchBlob, getConfigOverride, getDependencyCSS, getDependencySource } = opts;
 
   if (!versions[currentVersionID]) {
     throw new Error("Version metadata is missing for the version set as current");
@@ -648,7 +660,7 @@ export async function * generateStaticSiteAssets(
     );
   }
 
-  const [configProgress, ] = opts.reportProgress('checking config override');
+  const [configProgress, ] = opts.reportProgress('check config override');
 
   const configOverride = await getConfigOverride();
 
@@ -700,14 +712,14 @@ export async function * generateStaticSiteAssets(
 
 
   for (const versionID of versionIDsSorted) {
-    const [versionProgress, versionSubtask] =
-      opts.reportProgress(`building version ${versionID}`);
+    const [versionProgress, versionSubtask, versionNotice] =
+      opts.reportProgress(`build version ${versionID}`);
 
     function fetchBlobAtThisVersion(objectPath: string) {
       return fetchBlob(objectPath, { atVersion: versionID });
     }
 
-    const [versionConfigProgress, ] = versionSubtask('reading version config');
+    const [versionConfigProgress, ] = versionSubtask('read version config');
     // Prefer in order:
     //   config override
     //     > config in given version tree
@@ -733,11 +745,13 @@ export async function * generateStaticSiteAssets(
       fetchBlobAtThisVersion,
       {
         getDOMStub,
+        cache,
         decodeXML,
         fetchDependency,
         getDependencyCSS,
         getDependencySource,
         reportProgress: versionSubtask,
+        reportNotice: versionNotice,
       },
       { htmlAttrs, head: globalCSS, tail: globalJS },
       function expandVersionedPath(versionRelativePath) {
@@ -753,7 +767,7 @@ export async function * generateStaticSiteAssets(
           ? path
           : `/${versionID}${path}`;
         const expanded = expandGlobalPath(withVersion);
-        console.debug("Expanding version-relative path", versionRelativePath, expanded);
+        //console.debug("Expanding version-relative path", versionRelativePath, expanded);
         return expanded;
       },
     );
@@ -777,525 +791,6 @@ export async function * generateStaticSiteAssets(
   }
 }
 
-interface ContentReader {
-  resolve: (resourceURI: string) => Promise<RelationGraphAsList>;
-  generatePaths: (fromSubpath?: string) => AsyncGenerator<{
-    /** Path with leading but no trailing slash. Empty string for root. */
-    path: string;
-    /**
-     * URI identifying a resource.
-     * A file: URI means there was no reader that could resolve it,
-     * and it is expected to be emitted under that path
-     */
-    resourceURI: string;
-    parentChain: [path: string, uri: string, graph: RelationGraphAsList][];
-    directDescendants: [path: string, uri: string, graph: RelationGraphAsList][];
-  }>;
-  findURL: (resourceURI: string) => string;
-  countPaths: () => number;
-  //traverseHierarchy: (subpath?: string) => AsyncGenerator<ResourceWithRelations>,
-}
-
-/**
- * Generates resources and their hierarchy and allows to resolve
- * relations recursively.
- */
-async function makeContentReader(
-  entryPointURI: string,
-  storeAdapters: Record<string, StoreAdapterModule>,
-  hierarchyContributingRelations: string[][],
-  /** Whether content adapter thinks this should contribute to hierarchy. */
-  contributesToHierarchy: (
-    relation: ResourceRelation,
-    targetRelations: RelationGraphAsList,
-  ) => null | string | string[][],
-  // /** Whether content adapter thinks this should contribute to content. */
-  //relationContributesToContent: (relation: ResourceRelation) => boolean,
-  { fetchBlob, decodeXML, reportProgress }: Pick<GeneratorHelpers, 'fetchBlob' | 'decodeXML' | 'reportProgress'>,
-): Promise<ContentReader> {
-
-  const readerHelpers = { fetchBlob, decodeXML } as const;
-
-  function findStoreAdapter(resourceURI: string): StoreAdapterModule | null {
-    for (const [, adapter] of Object.entries(storeAdapters)) {
-      if (adapter.canResolve(resourceURI)) {
-        return adapter;
-      }
-    }
-    return null;
-  }
-
-  // Each entry point has a reader, and since we obtain initial root relations
-  // after initializing a reader we’ll cache those too.
-  interface CachedReader {
-    reader: ResourceReader;
-    entryPointURI: string;
-  }
-  const entryPointReaders: Record<string, CachedReader> = {};
-  function findReaderWithResource(resourceURI: string): CachedReader | null {
-    // If resourceURI is an entry point, return that reader straight away.
-    // If resourceURI is empty, assume main entry point URI.
-    if (entryPointReaders[resourceURI || entryPointURI]) {
-      return entryPointReaders[resourceURI || entryPointURI] ?? null;
-    }
-    // Otherwise, go through readers and see which has the resource.
-    for (const [entryPointURI, { reader }] of Object.entries(entryPointReaders)) {
-      if (reader.resourceExists(resourceURI)) {
-        return { reader, entryPointURI };
-      }
-    }
-    console.warn("Could not find reader for resource", resourceURI);
-    return null;
-  }
-
-  // Initialization
-
-  const pathsByResourceURI: { [resourceURI: string]: string } = {
-    '': '',
-    [entryPointURI]: '',
-  };
-  const resourceURIsByPath: { [path: string]: string } = {
-    // Root
-    '': '',
-  };
-  const immediateRelations: { [resourceURI: string]: ResourceRelation[] } = {};
-  let totalPaths = 0;
-
-  const [hierarchyProgress, hierarchySubtask] = reportProgress('determining resource hierarchy');
-
-  for await (const [path, resourceURI, relations] of generateHierarchy(
-    entryPointURI,
-    '',
-    undefined,
-    hierarchySubtask,
-  )) {
-    //console.debug("Generating hierarchical resource", path, resourceURI);
-    hierarchyProgress({ state: `${path} for resource ${resourceURI}` });
-    pathsByResourceURI[resourceURI] = path;
-    immediateRelations[resourceURI] = relations;
-    resourceURIsByPath[path] = resourceURI;
-    totalPaths += 1;
-  }
-  hierarchyProgress(null);
-
-  // Utils
-
-  function findChildren(
-    /** Prefix without trailing slash, with leading slash. Empty string for root. */
-    prefix: string,
-  ): { [path: string]: string } {
-    // The logic was more elegant when root was assumed to be a slash,
-    // rather than empty string…
-    const results =  Object.entries(resourceURIsByPath).
-      filter(([p, ]) =>
-        p !== prefix && (!prefix || p.startsWith(`${prefix}/`)) && p.length > prefix.length).
-      map(([p, uri]) => [
-        (!prefix ? p : p.replace(`${prefix}/`, '')).split('/')[0],
-        uri,
-      ] as [string, string]).
-      filter(([p, ]) => p !== undefined);
-    const children = Object.fromEntries(
-      results.map(([p, uri]) =>
-        [!prefix ? `/${p}` : `/${prefix}/${p}`, resourceURIsByPath[!prefix ? p : `${prefix}/${p}`]] as [string, string]));
-    return children
-  }
-
-  function findParents(
-    /** Path with leading, without trailing slash. */
-    child: string,
-  ): [path: string, resourceURI: string][] {
-    const parts = child.split('/');
-    const partsWithoutChild = parts.slice(0, parts.length - 1);
-    const parentPaths = partsWithoutChild.map((c, idx) =>
-      `${partsWithoutChild.slice(0, idx + 1).join('/')}`
-    );
-    parentPaths.reverse();
-    return parentPaths.map(p => [`/${p}`, resourceURIsByPath[p]!]);
-  }
-
-  async function resolveResourceGraph(
-    resourceURI: string,
-    graphSoFar?: RelationGraphAsList,
-    rootResourceURI?: string,
-  ): Promise<RelationGraphAsList> {
-    const graph = graphSoFar ?? [];
-    const root = rootResourceURI ?? resourceURI;
-    const maybeReader = findReaderWithResource(resourceURI);
-    if (maybeReader) {
-      const { reader, entryPointURI } = maybeReader;
-      const relations: ResourceRelation[] = [];
-      if (immediateRelations[resourceURI] !== undefined) {
-        relations.push(...immediateRelations[resourceURI]);
-      } else {
-        const root = resourceURI === entryPointURI ? '' : resourceURI;
-        for await (const rel of reader.resolveRelations(root)) {
-          relations.push(rel);
-        }
-      }
-      const newGraph =  [...graph ];
-      // NOTE: Process in sequence, we for now preserve ordering
-      // and Promise.all might mess that up.
-      for (const rel of relations) {
-        const targetIsAFile = rel.target.startsWith('file:');
-        newGraph.push([
-          resourceURI,
-          rel.predicate,
-          // For targets that reference files,
-          // expand them to full paths based on entry point’s URI
-          // (which would have to be using file:, too)
-          rel.target.startsWith('file:')
-            ? expandFileURI(entryPointURI, rel.target)
-            : rel.target,
-        ]);
-        const referencesResource = !targetIsAFile && isURIString(rel.target);
-        const isInHierarchy = referencesResource && pathsByResourceURI[rel.target];
-        // We don’t resolve target’s subgraph if it references
-        // a resource already in page hierarchy.
-        // In case of isInHierarchy we may still resolve just one more level?
-        if (referencesResource && !isInHierarchy) {
-          if (rel.target === resourceURI) {
-            continue;
-          }
-          newGraph.push(
-            ...(await resolveResourceGraph(rel.target, graph, root)),
-          );
-        }
-      }
-      // Replace references to root with _:root
-      return dedupeGraph(newGraph).
-        map(([s, p, o]) => [s === root ? '_:root' : s, p, o]);
-    }
-    return graph;
-  }
-
-
-  // API
-
-  return {
-    countPaths: function countPaths() {
-      return totalPaths;
-    },
-    findURL: function findResourceURL(resourceURI) {
-      return pathsByResourceURI[resourceURI]!;
-    },
-    generatePaths: async function * generatePaths() {
-      for (const [path, resourceURI] of Object.entries(resourceURIsByPath)) {
-        const p = {
-          path,
-          resourceURI,
-          directDescendants: await Promise.all(
-            Object.entries(findChildren(path)).
-            map(async ([path, res]) => {
-              return [
-                path,
-                res,
-                await resolveResourceGraph(res),
-              ] as [string, string, RelationGraphAsList];
-            })
-          ),
-          parentChain: await Promise.all(
-            [...findParents(path), ['/', ''] as [string, string]].
-            map(async ([path, res]) => {
-              return [
-                path,
-                res,
-                await resolveResourceGraph(path === '/' ? '' : res),
-              ] as [string, string, RelationGraphAsList];
-            })
-          ),
-        };
-        //console.debug("generating path", path, resourceURI, p);
-        yield p;
-      }
-    },
-    resolve: async function resolveGraph(resourceURI) {
-      //console.debug("from resolveGraph: ", resourceURI);
-      return await resolveResourceGraph(resourceURI);
-    },
-  };
-
-  /**
-   * Given two `file:` URIs, makes a new one where
-   * they are joined, unless the second one starts with slash in which
-   * case it’s returned as is.
-   *
-   * Guarantees to return a `file:` URI or throw.
-   */
-  function expandFileURI(baseFileURI: string, fileURI: string): string {
-    const baseFilePath = baseFileURI.startsWith('file:')
-      ? baseFileURI.split('file:')[1]
-      : undefined;
-    if (!baseFilePath) {
-      throw new Error("Trying to expand a file: URI, but respective entry point is not using that scheme");
-    }
-    const filePath = fileURI.split('file:')[1]!;
-    const dirname = baseFilePath.indexOf('/') >= 1
-      ? baseFilePath.slice(0, baseFilePath.lastIndexOf('/'))
-      : '';
-    return filePath.startsWith('/')
-      ? fileURI
-      // ^ Treat given fileURI as root-relative
-      : `file:${dirname}${dirname ? '/' : ''}${filePath}`
-      // ^ Join dirname of base path with apparently relative file path
-  }
-
-  /**
-   * Resolve a list of chains using the logic in
-   * resolveChainToValue(). Returns the result of the first
-   * successful chain (that returned not a null).
-   */
-  async function resolveChainsToValue(
-    resourceURI: string,
-    relationChains: string[][],
-  ): Promise<string | null> {
-    for (const chain of relationChains) {
-      const maybeValue = await resolveChainToValue(resourceURI, chain);
-      if (maybeValue) {
-        return maybeValue;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Resolves a relation chain. E.g., if you provide
-   * [hasPart, hasClauseIdentifier]
-   * it would check if resourceURI hasPart relation,
-   * and related object also hasClauseIdentifier,
-   * and if yes then it would return that hasClauseIdentifier’s value.
-   * Otherwise, it would return null.
-   */
-  async function resolveChainToValue(
-    resourceURI: string,
-    relationChain: string[],
-  ): Promise<string | null> {
-    if (relationChain.length < 1) {
-      return null;
-    }
-    hierarchyProgress({ state: `resolving ${resourceURI}: ${relationChain.join(',')}` });
-    const reader = entryPointReaders[resourceURI]?.reader
-      ?? findReaderWithResource(resourceURI)?.reader;
-    if (!reader) {
-      return null;
-    }
-    const isEntryPointReader = entryPointReaders[resourceURI] !== undefined;
-    const targets = await reader.resolveRelation(
-      isEntryPointReader ? '' : resourceURI,
-      relationChain[0]!,
-    );
-    // Try every value
-    for (const target of targets) {
-      if (isURIString(target)) {
-        // Value points to an object, let’s recurse into it
-        const result = await resolveChainToValue(target, relationChain.slice(1));
-        if (result) {
-          return result;
-        }
-      } else if (relationChain.length === 1) {
-        // Value is a string and we’ve reached the last relation component,
-        // return the value.
-        return target;
-      }
-    }
-    return null;
-  }
-
-  async function _contributesToHierarchy(
-    relation: ResourceRelation,
-  ): Promise<string | null> {
-    if (!isURIString(relation.target)) {
-      return null;
-    } else {
-      // New path component to append for this relation
-      let pathComponent: string | null = null;
-
-      // Among contributing chains, find any starting with current predicate
-      // and cut the current predicate off the start of each.
-      const maybeContributingRelations = hierarchyContributingRelations.
-        filter(r => r[0] === relation.predicate).
-        map(r => r.slice(1));
-      if (maybeContributingRelations.length > 0) {
-        // Resolve chains that start with this relation’s predicate 
-        // relative to resource being considered
-        const maybePathComponent = await resolveChainsToValue(
-          relation.target,
-          maybeContributingRelations,
-        );
-        //console.debug("Checking for hierarchy", relation, maybePathComponent);
-        if (maybePathComponent) {
-          pathComponent = maybePathComponent;
-        }
-      } else {
-        // Use more complicated logic.
-        // TODO: Fix or remove contributesToHierarchy()
-        const targetGraph: RelationGraphAsList = [];
-        const maybeReader = findReaderWithResource(relation.target)
-        if (maybeReader) {
-          const { reader, entryPointURI } = maybeReader;
-          const root = entryPointURI === relation.target ? '' : relation.target;
-          for await (const targetRelation of reader.resolveRelations(root)) {
-            targetGraph.push(['_:root', targetRelation.predicate, targetRelation.target]);
-          }
-        }
-        const maybePropertyOrChains = contributesToHierarchy(
-          relation,
-          dedupeGraph(targetGraph),
-        );
-        if (maybePropertyOrChains) {
-          const maybePathComponent = typeof maybePropertyOrChains === 'string'
-            ? maybePropertyOrChains
-            : await resolveChainsToValue(
-                // Resolve these chains relative to relation target,
-                // since relation target is implied
-                relation.target,
-                maybePropertyOrChains,
-              );
-          if (maybePathComponent) {
-            pathComponent = maybePathComponent;
-          }
-        }
-      }
-
-      return pathComponent;
-    }
-  }
-
-  // It is implied that starting resource URI generated hierarchy,
-  // so we start from its direct relations and down.
-
-  async function * generateHierarchy(
-    resourceURI: string,
-    /**
-     * Root-relative prefix, no trailing slash.
-     * Emptry string for root entry.
-     */
-    urlPrefix: string,
-    /**
-     * The current entry point.
-     * If a new blob reader is created, its entry point URI
-     * will be computed relative to this.
-     */
-    entryPointURI: string | undefined,
-    reportProgress: TaskProgressCallback,
-  ):
-  AsyncGenerator<[
-    /** Root-relative path with leading slash but no trailing slash. */
-    path: string,
-    resourceURI: string,
-    relations: ResourceRelation[],
-  ]> {
-    const [progress, subtask] =
-      reportProgress(`${urlPrefix}: ${resourceURI.replaceAll('/', '->')}`);
-
-    // Try any of the preexisting readers, if any report existing resource
-    // then resolve through that.
-    //
-    // NOTE: If resource URI resolves via another entry point, we must have
-    // seen that entry point already or we cannot resolve the resource.
-    const maybeReader = findReaderWithResource(resourceURI);
-    const relations: ResourceRelation[] = [];
-    let currentEntryPointURI: string;
-    if (maybeReader) {
-      const { reader, entryPointURI } = maybeReader;
-      currentEntryPointURI = entryPointURI;
-      //url = `${urlPrefix}${reader.toURL(resourceURI)}`;
-      //const relations = yield * reader.resolveRelations(resourceURI);
-      const root = entryPointURI === resourceURI ? '' : resourceURI;
-      progress({ state: `resolving relations at ${root}` });
-      for await (const relation of reader.resolveRelations(root, 1)) {
-        relations.push(relation);
-      }
-    } else {
-      progress({ state: `starting a reader for ${resourceURI}` });
-      const [newCurrentEntryPointURI, relations_] =
-        await startReader(resourceURI, entryPointURI);
-      currentEntryPointURI = newCurrentEntryPointURI;
-      for (const rel of relations_) {
-        relations.push(rel);
-      }
-    }
-    if (!relations.find(({ predicate }) => predicate === 'type')) {
-      console.warn("Resource in hierarchy lacks a type", resourceURI, urlPrefix);
-    }
-
-    yield [urlPrefix, resourceURI, relations];
-
-    progress({ state: 'checking relations' });
-    for (const relation of dedupeResourceRelationList(relations)) {
-      let pathComponent = await _contributesToHierarchy(relation);
-      if (!pathComponent && relation.target.startsWith('file:')) {
-        try {
-          const [newCurrentEntryPointURI, ] =
-            await startReader(relation.target, entryPointURI);
-          currentEntryPointURI = newCurrentEntryPointURI;
-          pathComponent = await _contributesToHierarchy(relation);
-        } catch (e) {
-          console.error("Error starting reader for entry point", relation.target, e);
-          continue;
-        }
-      }
-
-      if (pathComponent) {
-        if (pathComponent && isValidPathComponent(pathComponent)) {
-          const encodedComponent = pathComponent.replace(':', '_');
-          const newPath = urlPrefix
-            ? `${urlPrefix}/${encodedComponent}` : encodedComponent;
-          yield * generateHierarchy(
-            relation.target,
-            newPath,
-            currentEntryPointURI,
-            reportProgress,
-          );
-        }
-      }
-    }
-    progress(null);
-  }
-
-  async function startReader(resourceURI: string, entryPointURI?: string) {
-    console.debug("Starting a new reader for", resourceURI, "from", entryPointURI);
-
-    // Otherwise obtain a new reader using resource URI as entry point.
-    // We only support blob readers & local file: URIs for entry points now.
-    const isFileURI = resourceURI.startsWith('file:');
-    if (!isFileURI) {
-      console.error("Hierarchy item points to a non-file URI, but only blob readers are supported for now", resourceURI);
-      throw new Error("Hierarchy item points to a non-file URI, but only blob readers are supported for now");
-    }
-    // Expand entry point URI relative to current entry point
-    const fullFileURI = entryPointURI !== undefined
-      ? expandFileURI(entryPointURI, resourceURI)
-      : resourceURI;
-    const localFilePath = fullFileURI.split('file:')[1]!;
-    const storeAdapter = findStoreAdapter(fullFileURI);
-    if (!storeAdapter || !storeAdapter.readerFromBlob) {
-      console.error("Unable to locate a blob reader for entry point with file URI", resourceURI);
-      throw new Error("Unable to locate a blob reader for entry point with file URI");
-    }
-    if (!entryPointReaders[fullFileURI]) {
-      // Resource URI is an entry point that we have not seen yet
-      console.debug("Starting a reader for entry path", fullFileURI, "expanded from", resourceURI);
-      const entryPointBlob = await fetchBlob(localFilePath);
-      const [relations_, reader] = await storeAdapter.readerFromBlob(
-        entryPointBlob,
-        readerHelpers);
-      entryPointReaders[fullFileURI] = { reader, entryPointURI: fullFileURI };
-      immediateRelations[fullFileURI] = relations_;
-
-      return [fullFileURI, relations_] as [string, ResourceRelation[]];
-    } else {
-      console.error("Won’t start a new reader for entry point that already has a reader", resourceURI, fullFileURI);
-      throw new Error("Won’t start a new reader for entry point that already has a reader");
-    }
-  }
-}
-
-
-function isValidPathComponent(val: string): boolean {
-  return val.indexOf('/') < 0;
-}
-
-
 function relativeGraph(
   relations: RelationGraphAsList | Readonly<RelationGraphAsList>,
   subj: string,
@@ -1304,3 +799,523 @@ function relativeGraph(
     filter(([s, ]) => s !== ROOT_SUBJECT).
     map(([s, p, o]) => [s === subj ? ROOT_SUBJECT : s, p, o]);
 }
+
+
+// interface ContentReader {
+//   resolve: (resourceURI: string) => Promise<RelationGraphAsList>;
+//   generatePaths: (fromSubpath?: string) => AsyncGenerator<{
+//     /** Path with leading but no trailing slash. Empty string for root. */
+//     path: string;
+//     /**
+//      * URI identifying a resource.
+//      * A file: URI means there was no reader that could resolve it,
+//      * and it is expected to be emitted under that path
+//      */
+//     resourceURI: string;
+//     parentChain: [path: string, uri: string, graph: RelationGraphAsList][];
+//     directDescendants: [path: string, uri: string, graph: RelationGraphAsList][];
+//   }>;
+//   findURL: (resourceURI: string) => string;
+//   countPaths: () => number;
+//   //traverseHierarchy: (subpath?: string) => AsyncGenerator<ResourceWithRelations>,
+// }
+// 
+// /**
+//  * Generates resources and their hierarchy and allows to resolve
+//  * relations recursively.
+//  */
+// async function makeContentReader(
+//   entryPointURI: string,
+//   storeAdapters: Record<string, StoreAdapterModule>,
+//   hierarchyContributingRelations: string[][],
+//   /** Whether content adapter thinks this should contribute to hierarchy. */
+//   contributesToHierarchy: (
+//     relation: ResourceRelation,
+//     targetRelations: RelationGraphAsList,
+//   ) => null | string | string[][],
+//   // /** Whether content adapter thinks this should contribute to content. */
+//   //relationContributesToContent: (relation: ResourceRelation) => boolean,
+//   { fetchBlob, decodeXML, reportProgress }: Pick<GeneratorHelpers, 'fetchBlob' | 'decodeXML' | 'reportProgress'>,
+// ): Promise<ContentReader> {
+// 
+//   const readerHelpers = { fetchBlob, decodeXML } as const;
+// 
+//   function findStoreAdapter(resourceURI: string): StoreAdapterModule | null {
+//     for (const [, adapter] of Object.entries(storeAdapters)) {
+//       if (adapter.canResolve(resourceURI)) {
+//         return adapter;
+//       }
+//     }
+//     return null;
+//   }
+// 
+//   // Each entry point has a reader, and since we obtain initial root relations
+//   // after initializing a reader we’ll cache those too.
+//   interface CachedReader {
+//     reader: ResourceReader;
+//     entryPointURI: string;
+//   }
+//   const entryPointReaders: Record<string, CachedReader> = {};
+//   function findReaderWithResource(resourceURI: string): CachedReader | null {
+//     // If resourceURI is an entry point, return that reader straight away.
+//     // If resourceURI is empty, assume main entry point URI.
+//     if (entryPointReaders[resourceURI || entryPointURI]) {
+//       return entryPointReaders[resourceURI || entryPointURI] ?? null;
+//     }
+//     // Otherwise, go through readers and see which has the resource.
+//     for (const [entryPointURI, { reader }] of Object.entries(entryPointReaders)) {
+//       if (reader.resourceExists(resourceURI)) {
+//         return { reader, entryPointURI };
+//       }
+//     }
+//     console.warn("Could not find reader for resource", resourceURI);
+//     return null;
+//   }
+// 
+//   // Initialization
+// 
+//   const pathsByResourceURI: { [resourceURI: string]: string } = {
+//     '': '',
+//     [entryPointURI]: '',
+//   };
+//   const resourceURIsByPath: { [path: string]: string } = {
+//     // Root
+//     '': '',
+//   };
+//   const immediateRelations: { [resourceURI: string]: ResourceRelation[] } = {};
+//   let totalPaths = 0;
+// 
+//   const [hierarchyProgress, hierarchySubtask] = reportProgress('determining resource hierarchy');
+// 
+//   for await (const [path, resourceURI, relations] of generateHierarchy(
+//     entryPointURI,
+//     '',
+//     undefined,
+//     hierarchySubtask,
+//   )) {
+//     //console.debug("Generating hierarchical resource", path, resourceURI);
+//     hierarchyProgress({ state: `${path} for resource ${resourceURI}` });
+//     pathsByResourceURI[resourceURI] = path;
+//     immediateRelations[resourceURI] = relations;
+//     resourceURIsByPath[path] = resourceURI;
+//     totalPaths += 1;
+//   }
+//   hierarchyProgress(null);
+// 
+//   // Utils
+// 
+//   function findChildren(
+//     /** Prefix without trailing slash, with leading slash. Empty string for root. */
+//     prefix: string,
+//   ): { [path: string]: string } {
+//     // The logic was more elegant when root was assumed to be a slash,
+//     // rather than empty string…
+//     const results =  Object.entries(resourceURIsByPath).
+//       filter(([p, ]) =>
+//         p !== prefix && (!prefix || p.startsWith(`${prefix}/`)) && p.length > prefix.length).
+//       map(([p, uri]) => [
+//         (!prefix ? p : p.replace(`${prefix}/`, '')).split('/')[0],
+//         uri,
+//       ] as [string, string]).
+//       filter(([p, ]) => p !== undefined);
+//     const children = Object.fromEntries(
+//       results.map(([p, uri]) =>
+//         [!prefix ? `/${p}` : `/${prefix}/${p}`, resourceURIsByPath[!prefix ? p : `${prefix}/${p}`]] as [string, string]));
+//     return children
+//   }
+// 
+//   function findParents(
+//     /** Path with leading, without trailing slash. */
+//     child: string,
+//   ): [path: string, resourceURI: string][] {
+//     const parts = child.split('/');
+//     const partsWithoutChild = parts.slice(0, parts.length - 1);
+//     const parentPaths = partsWithoutChild.map((c, idx) =>
+//       `${partsWithoutChild.slice(0, idx + 1).join('/')}`
+//     );
+//     parentPaths.reverse();
+//     return parentPaths.map(p => [`/${p}`, resourceURIsByPath[p]!]);
+//   }
+// 
+//   async function resolveResourceGraph(
+//     resourceURI: string,
+//     graphSoFar?: RelationGraphAsList,
+//     rootResourceURI?: string,
+//   ): Promise<RelationGraphAsList> {
+//     const graph = graphSoFar ?? [];
+//     const root = rootResourceURI ?? resourceURI;
+//     const maybeReader = findReaderWithResource(resourceURI);
+//     if (maybeReader) {
+//       const { reader, entryPointURI } = maybeReader;
+//       const relations: ResourceRelation[] = [];
+//       if (immediateRelations[resourceURI] !== undefined) {
+//         relations.push(...immediateRelations[resourceURI]);
+//       } else {
+//         const root = resourceURI === entryPointURI ? '' : resourceURI;
+//         for await (const rel of reader.resolveRelations(root)) {
+//           relations.push(rel);
+//         }
+//       }
+//       const newGraph =  [...graph ];
+//       // NOTE: Process in sequence, we for now preserve ordering
+//       // and Promise.all might mess that up.
+//       for (const rel of relations) {
+//         const targetIsAFile = rel.target.startsWith('file:');
+//         newGraph.push([
+//           resourceURI,
+//           rel.predicate,
+//           // For targets that reference files,
+//           // expand them to full paths based on entry point’s URI
+//           // (which would have to be using file:, too)
+//           rel.target.startsWith('file:')
+//             ? expandFileURI(entryPointURI, rel.target)
+//             : rel.target,
+//         ]);
+//         const referencesResource = !targetIsAFile && isURIString(rel.target);
+//         const isInHierarchy = referencesResource && pathsByResourceURI[rel.target];
+//         // We don’t resolve target’s subgraph if it references
+//         // a resource already in page hierarchy.
+//         // In case of isInHierarchy we may still resolve just one more level?
+//         if (referencesResource && !isInHierarchy) {
+//           if (rel.target === resourceURI) {
+//             continue;
+//           }
+//           newGraph.push(
+//             ...(await resolveResourceGraph(rel.target, graph, root)),
+//           );
+//         }
+//       }
+//       // Replace references to root with _:root
+//       return dedupeGraph(newGraph).
+//         map(([s, p, o]) => [s === root ? '_:root' : s, p, o]);
+//     }
+//     return graph;
+//   }
+// 
+// 
+//   // API
+// 
+//   return {
+//     countPaths: function countPaths() {
+//       return totalPaths;
+//     },
+//     findURL: function findResourceURL(resourceURI) {
+//       return pathsByResourceURI[resourceURI]!;
+//     },
+//     generatePaths: async function * generatePaths() {
+//       for (const [path, resourceURI] of Object.entries(resourceURIsByPath)) {
+//         const p = {
+//           path,
+//           resourceURI,
+//           directDescendants: await Promise.all(
+//             Object.entries(findChildren(path)).
+//             map(async ([path, res]) => {
+//               return [
+//                 path,
+//                 res,
+//                 await resolveResourceGraph(res),
+//               ] as [string, string, RelationGraphAsList];
+//             })
+//           ),
+//           parentChain: await Promise.all(
+//             [...findParents(path), ['/', ''] as [string, string]].
+//             map(async ([path, res]) => {
+//               return [
+//                 path,
+//                 res,
+//                 await resolveResourceGraph(path === '/' ? '' : res),
+//               ] as [string, string, RelationGraphAsList];
+//             })
+//           ),
+//         };
+//         //console.debug("generating path", path, resourceURI, p);
+//         yield p;
+//       }
+//     },
+//     resolve: async function resolveGraph(resourceURI) {
+//       //console.debug("from resolveGraph: ", resourceURI);
+//       return await resolveResourceGraph(resourceURI);
+//     },
+//   };
+// 
+//   /**
+//    * Given two `file:` URIs, makes a new one where
+//    * they are joined, unless the second one starts with slash in which
+//    * case it’s returned as is.
+//    *
+//    * Guarantees to return a `file:` URI or throw.
+//    */
+//   function expandFileURI(baseFileURI: string, fileURI: string): string {
+//     const baseFilePath = baseFileURI.startsWith('file:')
+//       ? baseFileURI.split('file:')[1]
+//       : undefined;
+//     if (!baseFilePath) {
+//       throw new Error("Trying to expand a file: URI, but respective entry point is not using that scheme");
+//     }
+//     const filePath = fileURI.split('file:')[1]!;
+//     const dirname = baseFilePath.indexOf('/') >= 1
+//       ? baseFilePath.slice(0, baseFilePath.lastIndexOf('/'))
+//       : '';
+//     return filePath.startsWith('/')
+//       ? fileURI
+//       // ^ Treat given fileURI as root-relative
+//       : `file:${dirname}${dirname ? '/' : ''}${filePath}`
+//       // ^ Join dirname of base path with apparently relative file path
+//   }
+// 
+//   /**
+//    * Resolve a list of chains using the logic in
+//    * resolveChainToValue(). Returns the result of the first
+//    * successful chain (that returned not a null).
+//    */
+//   async function resolveChainsToValue(
+//     resourceURI: string,
+//     relationChains: string[][],
+//   ): Promise<string | null> {
+//     for (const chain of relationChains) {
+//       const maybeValue = await resolveChainToValue(resourceURI, chain);
+//       if (maybeValue) {
+//         return maybeValue;
+//       }
+//     }
+//     return null;
+//   }
+// 
+//   /**
+//    * Resolves a relation chain. E.g., if you provide
+//    * [hasPart, hasClauseIdentifier]
+//    * it would check if resourceURI hasPart relation,
+//    * and related object also hasClauseIdentifier,
+//    * and if yes then it would return that hasClauseIdentifier’s value.
+//    * Otherwise, it would return null.
+//    */
+//   async function resolveChainToValue(
+//     resourceURI: string,
+//     relationChain: string[],
+//   ): Promise<string | null> {
+//     if (relationChain.length < 1) {
+//       return null;
+//     }
+//     hierarchyProgress({ state: `resolving ${resourceURI}: ${relationChain.join(',')}` });
+//     const reader = entryPointReaders[resourceURI]?.reader
+//       ?? findReaderWithResource(resourceURI)?.reader;
+//     if (!reader) {
+//       return null;
+//     }
+//     const isEntryPointReader = entryPointReaders[resourceURI] !== undefined;
+//     const targets = await reader.resolveRelation(
+//       isEntryPointReader ? '' : resourceURI,
+//       relationChain[0]!,
+//     );
+//     // Try every value
+//     for (const target of targets) {
+//       if (isURIString(target)) {
+//         // Value points to an object, let’s recurse into it
+//         const result = await resolveChainToValue(target, relationChain.slice(1));
+//         if (result) {
+//           return result;
+//         }
+//       } else if (relationChain.length === 1) {
+//         // Value is a string and we’ve reached the last relation component,
+//         // return the value.
+//         return target;
+//       }
+//     }
+//     return null;
+//   }
+// 
+//   async function _contributesToHierarchy(
+//     relation: ResourceRelation,
+//   ): Promise<string | null> {
+//     if (!isURIString(relation.target)) {
+//       return null;
+//     } else {
+//       // New path component to append for this relation
+//       let pathComponent: string | null = null;
+// 
+//       // Among contributing chains, find any starting with current predicate
+//       // and cut the current predicate off the start of each.
+//       const maybeContributingRelations = hierarchyContributingRelations.
+//         filter(r => r[0] === relation.predicate).
+//         map(r => r.slice(1));
+//       if (maybeContributingRelations.length > 0) {
+//         // Resolve chains that start with this relation’s predicate 
+//         // relative to resource being considered
+//         const maybePathComponent = await resolveChainsToValue(
+//           relation.target,
+//           maybeContributingRelations,
+//         );
+//         //console.debug("Checking for hierarchy", relation, maybePathComponent);
+//         if (maybePathComponent) {
+//           pathComponent = maybePathComponent;
+//         }
+//       } else {
+//         // Use more complicated logic.
+//         // TODO: Fix or remove contributesToHierarchy()
+//         const targetGraph: RelationGraphAsList = [];
+//         const maybeReader = findReaderWithResource(relation.target)
+//         if (maybeReader) {
+//           const { reader, entryPointURI } = maybeReader;
+//           const root = entryPointURI === relation.target ? '' : relation.target;
+//           for await (const targetRelation of reader.resolveRelations(root)) {
+//             targetGraph.push(['_:root', targetRelation.predicate, targetRelation.target]);
+//           }
+//         }
+//         const maybePropertyOrChains = contributesToHierarchy(
+//           relation,
+//           dedupeGraph(targetGraph),
+//         );
+//         if (maybePropertyOrChains) {
+//           const maybePathComponent = typeof maybePropertyOrChains === 'string'
+//             ? maybePropertyOrChains
+//             : await resolveChainsToValue(
+//                 // Resolve these chains relative to relation target,
+//                 // since relation target is implied
+//                 relation.target,
+//                 maybePropertyOrChains,
+//               );
+//           if (maybePathComponent) {
+//             pathComponent = maybePathComponent;
+//           }
+//         }
+//       }
+// 
+//       return pathComponent;
+//     }
+//   }
+// 
+//   // It is implied that starting resource URI generated hierarchy,
+//   // so we start from its direct relations and down.
+// 
+//   async function * generateHierarchy(
+//     resourceURI: string,
+//     /**
+//      * Root-relative prefix, no trailing slash.
+//      * Emptry string for root entry.
+//      */
+//     urlPrefix: string,
+//     /**
+//      * The current entry point.
+//      * If a new blob reader is created, its entry point URI
+//      * will be computed relative to this.
+//      */
+//     entryPointURI: string | undefined,
+//     reportProgress: TaskProgressCallback,
+//   ):
+//   AsyncGenerator<[
+//     /** Root-relative path with leading slash but no trailing slash. */
+//     path: string,
+//     resourceURI: string,
+//     relations: ResourceRelation[],
+//   ]> {
+//     const [progress, subtask] =
+//       reportProgress(`${urlPrefix}: ${resourceURI.replaceAll('/', '->')}`);
+// 
+//     // Try any of the preexisting readers, if any report existing resource
+//     // then resolve through that.
+//     //
+//     // NOTE: If resource URI resolves via another entry point, we must have
+//     // seen that entry point already or we cannot resolve the resource.
+//     const maybeReader = findReaderWithResource(resourceURI);
+//     const relations: ResourceRelation[] = [];
+//     let currentEntryPointURI: string;
+//     if (maybeReader) {
+//       const { reader, entryPointURI } = maybeReader;
+//       currentEntryPointURI = entryPointURI;
+//       //url = `${urlPrefix}${reader.toURL(resourceURI)}`;
+//       //const relations = yield * reader.resolveRelations(resourceURI);
+//       const root = entryPointURI === resourceURI ? '' : resourceURI;
+//       progress({ state: `resolving relations at ${root}` });
+//       for await (const relation of reader.resolveRelations(root, 1)) {
+//         relations.push(relation);
+//       }
+//     } else {
+//       progress({ state: `starting a reader for ${resourceURI}` });
+//       const [newCurrentEntryPointURI, relations_] =
+//         await startReader(resourceURI, entryPointURI);
+//       currentEntryPointURI = newCurrentEntryPointURI;
+//       for (const rel of relations_) {
+//         relations.push(rel);
+//       }
+//     }
+//     if (!relations.find(({ predicate }) => predicate === 'type')) {
+//       console.warn("Resource in hierarchy lacks a type", resourceURI, urlPrefix);
+//     }
+// 
+//     yield [urlPrefix, resourceURI, relations];
+// 
+//     progress({ state: 'checking relations' });
+//     for (const relation of dedupeResourceRelationList(relations)) {
+//       let pathComponent = await _contributesToHierarchy(relation);
+//       if (!pathComponent && relation.target.startsWith('file:')) {
+//         try {
+//           const [newCurrentEntryPointURI, ] =
+//             await startReader(relation.target, entryPointURI);
+//           currentEntryPointURI = newCurrentEntryPointURI;
+//           pathComponent = await _contributesToHierarchy(relation);
+//         } catch (e) {
+//           console.error("Error starting reader for entry point", relation.target, e);
+//           continue;
+//         }
+//       }
+// 
+//       if (pathComponent) {
+//         if (pathComponent && isValidPathComponent(pathComponent)) {
+//           const encodedComponent = pathComponent.replace(':', '_');
+//           const newPath = urlPrefix
+//             ? `${urlPrefix}/${encodedComponent}` : encodedComponent;
+//           yield * generateHierarchy(
+//             relation.target,
+//             newPath,
+//             currentEntryPointURI,
+//             reportProgress,
+//           );
+//         }
+//       }
+//     }
+//     progress(null);
+//   }
+// 
+//   async function startReader(resourceURI: string, entryPointURI?: string) {
+//     console.debug("Starting a new reader for", resourceURI, "from", entryPointURI);
+// 
+//     // Otherwise obtain a new reader using resource URI as entry point.
+//     // We only support blob readers & local file: URIs for entry points now.
+//     const isFileURI = resourceURI.startsWith('file:');
+//     if (!isFileURI) {
+//       console.error("Hierarchy item points to a non-file URI, but only blob readers are supported for now", resourceURI);
+//       throw new Error("Hierarchy item points to a non-file URI, but only blob readers are supported for now");
+//     }
+//     // Expand entry point URI relative to current entry point
+//     const fullFileURI = entryPointURI !== undefined
+//       ? expandFileURI(entryPointURI, resourceURI)
+//       : resourceURI;
+//     const localFilePath = fullFileURI.split('file:')[1]!;
+//     const storeAdapter = findStoreAdapter(fullFileURI);
+//     if (!storeAdapter || !storeAdapter.readerFromBlob) {
+//       console.error("Unable to locate a blob reader for entry point with file URI", resourceURI);
+//       throw new Error("Unable to locate a blob reader for entry point with file URI");
+//     }
+//     if (!entryPointReaders[fullFileURI]) {
+//       // Resource URI is an entry point that we have not seen yet
+//       console.debug("Starting a reader for entry path", fullFileURI, "expanded from", resourceURI);
+//       const entryPointBlob = await fetchBlob(localFilePath);
+//       const [relations_, reader] = await storeAdapter.readerFromBlob(
+//         entryPointBlob,
+//         readerHelpers);
+//       entryPointReaders[fullFileURI] = { reader, entryPointURI: fullFileURI };
+//       immediateRelations[fullFileURI] = relations_;
+// 
+//       return [fullFileURI, relations_] as [string, ResourceRelation[]];
+//     } else {
+//       console.error("Won’t start a new reader for entry point that already has a reader", resourceURI, fullFileURI);
+//       throw new Error("Won’t start a new reader for entry point that already has a reader");
+//     }
+//   }
+// }
+// 
+// 
+// function isValidPathComponent(val: string): boolean {
+//   return val.indexOf('/') < 0;
+// }
+// 

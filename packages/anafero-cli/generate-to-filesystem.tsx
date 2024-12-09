@@ -27,6 +27,7 @@ import React from 'react';
 import { render } from 'ink';
 import { Processor } from './CLI.jsx';
 import { type TaskProgressCallback } from 'anafero/progress.mjs';
+import { makeDummyInMemoryCache } from 'anafero/cache.mjs';
 
 import { JSDOM } from 'jsdom';
 import xpath from 'xpath';
@@ -73,6 +74,9 @@ const build = Command.
 
       targetDirectoryPath: Options.directory('target-dir'),
 
+      pathPrefix: Options.directory('path-prefix').
+        pipe(Options.optional),
+
       // Revision flags have effect only if we’re building a Git repo:
 
       revision: Options.text('rev').
@@ -90,25 +94,36 @@ const build = Command.
 
       ...reportingOptions,
     },
-    ({ targetDirectoryPath, verbose, debug, revision, omitRevisionsNewerThanCurrent, currentRevision }) => pipe(
+    ({ targetDirectoryPath, pathPrefix, verbose, debug, revision, omitRevisionsNewerThanCurrent, currentRevision }) => pipe(
       Effect.try(() => parseReportingConfig({ verbose, debug })),
       Effect.flatMap(reportingConfig => pipe(
         Effect.tryPromise({
           try: () => new Promise((resolve, reject) => {
+            const prefix = unpackOption(pathPrefix);
+            if (prefix && (!prefix.startsWith('/') || prefix.endsWith('/'))) {
+              throw new Error("Path prefix must have a leading slash and no trailing slash");
+            }
             render(<Processor rootTaskName="build site" onStart={async function ({ onProgress }) {
-              const generator = generateSite({
-                revision: unpackOption(revision)!,
-                omitRevisionsNewerThanCurrent: unpackOption(omitRevisionsNewerThanCurrent)!,
-                currentRevision: unpackOption(currentRevision)!,
-              }, (task, progress) => onProgress(`build site/${task}`, progress));
-              const [writeProgress, ] = onProgress('build site/write to disk');
-              for await (const blobchunk of generator) {
-                writeProgress({ state: Object.keys(blobchunk).join(',') });
-                await writeBlobs(targetDirectoryPath, blobchunk);
+              try {
+                const generator = generateSite({
+                  revision: unpackOption(revision)!,
+                  omitRevisionsNewerThanCurrent: unpackOption(omitRevisionsNewerThanCurrent)!,
+                  currentRevision: unpackOption(currentRevision)!,
+                }, (task, progress) => onProgress(`build site|${task}`, progress), {
+                  pathPrefix: prefix,
+                });
+                const [writeProgress, writingSubtask] = onProgress('build site|write files');
+                for await (const blobchunk of generator) {
+                  const [subtask] = writingSubtask(Object.keys(blobchunk).join(',').replaceAll('|', ':'), { state: 'writing' });
+                  await writeBlobs(targetDirectoryPath, blobchunk);
+                  subtask(null);
+                }
+                writeProgress(null);
+                onProgress('build site', null);
+                resolve(void 0);
+              } catch (e) {
+                reject(e);
               }
-              writeProgress(null);
-              onProgress('build site', null);
-              resolve(void 0);
             }} />);
           }),
           catch: (e) => {
@@ -327,6 +342,7 @@ async function getRefsToBuild(revisionsToBuild: VersionBuildConfig) {
 async function * generateSite(
   revisionsToBuild: VersionBuildConfig | undefined,
   onProgress: TaskProgressCallback,
+  opts?: { pathPrefix?: string | undefined },
 ) {
   if (revisionsToBuild !== undefined) {
 
@@ -365,40 +381,51 @@ async function * generateSite(
     yield {
       '/bootstrap.js': await readFile(
         join(PACKAGE_ROOT, './bootstrap.js')),
-    };
-    yield {
       '/bootstrap.css': await readFile(
         join(PACKAGE_ROOT, './bootstrap.css')),
     };
 
-    yield * generateStaticSiteAssets(
-      refsToBuild,
-      revisionsToBuild.currentRevision,
-      {
-        reportProgress: onProgress,
-        fetchBlob: readObject,
-        fetchDependency,
-        getDependencyCSS: (modID) => {
-          const maybeCSS = getDependencySupportingFiles()[modID]?.['index.css'];
-          return maybeCSS ?? null;
+    const cache = makeDummyInMemoryCache();
+
+    try {
+      yield * generateStaticSiteAssets(
+        refsToBuild,
+        revisionsToBuild.currentRevision,
+        {
+          reportProgress: onProgress,
+          fetchBlob: readObject,
+          fetchDependency,
+          getDependencyCSS: (modID) => {
+            const maybeCSS = getDependencySupportingFiles()[modID]?.['index.css'];
+            return maybeCSS ?? null;
+          },
+          getDependencySource: (modID) => {
+            const source = getDependencySources()[modID];
+            if (!source) {
+              console.error("Requested dependency source was not found", modID);
+              throw new Error("Requested dependency source was not found");
+            }
+            return source;
+          },
+          getDOMStub: (() => (new JSDOM('<html></html>')).window.document),
+          cache,
+          pathPrefix: opts?.pathPrefix,
+          decodeXML: (blob) =>
+            new JSDOM(
+              decoder.decode(blob).replace('xmlns', 'wtf'), // xpath
+              { contentType: 'application/xhtml+xml' },
+            ).window.document,
+          getConfigOverride: async () => null,
         },
-        getDependencySource: (modID) => {
-          const source = getDependencySources()[modID];
-          if (!source) {
-            console.error("Requested dependency source was not found", modID);
-            throw new Error("Requested dependency source was not found");
-          }
-          return source;
-        },
-        getDOMStub: (() => (new JSDOM('<html></html>')).window.document),
-        decodeXML: (blob) =>
-          new JSDOM(
-            decoder.decode(blob).replace('xmlns', 'wtf'), // xpath
-            { contentType: 'application/xhtml+xml' },
-          ).window.document,
-        getConfigOverride: async () => null,
-      },
-    );
+      );
+    } finally {
+      console.info("cacheDump.json was written for content reader work inspection");
+      fs.writeFileSync(
+        'cacheDump.json',
+        JSON.stringify(cache.dump(), null, 2),
+        { encoding: 'utf-8' },
+      );
+    }
   } else {
     throw new Error("Unversioned build is not supported yet");
   }

@@ -1,12 +1,11 @@
 import { join, basename } from 'node:path';
 import { rmdir, readFile, cp, mkdtemp, stat } from 'node:fs/promises';
-import * as S from 'effect/Schema';
 import vm, { type Module as VMModule } from 'node:vm';
 import { tmpdir } from 'node:os';
 import fs from 'node:fs';
 
 import http from 'isomorphic-git/http/node';
-import git, { type CommitObject } from 'isomorphic-git';
+import git from 'isomorphic-git';
 
 import fetch from 'node-fetch';
 import { build as esbuild } from 'esbuild-wasm';
@@ -14,7 +13,8 @@ import { build as esbuild } from 'esbuild-wasm';
 import { JSDOM } from 'jsdom';
 import xpath from 'xpath';
 
-import { parseModuleRef, GitModuleRefSchema } from 'anafero/index.mjs';
+import { parseModuleRef, type DependencyResolver } from 'anafero/index.mjs';
+import { type Progress } from 'anafero/progress.mjs';
 
 // Made available to fetched dependencies but for now
 // we don’t leave it up to import because of workspace packaging hassle.
@@ -74,6 +74,7 @@ export async function cleanUpRepositories() {
  */
 async function fetchSourceFromGit(
   moduleRef: string,
+  onProgress: (progress: Progress) => void,
 ): Promise<string> {
   const [url, ref, subdir] = parseModuleRef(moduleRef);
 
@@ -84,7 +85,7 @@ async function fetchSourceFromGit(
       `anafero-source-${moduleRef.replace(/[^a-z0-9]/gi, '_')}-`,
     ));
 
-    console.debug("Cloning moduleRef", moduleRef, "to dir", dir);
+    onProgress({ state: `cloning to ${dir}` });
 
     await git.clone({
       fs,
@@ -93,17 +94,23 @@ async function fetchSourceFromGit(
       url,
       ref,
       depth: 1,
+      onProgress: function handleCloneProgress(progress) {
+        onProgress({
+          state: `cloning: ${progress.phase}`,
+          total: progress.total,
+          done: progress.loaded,
+        });
+      }
     });
 
     dependencyRepositories[alreadyClonedKey] = dir;
   } else {
-    console.debug("Already cloned", moduleRef);
+    onProgress({ state: `already cloned ${moduleRef}` });
   }
   const clonePath = dependencyRepositories[alreadyClonedKey];
 
   if (subdir) {
     const presumedSubdir = join(clonePath, `/${subdir}`);
-    console.debug("STATTING SUBDIR", presumedSubdir);
     const subdirStat = await stat(presumedSubdir);
     if (subdirStat.isDirectory()) {
       return presumedSubdir;
@@ -137,10 +144,13 @@ const decoder = new TextDecoder();
  * see TODO about resolveDir about making dependencies buildable
  * in the browser.
  */
-export async function fetchDependency<T>(moduleRef: string):
-Promise<T> {
+export const fetchDependency: DependencyResolver =
+async function fetchDependency(
+  moduleRef,
+  onProgress,
+) {
   if (depRegistry[moduleRef]) {
-    return await depRegistry[moduleRef] as T;
+    return await depRegistry[moduleRef];
   }
   depRegistry[moduleRef] = async function resolveDep() {
     let sourceDir: string;
@@ -148,8 +158,8 @@ Promise<T> {
     const localPath = moduleRef.split('file:')[1];
     if (!localPath) {
       //throw new Error("Only dependencies on local filesystem are supported for now.");
-      sourceDir = await fetchSourceFromGit(moduleRef);
-      console.debug("Fetched to path", localPath);
+      onProgress({ state: `fetching ${moduleRef} to ${localPath}` });
+      sourceDir = await fetchSourceFromGit(moduleRef, onProgress);
     } else {
       sourceDir = localPath;
     }
@@ -159,22 +169,14 @@ Promise<T> {
       `anafero-dist-${moduleRef.replace(/[^a-z0-9]/gi, '_')}-`,
     ));
 
-    console.debug(
-      "Building dependency from source dir",
-      sourceDir);
-
-    console.debug(
-      "Copying into build dir",
-      buildDir);
+    onProgress({ state: `copying into build dir ${buildDir}` });
 
     await cp(sourceDir, buildDir, { recursive: true });
 
     //const outfile = join(buildDir, 'out.mjs');
     //await esbuildTransform('oi');
 
-    console.debug(
-      "Building with esbuild",
-      moduleRef);
+    onProgress({ state: "compiling" });
 
     const result = await esbuild({
       //entryPoints: [join(buildDir, 'index.mts')],
@@ -215,7 +217,8 @@ Promise<T> {
       minify: false,
       platform: 'browser',
       write: false,
-      logLevel: 'info',
+      logLevel: 'silent',
+      //logLevel: 'info',
       sourcemap: true,
       bundle: true,
       outfile: 'index.js',
@@ -240,9 +243,7 @@ Promise<T> {
 
     const code = decoder.decode(mainOutput);
 
-    console.debug(
-      "Built with esbuild, instantiating…",
-      moduleRef);
+    onProgress({ state: "instantiating module" });
 
     // const fn = `${process.cwd()}/test.js`;
     // console.debug("Will write to", fn);
@@ -309,15 +310,14 @@ Promise<T> {
 
     const defaultExport = (mod.namespace as any).default as any;
 
-    console.debug("Instantiated", defaultExport.name, defaultExport.version);
-    console.debug("Removing build dir", buildDir);
+    onProgress({ state: `removing build dir ${buildDir}` });
 
     await rmdir(buildDir, { recursive: true });
 
     dependencySources[moduleRef] = code;
     dependencySupportingFiles[moduleRef] = otherFiles;
 
-    return defaultExport as T;
+    return defaultExport;
 
     // It would be nice if this did work…
     //let module = {};
@@ -334,5 +334,6 @@ Promise<T> {
     //const data = await readFile(outfile, { encoding: 'utf-8' });
     //return new Function(data);
   }();
-  return await depRegistry[moduleRef] as T;
+
+  return await depRegistry[moduleRef] as any;
 }

@@ -521,7 +521,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
         return pm.node('resource_link', { href: target }, generateContent(subj, pm.nodes.resource_link!));
       },
       'table': (subj: string) => {
-        const caption = findValue(section, subj, 'hasName') ?? 'table';
+        const name = findValue(section, subj, 'hasName');
+        const caption = name ? findValue(section, name, 'hasPart') : null;
 
         const tbody = findValue(section, subj, 'hasTableBody');
         const thead = findValue(section, subj, 'hasTableHeader');
@@ -592,7 +593,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
       },
       'bibitem': (subj: string) => {
         const contents: ProseMirrorNode[] = [];
-        const tag = findValue(section, subj, 'hasBiblioTag');
+        const tagSubj = findValue(section, subj, 'hasBiblioTag');
+        const tag = tagSubj ? findValue(section, tagSubj, 'hasPart') : null;
         if (tag) {
           contents.push(pm.node('span', null, [pm.text(tag), pm.text(' ')]));
         }
@@ -653,7 +655,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
             pm.node('image', { src: imgSrc }),
           );
         }
-        const caption = findValue(section, subj, 'hasName');
+        const name = findValue(section, subj, 'hasName');
+        const caption = name ? findValue(section, name, 'hasPart') : null;
         if (caption) {
           if (hasSubject(section, caption)) {
             console.warn(

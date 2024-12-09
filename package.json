@@ -3,7 +3,7 @@
   "type": "module",
   "packageManager": "yarn@4.5.0",
   "bin": {
-    "build-site": "./site-builder.mjs"
+    "build-site": "./packages/anafero-cli/build-site.mjs"
   },
   "scripts": {
     "compile": "tsc --outdir compiled",
