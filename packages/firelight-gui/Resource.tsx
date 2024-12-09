@@ -346,7 +346,8 @@ function processAttributes(
           resolvedResourcePath = null;
         }
         if (resolvedResourcePath) {
-          el.setAttribute(attr.name, `/${resolvedResourcePath}`);
+          // TODO: Check that this works in versions
+          el.setAttribute(attr.name, resolvedResourcePath);
         }
       }
     }

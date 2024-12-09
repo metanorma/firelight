@@ -69,6 +69,34 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     throw new Error("Missing initial workspace title");
   }
 
+  /** Global path prefix. */
+  const pathPrefix: string = 
+    useMemo(() => document.documentElement.dataset.pathPrefix ?? '', []);
+
+  /** Removes global path prefix. */
+  const getSiteRootRelativePath = useMemo(() => pathPrefix === ''
+    ? ((slashPrependedPath: string) => slashPrependedPath)
+    : ((slashPrependedPath: string) => {
+        const unprefixed = slashPrependedPath.startsWith(pathPrefix)
+          ? slashPrependedPath.replace(pathPrefix, '')
+          : slashPrependedPath;
+        if (!unprefixed.startsWith('/')) {
+          console.error("Non-slash-prepended path after getSiteRootRelativePath!", unprefixed, slashPrependedPath);
+        }
+        console.debug("Unprefixed path", slashPrependedPath, unprefixed);
+        return unprefixed;
+      }), [pathPrefix]);
+
+  /** Ensures global path prefix. */
+  const getDomainRelativePath = useMemo(() => pathPrefix === ''
+    ? ((slashPrependedPath: string) => slashPrependedPath)
+    : ((slashPrependedPath: string) => {
+        const prefixed = !slashPrependedPath.startsWith(pathPrefix)
+          ? `${pathPrefix}${slashPrependedPath}`
+          : slashPrependedPath;
+        return prefixed;
+      }), [pathPrefix]);
+
   const [loadProgress, setLoadProgress] = useState<LoadProgress>({ done: 0, total: 0 });
 
   const [versionDeps, setVersionDeps] =
@@ -94,7 +122,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
       : (Object.
           keys(sharedDeps['/versions.json'].versions).
           find((vID) =>
-            window.location.pathname.startsWith(`/${vID}/`)
+            window.location.pathname.startsWith(`${pathPrefix ?? '/'}${vID}/`)
           ) ?? null),
     [sharedDeps?.['/versions.json']]);
 
@@ -120,24 +148,38 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
         ? `/${nonCurrentActiveVersionID}`
         : '';
 
+  // TODO: Rename to getAbsolutePath or split into two functions
+  /** Returns versioned & prefixed path. */
   const getVersionedPath = useMemo(() => (
     versionPrefix !== undefined
       ? function (slashPrependedPath: string): string {
-          return `${versionPrefix}${slashPrependedPath}`;
+          const versioned = `${pathPrefix}${versionPrefix}${slashPrependedPath}`;
+          console.debug("getVersionedPath", slashPrependedPath, versioned);
+          return versioned;
         }
       : undefined
-  ), [versionPrefix]);
+  ), [pathPrefix, versionPrefix]);
 
+  // TODO: Rename to getVersionRelativePath or split into two functions
+  /** Returns unversioned & unprefixed path. */
   const getUnversionedPath = useMemo(() => (
     versionPrefix !== undefined
       ? function (slashPrependedPath: string): string {
-          if (!versionPrefix) { return slashPrependedPath; }
-          return slashPrependedPath.startsWith(versionPrefix)
-            ? slashPrependedPath.replace(versionPrefix, '')
-            : slashPrependedPath;
+          const siteRootRelative = getSiteRootRelativePath(slashPrependedPath);
+          if (!versionPrefix) {
+            return siteRootRelative;
+          }
+          const unversioned = versionPrefix !== '' && versionPrefix !== undefined && siteRootRelative.startsWith(versionPrefix)
+            ? siteRootRelative.replace(versionPrefix, '')
+            : siteRootRelative;
+          if (!unversioned.startsWith('/')) {
+            console.error("Non-slash-prepended path in getUnversionedPath!");
+          }
+          console.debug("Version-relative path", slashPrependedPath, unversioned);
+          return unversioned;
         }
       : undefined
-  ), [versionPrefix]);
+  ), [versionPrefix, getSiteRootRelativePath]);
 
   //const normalizedResourcePathFromPathname =
   const initialResourceURI: string | undefined = resourceMap && getUnversionedPath
@@ -171,30 +213,40 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   }, []);
 
   const locateResource = useMemo((() =>
-    !reverseResourceMap ? undefined :
-    (uri: string) => reverseResourceMap[uri]
-  ), [reverseResourceMap]);
+    (!reverseResourceMap || !getVersionedPath)
+      ? undefined
+      : (uri: string) => {
+          if (reverseResourceMap[uri] !== undefined) {
+            return getVersionedPath(`/${reverseResourceMap[uri]}`);
+          } else {
+            console.error("Failed to get path for resource", uri, reverseResourceMap);
+            throw new Error("Failed to get path for resource");
+          }
+        }
+  ), [getVersionedPath, reverseResourceMap]);
 
   const reverseResource = useMemo((() =>
-    !resourceMap ? undefined :
-    (path: string) => resourceMap[path]
-  ), [resourceMap]);
+    (!resourceMap || !getUnversionedPath)
+      ? undefined
+      : (path: string) => resourceMap[stripLeadingSlash(getUnversionedPath(path))]
+  ), [resourceMap, getUnversionedPath]);
 
   const getResourceDataPaths = useMemo(() =>
-    !getVersionedPath || !locateResource ? undefined :
-    function getResourceDataPaths(uri: string): Record<keyof ResourceData, string> {
-      const rpath = locateResource(uri);
-      if (rpath === undefined) {
-        console.error("Failed to get path for resource", uri, reverseResourceMap);
-      }
-      return Object.entries(RESOURCE_DATA_PATHS).
-        map(([propID, path]) =>
-          ({ [propID]: getVersionedPath(`${rpath !== '' ? '/' : ''}${rpath}/${path}`) })).
-        reduce((prev, curr) =>
-          ({ ...prev, ...curr }), {}
-        ) as Record<keyof ResourceData, string>;
-    },
-    [locateResource, reverseResourceMap, getVersionedPath]);
+    !locateResource
+      ? undefined
+      : function getResourceDataPaths(uri: string): Record<keyof ResourceData, string> {
+          const rpath = locateResource(uri);
+          if (rpath.includes('#')) {
+            throw new Error("Will not return data asset paths for a resource that does not have its own page");
+          }
+          return Object.entries(RESOURCE_DATA_PATHS).
+            map(([propID, path]) =>
+              ({ [propID]: `${rpath}/${path}` })).
+            reduce((prev, curr) =>
+              ({ ...prev, ...curr }), {}
+            ) as Record<keyof ResourceData, string>;
+        },
+    [locateResource, reverseResourceMap]);
 
   const fetchResourceData = useMemo(() =>
     !getResourceDataPaths ? undefined :
@@ -224,8 +276,9 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   const setLoadProgressThrottled = useThrottledCallback(setLoadProgress, 200);
 
   useEffect(() => {
+    const depURLs = SHARED_DEPS.map(getDomainRelativePath);
     return fetchJSON<keyof SharedDeps>(
-      SHARED_DEPS,
+      depURLs,
       (done, total) => setLoadProgressThrottled({
         done,
         total,
@@ -236,15 +289,15 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
           total: 100,
         })
         setSharedDeps(Object.entries(results).
-          filter(([src]) => SHARED_DEPS.includes(src as keyof SharedDeps)).
-          map(([src, resp]) => ({ [src]: resp })).
+          filter(([src]) => depURLs.includes(src as keyof SharedDeps)).
+          map(([src, resp]) => ({ [getSiteRootRelativePath(src)]: resp })).
           reduce((prev, curr) =>
             ({ ...prev, ...curr }),
             {},
           ) as SharedDeps);
         },
     );
-  }, [fetchJSON]);
+  }, [fetchJSON, getDomainRelativePath]);
 
   useEffect(() => {
     if (!getVersionedPath || !getUnversionedPath) { return; }
@@ -528,11 +581,11 @@ export const VersionWorkspace: React.FC<{
    * obtain root-relative (including version) path to structural resource,
    * and in-page resource as a separate string.
    */
-  const expandResourcePath = useCallback(((rpath: string): [structuralResourceFullPath: string, inPageResourceHashFragment: string | null] => {
+  const expandResourcePath = useCallback(((rpath: string): [path: string, inPageResourceHashFragment: string | null] => {
     const hasFragment = rpath.indexOf('#') >= 1;
-    const expanded = expandUnversionedPath(`/${rpath}${rpath !== '' && !hasFragment ? '/' : ''}`)
+    const withTrailing = `${rpath}${rpath !== '' ? '/' : ''}`
     return [
-      expanded,
+      withTrailing,
       hasFragment ? `#${rpath.split('#')[1]!}` : null,
     ] as [string, string];
   }), [expandUnversionedPath]);
@@ -551,7 +604,7 @@ export const VersionWorkspace: React.FC<{
         path = null;
       }
       if (uri && path) {
-        const [expanded, fragment] = expandResourcePath(path);
+        const [, fragment] = expandResourcePath(path);
         dispatch({ type: 'activated_resource', uri });
         if (fragment) {
           window.location.hash = fragment;
@@ -598,8 +651,7 @@ export const VersionWorkspace: React.FC<{
       }
       const url = new URL(href, document.baseURI);
       const absoluteHref = url.pathname;
-      const resourceURI = reverseResource(
-        stripLeadingSlash(getVersionLocalPath(stripTrailingSlash(absoluteHref))));
+      const resourceURI = reverseResource(absoluteHref);
       console.debug("Intercepted", resourceURI);
       if (resourceURI) {
         dispatch({ type: 'activated_resource', uri: resourceURI });
@@ -618,7 +670,7 @@ export const VersionWorkspace: React.FC<{
   }, [reverseResource, getVersionLocalPath]);
 
   const navigate = useCallback(function navigate(path: string) {
-    const resourceURI = reverseResource(stripLeadingSlash(stripTrailingSlash(path)));
+    const resourceURI = reverseResource(path);
     dispatch({ type: 'activated_resource', uri: resourceURI });
   }, [reverseResource]);
 
@@ -669,8 +721,8 @@ export const VersionWorkspace: React.FC<{
       try {
         const lastResourcePath = locateResource(lastResource);
         const nextResourcePath = await getAdjacentResource(
-          `/${lastResourcePath}`,
-          stripLeadingSlash(lastResourceParentPath),
+          lastResourcePath,
+          lastResourceParentPath,
           'after',
           abortController.signal,
         );
@@ -883,11 +935,12 @@ async function getAdjacentResource(
   order: 'after',
   signal: AbortSignal,
 ): Promise<string> {
-  const parentNavPath = parentPath
-    ? [parentPath, 'resource-nav.json'].join('/')
-    : 'resource-nav.json';
+  if (!parentPath) {
+    throw new Error("getAdjacentResource: missing parentPath");
+  }
+  const parentNavPath = [parentPath, 'resource-nav.json'].join('/');
   const parentNav = S.decodeUnknownSync(ResourceNavSchema)
-    (await (await fetch(`/${parentNavPath}`, { signal })).json());
+    (await (await fetch(parentNavPath, { signal })).json());
   const currentPathTail = currentPath.slice(currentPath.lastIndexOf('/') + 1);
   const children = parentNav.children.map(
     ({ path }) => path.slice(path.lastIndexOf('/') + 1));
@@ -897,7 +950,7 @@ async function getAdjacentResource(
     const nextChildIndex = childIndex + 1;
     const nextChild = parentNav.children[nextChildIndex]
     if (nextChild) {
-      return stripLeadingSlash(nextChild.path);
+      return nextChild.path;
     } else {
       throw new Error("Unable to get adjacent resource: no next child");
     }
