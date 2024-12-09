@@ -1,6 +1,8 @@
 Firelight renderer for Metanorma
 ================================
 
+.. note:: Currently used rewrite is in the ``next`` branch, about to be merged shortly.
+
 Firelight renders Metanorma XML
 (usually produced from Metanorma-flavoured AsciiDoc)
 in a way that is readable and easy to navigate by default
