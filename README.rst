@@ -9,12 +9,12 @@ Usage
 This does not yet work—please stand by while we publish packages
 and provide a better out of the box development experience::
 
-    npx --node-options='--experimental-vm-modules' anafero \
+    npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli \
       --target-dir <path/to/target/dir> \
       --current-rev <main-revision> \
+      [--path-prefix </slash-prepended-path-prefix>]
       [--rev <other-revision-or-spec>]
       [--debug]
-      [develop --package </path/to/anafero-cli>]
 
 Each version should have an ``anafero-config.json``,
 which points to the entry point within versioned repository tree,
