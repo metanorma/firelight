@@ -67,6 +67,16 @@ Example specifying ``metanorma/firelight`` Github repo at hash ``12345``
 and layout under a subdirectory:
 ``git+https://github.com/metanorma/firelight#12345/packages/plateau-layout``.
 
+During local development, it is possible to specify ``file:`` URLs instead::
+
+    file:/path/to/store-adapter-directory
+
+Module specification
+~~~~~~~~~~~~~~~~~~~~
+
+TBD. Feel free to reference ``metanorma-xml-store`` for store adapter,
+``metanorma-site-content`` for content adapter, but API may change shortly.
+
 Architecture
 ------------
 
