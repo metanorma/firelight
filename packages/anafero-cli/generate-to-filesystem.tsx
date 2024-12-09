@@ -112,6 +112,7 @@ const build = Command.
                   currentRevision: unpackOption(currentRevision)!,
                 }, (task, progress) => onProgress(`build site|${task}`, progress), {
                   pathPrefix: prefix,
+                  dumpCache: debug,
                 });
                 const [writeProgress, writingSubtask] = onProgress('build site|write files');
                 for await (const blobchunk of generator) {
@@ -343,7 +344,7 @@ async function getRefsToBuild(revisionsToBuild: VersionBuildConfig) {
 async function * generateSite(
   revisionsToBuild: VersionBuildConfig | undefined,
   onProgress: TaskProgressCallback,
-  opts?: { pathPrefix?: string | undefined },
+  opts?: { pathPrefix?: string | undefined, dumpCache?: boolean },
 ) {
   if (revisionsToBuild !== undefined) {
 
@@ -420,12 +421,18 @@ async function * generateSite(
         },
       );
     } finally {
-      console.info("cacheDump.json was written for content reader work inspection");
-      fs.writeFileSync(
-        'cacheDump.json',
-        JSON.stringify(cache.dump(), null, 2),
-        { encoding: 'utf-8' },
-      );
+      if (opts?.dumpCache) {
+        try {
+          fs.writeFileSync(
+            'cacheDump.json',
+            JSON.stringify(cache.dump(), null, 2),
+            { encoding: 'utf-8' },
+          );
+          console.info("cacheDump.json was written for content reader work inspection");
+        } catch (e) {
+          console.warn("cacheDump.json could not be written");
+        }
+      }
     }
   } else {
     throw new Error("Unversioned build is not supported yet");
