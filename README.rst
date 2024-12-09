@@ -78,7 +78,8 @@ Module specification
 ~~~~~~~~~~~~~~~~~~~~
 
 TBD. Feel free to reference ``metanorma-xml-store`` for store adapter,
-``metanorma-site-content`` for content adapter, but API may change shortly.
+``metanorma-site-content`` for content adapter, but API may change shortly
+(particularly for content adapters).
 
 Architecture
 ------------
