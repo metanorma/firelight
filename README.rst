@@ -65,7 +65,7 @@ Module identifier shape
 
 Example specifying ``metanorma/firelight`` Github repo at hash ``12345``
 and layout under a subdirectory:
-``git://github.com/metanorma/firelight#12345/packages/plateau-layout``.
+``git+https://github.com/metanorma/firelight#12345/packages/plateau-layout``.
 
 Architecture
 ------------
