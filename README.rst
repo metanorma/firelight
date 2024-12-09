@@ -93,4 +93,5 @@ Architecture
 Known issues
 ------------
 
-Very slow.
+- Language support is limited, for now just Japanese, English
+  and possibly French work.
