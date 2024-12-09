@@ -20,8 +20,11 @@ Each version should have an ``anafero-config.json``,
 which points to the entry point within versioned repository tree,
 as well as store/content adapter and layout.
 
-Anafero config spec
--------------------
+Anafero config
+--------------
+
+This file, named ``anafero-config.json``, must reside in the root
+of the repository with the data being built.
 
 Example::
 
