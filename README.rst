@@ -23,14 +23,32 @@ as well as store/content adapter and layout.
 Anafero config spec
 -------------------
 
-TBD.
+Example::
+
+    {
+      "version": "0.1",
+      "entryPoint": "file:documents/001-v4/document.presentation.xml",
+      "storeAdapters": [
+        "git+https://github.com/metanorma/firelight#next/packages/metanorma-xml-store"
+      ],
+      "contentAdapters": [
+        "git+https://github.com/metanorma/firelight#next/packages/metanorma-site-content"
+      ],
+      "resourceLayouts": [
+        "git+https://github.com/metanorma/firelight#next/packages/plateau-layout"
+      ]
+    }
+
+For extension module reference format (adapters & layouts)
+see module identifier shape below.
+
 
 Module identifier shape
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
-    git://example.com/path/to/repo#<OID>[/subdirectory/within/repo]
+    git+https://example.com/path/to/repo#<OID>[/subdirectory/within/repo]
 
 .. important:: It is required to specify OID (Git commit hash, tag, or branch).
                HEAD can be provided, but that is not recommended.
