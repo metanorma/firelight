@@ -9,6 +9,11 @@ Requires Node 22.
 
 Currently it only supports Firelight GUI.
 
+Development
+-----------
+
+To clean & build the package, run ``yarn cbp``.
+
 Notes on dependencies
 ---------------------
 
