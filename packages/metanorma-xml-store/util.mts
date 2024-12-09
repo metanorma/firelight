@@ -211,6 +211,7 @@ export function processResources(
           p,
           o,
         ]);
+        // FIXME: Make sure a triple does not appear twice
         graph.map(rel => chunk.set(rel, true));
         processed.add(current);
       }
