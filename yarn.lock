@@ -3990,6 +3990,52 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@riboseinc/anafero-cli@workspace:packages/anafero-cli":
+  version: 0.0.0-use.local
+  resolution: "@riboseinc/anafero-cli@workspace:packages/anafero-cli"
+  dependencies:
+    "@aws-crypto/sha256-universal": "npm:^2.0.0"
+    "@effect/cli": "npm:^0.44.4"
+    "@effect/platform": "npm:^0.65.4"
+    "@effect/platform-node": "npm:^0.60.4"
+    "@effect/printer": "npm:^0.36.2"
+    "@effect/printer-ansi": "npm:^0.36.2"
+    "@effect/schema": "npm:^0.74.0"
+    "@effect/typeclass": "npm:^0.27.2"
+    "@hyrious/esbuild-plugin-commonjs": "npm:^0.2.4"
+    "@inkjs/ui": "npm:2.0.0"
+    "@riboseinc/isogit-lfs": "npm:0.2.0"
+    "@types/jsdom": "npm:^20.0.0"
+    "@types/node": "npm:^20.0.0"
+    "@types/react": "npm:^18"
+    "@types/react-dom": "npm:^18"
+    "@types/react-helmet": "npm:^6"
+    "@xmldom/xmldom": "npm:^0.9.3"
+    anafero: "workspace:~"
+    effect: "npm:^3.10.15"
+    esbuild: "npm:^0.24.0"
+    esbuild-wasm: "npm:^0.24.0"
+    immer: "npm:^10.1.1"
+    import-mapper: "npm:0.0.4"
+    ink: "npm:5.0.1"
+    isomorphic-git: "npm:^1.27.1"
+    jsdom: "npm:^20.0.0"
+    linkedom: "npm:^0.18.5"
+    node-fetch: "npm:^3.3.2"
+    prosemirror-model: "npm:^1.22.3"
+    prosemirror-schema-list: "npm:^1.4.1"
+    prosemirror-tables: "npm:^1.5.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    react-helmet: "npm:^6.1.0"
+    typescript: "npm:^5.6.2"
+    xpath: "npm:^0.0.34"
+    yoga-wasm-web: "npm:0.3.3"
+  bin:
+    build-site: build-site.mjs
+  languageName: unknown
+  linkType: soft
+
 "@riboseinc/isogit-lfs@npm:0.2.0":
   version: 0.2.0
   resolution: "@riboseinc/isogit-lfs@npm:0.2.0"
@@ -4244,52 +4290,6 @@ __metadata:
   checksum: 10c0/a42f67faa79e3e6687a4923050e7c9807db3848a037076f791d10e092677d65c1d2d863b7848560699f40fc0502c19f40963fb1cd1fb3d338a7423df8e45e039
   languageName: node
   linkType: hard
-
-"anafero-cli@workspace:packages/anafero-cli":
-  version: 0.0.0-use.local
-  resolution: "anafero-cli@workspace:packages/anafero-cli"
-  dependencies:
-    "@aws-crypto/sha256-universal": "npm:^2.0.0"
-    "@effect/cli": "npm:^0.44.4"
-    "@effect/platform": "npm:^0.65.4"
-    "@effect/platform-node": "npm:^0.60.4"
-    "@effect/printer": "npm:^0.36.2"
-    "@effect/printer-ansi": "npm:^0.36.2"
-    "@effect/schema": "npm:^0.74.0"
-    "@effect/typeclass": "npm:^0.27.2"
-    "@hyrious/esbuild-plugin-commonjs": "npm:^0.2.4"
-    "@inkjs/ui": "npm:2.0.0"
-    "@riboseinc/isogit-lfs": "npm:0.2.0"
-    "@types/jsdom": "npm:^20.0.0"
-    "@types/node": "npm:^20.0.0"
-    "@types/react": "npm:^18"
-    "@types/react-dom": "npm:^18"
-    "@types/react-helmet": "npm:^6"
-    "@xmldom/xmldom": "npm:^0.9.3"
-    anafero: "workspace:~"
-    effect: "npm:^3.10.15"
-    esbuild: "npm:^0.24.0"
-    esbuild-wasm: "npm:^0.24.0"
-    immer: "npm:^10.1.1"
-    import-mapper: "npm:0.0.4"
-    ink: "npm:5.0.1"
-    isomorphic-git: "npm:^1.27.1"
-    jsdom: "npm:^20.0.0"
-    linkedom: "npm:^0.18.5"
-    node-fetch: "npm:^3.3.2"
-    prosemirror-model: "npm:^1.22.3"
-    prosemirror-schema-list: "npm:^1.4.1"
-    prosemirror-tables: "npm:^1.5.0"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    react-helmet: "npm:^6.1.0"
-    typescript: "npm:^5.6.2"
-    xpath: "npm:^0.0.34"
-    yoga-wasm-web: "npm:0.3.3"
-  bin:
-    build-site: build-site.mjs
-  languageName: unknown
-  linkType: soft
 
 "anafero@workspace:packages/anafero, anafero@workspace:~":
   version: 0.0.0-use.local
@@ -5175,7 +5175,7 @@ __metadata:
     typescript-language-server: "npm:~3.3.2"
     yaml: "npm:^2.5.1"
   bin:
-    build-site: ./site-builder.mjs
+    build-site: ./packages/anafero-cli/build-site.mjs
   languageName: unknown
   linkType: soft
 
