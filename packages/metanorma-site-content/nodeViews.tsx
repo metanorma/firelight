@@ -34,7 +34,7 @@ const ResourceLinkView: NodeViews[string] = React.forwardRef(function ResourceLi
     resolvedHref = null;
   } else {
     try {
-      resolvedHref = `/${navCtx.locateResource(href)}`;
+      resolvedHref = navCtx.locateResource(href);
     } catch (e) {
       console.warn("ResourceLinkView failed to locate resource", href);
       resolvedHref = null;

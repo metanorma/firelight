@@ -79,6 +79,16 @@ interface GeneratorHelpers {
   reportProgress: TaskProgressCallback;
 }
 
+/** Arbitrary stuff to inject in HTML. */
+interface StringsToInjectIntoHTML {
+  /** To be included within <html> tag. */
+  htmlAttrs?: string | undefined;
+  /** To be included in the head, e.g. CSS. */
+  head?: string | undefined;
+  /** To be included at the end, e.g. optional JS. */
+  tail?: string | undefined;
+}
+
 /**
  * Since we currently generate content on two occasions—
  * when generating resource’s page itself, and when generating
@@ -95,8 +105,18 @@ export function * generateResourceAssets(
   /** Graphs for descendants (probably in order). */
   directDescendants: [path: string, uri: string, graph: RelationGraphAsList][],
   resourceProps: Omit<ResourceProps, 'nav' | 'graph' | 'content' | 'document'>,
+
+  /**
+   * Used to expand a version-relative path to an absolute domain-relative
+   * (includnig site root prefix, if any).
+   */
+  expandVersionedPath: (versionRelativePath: string) => string,
+
   getDOMStub: GeneratorHelpers['getDOMStub'],
-  extraCSS: string,
+
+  // TODO: Refactor HTML generation
+  inject: StringsToInjectIntoHTML,
+
   workspaceTitle: string,
   primaryLanguageID: string,
 
@@ -129,7 +149,7 @@ export function * generateResourceAssets(
     graph: RelationGraphAsList,
   ): NavLink {
     return {
-      path,
+      path: expandVersionedPath(path),
       plainTitle: (describe(graph, uri))?.labelInPlainText ?? uri,
     };
   };
@@ -167,6 +187,7 @@ export function * generateResourceAssets(
   const htmlPage = `
     <!doctype html>
     <html ${helmet.htmlAttributes.toString()}
+        ${inject.htmlAttrs}
         data-initial-resource-id="${resourceURI}"
         data-workspace-title="${workspaceTitle}">
       <head>
@@ -176,12 +197,11 @@ export function * generateResourceAssets(
         ${helmet.title.toString()}
         ${helmet.meta.toString()}
         ${helmet.link.toString()}
-        ${extraCSS}
-        <link rel="stylesheet" href="/bootstrap.css" />
+        ${inject.head}
       </head>
       <body ${helmet.bodyAttributes.toString()}>
         <div id="app">${browseBarHTML}<main id="resources">${resourceHTML}</main></div>
-        <script src="/bootstrap.js"></script>
+        ${inject.tail}
       </body>
     </html>
   `;
@@ -198,7 +218,7 @@ export async function * generateVersion(
   fetchBlobAtThisVersion: (objectPath: string) => Promise<Uint8Array>,
   { getDOMStub, fetchDependency, getDependencyCSS, getDependencySource, decodeXML, reportProgress }:
     Pick<GeneratorHelpers, 'getDOMStub' | 'fetchDependency' | 'getDependencySource' | 'getDependencyCSS' | 'decodeXML' | 'reportProgress'>,
-  expandPath: (versionRelativePath: string) => string,
+  expandVersionedPath: (versionRelativePath: string) => string,
 ): AsyncGenerator<Record<string, Uint8Array>> {
 
   const [dependencyProgress, ] = reportProgress('loading extensions');
@@ -263,17 +283,19 @@ export async function * generateVersion(
   for (const modID of [...cfg.resourceLayouts, ...cfg.contentAdapters]) {
     const supportingCSS = getDependencyCSS(modID);
     if (supportingCSS) {
-      const cssURLWithLeadingSlash = `${modID.slice(modID.lastIndexOf('/'))}.css`;
+      const cssURLWithLeadingSlash = `${modID.slice(modID.lastIndexOf('/') + 1)}.css`;
       supportingCSSLinks.push(cssURLWithLeadingSlash);
       yield { [cssURLWithLeadingSlash]: supportingCSS };
     }
   }
 
   dependencyProgress(null);
+  // Stuff to inject in HTML
+  const dependencyCSS = supportingCSSLinks.map(url =>
+    `<link rel="stylesheet" href="${expandVersionedPath(url)}" />`
+  ).join('\n');
 
-  const dependencyHTMLHead = supportingCSSLinks.map(link =>
-    `<link rel="stylesheet" href="${expandPath(link)}" />`
-  ).join('\n')
+  const extraHead = `${dependencyCSS}\n${inject.head ?? ''}`;
 
   /** The first content adapter specified. */
   const contentAdapter = contentAdapters[cfg.contentAdapters[0]]!;
@@ -436,10 +458,14 @@ export async function * generateVersion(
         onIntegrityViolation: console.warn,
         reverseResource: (path) => getReverseResourceMap()[path]!,
         uri: resourceURI,
-        locateResource: (uri) => expandPath(reader.findURL(uri)),
+
+        // TODO: Consider slash-prepending the outcome of findURL,
+        // if it’s reliably not slash-prepended
+        locateResource: (uri) => expandVersionedPath(reader.findURL(uri)),
       },
+      expandVersionedPath,
       getDOMStub,
-      dependencyHTMLHead,
+      { head: extraHead, tail: inject.tail, htmlAttrs: inject.htmlAttrs },
       maybeMainTitle ?? 'Workspace',
       resourceMeta.primaryLanguageID ?? maybePrimaryLanguageID ?? 'en',
       function describe(relations) {
@@ -595,6 +621,7 @@ export async function * generateStaticSiteAssets(
   currentVersionID: string,
   opts: GeneratorHelpers & {
     getConfigOverride: (forVersionID?: string) => Promise<BuildConfig | null>;
+    pathPrefix?: string | undefined;
     //resolveConfig: (cfg: BuildConfig) => ResolvedBuildConfig;
   },
 ): AsyncGenerator<Record<string, Uint8Array>> {
@@ -644,6 +671,34 @@ export async function * generateStaticSiteAssets(
     '/versions.json': encoder.encode(JSON.stringify(baseVersioning, null, 4)),
   };
 
+  const prefixWithTrailing = opts.pathPrefix
+    ? `${opts.pathPrefix}/`
+    : '/';
+  function expandGlobalPath(
+    /** Path without leading slash. */
+    path: string,
+  ): string {
+    if (!opts.pathPrefix) {
+      return path;
+    }
+    const expanded = path.startsWith('/')
+      ? `${opts.pathPrefix}${path}`
+      : `${prefixWithTrailing}${path}` ;
+    //console.debug("Expanding path", path, expanded);
+    return expanded;
+  }
+
+  const htmlAttrs = opts.pathPrefix ? `
+    data-path-prefix="${opts.pathPrefix}"
+  ` : undefined;
+  const globalCSS = ['bootstrap.css'].map(url =>
+    `<link rel="stylesheet" href="${expandGlobalPath(url)}" />`
+  ).join('\n');
+  const globalJS = ['bootstrap.js'].map(url =>
+    `<script src="${expandGlobalPath(url)}"></script>`
+  ).join('\n');
+
+
   for (const versionID of versionIDsSorted) {
     const [versionProgress, versionSubtask] =
       opts.reportProgress(`building version ${versionID}`);
@@ -684,10 +739,22 @@ export async function * generateStaticSiteAssets(
         getDependencySource,
         reportProgress: versionSubtask,
       },
-      function expandPath(versionRelativePath) {
-        return versionID === currentVersionID
-          ? versionRelativePath
-          : `/${versionID}${versionRelativePath}`;
+      { htmlAttrs, head: globalCSS, tail: globalJS },
+      function expandVersionedPath(versionRelativePath) {
+        const isNonSlashPrepended = !versionRelativePath.startsWith('/');
+        // TODO: Make callers specify paths consistently slash-prepended?
+        if (isNonSlashPrepended) {
+          console.warn("expandVersionedPath: got non-slash-prepended path");
+        }
+        const path = isNonSlashPrepended
+          ? `/${versionRelativePath}`
+          : versionRelativePath;
+        const withVersion = versionID === currentVersionID
+          ? path
+          : `/${versionID}${path}`;
+        const expanded = expandGlobalPath(withVersion);
+        console.debug("Expanding version-relative path", versionRelativePath, expanded);
+        return expanded;
       },
     );
 

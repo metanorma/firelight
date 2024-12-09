@@ -27,7 +27,7 @@ export const Bookmarks: React.FC<{
       <Item
           key={res.id}
           textValue="A bookmarked resource"
-          href={`/${locateResource(res.id)}`}>
+          href={locateResource(res.id)}>
         <Text>{getPlainTitle(res.id)}</Text>
         {onRemoveBookmark
           ? <ActionGroup onAction={() => onRemoveBookmark?.(res.id)}>
@@ -89,7 +89,7 @@ export const Search: React.FC<{
         isQuiet
         renderEmptyState={() => <>There is nothing to show.</>}>
       {({ ref }) =>
-        <Item href={`/${locateResource(ref)}`} key={ref}>
+        <Item href={locateResource(ref)} key={ref}>
           <Text>{getPlainTitle(ref)}</Text>
         </Item>}
     </ListView>
