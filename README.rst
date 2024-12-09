@@ -12,8 +12,7 @@ of Firelight’s MN XML parsing & site content rendering extensions.
 Usage
 -----
 
-This does not yet work—please stand by while we publish packages
-and provide a better out of the box development experience::
+::
 
     npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli \
       --target-dir <path/to/target/dir> \
@@ -22,14 +21,13 @@ and provide a better out of the box development experience::
       [--rev <other-revision-or-spec>]
       [--debug]
 
-Each version should have an ``anafero-config.json``,
-which points to the entry point within versioned repository tree,
-as well as store/content adapter and layout.
+The command must be run from the root of the repository that has
+Anafero config file in the root.
 
 Anafero config
 --------------
 
-This file, named ``anafero-config.json``, must reside in the root
+A file named ``anafero-config.json`` must reside in the root
 of the repository with the data being built.
 
 Example::
@@ -47,6 +45,11 @@ Example::
         "git+https://github.com/metanorma/firelight#next/packages/plateau-layout"
       ]
     }
+
+Each version being built (e.g., different commits or tags)
+can have a different configuration. If a specified version does not have the config,
+the config will be sourced from the nearest more recent version that has it,
+or via config override if provided.
 
 For extension module reference format (adapters & layouts)
 see module identifier shape below.
