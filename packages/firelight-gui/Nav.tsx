@@ -56,7 +56,7 @@ export const Search: React.FC<{
       try {
         return [
           index?.
-            search(queryTokenized.map(t => `+${t}`).join(' '))?.
+            search(queryTokenized.map(t => `${t}`).join(' '))?.
             map(res => ({ ...res, id: res.ref, name: res.ref })),
           null,
         ];
