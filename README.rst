@@ -19,14 +19,14 @@ Usage
 ::
 
     npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli \
-      --target-dir <path/to/target/dir> \
+      --target-dir <path/to/site/output/dir> \
       --current-rev <main-revision> \
       [--path-prefix </slash-prepended-path-prefix>]
       [--rev <other-revision-or-spec>]
       [--debug]
 
 The command must be run from the root of a repository that has
-Anafero config file in the root.
+Anafero config file versioned in the root.
 
 Anafero config
 --------------
@@ -50,10 +50,11 @@ Example::
       ]
     }
 
+The file must be versioned, unless config is supplied via an override.
 Each version being built (e.g., different commits or tags)
-can have a different configuration. If a specified version does not have the config,
+can have a different configuration (if a specified version does not have the config,
 the config will be sourced from the nearest more recent version that has it,
-or via config override if provided.
+or via config override if provided).
 
 For extension module reference format (adapters & layouts)
 see module identifier shape below.
@@ -73,10 +74,6 @@ Module identifier shape
 Example specifying ``metanorma/firelight`` Github repo at hash ``12345``
 and layout under a subdirectory:
 ``git+https://github.com/metanorma/firelight#12345/packages/plateau-layout``.
-
-During local development, it is possible to specify ``file:`` URLs instead::
-
-    file:/path/to/store-adapter-directory
 
 Module specification
 ~~~~~~~~~~~~~~~~~~~~
@@ -126,3 +123,39 @@ Known issues
   broken results if any objects are stored with LFS.
 
   So far this was not reproduced in build environments other than GHA.
+
+Development
+-----------
+
+.. important:: Extension modules are not being cleaned up after build as of now.
+               This is fine in cloud environments that can do the clean up,
+               but locally they may accumulate.
+               On macOS, you may likely find temporary build directories
+               under ``/var/folders/ln/<long string>/<short string>/anafero-*``.
+               They can be safely deleted.
+
+Local modules
+~~~~~~~~~~~~~
+
+During local development, instead of specifying ``git+https`` URLs
+it is possible to specify ``file:`` URLs
+in ``anafero-config.json``::
+
+    file:/path/to/store-adapter-directory
+
+This is helpful when working on modules, of course, but also
+when working on something else to save the time fetching module data.
+
+Local Anafero
+~~~~~~~~~~~~~
+
+After building ``anafero-cli`` with ``yarn cbp``, to test the changes
+before making a release invoke the CLI via NPX on your machine
+as follows (where tgz is the artifact within ``anafero-cli`` package)::
+
+    npx --node-options='--experimental-vm-modules' -y file:/path/to/anafero.tgz \
+      --target-dir <path/to/site/output/dir> \
+      --current-rev <main-revision> \
+      [--path-prefix </slash-prepended-path-prefix>]
+      [--rev <other-revision-or-spec>]
+      [--debug]
