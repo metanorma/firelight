@@ -53,6 +53,7 @@ import {
 
 
 const PACKAGE_ROOT = resolve(join(import.meta.url.split('file://')[1]!, '..'));
+console.debug("Package root", PACKAGE_ROOT);
 
 const decoder = new TextDecoder();
 
