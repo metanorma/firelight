@@ -134,8 +134,60 @@ Development
                under ``/var/folders/ln/<long string>/<short string>/anafero-*``.
                They can be safely deleted.
 
+Conventions
+~~~~~~~~~~~
+
+Types & schema
+^^^^^^^^^^^^^^
+
+- We try to make the most out of TypeScript while staying pragmatic
+  and not going overboard type wrangling.
+
+- Using `any` or `unknown` is almost never acceptable.
+  For data constructed by the code directly at runtime, we make sure
+  the interface or type is clearly defined somewhere.
+
+- For data that can arrive from an external source
+  (including storage, such as JSON configuration, LocalStorage, IndexedDB),
+  do not define or annotate types by hand.
+
+  - Instead of defining types by hand, declare
+    an `Effect schema <https://effect.website/docs/guides/schema/basic-usage>`_
+    and derive the typings from that.
+
+    - For consistently, the schema for a type ``Something`` must be called
+      ``SomethingSchema``, and the following pattern is OK::
+
+          import * as S from 'effect/Schema';
+
+          export const SomethingSchema = S.Something({...});
+
+          // If type needs to be manually annotated somewhere,
+          // this can be defined:
+          export type Something = S.Schema.Type<typeof SomethingSchema>;
+
+  - Instead of using type guards and ad-hoc checking, or annotating types without
+    actual validation, decode incoming structure with the schema
+    (even with simple ``S.decodeUnkownSync()``) and handle parsing errors.
+
+- If the type in question was defined and can be inferred by TSC
+  *and* by a human without explicit annotation, manual annotation can/should be omitted.
+
+Other conventions
+^^^^^^^^^^^^^^^^^
+
+- Do not export something that does not need exporting.
+- Use ``@ts-expect-error``, if necessary, but not the ignore directive.
+
+
+Environment setup
+~~~~~~~~~~~~~~~~~
+
+Node 22. Run `corepack enable` to ensure it can load correct Yarn
+for the package.
+
 Local modules
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^
 
 During local development, instead of specifying ``git+https`` URLs
 it is possible to specify ``file:`` URLs
@@ -147,7 +199,7 @@ This is helpful when working on modules, of course, but also
 when working on something else to save the time fetching module data.
 
 Local Anafero
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^
 
 After building ``anafero-cli`` with ``yarn cbp``, to test the changes
 before making a release invoke the CLI via NPX on your machine
@@ -159,3 +211,17 @@ as follows (where tgz is the artifact within ``anafero-cli`` package)::
       [--path-prefix </slash-prepended-path-prefix>]
       [--rev <other-revision-or-spec>]
       [--debug]
+
+Known issues
+~~~~~~~~~~~~
+
+- There are typing errors when compiling. While they don’t stop ``yarn cbp``
+  from otherwise completing, we aim to get rid of them when possible.
+
+- The API for content & store adapters, and layouts as well, is being changed.
+
+- App shell (Firelight) may be made pluggable, to facilitate sites that look & feel
+  differently enough from a document.
+
+- Some of the CSS that currently is implemented in Firelight GUI
+  possibly belongs to Plateau layout adapter instead.
