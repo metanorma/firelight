@@ -687,12 +687,8 @@ export async function * generateStaticSiteAssets(
     ? `${opts.pathPrefix}/`
     : '/';
   function expandGlobalPath(
-    /** Path without leading slash. */
     path: string,
   ): string {
-    if (!opts.pathPrefix) {
-      return path;
-    }
     const expanded = path.startsWith('/')
       ? `${opts.pathPrefix}${path}`
       : `${prefixWithTrailing}${path}` ;
