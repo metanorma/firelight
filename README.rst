@@ -127,12 +127,45 @@ Known issues
 Development
 -----------
 
+Environment setup
+~~~~~~~~~~~~~~~~~
+
+Use Node 22.
+Run `corepack enable` to ensure it can load correct Yarn
+for the package.
+
 .. important:: Extension modules are not being cleaned up after build as of now.
                This is fine in cloud environments that can do the clean up,
                but locally they may accumulate.
                On macOS, you may likely find temporary build directories
                under ``/var/folders/ln/<long string>/<short string>/anafero-*``.
                They can be safely deleted.
+
+Local modules
+^^^^^^^^^^^^^
+
+During local development, instead of specifying ``git+https`` URLs
+it is possible to specify ``file:`` URLs
+in ``anafero-config.json``::
+
+    file:/path/to/store-adapter-directory
+
+This is helpful when working on modules, of course, but also
+when working on something else to save the time fetching module data.
+
+Local Anafero
+^^^^^^^^^^^^^
+
+After building ``anafero-cli`` with ``yarn cbp``, to test the changes
+before making a release invoke the CLI via NPX on your machine
+as follows (where tgz is the artifact within ``anafero-cli`` package)::
+
+    npx --node-options='--experimental-vm-modules' -y file:/path/to/anafero.tgz \
+      --target-dir <path/to/site/output/dir> \
+      --current-rev <main-revision> \
+      [--path-prefix </slash-prepended-path-prefix>]
+      [--rev <other-revision-or-spec>]
+      [--debug]
 
 Conventions
 ~~~~~~~~~~~
@@ -178,39 +211,6 @@ Other conventions
 
 - Do not export something that does not need exporting.
 - Use ``@ts-expect-error``, if necessary, but not the ignore directive.
-
-
-Environment setup
-~~~~~~~~~~~~~~~~~
-
-Node 22. Run `corepack enable` to ensure it can load correct Yarn
-for the package.
-
-Local modules
-^^^^^^^^^^^^^
-
-During local development, instead of specifying ``git+https`` URLs
-it is possible to specify ``file:`` URLs
-in ``anafero-config.json``::
-
-    file:/path/to/store-adapter-directory
-
-This is helpful when working on modules, of course, but also
-when working on something else to save the time fetching module data.
-
-Local Anafero
-^^^^^^^^^^^^^
-
-After building ``anafero-cli`` with ``yarn cbp``, to test the changes
-before making a release invoke the CLI via NPX on your machine
-as follows (where tgz is the artifact within ``anafero-cli`` package)::
-
-    npx --node-options='--experimental-vm-modules' -y file:/path/to/anafero.tgz \
-      --target-dir <path/to/site/output/dir> \
-      --current-rev <main-revision> \
-      [--path-prefix </slash-prepended-path-prefix>]
-      [--rev <other-revision-or-spec>]
-      [--debug]
 
 Known issues
 ~~~~~~~~~~~~
