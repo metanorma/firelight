@@ -151,7 +151,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   // TODO: Rename to getAbsolutePath or split into two functions
   /** Returns versioned & prefixed path. */
   const getVersionedPath = useMemo(() => (
-    versionPrefix !== undefined
+    versionPrefix !== undefined || pathPrefix !== ''
       ? function (slashPrependedPath: string): string {
           const versioned = `${pathPrefix}${versionPrefix}${slashPrependedPath}`;
           //console.debug("getVersionedPath", slashPrependedPath, versioned);
