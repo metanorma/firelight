@@ -780,11 +780,11 @@ export async function * generateStaticSiteAssets(
     };
 
     for await (const blobChunk of versionAssetGenerator) {
-      for (const [subpath, blob] of Object.entries(blobChunk)) {
+      yield Object.entries(blobChunk).map(([subpath, blob]) => {
         const assetBlobPath = `${versionPathPrefix}${subpath}`;
         //console.debug("Outputting resource blob at path", path, subpath, assetBlobPath);
-        yield { [assetBlobPath]: blob };
-      }
+        return { [assetBlobPath]: blob };
+      }).reduce((prev, curr) => ({ ...prev, ...curr }), {});
     }
 
     versionProgress(null);
