@@ -241,7 +241,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
           }
           return Object.entries(RESOURCE_DATA_PATHS).
             map(([propID, path]) =>
-              ({ [propID]: `${rpath}/${path}` })).
+              ({ [propID]: [rpath === '/' ? '' : rpath, path].join('/') })).
             reduce((prev, curr) =>
               ({ ...prev, ...curr }), {}
             ) as Record<keyof ResourceData, string>;
@@ -583,7 +583,7 @@ export const VersionWorkspace: React.FC<{
    */
   const expandResourcePath = useCallback(((rpath: string): [path: string, inPageResourceHashFragment: string | null] => {
     const hasFragment = rpath.indexOf('#') >= 1;
-    const withTrailing = `${rpath}${rpath !== '' ? '/' : ''}`
+    const withTrailing = `${rpath}${(rpath !== '' && rpath !== '/') ? '/' : ''}`
     return [
       withTrailing,
       hasFragment ? `#${rpath.split('#')[1]!}` : null,
