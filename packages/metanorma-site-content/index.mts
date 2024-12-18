@@ -6,16 +6,11 @@ import {
   type RelationGraphAsList,
   type RelationTriple,
   titleSchema,
+  ROOT_SUBJECT,
 } from 'anafero/index.mjs';
 import nodeViews from './nodeViews.jsx';
 
 import * as classNames from './style.css';
-
-
-// Reference to root subject of a subgraph.
-// Because generating content/describing resource
-// must not require knowing its ID.
-const ROOT_SUBJECT = '_:root';
 
 
 const tn = tableNodes({
