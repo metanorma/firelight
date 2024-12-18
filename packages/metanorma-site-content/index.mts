@@ -31,7 +31,6 @@ const tn = tableNodes({
 });
 
 
-//tn.table.content = 'table_colgroup? table_row+';
 tn.table.attrs = {
   // Colgroup support.
   colWidths: {
@@ -206,24 +205,6 @@ const clauseSchemaBase = new Schema({
         return ['li', 0];
       },
     },
-    //table_colgroup: {
-    //  attrs: {
-    //    colWidths: {
-    //      default: [] as string[],
-    //    },
-    //  },
-    //  toDOM(node) {
-    //    const cols = (node.attrs.colWidths ?? []).map((width: string) =>
-    //      ['col', { width }]
-    //    );
-    //    //console.debug("colgroup toDOM", JSON.stringify(['colgroup', cols]));
-    //    if (cols.length > 0) {
-    //      return ['colgroup', ...cols];
-    //    } else {
-    //      return ['colgroup', {}];
-    //    }
-    //  }
-    //},
     span: {
       group: 'flow',
       content: '(text | flow)*',
