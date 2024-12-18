@@ -334,7 +334,3 @@ function repr(el: Element) {
   const maybeID = el.getAttribute('id');
   return `${el.tagName}${maybeID ? `#${maybeID}` : ''}`;
 }
-
-//function reprChain(reprs: string[]) {
-//  return reprs.join(' -> ');
-//}
