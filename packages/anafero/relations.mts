@@ -1,3 +1,5 @@
+// Anafero operates resource graphs that are expressed, like in RDF, as triples.
+
 import * as S from '@effect/schema/Schema';
 import { type ResourceRelation } from './ResourceReader.mjs';
 
