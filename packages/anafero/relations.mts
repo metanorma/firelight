@@ -2,6 +2,10 @@ import * as S from '@effect/schema/Schema';
 import { type ResourceRelation } from './ResourceReader.mjs';
 
 
+// Reference to root subject of a subgraph.
+// In case of the overall site graph that’s the top-level resource.
+// In many other cases, however, generating content/describing resource
+// does not require knowing its ID when logic operates on subgraphs.
 export const ROOT_SUBJECT = '_:root';
 
 
