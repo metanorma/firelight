@@ -3,7 +3,7 @@ import * as S from '@effect/schema/Schema';
 import { Schema as ProseMirrorDocumentSchema } from 'prosemirror-model';
 import { type NodeViewComponentProps } from '@nytimes/react-prosemirror';
 
-import { type ResourceRelation } from './ResourceReader.mjs';
+import { type ResourceRelation } from './StoreAdapter.mjs';
 import { type RelationTriple, type RelationGraphAsList } from './relations.mjs';
 
 // Old

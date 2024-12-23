@@ -20,7 +20,7 @@ import {
   type AdapterGeneratedResourceContent,
   type ContentAdapterModule,
   gatherDescribedResourcesFromJsonifiedProseMirrorNode,
-} from 'anafero/ContentGenerator.mjs';
+} from 'anafero/ContentAdapter.mjs';
 import { type Layout, type ResourceNav } from 'anafero/Layout.mjs';
 import { ResourceNavigationContext } from 'anafero/ResourceNavigationContext.mjs';
 

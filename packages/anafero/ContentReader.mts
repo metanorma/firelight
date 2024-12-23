@@ -8,11 +8,11 @@ import {
   type ResourceReader,
   type ResourceRelation,
   type StoreAdapterModule,
-} from './ResourceReader.mjs';
+} from './StoreAdapter.mjs';
 
 import {
   type ContentAdapterModule,
-} from './ContentGenerator.mjs';
+} from './ContentAdapter.mjs';
 
 import {
   type Cache,

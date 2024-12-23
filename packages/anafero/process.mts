@@ -33,7 +33,7 @@ import {
 } from './Config.mjs';
 import {
   type StoreAdapterModule,
-} from './ResourceReader.mjs';
+} from './StoreAdapter.mjs';
 import {
   type ContentAdapterModule,
   type ResourceContent,
@@ -41,7 +41,7 @@ import {
   type ResourceMetadata,
   gatherDescribedResourcesFromJsonifiedProseMirrorNode,
   fillInLocale,
-} from './ContentGenerator.mjs';
+} from './ContentAdapter.mjs';
 import {
   ROOT_SUBJECT,
   type RelationGraphAsList,

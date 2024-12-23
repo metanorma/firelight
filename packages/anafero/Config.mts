@@ -1,7 +1,7 @@
 import * as S from '@effect/schema/Schema';
 //import { Schema as ProseMirrorDocumentSchema } from 'prosemirror-model';
-import { type StoreAdapterModule } from './ResourceReader.mjs';
-import { type ContentAdapterModule } from './ContentGenerator.mjs';
+import { type StoreAdapterModule } from './StoreAdapter.mjs';
+import { type ContentAdapterModule } from './ContentAdapter.mjs';
 import { type LayoutModule } from './Layout.mjs';
 import { type Progress as TaskProgress } from './progress.mjs';
 
