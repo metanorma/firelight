@@ -215,7 +215,7 @@ const clauseSchemaBase = new Schema({
     },
     code: {
       group: 'flow',
-      content: 'text*',
+      content: '(text | flow)*',
       inline: true,
       toDOM() {
         return ['code', 0];
