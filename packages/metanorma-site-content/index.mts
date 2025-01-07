@@ -647,7 +647,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         return pm.node('figure', { resourceID: subj }, figureContents);
       },
     };
-    function makeNodeOrNot(subj: string, subjType: string, parent: string):
+    function makeNodeOrNot(subj: string, subjType: string):
     ProseMirrorNode | undefined {
       if (simpleNodes[subjType]) {
         const nodeID = simpleNodes[subjType];
