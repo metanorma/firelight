@@ -1,24 +1,32 @@
 import React from 'react';
 
 
-class ErrorBoundary extends React.Component<
-  React.PropsWithChildren<{ viewName?: string | undefined; inline?: boolean | undefined; }>,
+export class ErrorBoundary extends React.Component<
+  React.PropsWithChildren<{
+    fallback?: React.FC<ErrorBoundaryFallbackProps> | undefined;
+  }>,
   { error?: string | undefined; }
 > {
-  constructor(props: { viewName?: string | undefined; inline?: boolean | undefined }) {
+  constructor(props: {
+    fallback?: React.FC<ErrorBoundaryFallbackProps> | undefined,
+  }) {
     super(props);
     this.state = { error: undefined };
   }
   componentDidCatch(error: Error, info: any) {
-    console.error("Error rendering view", this.props.viewName, error, info);
+    console.error(
+      "Error boundary caught while rendering view",
+      error,
+      info,
+    );
     this.setState({ error: `${error.name}: ${error.message}` });
   }
   render() {
     if (this.state.error !== undefined) {
-      return <ErrorState
-        inline={this.props.inline}
-        viewName={this.props.viewName}
+      const Fallback = this.props.fallback ?? DefaultErrorBoundaryFallback;
+      return <Fallback
         technicalDetails={this.state.error}
+        technicalDetailsPlain={this.state.error}
       />;
     }
     return this.props.children;
@@ -26,49 +34,47 @@ class ErrorBoundary extends React.Component<
 }
 
 
-export default ErrorBoundary;
-
-
-
-// TODO: Give suggestions to resolve (move from dataset view)
-export interface ErrorStateProps {
-  inline?: boolean | undefined;
+export interface ErrorBoundaryFallbackProps {
+  technicalDetailsPlain: string;
   technicalDetails?: string | JSX.Element;
-  error?: string;
-  viewName?: string | undefined;
   className?: string;
 }
 
-export const ErrorState: React.FC<ErrorStateProps> = function ({
-  inline,
+export const DefaultErrorBoundaryFallback:
+React.FC<ErrorBoundaryFallbackProps> =
+function ({
+  technicalDetailsPlain,
   technicalDetails,
-  error,
-  viewName,
   className,
 }) {
-  if (inline) {
-    return <span title={error} className={className}>
-      [failed to render {viewName ?? 'view'}]
-    </span>;
-  } else {
-    return (
-      <div>
-        <div style={{ textAlign: 'left' }}>
-          <p>
-            We encountered an error in {viewName || 'a'} view.
-          </p>
-        </div>
-        {technicalDetails || error
-          ? <div style={{ textAlign: 'left', transform: 'scale(0.9)' }} title="Technical details">
-            {technicalDetails}
-            {error
-              ? <pre style={{ overflow: 'auto', paddingBottom: '1em' }}>
-                  {error || 'error information is unavailable'}
-                </pre>
-              : null}
-          </div>
-          : null}
+  return (
+    <div>
+      <div style={{ textAlign: 'left' }}>
+        <p>
+          Encountered an error in this view.
+        </p>
       </div>
-    );
-  }
+      {technicalDetails || technicalDetailsPlain
+        ? <div
+              style={{ textAlign: 'left', transform: 'scale(0.9)' }}
+              title="Technical details">
+            {technicalDetails ?? technicalDetailsPlain}
+          </div>
+        : null}
+    </div>
+  );
 };
+
+export const DefaultErrorBoundaryFallbackINline:
+React.FC<ErrorBoundaryFallbackProps> =
+function ({
+  technicalDetailsPlain,
+  className,
+}) {
+  return <span title={technicalDetailsPlain} className={className}>
+    [not available]
+  </span>;
+};
+
+
+export default ErrorBoundary;
