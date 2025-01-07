@@ -690,11 +690,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
           // Part itself is not a subject, so treat as text.
           if (partValue.trim() !== '') {
             return pm.text(partValue);
-            if (subjectNodeType.inlineContent) {
-              return pm.text(`${partValue} `);
-            } else {
-              return pm.node('paragraph', null, [pm.text(partValue)]);
-            }
+            //if (subjectNodeType.inlineContent) {
+            //  return pm.text(`${partValue} `);
+            //} else {
+            //  return pm.node('paragraph', null, [pm.text(partValue)]);
+            //}
             //if (canCreate(textNode, subjectNodeType)) {
             //  return textNode;
             //} else {
