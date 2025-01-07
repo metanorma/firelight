@@ -10,6 +10,10 @@ import {
   reactKeys,
 } from '@nytimes/react-prosemirror';
 
+import {
+  ErrorBoundary,
+  type ErrorBoundaryFallbackProps,
+} from 'anafero/index.mjs';
 import { type SyncDependencyGetter } from 'anafero/Config.mjs';
 import {
   type RelationGraphAsList,
@@ -209,22 +213,47 @@ export const Resource = React.forwardRef(function ({
     }
   }, [layoutElement, contentElement, describedResources]);
 
-  const mainView = somethingStillLoading || typeof window?.document?.createElement === 'undefined'
-    ? preRenderedHTML !== undefined
+  /**
+   * Used when generating static HTML for non-JS UAs
+   * and as a fallback for JS UAs if React error boundary caught an error
+   * while rendering resource.
+   */
+  const PreRenderedView = useCallback(((props: { className?: string | undefined, title?: string | undefined }) =>
+    preRenderedHTML !== undefined
       ? <article
           id="content"
           ref={contentRef}
+          className={props.className}
+          title={props.title}
           dangerouslySetInnerHTML={{ __html: preRenderedHTML }}
         />
-      : <>…</>
-    : <ResourceNavigationContext.Provider value={{ locateResource, resolvePlainTitle }}>
-        <ProseMirror
-            defaultState={initialState!}
-            editable={() => false}
-            nodeViews={adapter!.resourceContentProseMirrorOptions.nodeViews}>
-          <ProseMirrorDoc ref={contentRef} as={<article />} />
-        </ProseMirror>
-      </ResourceNavigationContext.Provider>;
+      : <>No content could be rendered for this resource.</>
+  ), [contentRef, preRenderedHTML]);
+
+  /**
+   * Used as fallback in case error boundary catches while loading editor.
+   * Wraps PreRenderedView.
+   */
+  const ProseMirrorErrorFallbackView: React.FC<ErrorBoundaryFallbackProps> =
+  useCallback((({ technicalDetailsPlain, className }) =>
+    <PreRenderedView
+      className={className}
+      title={`View is read-only (${technicalDetailsPlain})`}
+    />
+  ), [PreRenderedView]);
+
+  const mainView = somethingStillLoading || typeof window?.document?.createElement === 'undefined'
+    ? <PreRenderedView />
+    : <ErrorBoundary fallback={ProseMirrorErrorFallbackView}>
+        <ResourceNavigationContext.Provider value={{ locateResource, resolvePlainTitle }}>
+          <ProseMirror
+              defaultState={initialState!}
+              editable={() => false}
+              nodeViews={adapter!.resourceContentProseMirrorOptions.nodeViews}>
+            <ProseMirrorDoc ref={contentRef} as={<article />} />
+          </ProseMirror>
+        </ResourceNavigationContext.Provider>
+      </ErrorBoundary>;
 
   return (
     <div
