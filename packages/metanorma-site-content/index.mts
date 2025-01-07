@@ -153,6 +153,21 @@ const clauseSchemaBase = new Schema({
         return ['figure', attrs, 0];
       },
     },
+    example: {
+      content: 'figCaption? block*',
+      group: 'block',
+      attrs: {
+        resourceID: {
+          default: undefined,
+        },
+      },
+      toDOM(node) {
+        const attrs = node.attrs.resourceID
+          ? { about: node.attrs.resourceID }
+          : {};
+        return ['figure', attrs, 0];
+      },
+    },
     figCaption: {
       content: 'text*',
       toDOM() {
@@ -495,6 +510,32 @@ const generatorsByType: Record<string, ContentGenerator> = {
           return undefined;
         }
         return pm.node('resource_link', { href: target }, generateContent(subj, pm.nodes.resource_link!));
+      },
+      'example': (subj: string) => {
+
+        const captionID = findAll(section, subj, 'hasPart').
+        find(part => findValue(section, part, 'type') === 'name');
+
+        // Find caption parts that are plain text, don’t expect relations there for now
+        const captionParts = captionID
+          ? findAll(section, captionID, 'hasPart').filter(part => !hasSubject(section, part))
+          : null;
+
+        const contents: ProseMirrorNode[] = [];
+        for (const part of findAll(section, subj, 'hasPart')) {
+          const type = findValue(section, part, 'type');
+          if (type) {
+            const node = makeNodeOrNot(part, type);
+            if (node) {
+              contents.push(node);
+            }
+          }
+        }
+        if (captionParts) {
+          contents.splice(0, 0, pm.node('figCaption', null, captionParts.map(p => pm.text(p))));
+        }
+        // We will wrap the example in a figure.
+        return pm.node('example', { resourceID: subj }, contents);
       },
       'table': (subj: string) => {
         const name = findValue(section, subj, 'hasName');
