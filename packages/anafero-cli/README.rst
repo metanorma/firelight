@@ -14,6 +14,12 @@ Development
 
 To clean & build the package, run ``yarn cbp``.
 
+Release
+-------
+
+Increment version in package.json & NPM publish from within this directory
+(after running CBP script and extensive testing).
+
 Notes on dependencies
 ---------------------
 
