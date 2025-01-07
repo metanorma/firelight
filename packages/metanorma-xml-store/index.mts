@@ -180,7 +180,7 @@ const mod: StoreAdapterModule = {
                   }
 
                   const parts = Array.from(el.childNodes).
-                  filter(n => n.nodeType === 3).
+                  //filter(n => n.nodeType === 3). // can’t only select text nodes, titles allow complex content
                   map(n => n.textContent ?? '').
                   filter(content => content !== '' && content !== clauseNumber);
 
