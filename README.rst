@@ -32,13 +32,13 @@ Example::
       "version": "0.1",
       "entryPoint": "file:documents/001-v4/document.presentation.xml",
       "storeAdapters": [
-        "git+https://github.com/metanorma/firelight#next/packages/metanorma-xml-store"
+        "git+https://github.com/metanorma/firelight#main/packages/metanorma-xml-store"
       ],
       "contentAdapters": [
-        "git+https://github.com/metanorma/firelight#next/packages/metanorma-site-content"
+        "git+https://github.com/metanorma/firelight#main/packages/metanorma-site-content"
       ],
       "resourceLayouts": [
-        "git+https://github.com/metanorma/firelight#next/packages/plateau-layout"
+        "git+https://github.com/metanorma/firelight#main/packages/plateau-layout"
       ]
     }
 
