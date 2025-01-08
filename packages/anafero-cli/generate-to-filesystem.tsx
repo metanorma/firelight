@@ -213,6 +213,7 @@ const dev = Command.
             '.git',
           ];
 
+          // TODO: Also watch data dir?
           const watchedDirs = [pkg];
 
           yield * _(
