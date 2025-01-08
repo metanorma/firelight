@@ -67,13 +67,13 @@ Module identifier shape
 
     git+https://example.com/path/to/repo#<OID>[/subdirectory/within/repo]
 
-.. important:: It is required to specify OID (Git commit hash, tag, or branch).
+.. important:: It is required to specify a Git ref (e.g., tag or branch).
                HEAD can be provided, but that is not recommended.
-               Pinning by commit hash or tag is recommended.
+               Pinning by tag is recommended.
 
-Example specifying ``metanorma/firelight`` Github repo at hash ``12345``
+Example specifying ``metanorma/firelight`` Github repo at tag ``1.2.3``
 and layout under a subdirectory:
-``git+https://github.com/metanorma/firelight#12345/packages/plateau-layout``.
+``git+https://github.com/metanorma/firelight#1.2.3/packages/plateau-layout``.
 
 Module specification
 ~~~~~~~~~~~~~~~~~~~~
