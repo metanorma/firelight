@@ -85,7 +85,7 @@ async function fetchSourceFromGit(
       `anafero-source-${moduleRef.replace(/[^a-z0-9]/gi, '_')}-`,
     ));
 
-    onProgress({ state: `cloning to ${dir}` });
+    onProgress({ state: `cloning ${url} at ${ref} to ${dir}` });
 
     await git.clone({
       fs,
