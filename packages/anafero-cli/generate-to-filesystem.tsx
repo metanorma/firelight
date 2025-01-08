@@ -18,7 +18,7 @@ import git, { type CommitObject } from 'isomorphic-git';
 import { pointsToLFS } from '@riboseinc/isogit-lfs/util.js';
 import { readPointer, downloadBlobFromPointer } from '@riboseinc/isogit-lfs';
 
-import { pipe, Effect, Layer, Logger, Runtime, LogLevel, Option, Stream, Console } from 'effect';
+import { pipe, Effect, Logger, LogLevel, Option, Stream, Console } from 'effect';
 import { NodeContext, NodeRuntime } from '@effect/platform-node';
 import { FileSystem } from '@effect/platform';
 import { Options, Command } from '@effect/cli';
@@ -146,19 +146,20 @@ const dev = Command.
   make(
     'develop',
     {
-      pkg: Options.directory('package'),
+      pkg: Options.directory('package').
+        pipe(Options.optional),
 
       // Useful when site took a long time to generate
       // & we want to iterate on front-end
       skipBuild: Options.boolean('skip-build'),
 
-      serve: Options.boolean('serve').pipe(
-        Options.withDefault(false)),
+      // serve: Options.boolean('serve').pipe(
+      //   Options.withDefault(false)),
 
-      port: Options.integer('port').pipe(
-        Options.withDefault(8080)),
+      // port: Options.integer('port').pipe(
+      //   Options.withDefault(8080)),
     },
-    ({ pkg, skipBuild, serve, port }) =>
+    ({ pkg, skipBuild }) =>
       Effect.
         gen(function * (_) {
           const buildCfg = yield * _(build);
@@ -173,60 +174,64 @@ const dev = Command.
 
 
           // Serve
-
-          if (serve) {
-            yield * _(
-              Effect.fork(
-                Layer.launch(Layer.scopedDiscard(
-                  Effect.gen(function * (_) {
-                    //const srv = yield * _(ServerContext);
-                    const runtime = yield * _(Effect.runtime<never>());
-                    const runFork = Runtime.runFork(runtime);
-                    yield * _(
-                      Effect.acquireRelease(
-                        Effect.sync(() => simpleServe(
-                          targetDirectoryPath,
-                          port,
-                          {
-                            onDebug: (msg) => runFork(Effect.logDebug(msg)),
-                            onError: (msg) => runFork(Effect.logError(msg)),
-                          },
-                        )),
-                        (srv) => Effect.sync(() => srv.close()),
-                      ),
-                    );
-                  })
-                )),
-              ),
-              Logger.withMinimumLogLevel(LogLevel.Debug),
-            );
-          }
+          // (this is not working, possibly Effect API change)
+          // if (serve) {
+          //   console.debug("Starting serve");
+          //   yield * _(
+          //     Effect.fork(
+          //       Layer.launch(Layer.scopedDiscard(
+          //         Effect.gen(function * (_) {
+          //           //const srv = yield * _(ServerContext);
+          //           const runtime = yield * _(Effect.runtime<never>());
+          //           const runFork = Runtime.runFork(runtime);
+          //           yield * _(
+          //             Effect.acquireRelease(
+          //               Effect.sync(() => simpleServe(
+          //                 targetDirectoryPath,
+          //                 port,
+          //                 {
+          //                   onDebug: (msg) => runFork(Effect.logDebug(msg)),
+          //                   onError: (msg) => runFork(Effect.logError(msg)),
+          //                 },
+          //               )),
+          //               (srv) => Effect.sync(() => srv.close()),
+          //             ),
+          //           );
+          //         })
+          //       )),
+          //     ),
+          //     Logger.withMinimumLogLevel(LogLevel.Debug),
+          //   );
+          // }
 
 
           // Watch
 
-          const ignorePrefixes = [
-            // Spurious changes:
-            // Outdir is modified during build
-            // and reacting to it would cause infinite rebuilds:
-            resolve(targetDirectoryPath),
-            '.git',
-          ];
+          const packageDir = unpackOption(pkg);
+          if (packageDir) {
+            const ignorePrefixes = [
+              // Spurious changes:
+              // Outdir is modified during build
+              // and reacting to it would cause infinite rebuilds:
+              resolve(targetDirectoryPath),
+              '.git',
+            ];
 
-          // TODO: Also watch data dir?
-          const watchedDirs = [pkg];
+            // TODO: Also watch data dir?
+            const watchedDirs = [packageDir];
 
-          yield * _(
-            debouncedWatcher(watchedDirs, ignorePrefixes, 1000),
-            Stream.runForEach(path => Effect.gen(function * (_) {
-              yield * _(Effect.logDebug(`Path changed: ${path}`));
-              yield * _(Effect.logDebug(`Want to copy ${pkg} into ${targetDirectoryPath}`));
-              yield * _(Effect.all([
-                copyBootstrapScript(pkg, targetDirectoryPath),
-              ], { concurrency: 5 }));
-            })),
-            Logger.withMinimumLogLevel(LogLevel.Debug),
-          );
+            yield * _(
+              debouncedWatcher(watchedDirs, ignorePrefixes, 1000),
+              Stream.runForEach(path => Effect.gen(function * (_) {
+                yield * _(Effect.logDebug(`Path changed: ${path}`));
+                yield * _(Effect.logDebug(`Want to copy ${packageDir} into ${targetDirectoryPath}`));
+                yield * _(Effect.all([
+                  copyBootstrapScript(packageDir, targetDirectoryPath),
+                ], { concurrency: 5 }));
+              })),
+              Logger.withMinimumLogLevel(LogLevel.Debug),
+            );
+          }
         })
   ).
   pipe(
