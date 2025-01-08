@@ -172,7 +172,7 @@ const dev = Command.
           }
 
 
-          // Watch
+          // Serve
 
           if (serve) {
             yield * _(
