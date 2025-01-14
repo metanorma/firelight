@@ -41,6 +41,7 @@ const sectionLikeElements = [
   'references',
   'definitions',
   'terms',
+  'annex',
 ] as const;
 
 const mod: StoreAdapterModule = {
@@ -150,6 +151,7 @@ const mod: StoreAdapterModule = {
               foreword: processClauseLike,
               references: processClauseLike,
               terms: processClauseLike,
+              annex: processClauseLike,
               definitions: processClauseLike,
               xref: function processXref(el) {
                 const maybeTarget = el.getAttribute('target');
@@ -204,7 +206,6 @@ const mod: StoreAdapterModule = {
               },
               preface: 'bypass',
               sections: 'bypass',
-              annex: 'bypass',
               bibliography: 'bypass',
               metanorma: 'ignore',
               'localized-strings': 'ignore',
