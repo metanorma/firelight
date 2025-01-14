@@ -260,7 +260,7 @@ function processResource(
   // Element attributes
   graph.push(...Array.from(el.attributes).
   filter(attr => rules.processAttribute?.[attr.name] !== 'skip').
-  map(attr =>[
+  map(attr => [
     ROOT_SUBJECT,
     `has${dekebab(attr.name)}`,
     attr.value
