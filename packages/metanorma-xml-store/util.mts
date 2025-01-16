@@ -258,13 +258,15 @@ function processResource(
   ]);
 
   // Element attributes
-  graph.push(...Array.from(el.attributes).
-  filter(attr => rules.processAttribute?.[attr.name] !== 'skip').
-  map(attr => [
-    ROOT_SUBJECT,
-    `has${dekebab(attr.name)}`,
-    attr.value
-  ] as RelationTriple<any, any>));
+  graph.push(
+    ...Array.from(el.attributes).
+    filter(attr => rules.processAttribute?.[attr.name] !== 'skip').
+    map(attr => [
+      ROOT_SUBJECT,
+      `has${dekebab(attr.name)}`,
+      attr.value
+    ] as RelationTriple<any, any>)
+  );
 
   if (!rules.skipChildren?.(el)) {
     addRelationsToChildren(el, graph, getURI, rules);
