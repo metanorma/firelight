@@ -327,7 +327,13 @@ function getURIDefault(
 }
 
 
-/** CamelCase (with first letter capitalized) from possibly kebab-style */
+/**
+ * Converts a possibly kebab-style string
+ * to CamelCase (with first letter capitalized).
+ *
+ * Useful for cases like adapting dash-separated
+ * DOM attribute or element names to RDF conventions.
+ */
 export function dekebab(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).replace(/-./g, x => x[1]?.toUpperCase() ?? '');
 }
