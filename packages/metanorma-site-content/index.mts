@@ -24,7 +24,7 @@ const tn = tableNodes({
       },
       setDOMAttr(value, attrs) {
         if (value)
-          attrs.style = (attrs.style || '') + `background-color: ${value};`;
+          attrs.style = `${attrs.style || ''}; background-color: ${value};`;
       },
     },
   },
