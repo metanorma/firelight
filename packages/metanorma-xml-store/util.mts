@@ -228,7 +228,7 @@ export function processResources(
         currentChain.pop();
       }
 
-      current = 
+      current =
         current.nextElementSibling
         ?? current.parentElement
         ?? null;
