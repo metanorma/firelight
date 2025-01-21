@@ -191,6 +191,8 @@ export function processResources(
 
       if (processed.has(current)) {
         throw new Error("Encountered an already processed element");
+      } else {
+        processed.add(current);
       }
 
       if (rule !== 'ignore' && rule !== 'bypass') {
@@ -214,7 +216,6 @@ export function processResources(
         ]);
         // FIXME: Make sure a triple does not appear twice
         graph.map(rel => chunk.set(rel, true));
-        processed.add(current);
       }
 
       if (chunk.size > RETURNED_RELATION_CHUNK_SIZE) {
