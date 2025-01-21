@@ -481,6 +481,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'dd': 'dd',
       'dt': 'dt',
       'tt': 'code',
+      'semx': 'span',
       //'tableCell': 'table_cell',
     };
     const customNodes:
