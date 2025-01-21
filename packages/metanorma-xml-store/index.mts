@@ -173,15 +173,22 @@ const mod: StoreAdapterModule = {
                 if (el.parentElement
                     && sectionLikeElements.includes(el.parentElement.tagName as any)) {
                   const sectionURI = getURI(el.parentElement);
-                  const clauseNumber = el.querySelector('tab')
-                    ? el.childNodes[0]?.textContent ?? ''
+                  const id = el.getAttribute('id');
+                  if (!id) {
+                    throw new Error("Clause title seems to be missing ID");
+                  }
+                  const fmtTitleText = dom.documentElement.querySelector(`semx[element=title][source=${id}]`);
+                  const fmtTitleRoot = fmtTitleText?.closest('fmt-title');
+                  const clauseNumberEl = fmtTitleRoot?.querySelector('.fmt-caption-label');
+                  const clauseNumber = clauseNumberEl
+                    ? clauseNumberEl.textContent ?? ''
                     : '';
                   const graph: RelationGraphAsList = [];
                   if (clauseNumber.trim() !== '') {
                     graph.push([sectionURI, 'hasClauseNumber', clauseNumber]);
                   }
 
-                  const parts = Array.from(el.childNodes).
+                  const parts = Array.from(fmtTitleText?.childNodes ?? []).
                   //filter(n => n.nodeType === 3). // can’t only select text nodes, titles allow complex content
                   map(n => n.textContent ?? '').
                   filter(content => content !== '' && content !== clauseNumber);
