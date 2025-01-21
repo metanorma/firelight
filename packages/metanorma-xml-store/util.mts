@@ -234,6 +234,7 @@ export function processResources(
         ?? null;
     }
   }
+
   if (chunk.size > 0) {
     onRelationChunk(Array.from(chunk.keys()));
   }
