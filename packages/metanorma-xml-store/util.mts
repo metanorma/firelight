@@ -180,8 +180,9 @@ export function processResources(
       sinceLastReport += 1;
     }
 
+    const rule = rules.processTag?.[current.tagName];
     const firstChild: Element | null = current.firstElementChild;
-    if (firstChild && !processed.has(firstChild) && rules.processTag?.[firstChild.tagName] !== 'ignore') {
+    if (firstChild && !processed.has(firstChild) && rule !== 'ignore' && rules.processTag?.[firstChild.tagName] !== 'ignore') {
       current = firstChild;
       currentChain.push(repr(firstChild));
     } else {
@@ -191,7 +192,7 @@ export function processResources(
       if (processed.has(current)) {
         throw new Error("Encountered an already processed element");
       }
-      const rule = rules.processTag?.[current.tagName];
+
       if (rule !== 'ignore' && rule !== 'bypass') {
         const [localGraph, doDefaultProcess] = rule
           ? rule(current, getURI_)
