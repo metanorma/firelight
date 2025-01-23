@@ -169,7 +169,7 @@ const clauseSchemaBase = new Schema({
       },
     },
     figCaption: {
-      content: 'text*',
+      content: '(text | flow)*',
       toDOM() {
         return ['figcaption', { class: classNames.figCaption }, 0];
       },
@@ -540,8 +540,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
         return pm.node('example', { resourceID: subj }, contents);
       },
       'table': (subj: string) => {
-        const name = findValue(section, subj, 'hasName');
-        const caption = name ? findValue(section, name, 'hasPart') : null;
+        const caption = findValue(section, subj, 'hasFmtName');
+        //const caption = name ? findValue(section, name, 'hasPart') : null;
 
         const tbody = findValue(section, subj, 'hasTableBody');
         const thead = findValue(section, subj, 'hasTableHeader');
@@ -602,8 +602,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
           pm.node('table', colWidths ? { colWidths } : null,
             tableContents),
         ];
-        if (caption && !hasSubject(section, caption)) {
-          contents.splice(0, 0, pm.node('figCaption', null, [pm.text(caption)]));
+        if (caption) {
+          contents.splice(0, 0, pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!)));
         }
         // We will wrap the table in a figure, because PM’s default tables
         // don’t have captions or resourceID.
