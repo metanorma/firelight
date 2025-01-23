@@ -139,7 +139,12 @@ const mod: StoreAdapterModule = {
                 }
               },
               formattedref: processAsGenericContainer,
-              span: processAsGenericContainer,
+              span: (el, _) =>
+                ['fmt-autonum-delim', 'fmt-caption-label'].
+                map(t => el.classList.contains(t)).
+                includes(true)
+                  ? 'bypass'
+                  : processAsGenericContainer(el, _),
               clause: function processClause(el, getURI) {
                 if (el.getAttribute('type') === 'toc') {
                   return [[], false];
@@ -169,6 +174,7 @@ const mod: StoreAdapterModule = {
                   { skipChildren: () => true },
                 ];
               },
+              semx: 'bypass',
               title: function processTitle(el, getURI) {
                 if (el.parentElement
                     && sectionLikeElements.includes(el.parentElement.tagName as any)) {
