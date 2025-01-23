@@ -57,7 +57,7 @@ const clauseSchemaBase = new Schema({
       inline: true,
     },
     doc: {
-      content: 'title block* parts?',
+      content: 'title block*',
       parseDOM: [{ tag: 'article' }],
       toDOM() {
         return ['article', 0];
@@ -207,19 +207,20 @@ const clauseSchemaBase = new Schema({
 
     ...tn,
 
-    // Table of subclauses
-    parts: {
-      content: 'part_entry+',
-      toDOM(node) {
-        return ['ul', { class: 'toc' }, 0];
-      },
-    },
-    part_entry: {
-      content: 'resource_link',
-      toDOM() {
-        return ['li', 0];
-      },
-    },
+    // // Table of subclauses
+    // parts: {
+    //   content: 'part_entry+',
+    //   toDOM(node) {
+    //     return ['ul', { class: 'toc' }, 0];
+    //   },
+    // },
+    // part_entry: {
+    //   content: 'resource_link',
+    //   toDOM() {
+    //     return ['li', 0];
+    //   },
+    // },
+
     span: {
       group: 'flow',
       content: '(text | flow)*',
