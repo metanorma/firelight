@@ -134,7 +134,7 @@ export type CustomElementProcessor = (
    * in case processor wants to output relations for it.
    */
   getURI: (el: Element) => string,
-) => readonly [
+) => 'ignore' | 'bypass' | readonly [
   graph: RelationGraphAsList,
   /** Return:
    * - false if the element is not to be processed in any other way
@@ -195,10 +195,13 @@ export function processResources(
         processed.add(current);
       }
 
-      if (rule !== 'ignore' && rule !== 'bypass') {
-        const [localGraph, doDefaultProcess] = rule
-          ? rule(current, getURI_)
-          : [[], true];
+      const ruleResult = (rule !== 'ignore' && rule !== 'bypass')
+        ? rule?.(current, getURI_) ?? [[], true]
+        : rule;
+
+      if (ruleResult !== 'ignore' && ruleResult !== 'bypass') {
+        const [localGraph, doDefaultProcess] = ruleResult;
+
         if (doDefaultProcess !== false) {
           const rules_ = doDefaultProcess !== true
             ? { ...rules, ...doDefaultProcess }
@@ -289,7 +292,11 @@ function addRelationsToChildren(
       graph.push([ ROOT_SUBJECT, 'hasPart', node.textContent ]);
     } else if (node.nodeType === 1) {
       const childEl = node as Element;
-      if (rules.processTag?.[childEl.tagName] === 'bypass') {
+      const rule = rules.processTag?.[childEl.tagName];
+      const ruleResult = typeof rule === 'function'
+        ? rule(childEl, getURI)
+        : (rule ?? [[], true]);
+      if (ruleResult === 'bypass') {
         // If this child is bypassed, we process its children instead,
         // relating it to parent URI as if they were direct descendants.
         addRelationsToChildren(childEl, graph, getURI, rules);
