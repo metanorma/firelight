@@ -99,6 +99,7 @@ const clauseSchemaBase = new Schema({
         return ['pre', attrs, 0];
       },
     },
+
     definition_list: {
       content: '(dt | dd)+',
       group: 'block',
@@ -119,6 +120,49 @@ const clauseSchemaBase = new Schema({
         return ['dd', 0];
       },
     },
+
+    // Terms clause doesn’t fit into DL/DT/DD schema,
+    // because terms are not wrapped in a single root element.
+    termWithDefinition: {
+      content: 'term+ definition+',
+      group: 'block',
+      attrs: {
+        resourceID: {
+          default: undefined,
+        },
+      },
+      toDOM(node) {
+        const attrs = node.attrs.resourceID
+          ? { about: node.attrs.resourceID }
+          : {};
+        return ['section', attrs, 0];
+      },
+    },
+    term: {
+      content: '(text | flow)*',
+      attrs: {
+        preferred: {
+          // Whether the term is preferred
+          default: undefined,
+        },
+      },
+      toDOM(node) {
+        return [
+          node.attrs.preferred
+            ? 'strong'
+            : 'span',
+          { 'aria-role': 'term' },
+          0,
+        ];
+      },
+    },
+    definition: {
+      content: 'block*',
+      toDOM() {
+        return ['div', { 'aria-role': 'definition' }, 0];
+      },
+    },
+
     external_link: {
       attrs: {
         href: {
@@ -512,6 +556,28 @@ const generatorsByType: Record<string, ContentGenerator> = {
           return undefined;
         }
         return pm.node('resource_link', { href: target }, generateContent(subj, pm.nodes.resource_link!));
+      },
+      'term': (subj: string) => {
+        const xrefLabel = findAll(section, subj, 'hasPart').
+        find(part => findValue(section, part, 'type') === 'fmt-xref-label');
+        const preferred = findAll(section, subj, 'hasPart').
+        find(part => findValue(section, part, 'type') === 'preferred');
+        const definition = findAll(section, subj, 'hasPart').
+        find(part => findValue(section, part, 'type') === 'definition');
+
+        if (!xrefLabel || !preferred || !definition) {
+          console.warn("Cannot represent a term without xref label, preferred & definition");
+          return undefined;
+        }
+
+        return pm.node(
+          'termWithDefinition',
+          { resourceID: subj },
+          [
+            pm.node('term', { preferred: true }, generateContent(preferred, pm.nodes.term!)),
+            pm.node('definition', { preferred: true }, generateContent(definition, pm.nodes.definition!)),
+          ],
+        );
       },
       'example': (subj: string) => {
 
