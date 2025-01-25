@@ -447,6 +447,9 @@ const mod: ContentAdapterModule = {
     ['hasPart', 'hasClauseIdentifier'],
     ['hasPart', 'hasBibdata', 'hasDocidentifier', 'hasPart'],
   ],
+  crossReferences: (rel) => {
+    return rel.predicate === 'hasTarget';
+  },
   // This is not used currently?
   contributesToContent: (relation, targetRelations) => {
     return relation.predicate === 'hasPart' || relation.predicate === 'hasText';
