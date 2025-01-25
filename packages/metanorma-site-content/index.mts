@@ -1034,7 +1034,14 @@ const generateCoverPage: (lang: string, docid: string) => ContentGenerator =
  * returns a list of subjects that have that predicate and its value
  * (like [[someLanguageID, ja], [anotherLanguageID, en]]).
  */
-function resolveChain(relations: Readonly<RelationGraphAsList>, chain: string[], subj_?: string): [subj: string, value: string][] {
+function resolveChain(
+  /** Graph to resolve the chain in. */
+  relations: Readonly<RelationGraphAsList>,
+  /** Chain of predicates. */
+  chain: string[],
+  /** Starting subject. */
+  subj_?: string,
+): [subj: string, value: string][] {
   if (chain.length === 1) {
     // Reached the end of the chain, return matching predicates
     // for current subject
