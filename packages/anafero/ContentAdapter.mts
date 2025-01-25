@@ -211,6 +211,15 @@ export interface ContentAdapterModule {
   ) => null | string | string[][];
 
   /**
+   * Determines what constitutes a cross-reference: a relation that does not
+   * include target as content or hierarchy, but instead points to another
+   * resource anywhere in hierarchy.
+   */
+  crossReferences?: (
+    relation: ResourceRelation,
+  ) => boolean;
+
+  /**
    * Since readers can emit relations that contribute neither to hierarchy
    * nor to content, and we want to track which relations are being
    * displayed as content (especially if they are being edited),

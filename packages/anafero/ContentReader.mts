@@ -319,16 +319,18 @@ export const makeContentReader: ContentReaderFactory = async function (
           // to be processed as part of this resource graph:
 
           const newTargets = relations.
-          map(({ target }) => target).
           // Do not queue target if related resource is not a URI
-          filter(isURIString).
+          filter(({ target }) => isURIString(target)).
           // Do not queue target if related resource is already in path hierarchy
-          // (it should not be part of this graph, then)
-          filter(target =>
-            !cache.has(`path-for/${target}`)
+          // (either as itself or as part of another resource).
+          // It should not be part of this graph in that case.
+          filter(rel =>
+            !cache.has(`path-for/${rel.target}`)
+            && !contentAdapter.crossReferences?.(rel)
           ).
           // Do not queue target if it was already queued
-          filter(target => !queue.includes(target));
+          filter(rel => !queue.includes(rel.target)).
+          map(({ target }) => target);
 
           queue.push(...newTargets);
         }
