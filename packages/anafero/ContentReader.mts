@@ -211,8 +211,9 @@ export const makeContentReader: ContentReaderFactory = async function (
   }
 
   /**
-   * Chains of predicates.
-   * Follows each chain and returns the first resolved value, if any.
+   * Chains of predicates from given resource.
+   * Follows each chain recursively
+   * and returns the first resolved value, if any.
    */
   function resolvePredicateChainsToFirstValue(
     resourceURI: string,
@@ -282,6 +283,8 @@ export const makeContentReader: ContentReaderFactory = async function (
    * unless related resource is in hierarchy.
    *
    * Prefers cached graph, if already requested before.
+   *
+   * Relies on result of processHierarchy().
    */
   function getResourceGraph(
     resourceURI: string,
@@ -311,6 +314,9 @@ export const makeContentReader: ContentReaderFactory = async function (
               [`path-for/${currentResource}`]: `${resourcePath}#${currentResource}`,
             });
           }
+
+          // Add valid new targets to the queue
+          // to be processed as part of this resource graph:
 
           const newTargets = relations.
           map(({ target }) => target).
