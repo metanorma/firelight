@@ -150,6 +150,9 @@ in ``anafero-config.json``::
 
     file:/path/to/store-adapter-directory
 
+This way it would fetch modules from local filesystem, and any changes
+to adapters will have effect immediately without pushing them.
+
 This is helpful when working on modules, of course, but also
 when working on something else to save the time fetching module data.
 
