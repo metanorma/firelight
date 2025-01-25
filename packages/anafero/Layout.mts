@@ -2,7 +2,6 @@ import * as S from '@effect/schema/Schema';
 
 import { type Node as ProseMirrorNode } from 'prosemirror-model';
 //import { type ResourceRelation } from './ResourceReader.mjs';
-import { type RelationTriple } from './relations.mjs';
 
 
 export interface LayoutProps {
@@ -14,10 +13,10 @@ export interface LayoutProps {
    */
   resourceTitle: string | ProseMirrorNode;
 
-  /**
-   * Relations that did not contribute to content.
-   */
-  relations: RelationTriple<string, string>[];
+  // /**
+  //  * Relations that did not contribute to content.
+  //  */
+  // relations: RelationTriple<string, string>[];
 
   /**
    * Navigation around the resource is more strictly part of hierarchy,
@@ -67,18 +66,6 @@ export const ResourceNavSchema = S.Struct({
   previous: S.String.pipe(S.nonEmptyString(), S.optional),
 });
 export type ResourceNav = S.Schema.Type<typeof ResourceNavSchema>;
-
-//export interface Nav {
-//  breadcrumbs: NavLink[];
-//  children: NavLink[];
-//}
-//
-//export interface NavLink {
-//  /** Full path. */
-//  path: string;
-//
-//  plainTitle: string;
-//}
 
 
 export interface Layout {

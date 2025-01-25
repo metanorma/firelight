@@ -76,7 +76,6 @@ export const Resource = React.forwardRef(function ({
 
   //const resourcePath = locateResource(resourceURI);
   const adapter = useDependency<ContentAdapterModule | undefined>(content.adapterID);
-  const categorizedRelations = useCategorizedRelations(graph, adapter);
 
   const schema = useProseMirrorSchema(
     content.content?.contentSchemaID ?? '',
@@ -242,7 +241,6 @@ export const Resource = React.forwardRef(function ({
           ref={layoutRef}
           ResourceLink={() => ''}
           nav={resourceNav}
-          relations={categorizedRelations.nonContent}
           locateResource={locateResource}
           resourceTitle={''}>
         {mainView}
@@ -264,30 +262,30 @@ export const Resource = React.forwardRef(function ({
 
 
 
-/** Returns relations classified by whether each contributes to content. */
-function useCategorizedRelations(
-  relations: readonly RelationTriple<string, string>[],
-  adapter: ContentAdapterModule | undefined,
-): { content: RelationTriple<string, string>[]; nonContent: RelationTriple<string, string>[] } {
-  return useMemo(() => {
-    if (relations.length < 1 || !adapter) {
-      return { content: [], nonContent: [] };
-    }
-    return relations.map(([subj, predicate, target]) => [
-      [subj, predicate, target] as RelationTriple<string, string>,
-      adapter.contributesToContent(
-        { predicate, target },
-        relations.filter(([s, ]) => s === target)
-      ),
-    ] as const).reduce((accumulator, [rel, isContent]) => ({
-      content: isContent ? [...accumulator.content, rel] : accumulator.content,
-      nonContent: !isContent ? [...accumulator.nonContent, rel] : accumulator.nonContent,
-    }), {
-      content: [] as RelationTriple<string, string>[],
-      nonContent: [] as RelationTriple<string, string>[],
-    });
-  }, [adapter, relations]);
-}
+// /** Returns relations classified by whether each contributes to content. */
+// function useCategorizedRelations(
+//   relations: readonly RelationTriple<string, string>[],
+//   adapter: ContentAdapterModule | undefined,
+// ): { content: RelationTriple<string, string>[]; nonContent: RelationTriple<string, string>[] } {
+//   return useMemo(() => {
+//     if (relations.length < 1 || !adapter) {
+//       return { content: [], nonContent: [] };
+//     }
+//     return relations.map(([subj, predicate, target]) => [
+//       [subj, predicate, target] as RelationTriple<string, string>,
+//       adapter.contributesToContent(
+//         { predicate, target },
+//         relations.filter(([s, ]) => s === target)
+//       ),
+//     ] as const).reduce((accumulator, [rel, isContent]) => ({
+//       content: isContent ? [...accumulator.content, rel] : accumulator.content,
+//       nonContent: !isContent ? [...accumulator.nonContent, rel] : accumulator.nonContent,
+//     }), {
+//       content: [] as RelationTriple<string, string>[],
+//       nonContent: [] as RelationTriple<string, string>[],
+//     });
+//   }, [adapter, relations]);
+// }
 
 
 function useProseMirrorSchema(schemaID: string, adapter: ContentAdapterModule | undefined) {
