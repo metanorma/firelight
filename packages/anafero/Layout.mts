@@ -43,7 +43,7 @@ export interface LayoutProps {
 }
 
 /**
- * A layout receives resource title & relations and can render
+ * A layout receives resource title, nav, etc. and can render
  * some surrounding elements. It also receives children representing
  * resource contents, managed by the parent.
  */
