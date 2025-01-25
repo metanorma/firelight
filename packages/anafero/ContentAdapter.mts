@@ -168,7 +168,7 @@ export interface ContentAdapterModule {
 
 
   /**
-   * This determines what constitutes hierarchy and what constitutes content.
+   * This determines what constitutes hierarchy.
    *
    * If this returns a string, the related resource
    * should not be treated as part of the subject
@@ -189,8 +189,9 @@ export interface ContentAdapterModule {
    * then none of related object’s further relations should contribute
    * to hierarchy, obviously.
    *
-   * A relation that does not contribute to hierarchy is
-   * considered part of implied resource’s content (machine-readable data
+   * A relation that does not contribute to hierarchy,
+   * and is not a cross-reference,
+   * is considered part of implied resource’s content (machine-readable data
    * and page). If such relation target is an URI, its relations should be
    * resolved recursively, until relation whose target is in hierarchy
    * (that target’s relations should not be further resolved).
@@ -203,7 +204,8 @@ export interface ContentAdapterModule {
    * To avoid circularity, two passes are required:
    * 1. Collect all relations that contribute to hierarchy and skip others.
    * 2. For all resources of the hierarchy, collect relations stopping when
-   *    a reference is to a resource in hierarchy (or cannot be resolved).
+   *    a reference is to a resource in hierarchy,
+   *    or is a cross-reference, or cannot be resolved.
    */
   contributesToHierarchy?: (
     relation: ResourceRelation,
