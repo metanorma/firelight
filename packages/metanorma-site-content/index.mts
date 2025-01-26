@@ -265,6 +265,14 @@ const clauseSchemaBase = new Schema({
     //   },
     // },
 
+    linebreak: {
+      group: 'flow',
+      inline: true,
+      content: '',
+      toDOM() {
+        return ['br'];
+      },
+    },
     span: {
       group: 'flow',
       content: '(text | flow)*',
@@ -528,6 +536,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'dl': 'definition_list',
       'dd': 'dd',
       'dt': 'dt',
+      'br': 'linebreak',
       'tt': 'code',
       'semx': 'span',
       //'tableCell': 'table_cell',
