@@ -156,7 +156,7 @@ export function processResources(
       RESOURCE_URI_MAP.set(
         el,
         (el === doc.documentElement)
-          ? '_:root'
+          ? ROOT_SUBJECT
           : getURI(el, rules.getResourceURI, rules.getResourceURIFromID),
       );
     }
