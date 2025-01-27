@@ -124,7 +124,7 @@ const clauseSchemaBase = new Schema({
     // Terms clause doesn’t fit into DL/DT/DD schema,
     // because terms are not wrapped in a single root element.
     termWithDefinition: {
-      content: 'term+ definition+',
+      content: 'termXrefLabel? term+ definition+',
       group: 'block',
       attrs: {
         resourceID: {
@@ -135,7 +135,13 @@ const clauseSchemaBase = new Schema({
         const attrs = node.attrs.resourceID
           ? { about: node.attrs.resourceID }
           : {};
-        return ['section', attrs, 0];
+        return ['section', { ...attrs, class: classNames.termWithDefinition }, 0];
+      },
+    },
+    termXrefLabel: {
+      content: '(text | flow)*',
+      toDOM(node) {
+        return ['span', { class: classNames.xrefLabel }, 0];
       },
     },
     term: {
@@ -585,13 +591,18 @@ const generatorsByType: Record<string, ContentGenerator> = {
           return undefined;
         }
 
+        const content = [
+          pm.node('term', { preferred: true }, generateContent(preferredExpressionContent, pm.nodes.term!)),
+          pm.node('definition', null, generateContent(definition, pm.nodes.definition!)),
+        ];
+        if (xrefLabel) {
+          content.splice(0, 0, pm.node('termXrefLabel', null, generateContent(xrefLabel, pm.nodes.termXrefLabel)));
+        }
+
         return pm.node(
           'termWithDefinition',
           { resourceID: subj },
-          [
-            pm.node('term', { preferred: true }, generateContent(preferredExpressionContent, pm.nodes.term!)),
-            pm.node('definition', null, generateContent(definition, pm.nodes.definition!)),
-          ],
+          content,
         );
       },
       'example': (subj: string) => {
