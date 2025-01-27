@@ -445,7 +445,7 @@ export const makeContentReader: ContentReaderFactory = async function (
     findURL: function findURL (resourceURI) {
       const maybePath = cache.get<string>(`path-for/${resourceURI}`);
       if (maybePath) {
-        return maybePath;
+        return maybePath.startsWith('/') ? maybePath : `/${maybePath}`;
       } else {
         throw new Error("Unable to find URL for resource");
       }
