@@ -570,14 +570,17 @@ const generatorsByType: Record<string, ContentGenerator> = {
         return pm.node('resource_link', { href: target }, generateContent(subj, pm.nodes.resource_link!));
       },
       'term': (subj: string) => {
-        const xrefLabel = findAll(section, subj, 'hasPart').
-        find(part => findValue(section, part, 'type') === 'fmt-xref-label');
-        const preferred = findAll(section, subj, 'hasPart').
-        find(part => findValue(section, part, 'type') === 'preferred');
-        const definition = findAll(section, subj, 'hasPart').
-        find(part => findValue(section, part, 'type') === 'definition');
+        const xrefLabel = findPartsOfType(section, subj, 'fmt-xref-label')[0];
+        const preferred = findPartsOfType(section, subj, 'preferred')[0];
+        const preferredExpression = preferred
+          ? findPartsOfType(section, preferred, 'expression')[0]
+          : undefined;
+        const preferredExpressionContent = preferredExpression
+          ? findPartsOfType(section, preferredExpression, 'name')[0]
+          : undefined;
+        const definition = findPartsOfType(section, subj, 'fmt-definition')[0];
 
-        if (!xrefLabel || !preferred || !definition) {
+        if (!xrefLabel || !preferredExpressionContent || !definition) {
           console.warn("Cannot represent a term without xref label, preferred & definition");
           return undefined;
         }
@@ -586,8 +589,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
           'termWithDefinition',
           { resourceID: subj },
           [
-            pm.node('term', { preferred: true }, generateContent(preferred, pm.nodes.term!)),
-            pm.node('definition', { preferred: true }, generateContent(definition, pm.nodes.definition!)),
+            pm.node('term', { preferred: true }, generateContent(preferredExpressionContent, pm.nodes.term!)),
+            pm.node('definition', null, generateContent(definition, pm.nodes.definition!)),
           ],
         );
       },
