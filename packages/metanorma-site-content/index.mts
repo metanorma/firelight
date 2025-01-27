@@ -596,7 +596,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           pm.node('definition', null, generateContent(definition, pm.nodes.definition!)),
         ];
         if (xrefLabel) {
-          content.splice(0, 0, pm.node('termXrefLabel', null, generateContent(xrefLabel, pm.nodes.termXrefLabel)));
+          content.splice(0, 0, pm.node('termXrefLabel', null, generateContent(xrefLabel, pm.nodes.termXrefLabel!)));
         }
 
         return pm.node(
