@@ -251,7 +251,7 @@ export const Resource = React.forwardRef(function ({
           <div
               className={classNames.floatingSubresourceLink}
               style={{ position: 'absolute', top, left }}>
-            <a className={classNames.floatingSubresourceLinkAnchor} href={`/${url}`}>¶</a>
+            <a className={classNames.floatingSubresourceLinkAnchor} href={url}>¶</a>
           </div>,
           document.body,
         )
