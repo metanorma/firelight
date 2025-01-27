@@ -227,6 +227,10 @@
       }
       */
 
+      li:has(figure) {
+        margin-bottom: 1em;
+      }
+
       figure {
         margin: 0;
         margin-right: 1em; /* Good for aesthetics when tables overflow and scroll… */
