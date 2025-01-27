@@ -1111,6 +1111,20 @@ function findAll(
     map(([, , o]) => o);
 }
 
+/**
+ * Returns all targets (objects) of `hasPart` relations
+ * found from given subject in the graph, where related object
+ * has `type` relation with specified value.
+ */
+function findPartsOfType(
+  graph: Readonly<RelationGraphAsList>,
+  subj: string,
+  type: string,
+): string[] {
+  return findAll(graph, subj, 'hasPart').
+    filter(part => findValue(graph, part, 'type') === type);
+}
+
 function relativeGraph(relations: Readonly<RelationGraphAsList>, subj: string): Readonly<RelationGraphAsList> {
   return relations.
     filter(([s, ]) => s !== ROOT_SUBJECT).
