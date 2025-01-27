@@ -539,6 +539,9 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'paragraph': 'paragraph',
       'sourcecode': 'source_listing',
       'span': 'span',
+
+      // TODO: Figure out what to do with underlines. <u> isn’t fit
+      'underline': 'span',
       'dl': 'definition_list',
       'dd': 'dd',
       'dt': 'dt',
