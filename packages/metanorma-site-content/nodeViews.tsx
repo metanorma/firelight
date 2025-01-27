@@ -4,6 +4,7 @@ import { ResourceNavigationContext } from 'anafero/index.mjs';
 import * as classNames from './style.css';
 
 
+// TODO: This may be stripping HTML classes assigned in schema!
 const makeResourceNodeView:
 (Tag: 'section' | 'p' | 'div' | 'figure' | 'ul' | 'ol') => NodeViews[string] =
 (Tag) => React.forwardRef(function NodeViewMaybeRepresentingResource ({
