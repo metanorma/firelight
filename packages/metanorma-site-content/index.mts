@@ -1098,11 +1098,11 @@ function findValue(
  * from given subject via given predicate (or any of them, if is a list).
  */
 function findAll(
-  relations: Readonly<RelationGraphAsList>,
+  graph: Readonly<RelationGraphAsList>,
   subj: string,
   pred: string | string[],
 ): string[] {
-  return relations.
+  return graph.
     filter(([s, p, ]) =>
       s === subj && (
         (typeof pred === 'string' && p === pred) || pred.includes(p)
