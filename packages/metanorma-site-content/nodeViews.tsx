@@ -5,7 +5,7 @@ import * as classNames from './style.css';
 
 
 const makeResourceNodeView:
-(Tag: 'p' | 'div' | 'figure' | 'ul' | 'ol') => NodeViews[string] =
+(Tag: 'section' | 'p' | 'div' | 'figure' | 'ul' | 'ol') => NodeViews[string] =
 (Tag) => React.forwardRef(function NodeViewMaybeRepresentingResource ({
   children,
   nodeProps,
@@ -75,6 +75,7 @@ const nodeViews: NodeViews = {
     </div>
   }),
   paragraph: makeResourceNodeView('p'),
+  termWithDefinition: makeResourceNodeView('section'),
   figure: makeResourceNodeView('figure'),
   bullet_list: makeResourceNodeView('ul'),
   ordered_list: makeResourceNodeView('ol'),

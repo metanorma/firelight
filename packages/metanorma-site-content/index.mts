@@ -135,13 +135,13 @@ const clauseSchemaBase = new Schema({
         const attrs = node.attrs.resourceID
           ? { about: node.attrs.resourceID }
           : {};
-        return ['section', { ...attrs, class: classNames.termWithDefinition }, 0];
+        return ['section', attrs, 0];
       },
     },
     termXrefLabel: {
       content: '(text | flow)*',
-      toDOM(node) {
-        return ['span', { class: classNames.xrefLabel }, 0];
+      toDOM() {
+        return ['span', { class: classNames.termXrefLabel }, 0];
       },
     },
     term: {

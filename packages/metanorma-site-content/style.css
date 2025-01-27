@@ -7,8 +7,6 @@
   color: purple;
 }
 
-section.termWithDefinition {
-  .xrefLabel {
-    margin-right: 1em;
-  }
+.termXrefLabel {
+  margin-right: 1em;
 }
