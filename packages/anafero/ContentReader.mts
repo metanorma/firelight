@@ -261,20 +261,35 @@ export const makeContentReader: ContentReaderFactory = async function (
   }
 
   function * generateRelations(resourceURI: string) {
-    const chunkSize = 1000;
-    let finished = false;
-    let cursor = 0;
-    while (!finished) {
-      const relations = cache.list<ResourceRelation>(
-        `edges-from/${resourceURI}`,
-        { start: cursor, size: chunkSize },
-      );
-      if (relations.length > 0) {
-        yield * relations;
-        cursor += chunkSize;
-      } else {
-        finished = true;
+    if (cache.has(`edges-from/${resourceURI}`)) {
+      const chunkSize = 1000;
+      let finished = false;
+      let cursor = 0;
+      while (!finished) {
+        const relations = cache.list<ResourceRelation>(
+          `edges-from/${resourceURI}`,
+          { start: cursor, size: chunkSize },
+        );
+        if (relations.length > 0) {
+          yield * relations;
+          cursor += chunkSize;
+        } else {
+          finished = true;
+        }
       }
+    }
+  }
+
+  function isInPageHierarchy(resourceURI: string) {
+    if (cache.has(`graphs/${resourceURI}`)) {
+      try {
+        const path = cache.get<string>(`path-for/${resourceURI}`);
+        return path && path.indexOf('#') < 1
+      } catch (e) {
+        return false;
+      }
+    } else {
+      return false;
     }
   }
 
@@ -290,7 +305,7 @@ export const makeContentReader: ContentReaderFactory = async function (
     resourceURI: string,
   ): Readonly<RelationGraphAsList> {
     if (!cache.has(`graphs/${resourceURI}`)) {
-      const resourcePath = cache.get<string>(`path-for/${resourceURI}`);
+      //const resourcePath = cache.get<string>(`path-for/${resourceURI}`);
       const queue: string[] = [resourceURI];
       while (queue.length > 0) {
         const currentResource = queue.pop()!;
@@ -309,11 +324,11 @@ export const makeContentReader: ContentReaderFactory = async function (
             ]),
           );
 
-          if (currentResource !== resourceURI) {
-            cache.set({
-              [`path-for/${currentResource}`]: `${resourcePath}#${currentResource}`,
-            });
-          }
+          //if (currentResource !== resourceURI) {
+          //  cache.set({
+          //    [`path-for/${currentResource}`]: `${resourcePath}#${currentResource}`,
+          //  });
+          //}
 
           // Add valid new targets to the queue
           // to be processed as part of this resource graph:
@@ -325,7 +340,7 @@ export const makeContentReader: ContentReaderFactory = async function (
           // (either as itself or as part of another resource).
           // It should not be part of this graph in that case.
           filter(rel =>
-            !cache.has(`path-for/${rel.target}`)
+            !isInPageHierarchy(rel.target)
             && !contentAdapter.crossReferences?.(rel)
           ).
           // Do not queue target if it was already queued
@@ -337,6 +352,29 @@ export const makeContentReader: ContentReaderFactory = async function (
       }
     }
     return cache.list<RelationTriple<any, any>>(`graphs/${resourceURI}`);
+  }
+
+  /**
+   * Adds to cache all related resources as paths with URL fragments
+   * under containing resource path.
+   */
+  function processResourceContents(
+    resourceURI: string,
+    containingResourcePath: string,
+  ) {
+    if (containingResourcePath.indexOf('tocC/tocC_03/tocC_03_01/tocC_03_01_04') >= 0) {
+      console.debug("Marking as contained", containingResourcePath, resourceURI);
+      console.debug(`${containingResourcePath}#${resourceURI}`);
+    }
+    cache.set({
+      [`path-for/${resourceURI}`]: `${containingResourcePath}#${resourceURI}`,
+    });
+    // TODO: Recursion is not good here since it can be deep
+    for (const rel of generateRelations(resourceURI)) {
+      if (isURIString(rel.target) && !contentAdapter.crossReferences?.(rel)) {
+        processResourceContents(containingResourcePath, rel.target);
+      }
+    }
   }
 
   /**
@@ -401,6 +439,8 @@ export const makeContentReader: ContentReaderFactory = async function (
         // NOTE: Allow recursion, since no sane hierarchy
         // is expected to be too large for that to become an issue.
         processHierarchy(rel.target, newPath, onProgress);
+      } else {
+        processResourceContents(rel.target, pathPrefix);
       }
     }
   }
