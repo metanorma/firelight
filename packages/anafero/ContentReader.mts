@@ -362,10 +362,6 @@ export const makeContentReader: ContentReaderFactory = async function (
     resourceURI: string,
     containingResourcePath: string,
   ) {
-    if (containingResourcePath.indexOf('tocC/tocC_03/tocC_03_01/tocC_03_01_04') >= 0) {
-      console.debug("Marking as contained", containingResourcePath, resourceURI);
-      console.debug(`${containingResourcePath}#${resourceURI}`);
-    }
     cache.set({
       [`path-for/${resourceURI}`]: `${containingResourcePath}#${resourceURI}`,
     });
