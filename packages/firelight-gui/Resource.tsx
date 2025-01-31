@@ -24,6 +24,8 @@ import {
 import { type Layout, type ResourceNav } from 'anafero/Layout.mjs';
 import { ResourceNavigationContext } from 'anafero/ResourceNavigationContext.mjs';
 
+import ErrorBoundaryWithCustomFallback from 'anafero/ErrorBoundaryWithCustomView.jsx';
+
 import { ResourceBreadcrumbs } from './ResourceBreadcrumbs.jsx';
 import classNames from './style.module.css';
 
@@ -208,21 +210,25 @@ export const Resource = React.forwardRef(function ({
     }
   }, [layoutElement, contentElement, describedResources]);
 
+  const fallback = preRenderedHTML !== undefined
+    ? <article
+        id="content"
+        ref={contentRef}
+        dangerouslySetInnerHTML={{ __html: preRenderedHTML }}
+      />
+    : <>…</>;
+
   const mainView = somethingStillLoading || typeof window?.document?.createElement === 'undefined'
-    ? preRenderedHTML !== undefined
-      ? <article
-          id="content"
-          ref={contentRef}
-          dangerouslySetInnerHTML={{ __html: preRenderedHTML }}
-        />
-      : <>…</>
+    ? fallback
     : <ResourceNavigationContext.Provider value={{ locateResource, resolvePlainTitle }}>
-        <ProseMirror
-            defaultState={initialState!}
-            editable={() => false}
-            nodeViews={adapter!.resourceContentProseMirrorOptions.nodeViews}>
-          <ProseMirrorDoc ref={contentRef} as={<article />} />
-        </ProseMirror>
+        <ErrorBoundaryWithCustomFallback fallback={fallback}>
+          <ProseMirror
+              defaultState={initialState!}
+              editable={() => false}
+              nodeViews={adapter!.resourceContentProseMirrorOptions.nodeViews}>
+            <ProseMirrorDoc ref={contentRef} as={<article />} />
+          </ProseMirror>
+        </ErrorBoundaryWithCustomFallback>
       </ResourceNavigationContext.Provider>;
 
   return (
