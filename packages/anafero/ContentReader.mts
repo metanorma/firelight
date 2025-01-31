@@ -281,7 +281,7 @@ export const makeContentReader: ContentReaderFactory = async function (
   }
 
   function isInPageHierarchy(resourceURI: string) {
-    if (cache.has(`graphs/${resourceURI}`)) {
+    if (cache.has(`path-for/${resourceURI}`)) {
       try {
         const path = cache.get<string>(`path-for/${resourceURI}`);
         return path && path.indexOf('#') < 0;
