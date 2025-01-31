@@ -339,6 +339,15 @@ export const makeContentReader: ContentReaderFactory = async function (
     return cache.list<RelationTriple<any, any>>(`graphs/${resourceURI}`);
   }
 
+  /**
+   * Given resource URI and path prefix,
+   * will populate its path (also parents & parents’ descendants) in cache,
+   * resolve relations and recurse for related resources
+   * that generated subpaths.
+   *
+   * For related resources that did not generate subpaths,
+   * their paths (with URI fragment) would be added to cache.
+   */
   function processHierarchy(
     resourceURI: string,
 
