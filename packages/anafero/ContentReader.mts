@@ -368,7 +368,7 @@ export const makeContentReader: ContentReaderFactory = async function (
     // TODO: Recursion is not good here since it can be deep
     for (const rel of generateRelations(resourceURI)) {
       if (isURIString(rel.target) && !contentAdapter.crossReferences?.(rel)) {
-        processResourceContents(containingResourcePath, rel.target);
+        processResourceContents(rel.target, containingResourcePath);
       }
     }
   }
