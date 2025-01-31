@@ -284,7 +284,7 @@ export const makeContentReader: ContentReaderFactory = async function (
     if (cache.has(`graphs/${resourceURI}`)) {
       try {
         const path = cache.get<string>(`path-for/${resourceURI}`);
-        return path && path.indexOf('#') < 1
+        return path && path.indexOf('#') < 0;
       } catch (e) {
         return false;
       }
