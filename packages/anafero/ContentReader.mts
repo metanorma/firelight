@@ -182,7 +182,7 @@ export const makeContentReader: ContentReaderFactory = async function (
   }
 
   function maybeGetPathComponent(relation: ResourceRelation) {
-    if (!isURIString(relation.target)) {
+    if (!isURIString(relation.target) || contentAdapter.crossReferences?.(relation)) {
       // If this is not a relation to another resource but a primitive value,
       // it cannot generate hierarchy.
       return null;
