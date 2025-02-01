@@ -239,6 +239,34 @@ const clauseSchemaBase = new Schema({
       isLeaf: true,
     },
 
+    admonition: {
+      attrs: {
+        // An array of strings. E.g., ['note', 'commentary']
+        tags: {
+          default: undefined,
+        },
+      },
+      content: 'admonitionXrefLabel? block*',
+      group: 'block',
+      toDOM(node) {
+        return ['aside', {
+          class: `
+            ${classNames.admonition}
+            ${(node.attrs.tags ?? []).
+              map((tag: string) => classNames[`admonition-${tag}`]).
+              join(' ')}
+          `,
+        }, 0];
+      },
+    },
+
+    admonitionXrefLabel: {
+      content: '(text | flow)*',
+      toDOM() {
+        return ['header', 0];
+      },
+    },
+
     math: {
       attrs: {
         /** HTML markup, from the outer <math> tag and down. */
