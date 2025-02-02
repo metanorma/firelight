@@ -844,8 +844,10 @@ const generatorsByType: Record<string, ContentGenerator> = {
         return undefined;
       }
     }
-    function generateContent(subject: string, subjectNodeType: ProseMirrorNodeType): ProseMirrorNode[] {
-
+    function generateContent(
+      subject: string,
+      subjectNodeType: ProseMirrorNodeType | 'block' | 'inline',
+    ): ProseMirrorNode[] {
       const allSubparts: ProseMirrorNode[] =
       // TODO: subject is really only used to resolve relations,
       // maybe this can be refactored out of this function.
@@ -895,20 +897,48 @@ const generatorsByType: Record<string, ContentGenerator> = {
       }).
       filter(maybeNode => maybeNode !== undefined);
 
-      if (subjectNodeType.validContent(Fragment.from(allSubparts))) {
-        return allSubparts;
+      // TODO: Refactor to only allow string subjectNodeType?
+      const subjectNodeTypeRepr = typeof subjectNodeType === 'string'
+        ? subjectNodeType
+        : subjectNodeType.name;
+      if (typeof subjectNodeType !== 'string') {
+        if (subjectNodeType.validContent(Fragment.from(allSubparts))) {
+          return allSubparts;
+        } else {
+          if (subjectNodeType.inlineContent && allSubparts.find(node => !node.isInline)) {
+            console.warn("Trying to create a block in an inline-content node?", subjectNodeTypeRepr, allSubparts.map(n => n.textContent).join(', '));
+            return allSubparts.
+            map(n => n.isInline
+              ? n
+              //: (new Transform(n).doc.textContent.toString() ?? ''))
+              : pm.text(n.textContent))
+          } else if (!subjectNodeType.inlineContent && allSubparts.find(node => node.isInline)) {
+            //return allSubparts;
+            if (allSubparts.find(node => !node.isInline)) {
+              console.error("Mixing inline and block content :(", subject, subjectNodeTypeRepr, allSubparts.filter(node => !node.isInline).map(n => n.toString()));
+              return allSubparts.map(n =>
+                n.isInline
+                  ? pm.node('paragraph', null, [n])
+                  : n)
+            } else {
+              return [pm.node('paragraph', null, allSubparts)];
+            }
+          } else {
+            return allSubparts;
+            console.error("Something went wrong", subject, subjectNodeType.name);
+          }
+        }
       } else {
-        if (subjectNodeType.inlineContent && allSubparts.find(node => !node.isInline)) {
-          console.warn("Trying to create a block in inline content node?", subject, subjectNodeType.name);
+        if (subjectNodeType === 'inline' && allSubparts.find(n => !n.isInline)) {
+          console.warn("Trying to create a block in an inline-content node? Will unwrap text content.", subjectNodeTypeRepr, allSubparts.map(n => n.textContent).join(', '));
           return allSubparts.
           map(n => n.isInline
             ? n
             //: (new Transform(n).doc.textContent.toString() ?? ''))
             : pm.text(n.textContent))
-        } else if (!subjectNodeType.inlineContent && allSubparts.find(node => node.isInline)) {
-          //return allSubparts;
+        } else if (subjectNodeType === 'block' && allSubparts.find(n => n.isInline)) {
           if (allSubparts.find(node => !node.isInline)) {
-            console.error("Mixing inline and block content :(", subject, subjectNodeType.name, allSubparts.filter(node => !node.isInline).map(n => n.toString()));
+            console.error("Trying to create an inline node in a block-content node? Will wrap in a paragraph.", subjectNodeTypeRepr, allSubparts.filter(node => !node.isInline).map(n => n.toString()));
             return allSubparts.map(n =>
               n.isInline
                 ? pm.node('paragraph', null, [n])
@@ -918,10 +948,12 @@ const generatorsByType: Record<string, ContentGenerator> = {
           }
         } else {
           return allSubparts;
-          console.error("Something went wrong", subject, subjectNodeType.name);
         }
       }
-      console.error("Something went wrong, and nothing was generated", subject, subjectNodeType.name);
+      console.error(
+        "Something went wrong, and nothing was generated",
+        subject,
+        subjectNodeType);
       return [];
     }
 
