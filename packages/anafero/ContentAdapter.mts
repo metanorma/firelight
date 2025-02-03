@@ -109,7 +109,7 @@ const DEFAULT_LOCALE = {
 
 
 /**
- * Content generator is responsible for transforming resource relations
+ * Content adapter is responsible for transforming resource relations
  * into an hierarchy of formatted website pages.
  */
 export interface ContentAdapterModule {
