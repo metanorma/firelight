@@ -196,7 +196,7 @@ The main parts of content adapter API are:
                      set to resource’s ID (subject URI); conversely,
                    - ``toDOM()`` should ensure returned DOM node representing
                      a resource specifies that resource’s ID
-                     (subject URI) using RDFa ``about`` attribute,
+                     (subject URI) using RDFa ``about`` attribute.
 
     .. important:: Schema nodes MUST NOT return DOM nodes from ``toDOM()``
                    functions currently; only return spec objects per PM docs.
