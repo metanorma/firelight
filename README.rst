@@ -124,6 +124,94 @@ Known issues
 
   So far this was not reproduced in build environments other than GHA.
 
+Implementing adapters
+---------------------
+
+Store adapters
+~~~~~~~~~~~~~~
+
+The job of a store adapter is to map an entry point file to resources
+and relations.
+
+Store adapter module interface
+is defined by ``StoreAdapterModule`` in ``anafero/StoreAdapter.mts``.
+Adpater module MUST have a default export of an object
+that conforms to this interface.
+
+The main part of store adapter API is ``readerFromBlob()``. It is given
+an entry point as a binary blob and some helper functions
+(e.g., for decoding it into an XML DOM), and must return a resource reader.
+Resource reader is responsible for quickly estimating relation count
+(used mostly for progress reporting) and for discovering relations
+by returning them in chunks via ``onRelationChunk()`` callback
+passed to ``discoverAllResources()`` function.
+
+.. note:: ``discoverAllRelations()`` should chunk relations responsibly.
+          Avoid calling ``onRelationChunk()`` too frequently,
+          as this can create a significant performance overhead.
+
+          Other performance considerations (such as not relying
+          on async generators & preferring loops instead) apply.
+
+Anafero will follow outwards relations and initialize another store adapter
+(or reuse a previously initialized one, if it recognizes this relation).
+
+Content adapters
+~~~~~~~~~~~~~~~~
+
+.. note:: Content adapter API is likely to change in near future.
+
+The job of a content adapter is to map resource relations to an *hierarchy*
+of formatted website pages.
+
+Content adapter module interface
+is defined by ``ContentAdapterModule`` in ``anafero/ContentAdapter.mts``.
+Adpater module MUST have a default export of an object
+that conforms to this interface.
+
+The main parts of content adapter API are:
+
+- Used for determining hierarchy:
+
+  - ``contributingToHierarchy``: spec for relations that create sub-hierarchy.
+  - ``crossReferences()``: given a relation, returns whether the relation
+    is a cross-reference (and therefore does not participate in hierarchy).
+
+- Used for transforming between page content and relations:
+
+  - ``generateContent()``: given a graph of relations of a page in hierarchy,
+    returns content representing it. The content is in ProseMirror doc format,
+    with an ID for associated schema.
+    The adapter module can import some ``prosemirror-*`` contrib modules
+    and is responsible for defining ProseMirror schema.
+
+  - ``resourceContentProseMirrorSchema``: a map of schema ID
+    to ProseMirror schema.
+
+    .. important:: A single page is a resource; but its parts are resources too.
+                   Anafero attempts to maintain a mapping between subresources
+                   and respective DOM nodes. To facilitate this,
+
+                   - created ProseMirror nodes should have ``resourceID`` attr
+                     set to resource’s ID (subject URI); conversely,
+                   - ``toDOM()`` should ensure returned DOM node representing
+                     a resource specifies that resource’s ID
+                     (subject URI) using RDFa ``about`` attribute,
+
+    .. important:: Schema nodes MUST NOT return DOM nodes from ``toDOM()``
+                   functions currently; only return spec objects per PM docs.
+                   This is a limitation of ``react-prosemirror``.
+
+  - ``resourceContentProseMirrorOptions``: currently only used to supply
+    ProseMirror node views. Generally speaking, optional, and node views
+    should not be relied on for actual content presentation.
+
+  - ``describe()``: describes a resource.
+
+  - ``generateRelations()``: not currently used. Given page content,
+    returns a graph of relations. Planned for reverse transformation
+    when editing.
+
 Development
 -----------
 
