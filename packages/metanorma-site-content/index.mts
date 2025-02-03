@@ -794,7 +794,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         }
         const firstPartTypes = findAll(section, firstPart, 'type');
         if (!firstPartTypes.includes('paragraph')) {
-          console.warn("Inserting leading paragraph for valid list item");
+          console.warn("Inserting leading paragraph to ensure a valid list item");
           content.push(pm.node('paragraph', null, [pm.text("_")]));
         }
         content.push(...generateContent(subj, pm.nodes.list_item!));
