@@ -206,7 +206,8 @@ The main parts of content adapter API are:
     ProseMirror node views. Generally speaking, optional, and node views
     should not be relied on for actual content presentation.
 
-  - ``describe()``: describes a resource.
+  - ``describe()``: describes a resource (whether a page or its subresource),
+    providing a plain-text label and language code.
 
   - ``generateRelations()``: not currently used. Given page content,
     returns a graph of relations. Planned for reverse transformation
