@@ -135,7 +135,7 @@ and relations.
 
 Store adapter module interface
 is defined by ``StoreAdapterModule`` in ``anafero/StoreAdapter.mts``.
-Adpater module MUST have a default export of an object
+Adapter module MUST have a default export of an object
 that conforms to this interface.
 
 The main part of store adapter API is ``readerFromBlob()``. It is given
@@ -166,7 +166,7 @@ of formatted website pages.
 
 Content adapter module interface
 is defined by ``ContentAdapterModule`` in ``anafero/ContentAdapter.mts``.
-Adpater module MUST have a default export of an object
+Adapter module MUST have a default export of an object
 that conforms to this interface.
 
 The main parts of content adapter API are:
