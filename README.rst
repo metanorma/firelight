@@ -9,9 +9,9 @@ while also being customizable and extensible.
 Anafero build system implements the orchestration
 of Firelight’s MN XML parsing & site content rendering extensions.
 
-`Example repository <https://github.com/metanorma/mn-samples-plateau-firelight-demo/>`_
+`Example repository <https://github.com/metanorma/mn-samples-plateau/>`_
 built with this system;
-`deployed version <https://metanorma.github.io/mn-samples-plateau-firelight-demo/>`_.
+`deployed version <https://metanorma.github.io/mn-samples-plateau/001/>`_.
 
 Usage
 -----
