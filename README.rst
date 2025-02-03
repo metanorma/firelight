@@ -199,7 +199,7 @@ The main parts of content adapter API are:
                      (subject URI) using RDFa ``about`` attribute.
 
     .. important:: Schema nodes MUST NOT return DOM nodes from ``toDOM()``
-                   functions currently; only return spec objects per PM docs.
+                   functions currently; only return spec arrays per PM docs.
                    This is a limitation of ``react-prosemirror``.
 
   - ``resourceContentProseMirrorOptions``: currently only used to supply
