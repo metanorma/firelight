@@ -84,6 +84,35 @@ const clauseSchemaBase = new Schema({
         return ['p', attrs, 0];
       },
     },
+    footnotes: {
+      content: 'footnote+',
+      toDOM() {
+        return ['footer', { class: classNames.footnotes }, 0];
+      },
+    },
+    footnote: {
+      attrs: {
+        // Footnote reference for navigation purposes.
+        // Is not the same as cue (e.g., “a)”)
+        // and can be an auto-generated UUID.
+        footnoteID: {
+          default: undefined,
+        },
+      },
+      content: 'footnoteCue block+',
+      toDOM(node) {
+        return ['aside', {
+          class: classNames.footnote,
+          id: node.attrs.footnoteID,
+        }, 0];
+      }
+    },
+    footnoteCue: {
+      content: '(text | flow)*',
+      toDOM() {
+        return ['sup', { class: classNames.footnoteCue }, 0];
+      }
+    },
     source_listing: {
       attrs: {
         resourceID: {
