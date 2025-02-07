@@ -138,9 +138,9 @@ const decoder = new TextDecoder();
 /**
  * Given a module reference (URI), fetches and provides a tuple
  * with instantiated module and a map of any other generated files.
- * NOTE: Doesn’t really do validation of T.
+ * NOTE: Doesn’t really validate that returned module conforms to anything.
  *
- * This currently relies on Node, and is therefore in the CLI module,
+ * This currently relies on Node, and is therefore here in the CLI module;
  * see TODO about resolveDir about making dependencies buildable
  * in the browser.
  */
