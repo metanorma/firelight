@@ -18,6 +18,7 @@ function urnFromID(id: string): string {
 
 const tagNameAliases: Record<string, string> = {
   'p': 'paragraph',
+  'fn': 'footnote',
   'ul': 'unorderedList',
   'ol': 'orderedList',
   'li': 'listItem',
