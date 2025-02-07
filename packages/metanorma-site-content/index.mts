@@ -863,7 +863,6 @@ const generatorsByType: Record<string, ContentGenerator> = {
         return pm.node('admonition', { resourceID: subj, tags }, contents);
       },
       'footnote': (subj, onAnnotation) => {
-        console.debug("Processing footnote", subj);
         const cue = findValue(section, subj, 'hasReference');
         if (!cue) {
           console.error("Cannot create a footnote without reference");
