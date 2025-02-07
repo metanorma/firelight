@@ -80,6 +80,9 @@ const nodeViews: NodeViews = {
     </div>
   }),
   paragraph: makeResourceNodeView('p'),
+  // TODO: Somehow enabling this causes rendering issues when client-side PM is initialized
+  //admonition: makeResourceNodeView('aside'),
+  //footnote: makeResourceNodeView('aside'),
   termWithDefinition: makeResourceNodeView('section'),
   figure: makeResourceNodeView('figure'),
   bullet_list: makeResourceNodeView('ul'),

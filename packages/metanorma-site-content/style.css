@@ -23,3 +23,41 @@
   :not(:first-child) {
   }
 }
+
+.footnoteCue {
+  vertical-align: super;
+  line-height: 1;
+  font-size: 80%;
+}
+
+.footnotes {
+  font-size: 85%;
+
+  &::before {
+    content: " ";
+    display: block;
+    height: 1px;
+    width: 6em;
+    background-color: var(--spectrum-alias-text-color);
+    margin-top: 1.5em;
+    margin-bottom: .5em;
+  }
+
+  .footnote {
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 1em;
+
+    .footnoteCue {
+      flex-grow: 0;
+      flex-shrink: 0;
+      display: block;
+      min-width: 2em;
+      font-size: unset;
+      vertical-align: unset;
+    }
+    .footnoteBody {
+      flex: 1;
+    }
+  }
+}
