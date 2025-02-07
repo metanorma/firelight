@@ -4,7 +4,6 @@ import { ResourceNavigationContext } from 'anafero/index.mjs';
 import * as classNames from './style.css';
 
 
-// TODO: This may be stripping HTML classes assigned in schema!
 const makeResourceNodeView:
 (Tag: 'section' | 'p' | 'div' | 'figure' | 'ul' | 'ol') => NodeViews[string] =
 (Tag) => React.forwardRef(function NodeViewMaybeRepresentingResource ({
@@ -14,10 +13,15 @@ const makeResourceNodeView:
   const elID = nodeProps.node.attrs?.resourceID
     ? encodeURIComponent(nodeProps.node.attrs.resourceID)
     : undefined;
+  const maybeClassName = nodeProps.node.attrs?.className;
+  const extraProps = maybeClassName
+    ? { className: maybeClassName }
+    : {};
   return <Tag
       ref={ref}
       id={elID}
-      about={nodeProps.node.attrs?.resourceID}>
+      about={nodeProps.node.attrs?.resourceID}
+      {...extraProps}>
     {children}
   </Tag>;
 });
