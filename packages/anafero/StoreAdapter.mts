@@ -49,6 +49,7 @@ export interface StoreAdapterModule {
    */
   readerFromBlob?:
     (entryPointBlob: Uint8Array, helpers: ReaderHelpers) => Promise<[
+      // TODO: Deprecate relations
       entryPointRelations: ResourceRelation[],
       reader: BlobReader,
     ]>;
