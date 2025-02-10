@@ -635,6 +635,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
     const blockNodesNestedInParagraphs = [
       'note',
+      'orderedList',
+      'unorderedList',
     ];
 
     /**
