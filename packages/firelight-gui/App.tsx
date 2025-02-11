@@ -597,10 +597,14 @@ export const VersionWorkspace: React.FC<{
         ? history.state.res
         : undefined;
       let path: string | null = null;
-      try {
-        path = locateResource(uri);
-      } catch (e) {
-        console.error("Error locating resource while popping state", e);
+      if (uri) {
+        try {
+          path = locateResource(uri);
+        } catch (e) {
+          console.error("Error locating resource while popping state", e);
+          path = null;
+        }
+      } else {
         path = null;
       }
       if (uri && path) {
