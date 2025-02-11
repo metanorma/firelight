@@ -616,7 +616,7 @@ export const VersionWorkspace: React.FC<{
       } else {
         console.warn("When popping state, could not resolve resource URI or locate resource path");
         // ??
-        window.location.reload();
+        //window.location.reload();
         return;
       }
     }
