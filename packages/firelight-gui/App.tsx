@@ -592,7 +592,7 @@ export const VersionWorkspace: React.FC<{
 
   // Handle the pop
   useEffect(() => {
-    const handlePopState = function() {
+    const handlePopState = function () {
       const uri = typeof history.state?.res === 'string'
         ? history.state.res
         : undefined;
