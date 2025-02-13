@@ -238,8 +238,26 @@ const clauseSchemaBase = new Schema({
           : node.attrs.href];
       },
     },
-    figure: {
+
+    // Named inconsistently to avoid clashing with PM stock table nodes
+    tableFigure: {
       content: 'figCaption? (image | table)',
+      group: 'block',
+      attrs: {
+        resourceID: {
+          default: undefined,
+        },
+      },
+      toDOM(node) {
+        const attrs = node.attrs.resourceID
+          ? { about: node.attrs.resourceID }
+          : {};
+        return ['figure', attrs, 0];
+      },
+    },
+
+    figure: {
+      content: 'image figCaption?',
       group: 'block',
       attrs: {
         resourceID: {
@@ -956,7 +974,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         // We will wrap the table in a figure, because PM’s default tables
         // don’t have captions or resourceID.
         // TODO: implement fully custom tables for parity with MN?
-        return pm.node('figure', { resourceID: subj }, contents);
+        return pm.node('tableFigure', { resourceID: subj }, contents);
       },
       'bibitem': (subj: string) => {
         const contents: ProseMirrorNode[] = [];
@@ -1022,18 +1040,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
             pm.node('image', { src: imgSrc }),
           );
         }
-        const name = findValue(section, subj, 'hasName');
-        const caption = name ? findValue(section, name, 'hasPart') : null;
+        const caption = findValue(section, subj, 'hasFmtName');
         if (caption) {
-          if (hasSubject(section, caption)) {
-            console.warn(
-              "Figure captions with complex contents are not yet supported, got",
-              getAllRelations(section, caption));
-          } else {
-            figureContents.splice(0, 0,
-              pm.node('figCaption', null, [pm.text(caption)]),
-            );
-          }
+          figureContents.push(
+            pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!)),
+          );
         }
         return pm.node('figure', { resourceID: subj }, figureContents);
       },
