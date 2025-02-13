@@ -214,6 +214,10 @@
         grid-template-columns: 25% 75%;
       }
 
+      ol {
+        list-style: latin;
+      }
+
       /*
       ul {
         ::marker {
