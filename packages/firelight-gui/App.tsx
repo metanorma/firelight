@@ -673,7 +673,7 @@ export const VersionWorkspace: React.FC<{
         return;
       }
       const url = new URL(href, document.baseURI);
-      const absoluteHref = url.pathname;
+      const absoluteHref = decodeURIComponent(url.pathname);
       const resourceURI = reverseResource(absoluteHref);
       //console.debug("Intercepted", resourceURI);
       if (resourceURI) {
