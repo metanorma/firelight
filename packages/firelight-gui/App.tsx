@@ -590,6 +590,20 @@ export const VersionWorkspace: React.FC<{
     ] as [string, string];
   }), [expandUnversionedPath]);
 
+  const scrollToResource = useCallback((resourceURI: string) => {
+    const el = document.getElementById(resourceURI)
+      ?? document.querySelector(`[about="${resourceURI}"]`);
+    if (el) {
+      try {
+        el.scrollIntoView();
+      } catch (e) {
+        console.error("Failed to scroll element into view", resourceURI);
+      }
+    } else {
+      console.error("Element not found for resource to scroll to", resourceURI);
+    }
+  }, []);
+
   // Handle the pop
   useEffect(() => {
     const handlePopState = function () {
@@ -646,6 +660,8 @@ export const VersionWorkspace: React.FC<{
     }
   }, [expandResourcePath, locateResource, state.activeResourceURI]);
 
+  const [queuedFragment, setQueuedFragment] = useState('');
+
   // Intercept internal link clicks
   const setUpInterceptor = useCallback((resourcesRef: HTMLDivElement) => {
     // TODO: Do something with returned interceptor cleanup function?
@@ -664,7 +680,7 @@ export const VersionWorkspace: React.FC<{
         dispatch({ type: 'activated_resource', uri: resourceURI });
         // Selecting non-structural (in-page) resource is semi-broken
         if (url.hash) {
-          window.location.hash = url.hash;
+          setQueuedFragment(decodeURIComponent(url.hash.slice(1)));
         }
         evt.stopPropagation();
         evt.preventDefault();
@@ -715,6 +731,17 @@ export const VersionWorkspace: React.FC<{
   const routerProps = useMemo(() => ({ router: { navigate } }), [navigate]);
 
   const isLoading = Object.values(resourceDeps).find(val => typeof val === 'function');
+
+  useEffect(() => {
+    if (!isLoading && queuedFragment) {
+      const elID = queuedFragment;
+      window.location.hash = `#${encodeURIComponent(elID)}`;
+      setTimeout(() => {
+        scrollToResource(elID);
+        setQueuedFragment('');
+      }, 500);
+    }
+  }, [isLoading, queuedFragment]);
 
   const lastVisibleResourceMarkerIntersection = useInView({
     threshold: 0,
