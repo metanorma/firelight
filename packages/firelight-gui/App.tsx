@@ -614,7 +614,7 @@ export const VersionWorkspace: React.FC<{
           window.location.hash = fragment;
         }
       } else {
-        console.warn("When popping state, could not resolve resource URI or locate resource path");
+        console.warn("While popping state, could not resolve resource URI or locate resource path", uri, history.state?.res);
         // ??
         //window.location.reload();
         return;
