@@ -610,6 +610,9 @@ export const VersionWorkspace: React.FC<{
       if (uri && path) {
         const [, fragment] = expandResourcePath(path);
         dispatch({ type: 'activated_resource', uri });
+
+        // This is probably ineffective right now as we don’t store
+        // hashes as part of resource URI in history state.
         if (fragment) {
           window.location.hash = fragment;
         }
