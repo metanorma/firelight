@@ -662,8 +662,6 @@ export const VersionWorkspace: React.FC<{
     }
   }, [expandResourcePath, locateResource, state.activeResourceURI]);
 
-  const [queuedFragment, setQueuedFragment] = useState('');
-
   // Intercept internal link clicks
   const setUpInterceptor = useCallback((resourcesRef: HTMLDivElement) => {
     // TODO: Do something with returned interceptor cleanup function?
@@ -734,6 +732,9 @@ export const VersionWorkspace: React.FC<{
 
   const isLoading = Object.values(resourceDeps).find(val => typeof val === 'function');
 
+  // Queue hash fragment to navigate to subresources more precisely
+  // after page load is finished.
+  const [queuedFragment, setQueuedFragment] = useState('');
   useEffect(() => {
     if (!isLoading && queuedFragment) {
       const elID = queuedFragment;
