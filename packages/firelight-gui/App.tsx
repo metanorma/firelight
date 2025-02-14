@@ -628,7 +628,9 @@ export const VersionWorkspace: React.FC<{
         // This is probably ineffective right now as we don’t store
         // hashes as part of resource URI in history state.
         if (fragment) {
-          window.location.hash = fragment;
+          setTimeout(() => {
+            setQueuedFragment(fragment.slice(1));
+          }, 200);
         }
       } else {
         console.warn("While popping state, could not resolve resource URI or locate resource path", uri, history.state?.res);
