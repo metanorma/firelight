@@ -675,7 +675,7 @@ export const VersionWorkspace: React.FC<{
       const url = new URL(href, document.baseURI);
       const absoluteHref = decodeURIComponent(url.pathname);
       const resourceURI = reverseResource(absoluteHref);
-      //console.debug("Intercepted", resourceURI);
+      //console.debug("Intercepted", href, resourceURI, url.hash, url);
       if (resourceURI) {
         dispatch({ type: 'activated_resource', uri: resourceURI });
         // Selecting non-structural (in-page) resource is semi-broken
