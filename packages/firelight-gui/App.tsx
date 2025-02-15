@@ -590,20 +590,6 @@ export const VersionWorkspace: React.FC<{
     ] as [string, string];
   }), [expandUnversionedPath]);
 
-  const scrollToResource = useCallback((resourceURI: string) => {
-    const el = document.getElementById(resourceURI)
-      ?? document.querySelector(`[about="${resourceURI}"]`);
-    if (el) {
-      try {
-        el.scrollIntoView();
-      } catch (e) {
-        console.error("Failed to scroll element into view", resourceURI);
-      }
-    } else {
-      console.error("Element not found for resource to scroll to", resourceURI);
-    }
-  }, []);
-
   // Handle the pop
   useEffect(() => {
     const handlePopState = function () {
@@ -662,12 +648,20 @@ export const VersionWorkspace: React.FC<{
     }
   }, [expandResourcePath, locateResource, state.activeResourceURI]);
 
+  const [resourceContainerElement, setResourceContainerElement] =
+    useState<null | HTMLDivElement>(null);
+
   // Intercept internal link clicks
   const setUpInterceptor = useCallback((resourcesRef: HTMLDivElement) => {
+    if (resourcesRef) {
+      setResourceContainerElement(resourcesRef);
+    }
+
     // TODO: Do something with returned interceptor cleanup function?
     interceptNav(resourcesRef, {
       // shadowDom: true,
     }, function handleIntercept (evt: MouseEvent | KeyboardEvent, el: Element) {
+
       const href = el.getAttribute('href');
       if (!href || !getVersionLocalPath) {
         return;
@@ -735,16 +729,55 @@ export const VersionWorkspace: React.FC<{
   // Queue hash fragment to navigate to subresources more precisely
   // after page load is finished.
   const [queuedFragment, setQueuedFragment] = useState('');
-  useEffect(() => {
-    if (!isLoading && queuedFragment) {
-      const elID = queuedFragment;
-      window.location.hash = `#${encodeURIComponent(elID)}`;
-      setTimeout(() => {
-        scrollToResource(elID);
-        setQueuedFragment('');
-      }, 500);
+
+  const scrollToResource = useCallback(() => {
+    if (!queuedFragment) {
+      return;
     }
-  }, [isLoading, queuedFragment]);
+    if (!resourceContainerElement) {
+      console.warn("Cannot scroll to resource: no resource container element");
+      return;
+    }
+    //const encoded = encodeURIComponent(queuedFragment);
+    const el = document.getElementById(queuedFragment)
+      ?? resourceContainerElement.querySelector(`[about="${queuedFragment}"]`);
+    if (el) {
+      try {
+        el.scrollIntoView();
+      } catch (e) {
+        console.error("Failed to scroll element into view", queuedFragment);
+      }
+      setQueuedFragment('');
+    } else {
+      console.error("Element not found for resource to scroll to", queuedFragment);
+    }
+  }, [resourceContainerElement, queuedFragment]);
+
+  useEffect(() => {
+    if (!isLoading && queuedFragment && resourceContainerElement) {
+      const resourceID = queuedFragment;
+      window.location.hash = `#${encodeURIComponent(resourceID)}`;
+      // In case there’s a delay in element’s appearing in DOM tree:
+      const observer = new MutationObserver(scrollToResource);
+      scrollToResource();
+      observer.observe(resourceContainerElement, {
+        attributes: false,
+        childList: true,
+        characterData: false,
+        subtree: true,
+      });
+      // Clean up queued fragment if DOM tree is stuck for some reason
+      // (shouldn’t happen)
+      const timeout = setTimeout(() => {
+        setQueuedFragment('');
+      }, 5000);
+      return function () {
+        observer.disconnect();
+        window.clearTimeout(timeout);
+      };
+    }
+    return function () {};
+  }, [isLoading, queuedFragment, scrollToResource, resourceContainerElement]);
 
   const lastVisibleResourceMarkerIntersection = useInView({
     threshold: 0,
