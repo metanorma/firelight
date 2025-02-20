@@ -1032,18 +1032,26 @@ const generatorsByType: Record<string, ContentGenerator> = {
         return pm.node('paragraph', { resourceID: subj }, contents);
       },
       'listItem': (subj: string) => {
-        const content: ProseMirrorNode[] = [];
         const firstPart = findValue(section, subj, 'hasPart');
         if (!firstPart) {
           return undefined;
         }
         const firstPartTypes = findAll(section, firstPart, 'type');
-        if (!firstPartTypes.includes('paragraph')) {
-          console.warn("Inserting leading paragraph to ensure a valid list item");
-          content.push(pm.node('paragraph', null, [pm.text(" ")]));
-        }
-        content.push(...generateContent(subj, pm.nodes.list_item!));
+        const content = generateContent(subj, pm.nodes.list_item!);
         //console.debug("processing list item", subj, JSON.stringify(pm.node('list_item', null, content).toJSON()), null, 2);
+        if (content[0]?.type?.name !== 'paragraph') {
+          console.warn("Inserting leading paragraph to ensure a valid list item");
+          if (hasSubject(section, firstPart)) {
+            // First part is an element, so insert an empty paragraph
+            // before it.
+            content.splice(0, 0, pm.node('paragraph', null, [pm.text(" ")]));
+          } else {
+            // First part is plain text, so insert a paragraph
+            // containing this text.
+            content.splice(0, 1, pm.node('paragraph', null, [pm.text(firstPart)]));
+          }
+        }
+        //console.debug("processing list item: after", subj, JSON.stringify(pm.node('list_item', null, content).toJSON()), null, 2);
         return pm.node('list_item', null, content);
       },
       'figure': (subj: string) => {
