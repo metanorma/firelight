@@ -241,7 +241,7 @@
         padding: 0;
 
         &:has(> img) {
-          padding: 1em;
+          padding: .5em 1em;
           border-radius: 5px;
 
           background: white;
