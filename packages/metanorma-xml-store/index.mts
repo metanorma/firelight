@@ -43,6 +43,7 @@ const sectionLikeElements = [
   'definitions',
   'terms',
   'annex',
+  'indexsect',
 ] as const;
 
 const mod: StoreAdapterModule = {
@@ -155,6 +156,7 @@ const mod: StoreAdapterModule = {
               },
               introduction: processClauseLike,
               foreword: processClauseLike,
+              indexsect: processClauseLike,
               references: processClauseLike,
               terms: processClauseLike,
               annex: processClauseLike,
