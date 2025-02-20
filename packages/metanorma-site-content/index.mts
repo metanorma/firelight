@@ -311,6 +311,23 @@ const clauseSchemaBase = new Schema({
       isLeaf: true,
     },
 
+    anchor: {
+      group: 'flow',
+      inline: true,
+      isLeaf: true,
+      attrs: {
+        resourceID: {
+          default: undefined,
+        },
+      },
+      toDOM(node) {
+        return ['a', {
+          name: node.attrs.resourceID,
+          id: node.attrs.resourceID,
+        }];
+      },
+    },
+
     admonition: {
       attrs: {
         // An array of strings. E.g., ['note', 'commentary']
@@ -654,6 +671,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
       // TODO: Figure out what to do with underlines. <u> isn’t fit
       'underline': 'underline',
+      'bookmark': 'anchor',
 
       'dl': 'definition_list',
       'dd': 'dd',
