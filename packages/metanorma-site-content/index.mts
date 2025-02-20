@@ -391,6 +391,14 @@ const clauseSchemaBase = new Schema({
         return ['span', 0];
       },
     },
+    underline: {
+      group: 'flow',
+      content: '(text | flow)*',
+      inline: true,
+      toDOM() {
+        return ['span', { class: classNames.underlined }, 0];
+      },
+    },
     code: {
       group: 'flow',
       content: '(text | flow)*',
@@ -645,7 +653,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'span': 'span',
 
       // TODO: Figure out what to do with underlines. <u> isn’t fit
-      'underline': 'span',
+      'underline': 'underline',
+
       'dl': 'definition_list',
       'dd': 'dd',
       'dt': 'dt',
