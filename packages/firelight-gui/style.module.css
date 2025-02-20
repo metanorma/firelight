@@ -235,6 +235,10 @@
         margin-bottom: 1em;
       }
 
+      pre {
+        white-space: pre-line;
+      }
+
       figure {
         margin: 0;
         margin-right: 1em; /* Good for aesthetics when tables overflow and scroll… */
