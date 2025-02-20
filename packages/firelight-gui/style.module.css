@@ -244,6 +244,8 @@
           padding: .5em 1em;
           border-radius: 5px;
 
+          text-align: center;
+
           background: white;
           > img {
             margin: .5em;
