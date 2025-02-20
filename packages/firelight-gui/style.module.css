@@ -266,6 +266,8 @@
         --table-highlight-background: rgba(120, 120, 120, 0.5);
         --table-border: 1px solid var(--table-highlight-background);
 
+        width: 100%;
+
         border-collapse: collapse;
         border: var(--table-border);
 
