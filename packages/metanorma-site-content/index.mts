@@ -191,6 +191,8 @@ const clauseSchemaBase = new Schema({
         return ['section', attrs, 0];
       },
     },
+
+    // TODO: Simply use the ordinary xrefLabel?
     termXrefLabel: {
       content: '(text | flow)*',
       toDOM() {
