@@ -12,6 +12,17 @@
   margin-right: 1em;
 }
 
+.xrefLabel {
+  margin: -.25em .75em .75em -.25em;
+  font-size: 80%;
+  padding: .25em .5em;
+  background-color: var(--spectrum-alias-background-color-disabled);
+  color: var(--spectrum-alias-text-color);
+  display: inline-block;
+  border-radius: .25em;
+  font-weight: bold;
+}
+
 span.underlined {
   text-decoration: underline;
 }

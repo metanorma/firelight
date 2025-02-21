@@ -359,7 +359,7 @@ const clauseSchemaBase = new Schema({
     xrefLabel: {
       content: '(text | flow)*',
       toDOM() {
-        return ['header', 0];
+        return ['header', { class: classNames.xrefLabel }, 0];
       },
     },
 
