@@ -244,6 +244,12 @@
         margin-right: 1em; /* Good for aesthetics when tables overflow and scroll… */
         padding: 0;
 
+        > pre {
+          padding: .5em;
+          margin: 0;
+          overflow: auto;
+        }
+
         &:has(> img) {
           padding: .5em 1em;
           border-radius: 5px;
