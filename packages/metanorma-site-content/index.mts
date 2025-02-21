@@ -341,7 +341,7 @@ const clauseSchemaBase = new Schema({
           default: '',
         },
       },
-      content: 'admonitionXrefLabel? block*',
+      content: 'xrefLabel+ block*',
       group: 'block',
       toDOM(node) {
         return ['aside', {
@@ -356,7 +356,7 @@ const clauseSchemaBase = new Schema({
       },
     },
 
-    admonitionXrefLabel: {
+    xrefLabel: {
       content: '(text | flow)*',
       toDOM() {
         return ['header', 0];
@@ -921,9 +921,9 @@ const generatorsByType: Record<string, ContentGenerator> = {
         const xrefLabel = findPartsOfType(section, subj, 'fmt-xref-label')[0];
         if (xrefLabel) {
           contents.splice(0, 0, pm.node(
-            'admonitionXrefLabel',
+            'xrefLabel',
             null,
-            generateContent(xrefLabel, pm.nodes.admonitionXrefLabel!),
+            generateContent(xrefLabel, pm.nodes.xrefLabel!),
           ));
         }
 
