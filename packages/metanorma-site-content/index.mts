@@ -260,7 +260,7 @@ const clauseSchemaBase = new Schema({
     },
 
     figure: {
-      content: 'image figCaption?',
+      content: '(image | arbitrary_literal_block) figCaption?',
       group: 'block',
       attrs: {
         resourceID: {
@@ -417,6 +417,12 @@ const clauseSchemaBase = new Schema({
       inline: true,
       toDOM() {
         return ['span', { class: classNames.underlined }, 0];
+      },
+    },
+    arbitrary_literal_block: {
+      content: '(text | flow)*',
+      toDOM() {
+        return ['pre', 0];
       },
     },
     code: {
@@ -1078,7 +1084,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
         const svgContents = svg
           ? findValue(section, svg, 'hasSVGContents')
           : undefined;
-        if (!imgSrc && !svgContents) {
+        const arbitraryLiteralBlock = findValue(section, subj, 'hasPre');
+        if (!imgSrc && !svgContents && !arbitraryLiteralBlock) {
           console.warn("Won’t create a figure without an image src or SVG contents", subj);
           return undefined;
         }
@@ -1090,6 +1097,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
         } else if (imgSrc) {
           figureContents.push(
             pm.node('image', { src: imgSrc, width }),
+          );
+        } else if (arbitraryLiteralBlock) {
+          const parts = generateContent(arbitraryLiteralBlock, pm.nodes.arbitrary_literal_block!);
+          figureContents.push(
+            pm.node('arbitrary_literal_block', null, parts),
           );
         }
         const caption = findValue(section, subj, 'hasFmtName');
