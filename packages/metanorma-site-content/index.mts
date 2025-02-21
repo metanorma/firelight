@@ -277,7 +277,7 @@ const clauseSchemaBase = new Schema({
       },
     },
     example: {
-      content: 'figCaption? block*',
+      content: 'xrefLabel+ block* figCaption?',
       group: 'block',
       attrs: {
         resourceID: {
@@ -877,14 +877,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
         );
       },
       'example': (subj, onAnnotation) => {
-
-        const captionID = findAll(section, subj, 'hasPart').
-        find(part => findValue(section, part, 'type') === 'name');
-
-        // Find caption parts that are plain text, don’t expect relations there for now
-        const captionParts = captionID
-          ? findAll(section, captionID, 'hasPart').filter(part => !hasSubject(section, part))
-          : null;
+        //const caption = findValue(section, subj, 'hasFmtName');
+        const captionParts = findPartsOfType(section, subj, 'fmt-name');
 
         // TODO: Refactor this, probably with generateContent, see admonition/note
         const contents: ProseMirrorNode[] = [];
@@ -898,8 +892,21 @@ const generatorsByType: Record<string, ContentGenerator> = {
             }
           }
         }
-        if (captionParts) {
-          contents.splice(0, 0, pm.node('figCaption', null, captionParts.map(p => pm.text(p))));
+        const xrefLabels = findPartsOfType(section, subj, 'fmt-xref-label');
+        xrefLabels.reverse();
+        for (const xrefLabel of xrefLabels) {
+          contents.splice(0, 0, pm.node(
+            'xrefLabel',
+            null,
+            generateContent(xrefLabel, pm.nodes.xrefLabel!),
+          ));
+        }
+        if (captionParts.length > 0) {
+          contents.push(pm.node(
+            'figCaption',
+            null,
+            captionParts.flatMap(part => generateContent(part, pm.nodes.figCaption!)),
+          ));
         }
         // We will wrap the example in a figure.
         return pm.node('example', { resourceID: subj }, contents);
