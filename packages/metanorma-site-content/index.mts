@@ -72,7 +72,7 @@ const clauseSchemaBase = new Schema({
       },
     },
     title: {
-      content: 'text*',
+      content: '(text | flow)*',
       toDOM() {
         return ['h1', 0];
       },
@@ -667,11 +667,6 @@ const generatorsByType: Record<string, ContentGenerator> = {
   },
 
   section: function generateDoc (section) {
-
-    const labelInPlainText = getSectionPlainTitle(section);
-    if (!labelInPlainText) {
-      throw new Error("Cannot generate clause: missing title");
-    }
 
     const simpleNodes: Record<string, string> = {
       //'unorderedList': 'bullet_list',
@@ -1278,6 +1273,16 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
     const pm = clauseSchema;
 
+    const labelInPlainText = getSectionPlainTitle(section);
+    if (!labelInPlainText) {
+      throw new Error("Cannot generate clause: missing title");
+    }
+
+    const title = findPartsOfType(section, ROOT_SUBJECT, 'fmt-title')[0];
+    const titleContent = title
+      ? generateContent(title, pm.nodes.title!)
+      : undefined;
+
     // Footnote nodes only
     const footnotes: ProseMirrorNode[] = [];
     const handleAnnotation: AnnotationCallback =
@@ -1303,7 +1308,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
     //}
 
     const contentDoc = pm.node(pm.topNodeType, null, [
-      pm.node('title', null, [pm.text(labelInPlainText)]),
+      pm.node('title', null, titleContent ?? [pm.text(labelInPlainText)]),
       ...docContents,
     ]).toJSON();
 
