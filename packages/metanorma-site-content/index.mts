@@ -715,7 +715,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
             if (type !== 'listItem') {
               const content = type === 'paragraph'
                 ? [maybeNode]
-                : [pm.node('paragraph', null, [pm.text('_')]), maybeNode];
+                : [pm.node('paragraph', null, [pm.text(' ')]), maybeNode];
               contents.push(pm.node(
                 'list_item',
                 null,
