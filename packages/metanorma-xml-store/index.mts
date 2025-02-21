@@ -177,6 +177,12 @@ const mod: StoreAdapterModule = {
                   { skipChildren: () => true },
                 ];
               },
+              sourcecode: function processSourceCode(el) {
+                return [
+                  [[ROOT_SUBJECT, 'hasFormattedSource', el.outerHTML]],
+                  { skipChildren: () => true },
+                ];
+              },
               semx: 'bypass',
               title: function processTitle(el, getURI) {
                 if (el.parentElement

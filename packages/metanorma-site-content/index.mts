@@ -136,6 +136,9 @@ const clauseSchemaBase = new Schema({
     },
     source_listing: {
       attrs: {
+        formattedSource: {
+          default: undefined,
+        },
         resourceID: {
           default: '',
         },
@@ -143,10 +146,10 @@ const clauseSchemaBase = new Schema({
       content: '(text | flow)*',
       group: 'block',
       toDOM(node) {
-        const attrs = node.attrs.resourceID
-          ? { about: node.attrs.resourceID }
-          : {};
-        return ['pre', attrs, 0];
+        const el = document.createElement('pre');
+        el.setAttribute('about', node.attrs.resourceID);
+        el.innerHTML = node.attrs.formattedSource;
+        return el;
       },
     },
 
@@ -666,7 +669,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       //'unorderedList': 'bullet_list',
       'orderedList': 'ordered_list',
       //'paragraph': 'paragraph',
-      'sourcecode': 'source_listing',
+      //'sourcecode': 'source_listing',
       'span': 'span',
 
       // TODO: Figure out what to do with underlines. <u> isn’t fit
@@ -815,7 +818,14 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'stem': (subj: string) => {
         const mathML = findValue(section, subj, 'hasMathML');
         return pm.node('math', { mathML });
-        
+      },
+      'sourcecode': (subj: string) => {
+        const formattedSource = findValue(section, subj, 'hasFormattedSource');
+        if (!formattedSource) {
+          console.warn("Sourcecode lacks formatted source");
+          return undefined;
+        }
+        return pm.node('source_listing', { resourceID: subj, formattedSource });
       },
       'xref': (subj: string) => {
         const target = findValue(section, subj, 'hasTarget');
