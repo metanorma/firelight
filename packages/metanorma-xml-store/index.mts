@@ -189,7 +189,7 @@ const mod: StoreAdapterModule = {
                           : (node as Element).outerHTML
                         : ''
                   ).join('')]],
-                  { skipChildren: () => true },
+                  { skipChildren: () => false, processTag: { span: 'ignore' } },
                 ];
               },
               semx: 'bypass',
