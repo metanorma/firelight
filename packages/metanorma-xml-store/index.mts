@@ -179,7 +179,16 @@ const mod: StoreAdapterModule = {
               },
               sourcecode: function processSourceCode(el) {
                 return [
-                  [[ROOT_SUBJECT, 'hasFormattedSource', el.outerHTML]],
+                  [[ROOT_SUBJECT, 'hasFormattedSource', Array.from(el.childNodes).map(node =>
+                    node.nodeType === 3
+                      ? node.nodeValue
+                      : node.nodeType === 1
+                        ? (node as Element).tagName.startsWith('fmt-')
+                          // Ignore the fmt-* tags preceding actual source listing
+                          ? ''
+                          : (node as Element).outerHTML
+                        : ''
+                  ).join('')]],
                   { skipChildren: () => true },
                 ];
               },
