@@ -922,8 +922,9 @@ const generatorsByType: Record<string, ContentGenerator> = {
           flatMap(([part, partType]) => makeNodeOrNot(part!, partType!, onAnnotation)).
           filter(n => n !== undefined);
 
-        const xrefLabel = findPartsOfType(section, subj, 'fmt-xref-label')[0];
-        if (xrefLabel) {
+        const xrefLabels = findPartsOfType(section, subj, 'fmt-xref-label');
+        xrefLabels.reverse();
+        for (const xrefLabel of xrefLabels) {
           contents.splice(0, 0, pm.node(
             'xrefLabel',
             null,
