@@ -66,7 +66,7 @@
   box-shadow: 0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color);
 
   background-color: var(--spectrum-alias-background-color-default);
-  color: var(--spectrum-body-text-color);
+  color: var(--spectrum-alias-text-color);
 
   transition: margin-left .5s ease-in-out;
   &.withNav {
@@ -326,7 +326,7 @@
   /* loading janks things up for now. transition: background-color .5s linear; */
 
   background-color: var(--spectrum-alias-background-color-disabled);
-  color: var(--spectrum-body-text-color);
+  color: var(--spectrum-alias-text-color);
 
   z-index: 22;
 
@@ -386,7 +386,7 @@
   --spectrum-global-dimension-size-200: .5em;
 
   background-color: var(--spectrum-alias-background-color-default);
-  color: var(--spectrum-body-text-color);
+  color: var(--spectrum-alias-text-color);
 
   overflow-y: auto;
 
