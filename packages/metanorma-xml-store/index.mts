@@ -204,9 +204,7 @@ const mod: StoreAdapterModule = {
                   const fmtTitleText = dom.documentElement.querySelector(`semx[element=title][source=${id}]`);
                   const fmtTitleRoot = fmtTitleText?.closest('fmt-title');
                   const clauseNumberEl = fmtTitleRoot?.querySelector('.fmt-caption-label');
-                  const clauseNumber = clauseNumberEl
-                    ? clauseNumberEl.textContent ?? ''
-                    : '';
+                  const clauseNumber = clauseNumberEl?.textContent ?? '';
                   const graph: RelationGraphAsList = [];
                   if (clauseNumber.trim() !== '') {
                     graph.push([sectionURI, 'hasClauseNumber', clauseNumber]);
