@@ -142,7 +142,7 @@ const mod: StoreAdapterModule = {
               },
               formattedref: processAsGenericContainer,
               span: (el, _) =>
-                ['fmt-autonum-delim', 'fmt-caption-label'].
+                ['fmt-autonum-delim', 'fmt-caption-label', 'fmt-caption-delim'].
                 map(t => el.classList.contains(t)).
                 includes(true)
                   ? 'bypass'
