@@ -1221,7 +1221,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           return allSubparts;
         } else {
           if (subjectNodeType.inlineContent && allSubparts.find(node => !node.isInline)) {
-            console.warn("Trying to create a block in an inline-content node?", subjectNodeTypeRepr, allSubparts.map(n => n.textContent).join(', '));
+            console.warn("Trying to create a block in an inline-content node", subjectNodeTypeRepr, allSubparts.map(n => n.textContent).join(', '));
             return allSubparts.
             map(n => n.isInline
               ? n
@@ -1230,7 +1230,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           } else if (!subjectNodeType.inlineContent && allSubparts.find(node => node.isInline)) {
             //return allSubparts;
             if (allSubparts.find(node => !node.isInline)) {
-              console.error("Mixing inline and block content :(", subject, subjectNodeTypeRepr, allSubparts.filter(node => !node.isInline).map(n => n.toString()));
+              console.warn("Mixing inline nodes in a block-content node", subject, subjectNodeTypeRepr, allSubparts.filter(node => !node.isInline).map(n => n.toString()));
               return allSubparts.map(n =>
                 n.isInline
                   ? pm.node('paragraph', null, [n])
