@@ -934,6 +934,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
         return pm.node('admonition', { resourceID: subj, tags }, contents);
       },
+      'tab': () => pm.text('  '),
       'footnote': (subj, onAnnotation) => {
         const cue = findValue(section, subj, 'hasReference');
         if (!cue) {
