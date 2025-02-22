@@ -139,15 +139,11 @@ const clauseSchemaBase = new Schema({
         formattedSource: {
           default: undefined,
         },
-        resourceID: {
-          default: '',
-        },
       },
       content: '(text | flow)*',
       group: 'block',
       toDOM(node) {
         const el = document.createElement('pre');
-        el.setAttribute('about', node.attrs.resourceID);
         el.innerHTML = node.attrs.formattedSource;
         return el;
       },
@@ -262,7 +258,7 @@ const clauseSchemaBase = new Schema({
     },
 
     figure: {
-      content: '(image | arbitrary_literal_block) figCaption?',
+      content: '(image | source_listing | arbitrary_literal_block) figCaption?',
       group: 'block',
       attrs: {
         resourceID: {
@@ -828,7 +824,20 @@ const generatorsByType: Record<string, ContentGenerator> = {
           console.warn("Sourcecode lacks formatted source");
           return undefined;
         }
-        return pm.node('source_listing', { resourceID: subj, formattedSource });
+        const content = [pm.node('source_listing', { formattedSource })];
+        const captionID = findPartsOfType(section, subj, 'fmt-name')[0];
+        if (captionID) {
+          content.push(pm.node(
+            'figCaption',
+            null,
+            generateContent(captionID, pm.nodes.figCaption!),
+          ));
+        }
+        return pm.node(
+          'figure',
+          { resourceID: subj },
+          content,
+        );
       },
       'xref': (subj: string) => {
         const target = findValue(section, subj, 'hasTarget');
