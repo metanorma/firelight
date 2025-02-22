@@ -1240,7 +1240,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
             }
           } else {
             return allSubparts;
-            console.error("Something went wrong", subject, subjectNodeType.name);
+            //console.error("Something went wrong", subject, subjectNodeType.name);
           }
         }
       } else {
