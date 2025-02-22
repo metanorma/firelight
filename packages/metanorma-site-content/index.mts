@@ -1057,7 +1057,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         if (!firstPart) {
           return undefined;
         }
-        const firstPartTypes = findAll(section, firstPart, 'type');
+        //const firstPartTypes = findAll(section, firstPart, 'type');
         const content = generateContent(subj, pm.nodes.list_item!);
         //console.debug("processing list item", subj, JSON.stringify(pm.node('list_item', null, content).toJSON()), null, 2);
         if (content[0]?.type?.name !== 'paragraph') {
