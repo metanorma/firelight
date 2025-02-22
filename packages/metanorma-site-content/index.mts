@@ -821,7 +821,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'sourcecode': (subj: string) => {
         const formattedSource = findValue(section, subj, 'hasFormattedSource');
         if (!formattedSource) {
-          console.warn("Sourcecode lacks formatted source");
+          console.error("Sourcecode lacks formatted source");
           return undefined;
         }
         const content = [pm.node('source_listing', { formattedSource })];
