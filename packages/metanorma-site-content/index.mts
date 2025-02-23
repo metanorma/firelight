@@ -195,6 +195,7 @@ const clauseSchemaBase = new Schema({
         return ['span', { class: classNames.termXrefLabel }, 0];
       },
     },
+
     term: {
       content: '(text | flow)*',
       attrs: {
