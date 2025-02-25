@@ -932,7 +932,7 @@ export const VersionWorkspace: React.FC<{
                     ? <ResourceHelmet {...data.content.content} />
                     : null}
                 </React.Fragment>
-              : <div style={{ textAlign: 'right' }}>Loading</div>
+              : <div key={`${uri}-loading`} style={{ textAlign: 'right' }}>Loading</div>
           })}
         </Provider>
       </main>
