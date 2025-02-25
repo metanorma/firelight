@@ -31,8 +31,7 @@ span.underlined {
 .admonition {
   padding: .5em;
   margin: .5em 0;
-  border: 1px solid #888;
-  border-radius: 5px;
+  border: 1px solid var(--spectrum-alias-border-color);
 
   header:first-child {
     font-weight: bold;
