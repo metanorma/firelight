@@ -366,14 +366,25 @@ export const makeContentReader: ContentReaderFactory = async function (
   function processResourceContents(
     resourceURI: string,
     containingResourcePath: string,
+
+    /** Used for recursion, callers must not specify. */
+    _seen?: Set<string>,
   ) {
+    const seen = _seen ?? new Set<string>();
     cache.set({
       [`path-for/${resourceURI}`]: `${containingResourcePath}#${resourceURI}`,
     });
-    // TODO: Recursion is not good here since it can be deep
     for (const rel of generateRelations(resourceURI)) {
       if (isURIString(rel.target) && !contentAdapter.crossReferences?.(rel)) {
-        processResourceContents(rel.target, containingResourcePath);
+        // TODO: Recursion is not good here since it can be deep
+        //console.debug("processResourceContents", containingResourcePath, resourceURI, rel);
+        const key = JSON.stringify({ rel, resourceURI, containingResourcePath });
+        if (seen.has(key)) {
+          throw new Error(`Duplicate ${rel.predicate} to ${rel.target} from ${resourceURI} at ${containingResourcePath}`);
+        } else {
+          seen.add(key);
+          processResourceContents(rel.target, containingResourcePath, seen);
+        }
       }
     }
   }
