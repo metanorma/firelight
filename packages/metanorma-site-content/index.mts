@@ -1244,7 +1244,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           } else if (!subjectNodeType.inlineContent && allSubparts.find(node => node.isInline)) {
             //return allSubparts;
             if (allSubparts.find(node => !node.isInline)) {
-              console.warn("Mixing inline nodes in a block-content node", subject, subjectNodeTypeRepr, allSubparts.filter(node => !node.isInline).map(n => n.toString()));
+              console.warn("Mixing inline nodes in a block-content node for resource:", subject, subjectNodeTypeRepr/*, allSubparts.filter(node => !node.isInline).map(n => n.toString())*/);
               return allSubparts.map(n =>
                 n.isInline
                   ? pm.node('paragraph', null, [n])
