@@ -311,7 +311,11 @@ export const makeContentReader: ContentReaderFactory = async function (
         const currentResource = queue.pop()!;
         if (!cache.has(`edges-from/${currentResource}`)) {
           console.warn("No graph for", currentResource);
-          //throw new Error(`No resource graph found for ${currentResource}`);
+          if (entryPointURI === currentResource) {
+            // Throw error if we are *supposed* to have some graph
+            // because it’s an entry point resource
+            throw new Error(`No resource graph found for ${currentResource}`);
+          }
         } else {
           const relations = cache.list<ResourceRelation>(`edges-from/${currentResource}`);
           cache.add(
