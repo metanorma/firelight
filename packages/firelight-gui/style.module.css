@@ -241,7 +241,7 @@
 
       figure {
         margin: 0;
-        margin-right: 1em; /* Good for aesthetics when tables overflow and scroll… */
+        /* margin-right: 1em; /* Good for aesthetics when tables overflow and scroll… */
         padding: 0;
 
         > pre {
