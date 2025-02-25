@@ -247,8 +247,11 @@ export function processResources(
   if (chunk.size > 0) {
     onRelationChunk(Array.from(chunk.keys()));
   }
+
+  currentChain.pop();
+
   if (currentChain.length > 0) {
-    console.warn("Leftover chain after XML processing loop", currentChain);
+    console.warn("Unexpected items remain in current element chain after XML processing", currentChain);
   }
 }
 
