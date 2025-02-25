@@ -237,6 +237,7 @@ const mod: StoreAdapterModule = {
               sections: 'bypass',
               bibliography: 'bypass',
               metanorma: 'ignore',
+              'metanorma-extension': 'ignore',
               'localized-strings': 'ignore',
               'presentation-metadata': 'ignore',
             },
