@@ -243,7 +243,7 @@ const clauseSchemaBase = new Schema({
 
     // Named inconsistently to avoid clashing with PM stock table nodes
     tableFigure: {
-      content: 'figCaption? (image | table)',
+      content: 'figCaption? (image | table) block*',
       group: 'block',
       attrs: {
         resourceID: {
@@ -968,7 +968,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           ],
         );
       },
-      'table': (subj, onAnnotation) => {
+      'table': function (subj, onAnnotation) {
         const caption = findValue(section, subj, 'hasFmtName');
         //const caption = name ? findValue(section, name, 'hasPart') : null;
 
@@ -1034,6 +1034,20 @@ const generatorsByType: Record<string, ContentGenerator> = {
         if (caption) {
           contents.splice(0, 0, pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!)));
         }
+
+        // TODO: Direct paragraph descendants not allowed by the spec?
+        const paragraphs = findAll(section, subj, 'hasParagraph');
+        if (paragraphs.length > 0) {
+          // NOTE: If there are nodes not allowed by table node spec intermingled
+          // then it will fail to create the table.
+          contents.push(...paragraphs.flatMap(subj => this['paragraph'](subj, onAnnotation)));
+        }
+
+        const notes = findAll(section, subj, 'hasNote');
+        if (notes.length > 0) {
+          contents.push(...notes.map(subj => this['note'](subj, onAnnotation)));
+        }
+
         // We will wrap the table in a figure, because PM’s default tables
         // don’t have captions or resourceID.
         // TODO: implement fully custom tables for parity with MN?
