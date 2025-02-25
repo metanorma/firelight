@@ -1,7 +1,7 @@
 .figCaption {
   display: block;
   text-align: center;
-  font-size: 80%;
+  /*font-size: 80%;*/
 }
 
 .docMeta {
@@ -14,14 +14,11 @@
 }
 
 .xrefLabel {
-  margin: -.25em .75em .75em -.25em;
-  font-size: 80%;
+  margin: 0 .75em 0 0;
+  transform: translateX(-.5em);
+  /*font-size: 80%;*/
   padding: .25em .5em;
-  background-color: var(--spectrum-alias-background-color-disabled);
-  color: var(--spectrum-alias-text-color);
   display: inline-block;
-  border-radius: .25em;
-  font-weight: bold;
 }
 
 span.underlined {
@@ -29,11 +26,11 @@ span.underlined {
 }
 
 .admonition {
-  padding: .5em;
+  padding: 0 .5em .5em .5em;
   margin: .5em 0;
   border: 1px solid var(--spectrum-alias-border-color);
 
-  header:first-child {
+  > header:first-child {
     font-weight: bold;
   }
   :not(:first-child) {
