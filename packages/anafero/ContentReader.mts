@@ -310,7 +310,7 @@ export const makeContentReader: ContentReaderFactory = async function (
       while (queue.length > 0) {
         const currentResource = queue.pop()!;
         if (!cache.has(`edges-from/${currentResource}`)) {
-          console.warn("No graph for", currentResource);
+          //console.warn("No graph for", currentResource);
           if (entryPointURI === currentResource) {
             // Throw error if we are *supposed* to have some graph
             // because it’s an entry point resource
