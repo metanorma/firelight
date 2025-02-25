@@ -19,6 +19,10 @@ export function estimateRelationCount(doc: Document): number {
       // since each attribute is a relation
       count += current.attributes.length;
 
+      // Count child nodes,
+      // since each child node = relation
+      count += current.childNodes.length;
+
       processed.add(current);
     }
 
