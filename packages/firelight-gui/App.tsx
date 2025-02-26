@@ -850,6 +850,15 @@ export const VersionWorkspace: React.FC<{
       : 'en-US'
   ), [getResourceLocale, resourceMap]);
 
+  const activeResourceContent = useMemo(() => {
+    const dep = resourceDeps[state.activeResourceURI];
+    const activeResourceContent = (dep && typeof dep !== 'function')
+      ? dep.content?.content ?? undefined
+      : undefined;
+    console.debug("active resource content", activeResourceContent);
+    return activeResourceContent;
+  }, [resourceDeps, state.activeResourceURI]);
+
   return (
     <>
       <BrowserBar
@@ -930,14 +939,25 @@ export const VersionWorkspace: React.FC<{
                       },
                     } : {})}
                   />
-                  {(isActive || isOnlyOneShown) && data.content.content
-                    ? <ResourceHelmet {...data.content.content} />
-                    : null}
                 </React.Fragment>
               : <div key={`${uri}-loading`} style={{ textAlign: 'right' }}>Loading</div>
           })}
         </Provider>
       </main>
+
+      {/* This is needed here when multiple resources are visible,
+          to make sure the active resource is the one dictating HTML title.
+          key is used to force re-render and reset title when resources are loading. */}
+      {activeResourceContent
+        ? <ResourceHelmet
+            key={`
+              ${state.activeResourceURI}
+              ${state.visibleResourceURIs.join(' ')}
+              ${Object.values(resourceDeps).map(d => typeof d === 'function' ? 'f' : 't').join(' ')}
+            `}
+            {...activeResourceContent}
+          />
+        : null}
 
       <div
         ref={lastVisibleResourceMarkerIntersection.ref}
