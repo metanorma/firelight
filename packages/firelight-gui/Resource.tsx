@@ -39,7 +39,9 @@ export interface ResourceData {
 
 export const ResourceHelmet: React.FC<ResourceMetadata> = function (props) {
   return <Helmet>
-    {props.primaryLanguageID ? <html lang={props.primaryLanguageID} /> : null}
+    {props.primaryLanguageID
+      ? <html lang={props.primaryLanguageID} />
+      : null}
     <title>{props.labelInPlainText}</title>
   </Helmet>;
 }
