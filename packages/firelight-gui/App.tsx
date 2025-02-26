@@ -27,7 +27,7 @@ import enableLunrMultiLanguage from 'lunr-languages/lunr.multi';
 const lunrLanguageSupport = {
   ja: enableLunrJa,
   fr: enableLunrFr,
-};
+} as const;
 
 enableLunrStemmer(lunr);
 enableTinyLunrSegmenter(lunr);
