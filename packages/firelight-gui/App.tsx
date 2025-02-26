@@ -1,7 +1,7 @@
 import * as S from '@effect/schema/Schema';
 import { motion } from 'framer-motion';
 import { defaultTheme, Flex, Provider } from '@adobe/react-spectrum';
-import { useInView, InView } from "react-intersection-observer";
+import { useInView, InView } from 'react-intersection-observer';
 import { useThrottledCallback, useDebouncedCallback } from 'use-debounce';
 import lunr, { type Index as LunrIndex } from 'lunr';
 import React, { useCallback, createContext, useState, useReducer, useMemo, useEffect } from 'react';
