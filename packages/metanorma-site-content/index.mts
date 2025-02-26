@@ -1064,9 +1064,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'bibitem': (subj: string) => {
         const contents: ProseMirrorNode[] = [];
         const tagSubj = findValue(section, subj, 'hasBiblioTag');
-        const tag = tagSubj ? findValue(section, tagSubj, 'hasPart') : null;
-        if (tag) {
-          contents.push(pm.node('span', null, [pm.text(tag), pm.text(' ')]));
+        if (tagSubj) {
+          contents.push(pm.node('span', null, generateContent(tagSubj, pm.nodes.span!)));
         }
         const formattedref = findValue(section, subj, 'hasFormattedref');
         if (formattedref) {
