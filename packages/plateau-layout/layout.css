@@ -53,6 +53,12 @@
   }
 }
 
+@container (width < 680px) {
+  .descendantNavigation ul {
+    columns: 1;
+  }
+}
+
 .overall {
   font-family: "Noto Sans JP", sans-serif;
   font-optical-sizing: auto;
