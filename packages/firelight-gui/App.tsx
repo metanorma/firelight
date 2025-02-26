@@ -855,7 +855,6 @@ export const VersionWorkspace: React.FC<{
     const activeResourceContent = (dep && typeof dep !== 'function')
       ? dep.content?.content ?? undefined
       : undefined;
-    console.debug("active resource content", activeResourceContent);
     return activeResourceContent;
   }, [resourceDeps, state.activeResourceURI]);
 
