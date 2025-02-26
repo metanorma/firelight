@@ -459,8 +459,11 @@ const clauseSchemaBase = new Schema({
       },
       group: 'block',
       content: '(text | flow)*',
-      toDOM() {
-        return ['article', { class: classNames.bibitem }, 0];
+      toDOM(node) {
+        return ['article', {
+          class: classNames.bibitem,
+          about: node.attrs.resourceID ?? undefined,
+        }, 0];
       },
     },
   },
