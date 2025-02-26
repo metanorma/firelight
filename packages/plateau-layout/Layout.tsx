@@ -28,7 +28,7 @@ const Layout: LayoutFC = React.forwardRef<
 
       {children}
 
-      <nav>
+      <nav className={classNames.descendantNavigation}>
         <ul>
           {nav.children.map(link =>
             <li key={link.path}>
