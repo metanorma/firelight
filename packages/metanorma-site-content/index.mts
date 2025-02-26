@@ -553,6 +553,14 @@ function getBibdataDocid(doc: Readonly<RelationGraphAsList>): string | undefined
   )?.[1] ?? docids[0]?.[1];
 }
 
+function getBibdataMainTitle(doc: Readonly<RelationGraphAsList>, lang?: string): string | undefined {
+  const docids = resolveChain(doc, ['hasBibdata', 'hasTitle', 'hasPart']);
+  return docids.find(([uri, ]) =>
+    findValue(doc, uri, 'hasType') === 'title-main' &&
+    (!lang || findValue(doc, uri, 'hasLanguage') === lang)
+  )?.[1] ?? docids[0]?.[1];
+}
+
 function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | undefined {
 
   const clauseNumber = resolveChain(section, ['hasClauseNumber'], ROOT_SUBJECT)[0]?.[1];
@@ -577,7 +585,7 @@ const mod: ContentAdapterModule = {
     // We won’t know the language if it’s a section :(
     const primaryLanguageID = getCurrentLanguage(relations);
 
-    const labelInPlainText = getBibdataDocid(relations)
+    const labelInPlainText = getBibdataMainTitle(relations, primaryLanguageID)
       ?? getSectionPlainTitle(relations)
       // First few characters of any direct relation that is not a URI?
       ?? relations.
