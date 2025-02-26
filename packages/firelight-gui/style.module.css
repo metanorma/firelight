@@ -144,7 +144,7 @@
           > a {
             font-weight: 500;
             font-size: 16px;
-            padding: .5em 0;
+            padding: .1em 0;
             &:link {
               text-decoration: none;
             }
