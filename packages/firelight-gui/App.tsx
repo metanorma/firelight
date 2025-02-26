@@ -503,6 +503,8 @@ export const VersionWorkspace: React.FC<{
   // Either the actual dependency object ready to be passed to <Resource />,
   // or a function to *cancel* the fetching of dependencies for that resource
   // (in case it’s no longer needed, e.g., the user scrolled away).
+  // Testing for whether the value is a function is a way of testing
+  // whether resource data is still loading.
   const [resourceDeps, setResourceDeps] =
     useState<Record<string, ResourceData | (() => void)>>({});
 
