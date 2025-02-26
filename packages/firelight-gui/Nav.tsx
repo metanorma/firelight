@@ -52,7 +52,7 @@ export const Search: React.FC<{
   const [debouncedQuery] = useDebounce(query.text, 200);
   const [results, error] = useMemo(() => {
     if (debouncedQuery.trim() !== '') {
-      const queryTokenized = lunr.tokenizer(debouncedQuery);
+      const queryTokenized = lunr.tokenizer(debouncedQuery.replace(':', ' '));
       try {
         return [
           index?.
