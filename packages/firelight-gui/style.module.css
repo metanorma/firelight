@@ -136,8 +136,7 @@
         list-style: none;
         columns: 2;
         > li {
-          overflow: hidden;
-          text-overflow: ellipsis;
+          word-break: auto-phrase;
           &::before {
             content: "⏵";
             margin-right: 0.5em;
@@ -145,7 +144,6 @@
           > a {
             font-weight: 500;
             font-size: 16px;
-            white-space: nowrap;
             padding: .5em 0;
             &:link {
               text-decoration: none;
