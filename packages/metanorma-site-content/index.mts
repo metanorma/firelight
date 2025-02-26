@@ -1431,7 +1431,7 @@ const generateCoverPage: (lang: string, docid: string) => ContentGenerator =
     map(([, contribURI]) => findValue(bibdata, contribURI, 'hasOrganization')).
     filter((orgURI) => orgURI !== null);
   const authorsAndPublishers = Array.from(new Set(authorAndPublisherOrgURIs.map(uri =>
-    resolveChain(bibdata, ['hasName'], uri)[0]?.[1]
+    resolveChain(bibdata, ['hasName', 'hasPart'], uri)[0]?.[1]
   ).filter(name => name !== undefined)));
   const author = authorsAndPublishers[0] ?? 'unknown contributors';
 
