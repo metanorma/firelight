@@ -450,6 +450,19 @@ const clauseSchemaBase = new Schema({
         }, 0];
       },
     },
+
+    bibitem: {
+      attrs: {
+        resourceID: {
+          default: undefined,
+        },
+      },
+      group: 'block',
+      content: '(text | flow)*',
+      toDOM() {
+        return ['article', { class: classNames.bibitem }, 0];
+      },
+    },
   },
 });
 
@@ -1082,7 +1095,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
             pm.text(`[${type ?? 'link'}]`),
           ),
         ]));
-        return pm.node('paragraph', { resourceID: subj }, contents);
+        return pm.node('bibitem', { resourceID: subj }, contents);
       },
       'listItem': (subj: string) => {
         const firstPart = findValue(section, subj, 'hasPart');

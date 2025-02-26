@@ -97,11 +97,11 @@ const mod: StoreAdapterModule = {
       'thead',
       'tbody',
       'tr',
+      'bibitem',
     ];
 
     const TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS: string[] = [
       'bibdata',
-      'bibitem',
     ];
     const TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS_SELECTOR =
       TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS.join(', ');
