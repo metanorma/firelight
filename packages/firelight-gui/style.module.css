@@ -339,17 +339,42 @@
   .browserBarTitle {
     flex: 1;
     overflow: hidden;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
 
     h1 {
-      transform: rotate(-90deg) translateX(-100%) translateY(100%) translateX(-20px);
+      /* By default we achieve vertical rendition of LTR TB scripts
+       * by rotating the text, ensuring that typeface bottom
+       * faces the main reading area. */
+
+      /* TODO: This transform can maybe be simplified */
+      transform: translateX(50%) rotate(-90deg) translateY(-25%) translateX(-100%) translateX(-20px);
+
       color: var(--spectrum-alias-border-color);
       font-size: 20px;
       line-height: 1;
       margin: 0;
       padding: 0;
       transform-origin: top left;
-      text-align: right;
+
       width: 80vh; 
+      height: 30px;
+
+      overflow: hidden;
+      text-align: right;
+      text-overflow: ellipsis;
+
+      /* For fonts with native vertical support, we unset the fancy transforms
+       * and just set writing-mode. */
+      html[lang="ja"] & {
+        transform: unset;
+        width: unset;
+        height: unset;
+        text-align: unset;
+        writing-mode: vertical-rl;
+        margin-top: 20px;
+      }
     }
   }
 
