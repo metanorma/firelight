@@ -112,7 +112,9 @@ const build = Command.
                   currentRevision: unpackOption(currentRevision)!,
                 }, (task, progress) => onProgress(`build site|${task}`, progress), {
                   pathPrefix: prefix,
-                  dumpCache: debug,
+                  debug: {
+                    dumpCache: debug || false,
+                  },
                 });
                 const [writeProgress, writingSubtask] = onProgress('build site|write files');
                 for await (const blobchunk of generator) {
@@ -350,7 +352,12 @@ async function getRefsToBuild(revisionsToBuild: VersionBuildConfig) {
 async function * generateSite(
   revisionsToBuild: VersionBuildConfig | undefined,
   onProgress: TaskProgressCallback,
-  opts?: { pathPrefix?: string | undefined, dumpCache?: boolean },
+  opts?: {
+    pathPrefix?: string | undefined;
+    debug?: {
+      dumpCache?: boolean;
+    };
+  },
 ) {
   if (revisionsToBuild !== undefined) {
 
@@ -427,7 +434,7 @@ async function * generateSite(
         },
       );
     } finally {
-      if (opts?.dumpCache) {
+      if (opts?.debug?.dumpCache) {
         try {
           fs.writeFileSync(
             'cacheDump.json',
