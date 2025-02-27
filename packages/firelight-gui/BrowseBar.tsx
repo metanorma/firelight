@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { defaultTheme, Provider, type ProviderProps } from '@adobe/react-spectrum';
-import { Toolbar, Group, Separator } from 'react-aria-components';
+import { Toolbar, Group } from 'react-aria-components';
 import { ProgressCircle, ToggleButton } from '@adobe/react-spectrum';
 import HierarchyIcon from '@spectrum-icons/workflow/TextBulletedHierarchy';
-import Bookmark from '@spectrum-icons/workflow/Bookmark';
+//import Bookmark from '@spectrum-icons/workflow/Bookmark';
 import Search from '@spectrum-icons/workflow/Search';
-import Settings from '@spectrum-icons/workflow/Settings';
-import Branch1 from '@spectrum-icons/workflow/Branch1';
+//import Settings from '@spectrum-icons/workflow/Settings';
+//import Branch1 from '@spectrum-icons/workflow/Branch1';
 import { type Versioning } from 'anafero/index.mjs';
 import { type LoadProgress } from './loader.mjs';
 import { type BrowsingMode } from './model.mjs';
@@ -78,14 +78,15 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
                   {/* @ts-expect-error */}
                   <Search size={TB_SIZE} />
                 </ToggleButton>
+                {/*
                 <ToggleButton
                     aria-label="Bookmarks"
                     isSelected={activeBrowsingMode === 'bookmarks'}
                     onChange={(val) => val
                       ? onActivateBrowsingMode?.('bookmarks')
                       : onDeactivate?.()}
-                    isDisabled={!onActivateBrowsingMode || (activeBrowsingMode === 'bookmarks' && !onDeactivate)}>
-                  {/* @ts-expect-error */}
+                    //isDisabled={!onActivateBrowsingMode || (activeBrowsingMode === 'bookmarks' && !onDeactivate)}
+                    isDisabled>
                   <Bookmark size={TB_SIZE} />
                 </ToggleButton>
                 {Object.keys(versioning?.versions ?? {}).length > 1
@@ -93,20 +94,21 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
                   ? <ToggleButton
                         isDisabled
                         aria-label="Other versions">
-                      {/* @ts-expect-error */}
                       <Branch1 size={TB_SIZE} />
                     </ToggleButton>
                   : null}
+                */}
               </Group>
+              {/*
               <Separator orientation="horizontal" />
               <Group aria-label="Settings" className={classNames.browserBarToolbarGroup}>
                 <ToggleButton
                     isDisabled
                     aria-label="Settings">
-                  {/* @ts-expect-error */}
                   <Settings size={TB_SIZE} />
                 </ToggleButton>
               </Group>
+              */}
             </Toolbar>
           : null}
         {!initialRender

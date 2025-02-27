@@ -30,7 +30,7 @@
 /** Added dynamically in Resource component as a child of body. */
 .floatingSubresourceLink {
   .floatingSubresourceLinkAnchor {
-    display: block;
+    display: none; /* Hide temporarily */
     position: relative;
     left: -1em;
     width: 1em;
