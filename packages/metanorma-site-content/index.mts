@@ -265,7 +265,9 @@ const clauseSchemaBase = new Schema({
     },
 
     figure: {
-      content: '(image | source_listing | arbitrary_literal_block) figCaption?',
+      // NOTE: paragraph is allowed as a quick workaround for formula figures
+      // (math itself is flow content)
+      content: '(image | source_listing | arbitrary_literal_block | paragraph) figCaption?',
       group: 'block',
       attrs: {
         resourceID: {
@@ -848,6 +850,20 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'stem': (subj: string) => {
         const mathML = findValue(section, subj, 'hasMathML');
         return pm.node('math', { mathML });
+      },
+      'formula': (subj: string) => {
+        const mathSubj = findPartsOfType(section, subj, 'stem')[0];
+        const mathML = findValue(section, mathSubj, 'hasMathML');
+        const caption = findPartsOfType(section, subj, 'fmt-name')[0];
+        const figureContents = [
+          pm.node('paragraph', null, [pm.node('math', { mathML })]),
+        ];
+        if (caption) {
+          figureContents.push(
+            pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!)),
+          );
+        }
+        return pm.node('figure', { resourceID: subj }, figureContents);
       },
       'sourcecode': (subj: string) => {
         const formattedSource = findValue(section, subj, 'hasFormattedSource');
