@@ -61,6 +61,11 @@
   }
 }
 
+@counter-style jis-style {
+  system: extends lower-alpha;
+  suffix: ') ';
+}
+
 .overall {
   font-family: "Noto Sans JP", sans-serif;
   font-optical-sizing: auto;
@@ -130,6 +135,7 @@
 
     ol {
       list-style: lower-latin;
+      list-style: jis-style;
     }
 
     /*
