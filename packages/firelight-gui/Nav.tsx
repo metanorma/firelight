@@ -84,6 +84,7 @@ export const Search: React.FC<{
     <SearchField
       isQuiet
       width="100%"
+      autoFocus
       alignSelf="stretch"
       onChange={onEditQueryText}
       isReadOnly={!onEditQueryText}
