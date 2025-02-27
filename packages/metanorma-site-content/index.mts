@@ -173,7 +173,7 @@ const clauseSchemaBase = new Schema({
     // Terms clause doesn’t fit into DL/DT/DD schema,
     // because terms are not wrapped in a single root element.
     termWithDefinition: {
-      content: 'termXrefLabel? term+ definition+',
+      content: 'termXrefLabel? term+ definition+ termSource*',
       group: 'block',
       attrs: {
         resourceID: {
@@ -218,6 +218,12 @@ const clauseSchemaBase = new Schema({
       content: 'block*',
       toDOM() {
         return ['div', { 'aria-role': 'definition' }, 0];
+      },
+    },
+    termSource: {
+      content: '(text | flow)*',
+      toDOM() {
+        return ['div', 0];
       },
     },
 
@@ -875,7 +881,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           { href: target },
           generateContent(subj, pm.nodes.resource_link!));
       },
-      'term': (subj: string) => {
+      'term': function (subj, onAnnotation) {
         const xrefLabel = findPartsOfType(section, subj, 'fmt-xref-label')[0];
         const preferred = findPartsOfType(section, subj, 'preferred')[0];
         const preferredExpression = preferred
@@ -891,13 +897,22 @@ const generatorsByType: Record<string, ContentGenerator> = {
           return undefined;
         }
 
+        const definitionContent = generateContent(definition, pm.nodes.definition!);
+        const notes = findPartsOfType(section, subj, 'termnote');
+        definitionContent.push(...notes.flatMap(subj => this['note']!(subj, onAnnotation)).filter(n => n !== undefined));
+
         const content = [
           pm.node('term', { preferred: true }, generateContent(preferredExpressionContent, pm.nodes.term!)),
-          pm.node('definition', null, generateContent(definition, pm.nodes.definition!)),
+          pm.node('definition', null, definitionContent),
         ];
         if (xrefLabel) {
           content.splice(0, 0, pm.node('termXrefLabel', null, generateContent(xrefLabel, pm.nodes.termXrefLabel!)));
         }
+
+        const sources = findPartsOfType(section, subj, 'fmt-termsource');
+        content.push(...sources.map(subj =>
+          pm.node('termSource', null, generateContent(subj, pm.nodes.termSource!))
+        ));
 
         return pm.node(
           'termWithDefinition',
