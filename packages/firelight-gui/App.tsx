@@ -6,6 +6,7 @@ import { useThrottledCallback, useDebouncedCallback } from 'use-debounce';
 import lunr, { type Index as LunrIndex } from 'lunr';
 import React, { useCallback, createContext, useState, useReducer, useMemo, useEffect } from 'react';
 import { LayoutModule, ResourceNavSchema } from 'anafero/index.mjs';
+import { Helmet } from 'react-helmet';
 import { type Versioning, VersioningSchema } from 'anafero/index.mjs';
 import { fillInLocale, type ResourceMetadata } from 'anafero/index.mjs';
 import { reducer, createInitialState, type StoredAppState, StoredAppStateSchema } from './model.mjs';
@@ -407,6 +408,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
 
   const mainView = (
     resourceMap
+    && primaryLanguage
     && getUnversionedPath
     && locateResource
     && reverseResource
@@ -421,6 +423,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
 
     ? <VersionWorkspace
         workspaceTitle={workspaceTitle}
+        primaryLanguage={primaryLanguage}
         dependencies={loadedDependencies}
         locateResource={locateResource}
         reverseResource={reverseResource}
@@ -460,6 +463,7 @@ const RESOURCE_DATA_PATHS: Record<keyof ResourceData, string> = {
 
 export const VersionWorkspace: React.FC<{
   workspaceTitle: string;
+  primaryLanguage: string;
   searchIndex: LunrIndex;
   expandUnversionedPath: (path: string) => string;
   getVersionLocalPath: (path: string) => string;
@@ -477,6 +481,7 @@ export const VersionWorkspace: React.FC<{
   onStoreState?: (newState: StoredAppState) => void;
 }> = function ({
   workspaceTitle,
+  primaryLanguage,
   initialResource,
   initialResourceData,
   fetchResourceData,
@@ -860,6 +865,7 @@ export const VersionWorkspace: React.FC<{
 
   return (
     <>
+      <Helmet><html lang={primaryLanguage} /></Helmet>
       <BrowserBar
         title={workspaceTitle}
         loadProgress={isLoading ? true : undefined}
