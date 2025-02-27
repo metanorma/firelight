@@ -33,13 +33,17 @@
     margin-top: 1em;
     list-style: none;
     columns: 2;
+
     > li {
       word-break: auto-phrase;
+      display: flex;
+      gap: .75em;
+
       &::before {
         content: "⏵";
-        margin-right: 0.5em;
         color: var(--spectrum-alias-text-color-disabled);
       }
+
       > a {
         font-weight: 400;
         font-size: 18px;
