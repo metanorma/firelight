@@ -25,6 +25,7 @@
 /* Part navigation */
 .descendantNavigation {
   container-type: inline-size;
+  line-height: 1.42;
 
   ul {
     margin: 0;
@@ -37,10 +38,11 @@
       &::before {
         content: "⏵";
         margin-right: 0.5em;
+        color: var(--spectrum-alias-text-color-disabled);
       }
       > a {
-        font-weight: 500;
-        font-size: 16px;
+        font-weight: 400;
+        font-size: 18px;
         padding: .1em 0;
         &:link {
           text-decoration: none;

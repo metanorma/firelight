@@ -136,12 +136,12 @@
     margin: 0.5em 0;
     list-style: none;
     padding: 0;
-    color: grey;
+    color: var(--spectrum-alias-text-color-disabled);
     > li {
       display: inline-block;
       > a {
         &:link, &:visited {
-          color: grey;
+          color: var(--spectrum-alias-text-color-disabled);
           text-decoration: none;
         }
         &:hover {
