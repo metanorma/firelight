@@ -71,6 +71,16 @@ export const Search: React.FC<{
     }
   }, [index, debouncedQuery]);
   return <>
+    <ListView
+        flex={1}
+        items={results}
+        isQuiet
+        renderEmptyState={() => <></>}>
+      {({ ref }) =>
+        <Item href={locateResource(ref)} key={ref}>
+          <Text>{getPlainTitle(ref)}</Text>
+        </Item>}
+    </ListView>
     <SearchField
       isQuiet
       width="100%"
@@ -81,18 +91,12 @@ export const Search: React.FC<{
       errorMessage={error}
       UNSAFE_className={classNames.navStickyHeader}
       validationState={error ? 'invalid' : undefined}
-      description={results.length > 0 ? `${results.length} total.` : undefined}
+      description={results.length > 0
+        ? `${results.length} total.`
+        : query.text.trim() === ''
+          ? "Please enter a search query."
+          : "No results to show."}
     />
-    <ListView
-        flex={1}
-        items={results}
-        isQuiet
-        renderEmptyState={() => <>There is nothing to show.</>}>
-      {({ ref }) =>
-        <Item href={locateResource(ref)} key={ref}>
-          <Text>{getPlainTitle(ref)}</Text>
-        </Item>}
-    </ListView>
   </>;
 }
 
