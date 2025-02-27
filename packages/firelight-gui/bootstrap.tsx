@@ -19,11 +19,13 @@ async function initApp () {
 
   setUpExtensionImportMap();
 
+  const useStrictMode = document.documentElement.dataset.useReactStrict === 'true';
+
   hydrateRoot(
     appRoot!,
-    <StrictMode>
-      <AppLoader />
-    </StrictMode>
+    useStrictMode
+      ? <StrictMode><AppLoader /></StrictMode>
+      : <AppLoader />,
   );
 
 };
