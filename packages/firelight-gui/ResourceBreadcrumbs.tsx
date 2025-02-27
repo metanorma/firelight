@@ -22,20 +22,20 @@ export const ResourceBreadcrumbs: React.FC<{
   </ul>
 };
 
-
-export const ResourceParts: React.FC<{
-  parts: Readonly<readonly NavLink[]>;
-  className?: string;
-}> = function ({ parts, className }) {
-  return (
-    <ul className={classNames.resourcePartsNav}>
-      {parts.map(link =>
-        <li key={link.path}>
-          <a href={link.path}>
-            {link.plainTitle}
-          </a>
-        </li>
-      )}
-    </ul>
-  )
-}
+// Currently, layout-provided.
+// export const ResourceParts: React.FC<{
+//   parts: Readonly<readonly NavLink[]>;
+//   className?: string;
+// }> = function ({ parts, className }) {
+//   return (
+//     <ul className={classNames.resourcePartsNav}>
+//       {parts.map(link =>
+//         <li key={link.path}>
+//           <a href={link.path}>
+//             {link.plainTitle}
+//           </a>
+//         </li>
+//       )}
+//     </ul>
+//   )
+// }
