@@ -899,6 +899,8 @@ export const VersionWorkspace: React.FC<{
                   <InView rootMargin="0% 0% -80% 0%">
                     {({ inView, ref }) => {
                       if (inView && state.activeResourceURI !== uri) {
+                        // TODO: Intermittently(?) causes https://reactjs.org/link/setstate-in-render
+                        // when it updates state during render
                         handleActivateByScroll(uri);
                       }
                       return <div
