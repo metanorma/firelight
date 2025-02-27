@@ -939,7 +939,18 @@ export const VersionWorkspace: React.FC<{
                     } : {})}
                   />
                 </React.Fragment>
-              : <div key={`${uri}-loading`} style={{ textAlign: 'right' }}>Loading</div>
+              : <div
+                    key={uri}
+                    className={`
+                      ${classNames.resourceLoadingOrMissingPlaceholder}
+                      ${state.browsingMode ? classNames.withNav : ''}
+                    `}>
+                  Next: <a href={locateResource(uri)}>{getResourceTitle(uri)}</a>
+                  &nbsp;
+                  {typeof resourceDeps[uri] === 'function'
+                    ? <>(fetching…)</>
+                    : null}
+                </div>
           })}
         </Provider>
       </main>
@@ -959,8 +970,10 @@ export const VersionWorkspace: React.FC<{
         : null}
 
       <div
-        ref={lastVisibleResourceMarkerIntersection.ref}
-        style={{ position: 'relative', top: '-100px', zIndex: 22, textAlign: 'right' }}>&nbsp;</div>
+          ref={lastVisibleResourceMarkerIntersection.ref}
+          className={classNames.lastVisibleResourceMarkerIntersection}>
+        &nbsp;
+      </div>
 
       {state.browsingMode
         ? 
