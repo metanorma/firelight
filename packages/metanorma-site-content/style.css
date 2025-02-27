@@ -9,6 +9,14 @@
   text-align: right;
 }
 
+.mainTitle {
+  text-align: center;
+}
+
+.extraTitle {
+  text-align: center;
+}
+
 .termXrefLabel {
   margin-right: 1em;
 }

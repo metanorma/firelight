@@ -517,13 +517,13 @@ const coverBibdataSchema = new Schema({
     mainTitle: {
       content: 'text*',
       toDOM() {
-        return ['h1', 0];
+        return ['h1', { class: classNames.mainTitle }, 0];
       },
     },
     someOtherTitle: {
       content: 'text*',
       toDOM() {
-        return ['p', 0];
+        return ['p', { class: classNames.extraTitle }, 0];
       },
     },
     docMeta: {
