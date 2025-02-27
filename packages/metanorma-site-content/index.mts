@@ -1090,7 +1090,9 @@ const generatorsByType: Record<string, ContentGenerator> = {
         const uris = findAll(section, subj, 'hasUri');
         contents.push(...uris.map(uri =>
           [findValue(section, uri, 'hasPart'), findValue(section, uri, 'hasType')]
-        ).filter(([href, ]) => href !== '' && href !== undefined).flatMap(([href, type]) => [
+        ).
+        filter(([href, ]) => href !== '' && href !== undefined).
+        flatMap(([href, type]) => [
           pm.text(' '),
           pm.node(
             'external_link',
