@@ -703,12 +703,13 @@ export async function * generateStaticSiteAssets(
     `<link rel="stylesheet" href="${expandGlobalPath(url)}" />`
   ).join('\n');
 
-  const globalJSSources = ['bootstrap.js'].map(expandGlobalPath);
-  if (opts.debug?.reactDevTools) {
-    globalJSSources.push('http://localhost:8097');
-  }
-  const globalJS = globalJSSources.map(url =>
-    `<script src="${url}"></script>`
+  const head = `
+    ${globalCSS}
+    ${opts.debug?.reactDevTools ? '<script src="http://localhost:8097"></script>' : ''}
+  `;
+
+  const globalJS = ['bootstrap.js'].map(url =>
+    `<script src="${expandGlobalPath(url)}"></script>`
   ).join('\n');
 
 
@@ -754,7 +755,7 @@ export async function * generateStaticSiteAssets(
         reportProgress: versionSubtask,
         reportNotice: versionNotice,
       },
-      { htmlAttrs, head: globalCSS, tail: globalJS },
+      { htmlAttrs, head, tail: globalJS },
       function expandVersionedPath(versionRelativePath) {
         const isNonSlashPrepended = !versionRelativePath.startsWith('/');
         // TODO: Make callers specify paths consistently slash-prepended?
