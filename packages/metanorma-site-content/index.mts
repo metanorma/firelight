@@ -1064,12 +1064,12 @@ const generatorsByType: Record<string, ContentGenerator> = {
         if (paragraphs.length > 0) {
           // NOTE: If there are nodes not allowed by table node spec intermingled
           // then it will fail to create the table.
-          contents.push(...paragraphs.flatMap(subj => this['paragraph'](subj, onAnnotation)));
+          contents.push(...paragraphs.flatMap(subj => this['paragraph']!(subj, onAnnotation)).filter(n => n !== undefined));
         }
 
         const notes = findAll(section, subj, 'hasNote');
         if (notes.length > 0) {
-          contents.push(...notes.map(subj => this['note'](subj, onAnnotation)));
+          contents.push(...notes.flatMap(subj => this['note']!(subj, onAnnotation)).filter(n => n !== undefined));
         }
 
         // We will wrap the table in a figure, because PM’s default tables
