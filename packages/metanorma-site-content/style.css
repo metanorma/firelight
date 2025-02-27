@@ -18,6 +18,8 @@
   font-size: 32px;
   line-height: 1.6;
   margin-bottom: 30px;
+  word-break: auto-phrase;
+  width: 75%;
 }
 
 p.extraTitle {
@@ -25,6 +27,8 @@ p.extraTitle {
   /* Since extra title is optional, bottom margin should be the same as main title.
    * !important because article p from layout can override this. */
   margin-bottom: 30px !important;
+  word-break: auto-phrase;
+  width: 75%;
 }
 
 article.bibitem {
