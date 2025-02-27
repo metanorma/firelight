@@ -5,8 +5,8 @@
 }
 
 .docMeta {
-  font-style: italic;
-  color: purple;
+  color: var(--spectrum-alias-text-color);
+  text-align: right;
 }
 
 .termXrefLabel {

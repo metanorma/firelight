@@ -529,7 +529,7 @@ const coverBibdataSchema = new Schema({
     docMeta: {
       content: 'primaryDocID edition pubDate author',
       toDOM() {
-        return ['div', { class: 'docMeta', style: 'color: green;' }, 0];
+        return ['div', { class: classNames.docMeta }, 0];
       },
     },
     primaryDocID: {
