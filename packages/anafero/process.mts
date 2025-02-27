@@ -187,8 +187,6 @@ export function * generateResourceAssets(
         data-workspace-title="${workspaceTitle}">
       <head>
         <meta charset="utf-8">
-        <!-- devtools
-        <script src="http://192.168.0.179:8097"></script> -->
         ${helmet.title.toString()}
         ${helmet.meta.toString()}
         ${helmet.link.toString()}
@@ -634,6 +632,7 @@ export async function * generateStaticSiteAssets(
   opts: Omit<GeneratorHelpers, 'reportNotice'> & {
     getConfigOverride: (forVersionID?: string) => Promise<BuildConfig | null>;
     pathPrefix?: string | undefined;
+    debug?: { reactStrictMode?: boolean, reactDevTools?: boolean };
     //resolveConfig: (cfg: BuildConfig) => ResolvedBuildConfig;
   },
 ): AsyncGenerator<Record<string, Uint8Array>> {
@@ -696,14 +695,20 @@ export async function * generateStaticSiteAssets(
     return expanded;
   }
 
-  const htmlAttrs = opts.pathPrefix ? `
-    data-path-prefix="${opts.pathPrefix}"
-  ` : undefined;
+  const htmlAttrs = `
+    ${opts.pathPrefix ? `data-path-prefix="${opts.pathPrefix}"` : ''}
+    ${opts.debug?.reactStrictMode ? 'data-use-react-strict="true"' : ''}
+  `;
   const globalCSS = ['bootstrap.css'].map(url =>
     `<link rel="stylesheet" href="${expandGlobalPath(url)}" />`
   ).join('\n');
-  const globalJS = ['bootstrap.js'].map(url =>
-    `<script src="${expandGlobalPath(url)}"></script>`
+
+  const globalJSSources = ['bootstrap.js'].map(expandGlobalPath);
+  if (opts.debug?.reactDevTools) {
+    globalJSSources.push('http://localhost:8097');
+  }
+  const globalJS = globalJSSources.map(url =>
+    `<script src="${url}"></script>`
   ).join('\n');
 
 
