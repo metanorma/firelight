@@ -140,6 +140,7 @@ export const Hierarchy: React.FC<{
 
   const itemView = useCallback((item: IRecursiveNavigationEntry) => {
     return <TreeViewItem
+        id={item.id}
         key={item.id}
         href={`/${item.path}`}
         childItems={item.childItems}
