@@ -418,6 +418,14 @@ const clauseSchemaBase = new Schema({
         return ['span', 0];
       },
     },
+    strong: {
+      group: 'flow',
+      content: '(text | flow)*',
+      inline: true,
+      toDOM() {
+        return ['strong', 0];
+      },
+    },
     underline: {
       group: 'flow',
       content: '(text | flow)*',
@@ -706,6 +714,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
       // TODO: Figure out what to do with underlines. <u> isn’t fit
       'underline': 'underline',
+      'strong': 'strong',
       'bookmark': 'anchor',
 
       'dl': 'definition_list',
