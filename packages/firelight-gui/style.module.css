@@ -122,13 +122,13 @@
       color: var(--spectrum-accent-color-1000);
     }
     &:active {
-      color: var(--spectrum-link-text-color-down);
+      color: var(--spectrum-alias-text-color-down);
     }
     &:focus-visible {
-      color: var(--spectrum-link-text-color-key-focus);
+      color: var(--spectrum-alias-text-color-key-focus);
     }
     &.is-disabled {
-      color: var(--spectrum-link-text-color-disabled);
+      color: var(--spectrum-alias-text-color-disabled);
     }
   }
 
