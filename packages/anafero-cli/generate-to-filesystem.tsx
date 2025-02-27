@@ -114,6 +114,8 @@ const build = Command.
                   pathPrefix: prefix,
                   debug: {
                     dumpCache: debug || false,
+                    reactDevTools: debug || false,
+                    reactStrictMode: debug || false,
                   },
                 });
                 const [writeProgress, writingSubtask] = onProgress('build site|write files');
@@ -356,6 +358,8 @@ async function * generateSite(
     pathPrefix?: string | undefined;
     debug?: {
       dumpCache?: boolean;
+      reactDevTools?: boolean;
+      reactStrictMode?: boolean;
     };
   },
 ) {
@@ -424,6 +428,10 @@ async function * generateSite(
           },
           getDOMStub: (() => (new JSDOM('<html></html>')).window.document),
           cache,
+          debug: {
+            reactStrictMode: opts?.debug?.reactStrictMode || false,
+            reactDevTools: opts?.debug?.reactDevTools || false,
+          },
           pathPrefix: opts?.pathPrefix,
           decodeXML: (blob) =>
             new JSDOM(
