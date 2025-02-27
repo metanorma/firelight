@@ -883,16 +883,13 @@ const generatorsByType: Record<string, ContentGenerator> = {
       },
       'term': function (subj, onAnnotation) {
         const xrefLabel = findPartsOfType(section, subj, 'fmt-xref-label')[0];
-        const preferred = findPartsOfType(section, subj, 'preferred')[0];
-        const preferredExpression = preferred
-          ? findPartsOfType(section, preferred, 'expression')[0]
-          : undefined;
-        const preferredExpressionContent = preferredExpression
-          ? findPartsOfType(section, preferredExpression, 'name')[0]
+        const preferred = findPartsOfType(section, subj, 'fmt-preferred')[0];
+        const preferredContents = preferred
+          ? findPartsOfType(section, preferred, 'paragraph')
           : undefined;
         const definition = findPartsOfType(section, subj, 'fmt-definition')[0];
 
-        if (!xrefLabel || !preferredExpressionContent || !definition) {
+        if (!xrefLabel || !preferredContents || !definition) {
           console.warn("Cannot represent a term without xref label, preferred & definition");
           return undefined;
         }
@@ -902,7 +899,9 @@ const generatorsByType: Record<string, ContentGenerator> = {
         definitionContent.push(...notes.flatMap(subj => this['note']!(subj, onAnnotation)).filter(n => n !== undefined));
 
         const content = [
-          pm.node('term', { preferred: true }, generateContent(preferredExpressionContent, pm.nodes.term!)),
+          pm.node('term', { preferred: true },
+            preferredContents.
+              flatMap(subj => generateContent(subj, pm.nodes.term!))),
           pm.node('definition', null, definitionContent),
         ];
         if (xrefLabel) {
