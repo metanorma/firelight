@@ -388,20 +388,6 @@ const clauseSchemaBase = new Schema({
 
     ...tn,
 
-    // // Table of subclauses
-    // parts: {
-    //   content: 'part_entry+',
-    //   toDOM(node) {
-    //     return ['ul', { class: 'toc' }, 0];
-    //   },
-    // },
-    // part_entry: {
-    //   content: 'resource_link',
-    //   toDOM() {
-    //     return ['li', 0];
-    //   },
-    // },
-
     linebreak: {
       group: 'flow',
       inline: true,
