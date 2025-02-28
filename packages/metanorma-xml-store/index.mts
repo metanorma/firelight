@@ -172,6 +172,11 @@ const mod: StoreAdapterModule = {
                 }
                 return [graph, { processAttribute: { target: 'skip' } }];
               },
+
+              // These two are covered by the table located inside the fmt-provision
+              requirement: 'bypass',
+              'fmt-provision': 'bypass',
+
               stem: function processStem(el) {
                 return [
                   [[ROOT_SUBJECT, 'hasMathML', el.querySelector('math')!.outerHTML]],
