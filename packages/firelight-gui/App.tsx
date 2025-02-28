@@ -1040,6 +1040,8 @@ export const VersionWorkspace: React.FC<{
 const AnimatedResource = motion.create(Resource);
 
 
+// TODO: Stop requiring parent’s resource navigation data to locate siblings
+// Technically, it should be possible to do using resource map…
 async function getAdjacentResource(
   currentPath: string,
   parentPath: string,
