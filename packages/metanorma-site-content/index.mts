@@ -248,6 +248,7 @@ const clauseSchemaBase = new Schema({
 
     // Named inconsistently to avoid clashing with PM stock table nodes
     tableFigure: {
+      // Why does this one allow image?
       content: 'figCaption? (image | table) block*',
       group: 'block',
       attrs: {
