@@ -9,6 +9,7 @@ import {
   processResources,
   dekebab,
   type CustomElementProcessor,
+  type Rules,
 } from './util.mjs';
 
 
@@ -131,7 +132,7 @@ const mod: StoreAdapterModule = {
                         ? tagNameToHasPredicate(childEl.tagName)
                         : 'hasPart',
                   },
-                ];
+                ] as [RelationGraphAsList, Rules];
               },
               abstract: function processAbstract(el, getURI) {
                 if (!el.closest('bibdata')) {

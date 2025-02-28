@@ -86,7 +86,7 @@ const REPORT_EVERY_N = 200;
 const RETURNED_RELATION_CHUNK_SIZE = 1000;
 
 /** Rules for how XML is processed into resources. */
-interface Rules {
+export interface Rules {
 
   /** Override default URI generation. */
   getResourceURI?: (el: Element) => string | undefined;
