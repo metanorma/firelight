@@ -631,7 +631,7 @@ const mod: ContentAdapterModule = {
   contributesToContent: (relation, targetRelations) => {
     return relation.predicate === 'hasPart' || relation.predicate === 'hasText';
   },
-  generateContent: function (relations) {
+  generateContent: function (relations, helpers) {
     //const bibdata = relations.find(([s, p,]) => s === '_:root' && p === 'hasBibdata');
 
     const rootType = relations.find(([s, p,]) => s === ROOT_SUBJECT && p === 'type')?.[2];
@@ -651,7 +651,7 @@ const mod: ContentAdapterModule = {
       //throw new Error();
     }
 
-    return generator(relations);
+    return generator(relations, helpers);
   },
   resourceContentProseMirrorSchema: {
     cover: coverBibdataSchema,
@@ -668,7 +668,7 @@ export default mod;
 type ContentGenerator = ContentAdapterModule['generateContent'];
 const generatorsByType: Record<string, ContentGenerator> = {
 
-  document: function generateDoc (doc) {
+  document: function generateDoc (doc, helpers) {
     const bibdataID = doc.find(([s, p,]) => s === ROOT_SUBJECT && p === 'hasBibdata')?.[2];
     if (!bibdataID) {
       throw new Error("Can’t generate content: document is missing bibdata");
@@ -686,7 +686,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       throw new Error("Cannot generate document: missing current language");
     }
     return generateCoverPage(currentLanguage, docid)
-      (relativeGraph(doc, bibdataID));
+      (relativeGraph(doc, bibdataID), helpers);
   },
 
   section: function generateDoc (section) {
