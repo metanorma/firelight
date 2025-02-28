@@ -848,6 +848,9 @@ const generatorsByType: Record<string, ContentGenerator> = {
       },
       'formula': (subj: string) => {
         const mathSubj = findPartsOfType(section, subj, 'stem')[0];
+        if (!mathSubj) {
+          return undefined;
+        }
         const mathML = findValue(section, mathSubj, 'hasMathML');
         const caption = findPartsOfType(section, subj, 'fmt-name')[0];
         const figureContents = [
