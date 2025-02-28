@@ -39,27 +39,27 @@ export function makeDummyInMemoryCache(): Cache {
     set: (map) => {
       Object.assign(cache, map);
     },
-    iterate: function * iterateCache (key) {
-      yield * (cache[key] ?? []);
+    iterate: function * iterateCache<T>(key: string) {
+      yield * ((cache[key] ?? []) as T[]);
     },
     has: (key) => {
       return cache[key] !== undefined;
     },
-    get: (key, page) => {
+    get: <T,>(key: string) => {
       if (cache[key] !== undefined) {
-        return cache[key];
+        return cache[key] as T;
       } else {
         console.error("Requested key does not exist:", key);
         //dump();
         throw new Error("Requested key does not exist");
       }
     },
-    list: (key, page) => {
+    list: <T,>(key, page) => {
       if (cache[key] !== undefined) {
         if (!page) {
-          return cache[key];
+          return cache[key] as T[];
         } else {
-          return cache[key].slice(page.start, page.start + page.size);
+          return cache[key].slice(page.start, page.start + page.size) as T[];
         }
       } else {
         console.error("Requested key does not exist:", key);
