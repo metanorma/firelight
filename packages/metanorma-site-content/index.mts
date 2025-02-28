@@ -600,7 +600,7 @@ const mod: ContentAdapterModule = {
   name: "Metanorma site content",
   version: "0.0.1",
   describe: (relations) => {
-    // We won’t know the language if it’s a section :(
+    // We may not know the language in some cases, like if it’s a section :(
     const primaryLanguageID = getCurrentLanguage(relations);
 
     const labelInPlainText = getBibdataMainTitle(relations, primaryLanguageID)
@@ -1317,6 +1317,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
                   ? pm.node('paragraph', null, [n])
                   : n)
             } else {
+              //console.error("Only inline content in a block-content node: wrapping in a paragraph", subject, subjectNodeTypeRepr);
               return [pm.node('paragraph', null, allSubparts)];
             }
           } else {
@@ -1369,8 +1370,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
     const footnotes: ProseMirrorNode[] = [];
     const handleAnnotation: AnnotationCallback =
     function handleAnnotation (type, nodes, resourceID, cue) {
-      // For now there are no other types of annotations, so
-      // no need to compare `type`
+      // For now there are no other types of annotations,
+      // so no need to compare `type`
       footnotes.push(pm.node('footnote', { resourceID, cue }, nodes));
     }
 
