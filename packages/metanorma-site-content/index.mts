@@ -4,7 +4,6 @@ import { addListNodes } from 'prosemirror-schema-list';
 import {
   type ContentAdapterModule,
   type RelationGraphAsList,
-  type RelationTriple,
   titleSchema,
   ROOT_SUBJECT,
 } from 'anafero/index.mjs';
