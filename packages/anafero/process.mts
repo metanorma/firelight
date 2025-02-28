@@ -695,10 +695,14 @@ export async function * generateStaticSiteAssets(
     return expanded;
   }
 
+
+  // Things to inject in HTML
+
   const htmlAttrs = `
     ${opts.pathPrefix ? `data-path-prefix="${opts.pathPrefix}"` : ''}
     ${opts.debug?.reactStrictMode ? 'data-use-react-strict="true"' : ''}
   `;
+
   const globalCSS = ['bootstrap.css'].map(url =>
     `<link rel="stylesheet" href="${expandGlobalPath(url)}" />`
   ).join('\n');

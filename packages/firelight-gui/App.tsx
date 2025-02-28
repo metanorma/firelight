@@ -984,8 +984,7 @@ export const VersionWorkspace: React.FC<{
       </div>
 
       {state.browsingMode
-        ? 
-          <Provider theme={defaultTheme} {...routerProps}>
+        ? <Provider theme={defaultTheme} {...routerProps}>
             <Flex
                 aria-role="nav"
                 aria-label="Resource navigation options"
