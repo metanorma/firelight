@@ -1633,30 +1633,30 @@ function hasSubject(relations: Readonly<RelationGraphAsList>, subj: string) {
   return relations.find(([s, ]) => s === subj) !== undefined;
 }
 
-/**
- * Returns all relations from given subject,
- * recursively resolving any targets that also serve as subjects.
- */
-function getAllRelations(
-  relations: Readonly<RelationGraphAsList>,
-  subj: string,
-  depth: number | undefined = undefined,
-  _seen?: Set<string>,
-): Readonly<RelationGraphAsList> {
-  const seen = _seen ?? new Set();
-  return relations.map(([s, p, o]): Readonly<RelationGraphAsList> => {
-    if (s === subj) {
-      console.debug("Got relation", p, o)
-      const subjectGraph = [
-        [s, p, o] as RelationTriple<string, string>,
-      ];
-      if (depth === undefined || depth > 0) {
-        seen.add(o);
-        subjectGraph.push(...getAllRelations(relations, o, depth ? depth - 1 : depth, seen));
-      }
-      return subjectGraph;
-    } else {
-      return [];
-    }
-  }).flat();
-}
+// /**
+//  * Returns all relations from given subject,
+//  * recursively resolving any targets that also serve as subjects.
+//  */
+// function getAllRelations(
+//   relations: Readonly<RelationGraphAsList>,
+//   subj: string,
+//   depth: number | undefined = undefined,
+//   _seen?: Set<string>,
+// ): Readonly<RelationGraphAsList> {
+//   const seen = _seen ?? new Set();
+//   return relations.map(([s, p, o]): Readonly<RelationGraphAsList> => {
+//     if (s === subj) {
+//       console.debug("Got relation", p, o)
+//       const subjectGraph = [
+//         [s, p, o] as RelationTriple<string, string>,
+//       ];
+//       if (depth === undefined || depth > 0) {
+//         seen.add(o);
+//         subjectGraph.push(...getAllRelations(relations, o, depth ? depth - 1 : depth, seen));
+//       }
+//       return subjectGraph;
+//     } else {
+//       return [];
+//     }
+//   }).flat();
+// }
