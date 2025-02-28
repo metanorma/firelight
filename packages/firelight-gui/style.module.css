@@ -214,6 +214,10 @@
         text-align: unset;
         writing-mode: vertical-rl;
         margin-top: 20px;
+        abbr {
+          text-orientation: upright;
+          text-transform: full-width;
+        }
       }
     }
   }
