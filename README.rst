@@ -73,7 +73,7 @@ Module identifier shape
 
 ::
 
-    git+https://example.com/path/to/repo#<OID>[/subdirectory/within/repo]
+    git+https://example.com/path/to/repo#<ref>[/subdirectory/within/repo]
 
 .. important:: It is required to specify a Git ref (e.g., tag or branch).
                Branch is not recommended.
