@@ -315,8 +315,10 @@ Other conventions
 Known issues
 ~~~~~~~~~~~~
 
-- There are typing errors when compiling. While they don’t stop ``yarn cbp``
+- There are 16 typing errors when compiling. While they don’t stop ``yarn cbp``
   from otherwise completing, we aim to get rid of them when possible.
+  Some of the errors are caused by apparent mismatch between
+  TypeScript compiler invoked at build and TS language server.
 
 - The API for content & store adapters, and layouts as well, is being changed.
 
