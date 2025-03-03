@@ -312,7 +312,7 @@ function addRelationsToChildren(
         // If this child is bypassed, we process its children instead,
         // relating it to parent URI as if they were direct descendants.
         addRelationsToChildren(childEl, graph, getURI, rules);
-      } else {
+      } else if (ruleResult !== 'ignore') {
         // NOTE: In case a parent was bypassed,
         // should we call getChildPredicate with original parent?
         // This possibly calls it with the “bypassed child” parent.
