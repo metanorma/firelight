@@ -46,15 +46,17 @@ Example::
       "version": "0.1",
       "entryPoint": "file:documents/001-v4/document.presentation.xml",
       "storeAdapters": [
-        "git+https://github.com/metanorma/firelight#next/packages/metanorma-xml-store"
+        "git+https://github.com/metanorma/firelight#main/packages/metanorma-xml-store"
       ],
       "contentAdapters": [
-        "git+https://github.com/metanorma/firelight#next/packages/metanorma-site-content"
+        "git+https://github.com/metanorma/firelight#main/packages/metanorma-site-content"
       ],
       "resourceLayouts": [
-        "git+https://github.com/metanorma/firelight#next/packages/plateau-layout"
+        "git+https://github.com/metanorma/firelight#main/packages/plateau-layout"
       ]
     }
+
+(Note that this example pins adapters to branch name, which is not ideal in real use.)
 
 The file must be versioned, unless config is supplied via an override.
 Each version being built (e.g., different commits or tags)
@@ -74,7 +76,7 @@ Module identifier shape
     git+https://example.com/path/to/repo#<OID>[/subdirectory/within/repo]
 
 .. important:: It is required to specify a Git ref (e.g., tag or branch).
-               HEAD can be provided, but that is not recommended.
+               Branch is not recommended.
                Pinning by tag is recommended.
 
 Example specifying ``metanorma/firelight`` Github repo at tag ``1.2.3``
