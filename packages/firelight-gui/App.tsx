@@ -1,6 +1,6 @@
 import * as S from '@effect/schema/Schema';
 import { motion } from 'framer-motion';
-import { defaultTheme, Flex, Provider } from '@adobe/react-spectrum';
+import { defaultTheme, ProgressBar, Flex, Provider } from '@adobe/react-spectrum';
 import { useInView, InView } from 'react-intersection-observer';
 import { useThrottledCallback, useDebouncedCallback } from 'use-debounce';
 import lunr, { type Index as LunrIndex } from 'lunr';
@@ -953,10 +953,13 @@ export const VersionWorkspace: React.FC<{
                       ${classNames.resourceLoadingOrMissingPlaceholder}
                       ${state.browsingMode ? classNames.withNav : ''}
                     `}>
-                  Next: <a href={locateResource(uri)}>{getResourceTitle(uri)}</a>
-                  &nbsp;
+                  <a href={locateResource(uri)}>{getResourceTitle(uri)}</a>
                   {typeof resourceDeps[uri] === 'function'
-                    ? <>(fetching…)</>
+                    ? <ProgressBar
+                        labelPosition="side"
+                        label="Loading next resource…"
+                        isIndeterminate
+                      />
                     : null}
                 </div>
           })}
