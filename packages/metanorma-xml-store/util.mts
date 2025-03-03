@@ -184,6 +184,8 @@ export function processResources(
       sinceLastReport += 1;
     }
 
+    // TODO: This logic is sus (and buggy, esp. ignore rules)
+
     const rule = rules.processTag?.[current.tagName];
     const firstChild: Element | null = current.firstElementChild;
     if (firstChild && !processed.has(firstChild) && rule !== 'ignore') {
