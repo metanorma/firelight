@@ -16,3 +16,12 @@
 
 !.yarn/cache
 #.pnp.*
+
+node_modules/
+**/node_modules/
+.DS_Store
+*.log
+.env
+dist/
+build/
+*.lockb
