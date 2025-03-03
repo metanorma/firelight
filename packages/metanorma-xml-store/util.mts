@@ -186,7 +186,7 @@ export function processResources(
 
     const rule = rules.processTag?.[current.tagName];
     const firstChild: Element | null = current.firstElementChild;
-    if (firstChild && !processed.has(firstChild) && rule !== 'ignore' && rules.processTag?.[firstChild.tagName] !== 'ignore') {
+    if (firstChild && !processed.has(firstChild) && rule !== 'ignore') {
       current = firstChild;
       currentChain.push(repr(firstChild));
     } else {
