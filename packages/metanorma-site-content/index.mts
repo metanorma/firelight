@@ -900,6 +900,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           content,
         );
       },
+
       'fmt-xref': (subj: string) => {
         const target = findValue(section, subj, 'hasTarget');
         if (!target) {
@@ -911,6 +912,10 @@ const generatorsByType: Record<string, ContentGenerator> = {
           { href: target },
           generateContent(subj, pm.nodes.resource_link!));
       },
+      // 'xref': function (subj: string, onAnnotation) {
+      //   return this['fmt-xref']!(subj, onAnnotation);
+      // },
+
       'term': function (subj, onAnnotation) {
         const xrefLabel = findPartsOfType(section, subj, 'fmt-xref-label')[0];
         const preferred = findPartsOfType(section, subj, 'fmt-preferred')[0];

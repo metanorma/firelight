@@ -183,6 +183,7 @@ const mod: StoreAdapterModule = {
               terms: processClauseLike,
               annex: processClauseLike,
               definitions: processClauseLike,
+              xref: 'ignore',
               'fmt-xref': function processXref(el) {
                 const maybeTarget = el.getAttribute('target');
                 const graph: RelationGraphAsList = [];
@@ -220,6 +221,7 @@ const mod: StoreAdapterModule = {
                 ];
               },
               semx: 'bypass',
+              eref: 'bypass',
               origin: 'bypass',
               title: function processTitle(el, getURI) {
                 if (el.parentElement
