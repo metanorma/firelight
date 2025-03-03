@@ -212,7 +212,7 @@ The main parts of content adapter API are:
 
   - ``resourceContentProseMirrorOptions``: currently only used to supply
     ProseMirror node views. Generally speaking, optional, and node views
-    should not be relied on for actual content presentation.
+    should not be relied on for basic content presentation.
 
   - ``describe()``: describes a resource (whether a page or its subresource),
     providing a plain-text label and language code.
