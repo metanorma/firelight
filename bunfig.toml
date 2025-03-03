@@ -1,0 +1,12 @@
+[install]
+# Use the same registry as npm
+registry = "https://registry.npmjs.org/"
+
+[test]
+# Configure test environment
+coverage = true
+
+[build]
+# Configure build settings
+minify = false
+sourcemap = true

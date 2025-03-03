@@ -1,41 +1,24 @@
 {
-  "include": ["*.tsx", "*.mts", "*.d.ts"],
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
     "target": "es2020",
     "module": "node16",
 
-    "lib": ["es2023"],
+    "lib": ["es2023", "dom"],
+    "types": ["bun-types"],
 
     "resolveJsonModule": false,
 
-    "strict": true,
-    "noUnusedLocals": true,
-    "noFallthroughCasesInSwitch": true,
-    "verbatimModuleSyntax": true,
-    "noImplicitReturns": true,
-    "noImplicitAny": true,
-    "exactOptionalPropertyTypes": true,
-    "skipLibCheck": true,
-
-    "allowImportingTsExtensions": true, // XXX
-    "noEmit": true, // XXX
-
-    "isolatedModules": true,
-    "esModuleInterop": true,
-
-    "sourceMap": true,
-    "inlineSources": true,
-
+    "moduleResolution": "node16",
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "noUncheckedIndexedAccess": true,
-
-    "newLine": "lf",
-
-    "declaration": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "strictNullChecks": true,
     "jsx": "react"
-  }
+  },
+  "include": ["*.ts", "*.tsx", "*.mts"]
 }
-
-
