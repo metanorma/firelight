@@ -209,8 +209,8 @@
       text-align: right;
       text-overflow: ellipsis;
 
-      /* For fonts with native vertical support, we unset the fancy transforms
-       * and just set writing-mode. */
+      /* For fonts with native vertical support, unset the fancy transforms
+       * and just set writing-mode.
       html[lang="ja"] & {
         transform: unset;
         width: unset;
@@ -222,7 +222,7 @@
           text-orientation: upright;
           text-transform: full-width;
         }
-      }
+      } */
     }
   }
 
