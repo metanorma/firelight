@@ -83,13 +83,6 @@ Example specifying ``metanorma/firelight`` Github repo at tag ``1.2.3``
 and layout under a subdirectory:
 ``git+https://github.com/metanorma/firelight#1.2.3/packages/plateau-layout``.
 
-Module specification
-~~~~~~~~~~~~~~~~~~~~
-
-TBD. Feel free to reference ``metanorma-xml-store`` for store adapter,
-``metanorma-site-content`` for content adapter, but API may change shortly
-(particularly for content adapters).
-
 Architecture
 ------------
 
@@ -132,8 +125,12 @@ Known issues
 
   So far this was not reproduced in build environments other than GHA.
 
-Implementing adapters
----------------------
+Implementing adapter modules
+----------------------------
+
+Feel free to reference ``metanorma-xml-store`` for store adapter,
+``metanorma-site-content`` for content adapter, ``plateau-layout`` for layout,
+but API may change shortly (particularly for content adapters).
 
 Store adapters
 ~~~~~~~~~~~~~~
@@ -149,8 +146,7 @@ that conforms to this interface.
 The main part of store adapter API is ``readerFromBlob()``. It is given
 an entry point as a binary blob and some helper functions
 (e.g., for decoding it into an XML DOM), and must return a resource reader.
-Resource reader is responsible for quickly estimating relation count
-(used mostly for progress reporting) and for discovering relations
+Resource reader is responsible for discovering relations
 by returning them in chunks via ``onRelationChunk()`` callback
 passed to ``discoverAllResources()`` function.
 
@@ -161,8 +157,18 @@ passed to ``discoverAllResources()`` function.
           Other performance considerations (such as not relying
           on async generators & preferring loops instead) apply.
 
-Anafero will follow outwards relations and initialize another store adapter
-(or reuse a previously initialized one, if it recognizes this relation).
+Anafero will follow outwards relations and initialize another store adapter,
+or reuse a previously initialized one that returns ``true`` from
+``canResolve()``.
+
+``canResolve()`` is another bit of store adapter API. It’s supposed
+to return a boolean indicating whether this adapter should bother
+processing a resource based on its URI.
+Useful, e.g., if an adapter is supposed to only understand files
+with particular filename extension(s).
+It’s generally not a problem to return ``true``
+and then fail to instantiate a reader because upon closer
+inspection source data is not recognizable.
 
 Content adapters
 ~~~~~~~~~~~~~~~~
@@ -220,6 +226,16 @@ The main parts of content adapter API are:
   - ``generateRelations()``: not currently used. Given page content,
     returns a graph of relations. Planned for reverse transformation
     when editing.
+
+Layouts
+~~~~~~~
+
+Layout module interface
+is defined by ``LayoutModule`` in ``anafero/Layout.mts``.
+Adapter module MUST have a default export of an object
+that conforms to this interface.
+
+TBC.
 
 Development
 -----------
