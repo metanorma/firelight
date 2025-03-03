@@ -192,7 +192,8 @@ export function processResources(
       current = firstChild;
       currentChain.push(repr(firstChild));
     } else {
-      // There are no child elements. The resource can be related
+      // There are no child elements, or they were all processed.
+      // The resource can be related
       // to resources from elsewhere in the tree through attributes though.
 
       if (processed.has(current)) {
