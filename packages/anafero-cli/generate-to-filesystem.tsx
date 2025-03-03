@@ -27,7 +27,7 @@ import React from 'react';
 import { render } from 'ink';
 import { Processor } from './CLI.jsx';
 import { type TaskProgressCallback } from 'anafero/progress.mjs';
-import { makeDummyInMemoryCache } from 'anafero/cache.mjs';
+import { type Cache, makeDummyInMemoryCache } from 'anafero/cache.mjs';
 
 import { JSDOM } from 'jsdom';
 import xpath from 'xpath';
@@ -96,28 +96,57 @@ const build = Command.
       ...reportingOptions,
     },
     ({ targetDirectoryPath, pathPrefix, verbose, debug, revision, omitRevisionsNewerThanCurrent, currentRevision }) => pipe(
-      Effect.try(() => parseReportingConfig({ verbose, debug })),
-      Effect.flatMap(reportingConfig => pipe(
+      Effect.try(() => {
+        const config = parseReportingConfig({ verbose, debug })
+        return [
+          config,
+          makeDummyInMemoryCache(),
+        ] as [
+          ReturnType<typeof parseReportingConfig>,
+          ReturnType<typeof makeDummyInMemoryCache>,
+        ];
+      }),
+      Effect.flatMap(([reportingConfig, cache]) => pipe(
         Effect.tryPromise({
           try: () => new Promise((resolve, reject) => {
             const prefix = unpackOption(pathPrefix);
             if (prefix && (!prefix.startsWith('/') || prefix.endsWith('/'))) {
               throw new Error("Path prefix must have a leading slash and no trailing slash");
             }
+            function maybeDumpCache() {
+              if (debug) {
+                try {
+                  console.warn("Dumping cache to cacheDump.json");
+                  fs.writeFileSync(
+                    'cacheDump.json',
+                    JSON.stringify(cache.dump(), null, 2),
+                    { encoding: 'utf-8' },
+                  );
+                } catch (e) {
+                  console.error("Cache dump could not be written!", e);
+                }
+              }
+            }
+            process.on('SIGINT', maybeDumpCache);
             render(<Processor rootTaskName="build site" onStart={async function ({ onProgress }) {
               try {
-                const generator = generateSite({
-                  revision: unpackOption(revision)!,
-                  omitRevisionsNewerThanCurrent: unpackOption(omitRevisionsNewerThanCurrent)!,
-                  currentRevision: unpackOption(currentRevision)!,
-                }, (task, progress) => onProgress(`build site|${task}`, progress), {
-                  pathPrefix: prefix,
-                  debug: {
-                    dumpCache: debug || false,
-                    reactDevTools: debug || false,
-                    reactStrictMode: debug || false,
+                const generator = generateSite(
+                  {
+                    revision: unpackOption(revision)!,
+                    omitRevisionsNewerThanCurrent: unpackOption(omitRevisionsNewerThanCurrent)!,
+                    currentRevision: unpackOption(currentRevision)!,
                   },
-                });
+                  (task, progress) => onProgress(`build site|${task}`, progress),
+                  cache,
+                  {
+                    pathPrefix: prefix,
+                    debug: {
+                      //dumpCache: debug || false,
+                      reactDevTools: debug || false,
+                      reactStrictMode: debug || false,
+                    },
+                  },
+                );
                 const [writeProgress, writingSubtask] = onProgress('build site|write files');
                 for await (const blobchunk of generator) {
                   const [subtask] = writingSubtask(Object.keys(blobchunk).join(',').replaceAll('|', ':'), { state: 'writing' });
@@ -129,6 +158,9 @@ const build = Command.
                 resolve(void 0);
               } catch (e) {
                 reject(e);
+              } finally {
+                maybeDumpCache();
+                process.removeListener('SIGINT', maybeDumpCache);
               }
             }} />);
           }),
@@ -354,10 +386,11 @@ async function getRefsToBuild(revisionsToBuild: VersionBuildConfig) {
 async function * generateSite(
   revisionsToBuild: VersionBuildConfig | undefined,
   onProgress: TaskProgressCallback,
+  cache: Cache,
   opts?: {
     pathPrefix?: string | undefined;
     debug?: {
-      dumpCache?: boolean;
+      //dumpCache?: boolean;
       reactDevTools?: boolean;
       reactStrictMode?: boolean;
     };
@@ -404,57 +437,40 @@ async function * generateSite(
         join(PACKAGE_ROOT, './bootstrap.css')),
     };
 
-    const cache = makeDummyInMemoryCache();
-
-    try {
-      yield * generateStaticSiteAssets(
-        refsToBuild,
-        revisionsToBuild.currentRevision,
-        {
-          reportProgress: onProgress,
-          fetchBlob: readObject,
-          fetchDependency,
-          getDependencyCSS: (modID) => {
-            const maybeCSS = getDependencySupportingFiles()[modID]?.['index.css'];
-            return maybeCSS ?? null;
-          },
-          getDependencySource: (modID) => {
-            const source = getDependencySources()[modID];
-            if (!source) {
-              console.error("Requested dependency source was not found", modID);
-              throw new Error("Requested dependency source was not found");
-            }
-            return source;
-          },
-          getDOMStub: (() => (new JSDOM('<html></html>')).window.document),
-          cache,
-          debug: {
-            reactStrictMode: opts?.debug?.reactStrictMode || false,
-            reactDevTools: opts?.debug?.reactDevTools || false,
-          },
-          pathPrefix: opts?.pathPrefix,
-          decodeXML: (blob) =>
-            new JSDOM(
-              decoder.decode(blob).replace('xmlns', 'wtf'), // xpath
-              { contentType: 'application/xhtml+xml' },
-            ).window.document,
-          getConfigOverride: async () => null,
+    yield * generateStaticSiteAssets(
+      refsToBuild,
+      revisionsToBuild.currentRevision,
+      {
+        reportProgress: onProgress,
+        fetchBlob: readObject,
+        fetchDependency,
+        getDependencyCSS: (modID) => {
+          const maybeCSS = getDependencySupportingFiles()[modID]?.['index.css'];
+          return maybeCSS ?? null;
         },
-      );
-    } finally {
-      if (opts?.debug?.dumpCache) {
-        try {
-          fs.writeFileSync(
-            'cacheDump.json',
-            JSON.stringify(cache.dump(), null, 2),
-            { encoding: 'utf-8' },
-          );
-          console.info("cacheDump.json was written for content reader work inspection");
-        } catch (e) {
-          console.warn("cacheDump.json could not be written");
-        }
-      }
-    }
+        getDependencySource: (modID) => {
+          const source = getDependencySources()[modID];
+          if (!source) {
+            console.error("Requested dependency source was not found", modID);
+            throw new Error("Requested dependency source was not found");
+          }
+          return source;
+        },
+        getDOMStub: (() => (new JSDOM('<html></html>')).window.document),
+        cache,
+        debug: {
+          reactStrictMode: opts?.debug?.reactStrictMode || false,
+          reactDevTools: opts?.debug?.reactDevTools || false,
+        },
+        pathPrefix: opts?.pathPrefix,
+        decodeXML: (blob) =>
+          new JSDOM(
+            decoder.decode(blob).replace('xmlns', 'wtf'), // xpath
+            { contentType: 'application/xhtml+xml' },
+          ).window.document,
+        getConfigOverride: async () => null,
+      },
+    );
   } else {
     throw new Error("Unversioned build is not supported yet");
   }
