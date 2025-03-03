@@ -107,6 +107,17 @@ const mod: StoreAdapterModule = {
     const TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS_SELECTOR =
       TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS.join(', ');
 
+    function processXref(el: Element) {
+      const maybeTarget = el.getAttribute('target');
+      const graph: RelationGraphAsList = [];
+      if (!maybeTarget) {
+        console.warn("Xref with no target", el);
+      } else {
+        graph.push([ROOT_SUBJECT, 'hasTarget', urnFromID(maybeTarget)]);
+      }
+      return [graph, { processAttribute: { target: 'skip' } }] as [RelationGraphAsList, Rules];
+    }
+
     return [
       [],
       {
@@ -162,16 +173,11 @@ const mod: StoreAdapterModule = {
               terms: processClauseLike,
               annex: processClauseLike,
               definitions: processClauseLike,
-              xref: function processXref(el) {
-                const maybeTarget = el.getAttribute('target');
-                const graph: RelationGraphAsList = [];
-                if (!maybeTarget) {
-                  console.warn("Xref with no target", el);
-                } else {
-                  graph.push([ROOT_SUBJECT, 'hasTarget', urnFromID(maybeTarget)]);
-                }
-                return [graph, { processAttribute: { target: 'skip' } }];
-              },
+
+              // TODO: Somehow setting xref to 'ignore' breaks xref parsing,
+              // even though fmt-xref is the only one needed now
+              xref: 'ignore',
+              'fmt-xref': processXref,
 
               // These two are covered by the table located inside the fmt-provision
               requirement: 'bypass',
@@ -199,6 +205,7 @@ const mod: StoreAdapterModule = {
                 ];
               },
               semx: 'bypass',
+              eref: 'bypass',
               origin: 'bypass',
               title: function processTitle(el, getURI) {
                 if (el.parentElement
