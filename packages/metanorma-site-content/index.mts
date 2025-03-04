@@ -911,14 +911,14 @@ const generatorsByType: Record<string, ContentGenerator> = {
           return undefined;
         }
 
-        const definitionContent = generateContent(definition, pm.nodes.definition!);
+        const definitionContent = generateContent(definition, pm.nodes.definition!, onAnnotation);
         const notes = findPartsOfType(section, subj, 'termnote');
         definitionContent.push(...notes.flatMap(subj => this['note']!(subj, onAnnotation)).filter(n => n !== undefined));
 
         const content = [
           pm.node('term', { preferred: true },
             preferredContents.
-              flatMap(subj => generateContent(subj, pm.nodes.term!))),
+              flatMap(subj => generateContent(subj, pm.nodes.term!, onAnnotation))),
           pm.node('definition', null, definitionContent),
         ];
         if (xrefLabel) {
@@ -927,7 +927,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
         const sources = findPartsOfType(section, subj, 'fmt-termsource');
         content.push(...sources.map(subj =>
-          pm.node('termSource', null, generateContent(subj, pm.nodes.termSource!))
+          pm.node('termSource', null, generateContent(subj, pm.nodes.termSource!, onAnnotation))
         ));
 
         return pm.node(
@@ -965,7 +965,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           contents.push(pm.node(
             'figCaption',
             null,
-            captionParts.flatMap(part => generateContent(part, pm.nodes.figCaption!)),
+            captionParts.flatMap(part => generateContent(part, pm.nodes.figCaption!, onAnnotation)),
           ));
         }
         // We will wrap the example in a figure.
@@ -1087,7 +1087,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
             tableContents),
         ];
         if (caption) {
-          contents.splice(0, 0, pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!)));
+          contents.splice(0, 0, pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!, onAnnotation)));
         }
 
         // TODO: Direct paragraph descendants not allowed by the spec?
@@ -1108,15 +1108,15 @@ const generatorsByType: Record<string, ContentGenerator> = {
         // TODO: implement fully custom tables for parity with MN?
         return pm.node('tableFigure', { resourceID: subj }, contents);
       },
-      'bibitem': (subj: string) => {
+      'bibitem': (subj: string, onAnnotation) => {
         const contents: ProseMirrorNode[] = [];
         const tagSubj = findValue(section, subj, 'hasBiblioTag');
         if (tagSubj) {
-          contents.push(pm.node('span', null, generateContent(tagSubj, pm.nodes.span!)));
+          contents.push(pm.node('span', null, generateContent(tagSubj, pm.nodes.span!, onAnnotation)));
         }
         const formattedref = findValue(section, subj, 'hasFormattedref');
         if (formattedref) {
-          contents.push(...generateContent(formattedref, pm.nodes.span!));
+          contents.push(...generateContent(formattedref, pm.nodes.span!, onAnnotation));
         }
         const uris = findAll(section, subj, 'hasUri');
         contents.push(...uris.map(uri =>
@@ -1156,7 +1156,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         //console.debug("processing list item: after", subj, JSON.stringify(pm.node('list_item', null, content).toJSON()), null, 2);
         return pm.node('list_item', null, content);
       },
-      'figure': (subj: string) => {
+      'figure': (subj: string, onAnnotation) => {
         const image = findValue(section, subj, 'hasImage');
         const imgSrc = image
           ? findValue(section, image, 'hasSrc')
@@ -1188,7 +1188,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
             pm.node('image', { src: imgSrc, width, height }),
           );
         } else if (arbitraryLiteralBlock) {
-          const parts = generateContent(arbitraryLiteralBlock, pm.nodes.arbitrary_literal_block!);
+          const parts = generateContent(
+            arbitraryLiteralBlock,
+            pm.nodes.arbitrary_literal_block!,
+            onAnnotation,
+          );
           figureContents.push(
             pm.node('arbitrary_literal_block', null, parts),
           );
@@ -1196,7 +1200,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
         const caption = findValue(section, subj, 'hasFmtName');
         if (caption) {
           figureContents.push(
-            pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!)),
+            pm.node('figCaption', null, generateContent(
+              caption,
+              pm.nodes.figCaption!,
+              onAnnotation,
+            )),
           );
         }
         return pm.node('figure', { resourceID: subj }, figureContents);
