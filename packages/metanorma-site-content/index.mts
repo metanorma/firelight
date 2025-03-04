@@ -801,9 +801,12 @@ const generatorsByType: Record<string, ContentGenerator> = {
               paragraphContents.push(pm.text(part))
             }
           }
+          const resourceID = paragraphCounter > 0
+            ? `${subj}-split-${paragraphCounter}`
+            : subj;
           nodes.push(pm.node(
             'paragraph',
-            { resourceID: `${subj}-split-${paragraphCounter}` },
+            { resourceID },
             paragraphContents,
           ));
           paragraphCounter += 1;
