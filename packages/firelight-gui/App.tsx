@@ -679,7 +679,7 @@ export const VersionWorkspace: React.FC<{
       //console.debug("Intercepted", href, resourceURI, url.hash, url);
       if (resourceURI) {
         dispatch({ type: 'activated_resource', uri: resourceURI });
-        // Selecting non-structural (in-page) resource is semi-broken
+        // Selecting in-page resource is semi-broken
         if (url.hash) {
           setQueuedFragment(decodeURIComponent(url.hash.slice(1)));
         }
