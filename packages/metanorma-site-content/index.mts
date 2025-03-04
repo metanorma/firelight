@@ -1133,13 +1133,13 @@ const generatorsByType: Record<string, ContentGenerator> = {
         ]));
         return pm.node('bibitem', { resourceID: subj }, contents);
       },
-      'listItem': (subj: string) => {
+      'listItem': (subj: string, onAnnotation) => {
         const firstPart = findValue(section, subj, 'hasPart');
         if (!firstPart) {
           return undefined;
         }
         //const firstPartTypes = findAll(section, firstPart, 'type');
-        const content = generateContent(subj, pm.nodes.list_item!);
+        const content = generateContent(subj, pm.nodes.list_item!, onAnnotation);
         //console.debug("processing list item", subj, JSON.stringify(pm.node('list_item', null, content).toJSON()), null, 2);
         if (content[0]?.type?.name !== 'paragraph') {
           console.warn("Inserting leading paragraph to ensure a valid list item");
