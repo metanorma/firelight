@@ -595,7 +595,7 @@ export const VersionWorkspace: React.FC<{
       withTrailing,
       hasFragment ? `#${rpath.split('#')[1]!}` : null,
     ] as [string, string];
-  }), [expandUnversionedPath]);
+  }), []);
 
   // Handle the pop
   useEffect(() => {
