@@ -845,7 +845,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
         return nodes;
       },
-      'link': (subj: string) => {
+      'fmt-link': (subj: string) => {
         const target = findValue(section, subj, 'hasTarget');
         if (!target) {
           console.warn("Cannot create a link without target/href");
