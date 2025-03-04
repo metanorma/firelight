@@ -1097,6 +1097,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
           // then it will fail to create the table.
           contents.push(...paragraphs.flatMap(subj => this['paragraph']!(subj, onAnnotation)).filter(n => n !== undefined));
         }
+        // TODO: Direct source descendants not allowed by the spec?
+        const sources = findAll(section, subj, 'hasSource');
+        if (sources.length > 0) {
+          contents.push(...sources.flatMap(subj => this['paragraph']!(subj, onAnnotation)).filter(n => n !== undefined));
+        }
 
         const notes = findAll(section, subj, 'hasNote');
         if (notes.length > 0) {
