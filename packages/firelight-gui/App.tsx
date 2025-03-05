@@ -337,7 +337,11 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   const [lunrInitialized, markLunrAsInitialized] = useState(false);
 
   useEffect(() => {
-    if (primaryLanguage && lunrLanguageSupport[primaryLanguage as string]) {
+    if (!lunrInitialized && primaryLanguage && lunrLanguageSupport[primaryLanguage as string]) {
+      console.debug(
+        `Primary language is “${primaryLanguage}”, `,
+        'enabling multi-language Lunr mode & mixed tokenizer',
+        lunrLanguageSupport[primaryLanguage]);
       lunrLanguageSupport[primaryLanguage as string](lunr);
       enableLunrMultiLanguage(lunr);
 
@@ -349,7 +353,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
       };
       markLunrAsInitialized(true);
     }
-  }, [primaryLanguage]);
+  }, [lunrInitialized, primaryLanguage]);
 
   const lunrIndex = useMemo(() => (
     versionDeps?.['/search-index.json'] && lunrInitialized
