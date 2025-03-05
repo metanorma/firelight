@@ -282,7 +282,7 @@ const clauseSchemaBase = new Schema({
       },
     },
     example: {
-      content: 'xrefLabel* block* figCaption?',
+      content: 'figCaption? xrefLabel* block*',
       group: 'block',
       attrs: {
         resourceID: {
@@ -293,7 +293,7 @@ const clauseSchemaBase = new Schema({
         const attrs = node.attrs.resourceID
           ? { about: node.attrs.resourceID }
           : {};
-        return ['figure', attrs, 0];
+        return ['figure', { ...attrs, class: classNames.exampleFigure }, 0];
       },
     },
     figCaption: {
@@ -963,7 +963,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         //  ));
         //}
         if (captionParts.length > 0) {
-          contents.push(pm.node(
+          contents.splice(0, 0, pm.node(
             'figCaption',
             null,
             captionParts.flatMap(part => generateContent(part, pm.nodes.figCaption!, onAnnotation)),

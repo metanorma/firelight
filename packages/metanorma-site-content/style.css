@@ -2,6 +2,10 @@
   display: block;
   text-align: center;
   /*font-size: 80%;*/
+
+  .exampleFigure & {
+    text-align: left;
+  }
 }
 
 .docMeta {
