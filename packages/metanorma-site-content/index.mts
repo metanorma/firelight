@@ -786,19 +786,20 @@ const generatorsByType: Record<string, ContentGenerator> = {
             return;
           }
           const paragraphContents: ProseMirrorNode[] = [];
-          for (const part of currentParagraphParts) {
-            if (hasSubject(section, part)) {
+          let currentPart;
+          while ((currentPart = currentParagraphParts.shift()) !== undefined) {
+            if (hasSubject(section, currentPart)) {
               // This part is a nested element
-              const partType = findValue(section, part, 'type');
+              const partType = findValue(section, currentPart, 'type');
               if (partType) {
-                const nodes = makeNodeOrNot(part, partType, onAnnotation);
+                const nodes = makeNodeOrNot(currentPart, partType, onAnnotation);
                 for (const node of (Array.isArray(nodes) ? nodes : [nodes]).filter(n => n !== undefined)) {
                   paragraphContents.push(node);
                 }
               }
             } else {
               // This part is a text node
-              paragraphContents.push(pm.text(part))
+              paragraphContents.push(pm.text(currentPart))
             }
           }
           const resourceID = paragraphCounter > 0
