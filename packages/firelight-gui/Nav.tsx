@@ -70,16 +70,24 @@ export const Search: React.FC<{
       return [[], null];
     }
   }, [index, debouncedQuery]);
+
+  const renderItem = useCallback((result: { ref: string, score: number }) => {
+    const title = getPlainTitle(result.ref);
+    return <Item
+        href={locateResource(result.ref)}
+        key={result.ref}
+        textValue={title}>
+      <Text>{title} </Text>
+    </Item>;
+  }, [showMore, getPlainTitle]);
+
   return <>
     <ListView
         flex={1}
         items={results}
         isQuiet
         renderEmptyState={() => <></>}>
-      {({ ref }) =>
-        <Item href={locateResource(ref)} key={ref}>
-          <Text>{getPlainTitle(ref)}</Text>
-        </Item>}
+      {renderItem}
     </ListView>
     <SearchField
       isQuiet
