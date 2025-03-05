@@ -11,7 +11,6 @@
 // };
 
 export * from './Layout.mjs';
-export * from './search.mjs';
 export * from './TitleSchema.mjs';
 export * from './ContentAdapter.mjs';
 export * from './StoreAdapter.mjs';
