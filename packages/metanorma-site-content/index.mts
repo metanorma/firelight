@@ -114,8 +114,8 @@ const clauseSchemaBase = new Schema({
         return ['aside',
           {
             class: classNames.footnote,
-            //id: node.attrs.resourceID,
-            about: node.attrs.resourceID,
+            id: node.attrs.resourceID,
+            //about: node.attrs.resourceID,
           },
           ['div', { class: classNames.footnoteCue }, node.attrs.cue],
           ['div', { class: classNames.footnoteBody }, 0],
@@ -1009,18 +1009,20 @@ const generatorsByType: Record<string, ContentGenerator> = {
         }
         //const aUUID = crypto.randomUUID();
         //const resourceID = `urn:x-metanorma-footnote:${aUUID}`
+        const madeUpDOMID = encodeURIComponent(cue);
         const footnoteContent = generateContent(subj, 'block', onAnnotation);
         onAnnotation?.(
           'footnote',
           footnoteContent,
-          subj,
+          madeUpDOMID,
           cue,
         );
         return pm.node(
           'footnote_cue',
           null,
           [
-            pm.node('resource_link', { href: subj }, [pm.text(cue)])
+            // This is wrong, but works around current MN XML footnote behavior
+            pm.node('resource_link', { href: `#${madeUpDOMID}` }, [pm.text(cue)])
           ],
         );
       },
@@ -1383,13 +1385,15 @@ const generatorsByType: Record<string, ContentGenerator> = {
       ? generateContent(title, pm.nodes.title!)
       : undefined;
 
-    // Footnote nodes only
-    const footnotes: ProseMirrorNode[] = [];
+    type FootnoteNode = ProseMirrorNode & { type: 'footnote' }
+    // Footnote nodes mapped to resource IDs
+    const footnotes: Record<string, FootnoteNode> = {};
     const handleAnnotation: AnnotationCallback =
     function handleAnnotation (type, nodes, resourceID, cue) {
       // For now there are no other types of annotations,
       // so no need to compare `type`
-      footnotes.push(pm.node('footnote', { resourceID, cue }, nodes));
+      footnotes[resourceID] =
+        pm.node('footnote', { resourceID, cue }, nodes) as FootnoteNode;
     }
 
     const docContents = generateContent(
@@ -1398,8 +1402,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
       handleAnnotation,
     );
 
-    if (footnotes.length > 0) {
-      docContents.push(pm.node('footnotes', null, footnotes));
+    if (Object.keys(footnotes).length > 0) {
+      docContents.push(pm.node('footnotes', null, Object.values(footnotes)));
     }
 
     //const clauses = makeTableOfClauses(section);

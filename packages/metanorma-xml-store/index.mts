@@ -134,6 +134,15 @@ const mod: StoreAdapterModule = {
                   },
                 ] as [RelationGraphAsList, Rules];
               },
+              fn: function processFootnote() {
+                // Leave default processing, but strip IDs from children
+                return [
+                  [],
+                  {
+                    processAttribute: { id: 'skip' },
+                  },
+                ];
+              },
               abstract: function processAbstract(el, getURI) {
                 if (!el.closest('bibdata')) {
                   return processClauseLike(el, getURI);
