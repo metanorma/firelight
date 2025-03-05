@@ -966,7 +966,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
           contents.splice(0, 0, pm.node(
             'figCaption',
             null,
-            captionParts.flatMap(part => generateContent(part, pm.nodes.figCaption!, onAnnotation)),
+            captionParts.flatMap(part => generateContent(
+              part,
+              pm.nodes.figCaption!,
+              onAnnotation,
+            )),
           ));
         }
         // We will wrap the example in a figure.
