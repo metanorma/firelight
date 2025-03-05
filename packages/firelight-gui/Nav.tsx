@@ -1,7 +1,7 @@
 import lunr, { type Index as LunrIndex } from 'lunr';
 
 import { useDebounce, useDebouncedCallback } from 'use-debounce';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { SearchField, ActionGroup, ListView, Item, Text } from '@adobe/react-spectrum';
 import { TreeView, TreeViewItem } from '@react-spectrum/tree';
 import Delete from '@spectrum-icons/workflow/Delete';
@@ -42,6 +42,8 @@ export const Bookmarks: React.FC<{
 };
 
 
+const MAX_SEARCH_RESULT_COUNT = 100;
+
 export const Search: React.FC<{
   index: LunrIndex;
   query: SearchQuery;
@@ -50,26 +52,71 @@ export const Search: React.FC<{
   locateResource: (resID: string) => string;
 }> = function ({ index, query, getPlainTitle, locateResource, onEditQueryText }) {
   const [debouncedQuery] = useDebounce(query.text, 200);
-  const [results, error] = useMemo(() => {
-    if (debouncedQuery.trim() !== '') {
-      const queryTokenized = lunr.tokenizer(debouncedQuery.replace(':', ' '));
+
+  const [showMore, setShowMore] = useState(false);
+
+  const [matches, error] = useMemo(() => {
+    if (index && debouncedQuery.trim() !== '') {
+      const tokens = lunr.tokenizer(debouncedQuery.replace(/:/g, ' '));
+      //const queryTokenized = lunr.tokenizer(debouncedQuery);
+      console.debug("Search: tokens", tokens);
+      //console.debug("Search: Lunr argument", queryTokenized.map(t => `${t}`).join(' '));
+
       try {
-        return [
-          index?.
-            search(queryTokenized.map(t => `${t}`).join(' '))?.
-            map(res => ({ ...res, id: res.ref, name: res.ref })),
-          null,
-        ];
+
+        const exact =
+          (index.query(query => {
+            query.term(debouncedQuery, {
+              presence: lunr.Query.presence.REQUIRED,
+              wildcard: lunr.Query.wildcard.LEADING | lunr.Query.wildcard.TRAILING,
+            });
+          }) ?? []).
+          slice(0, MAX_SEARCH_RESULT_COUNT);
+
+        const full = exact.length < 1 || showMore
+          ? (index.query(query => {
+              query.term(tokens, {
+                presence: lunr.Query.presence.REQUIRED,
+              });
+            }) ?? []).
+            slice(0, MAX_SEARCH_RESULT_COUNT)
+          : [];
+
+        const partial = (exact.length < 1 && full.length < 1) || showMore
+          ? (index.query(query => {
+              query.term(tokens, {
+                presence: lunr.Query.presence.OPTIONAL,
+                wildcard: lunr.Query.wildcard.LEADING | lunr.Query.wildcard.TRAILING,
+              });
+            }) ?? []).
+            slice(0, MAX_SEARCH_RESULT_COUNT)
+          : [];
+
+        return [{ exact, full, partial }, null];
+
       } catch (e) {
-        return [
-          [],
-          `${e.message}`,
-        ];
+        return [{ exact: [], full: [], partial: [] }, `${e.message}`];
       }
+
     } else {
-      return [[], null];
+      return [{ exact: [], full: [], partial: [] }, null];
     }
-  }, [index, debouncedQuery]);
+  }, [index, debouncedQuery, showMore]);
+
+  const results = useMemo(() => {
+    const allResults = (Object.entries(matches).
+    flatMap(([matchType, results]) => {
+      console.debug(matchType, results.length);
+      return results.map(res => ({ [res.ref]: res }));
+    }) ?? []).reduce((prev, curr) => ({ ...prev, ...curr }), {});
+
+    return Object.values(allResults).
+    map(res => ({ ...res, id: res.ref, name: res.ref }));
+  }, [matches]);
+
+  useEffect(() => {
+    setShowMore(false);
+  }, [debouncedQuery]);
 
   const renderItem = useCallback((result: { ref: string, score: number }) => {
     const title = getPlainTitle(result.ref);
@@ -80,6 +127,13 @@ export const Search: React.FC<{
       <Text>{title} </Text>
     </Item>;
   }, [showMore, getPlainTitle]);
+
+  const showMoreButton =
+    (matches.exact.length > 0 || matches.full.length > 0)
+      ? <a onClick={() => setShowMore(!showMore)}>
+          ({showMore ? 'Show fewer' : 'Check for more matches'})
+        </a>
+      : null;
 
   return <>
     <ListView
@@ -102,7 +156,10 @@ export const Search: React.FC<{
       UNSAFE_className={classNames.navStickyHeader}
       validationState={error ? 'invalid' : undefined}
       description={results.length > 0
-        ? `${results.length} total.`
+        ? <>
+            {results.length >= MAX_SEARCH_RESULT_COUNT ? 'At least ' : ''}
+            {results.length} resources matched. {showMoreButton}
+          </>
         : query.text.trim() === ''
           ? "Please enter a search query."
           : "No results to show."}
