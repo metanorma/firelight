@@ -96,6 +96,7 @@ export const Search: React.FC<{
       alignSelf="stretch"
       onChange={onEditQueryText}
       isReadOnly={!onEditQueryText}
+      label="Search resources"
       value={query.text}
       errorMessage={error}
       UNSAFE_className={classNames.navStickyHeader}
