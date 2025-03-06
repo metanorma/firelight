@@ -174,7 +174,7 @@ export const Hierarchy: React.FC<{
   onExpand?: (uri: Set<string>) => void;
   selected: Set<string>;
   onSelect: (uri: string) => void;
-}> = function ({ hierarchy, selected, onSelect, expanded, onExpand }) {
+}> = React.memo(function ({ hierarchy, selected, onSelect, expanded, onExpand }) {
 
   const [hasScrolled, setHasScrolled] = useState<string | null>(null);
   // const [isScrolling, setIsScrolling] = useState(false);
@@ -244,7 +244,7 @@ export const Hierarchy: React.FC<{
       aria-label="Resource hierarchy">
     {itemView}
   </TreeView>
-}
+});
 
 /**
  * Converts a list of paths without leading or trailing slashes
