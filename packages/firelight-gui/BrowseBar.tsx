@@ -122,6 +122,11 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
                   : <ProgressCircle
                       aria-label="Loading…"
                       minValue={0}
+                      isIndeterminate={
+                        (loadProgress.total - 0.1) < (loadProgress.total - loadProgress.done)
+                        ||
+                        (loadProgress.total - loadProgress.done) < 0.1
+                      }
                       maxValue={loadProgress.total}
                       value={loadProgress.done}
                     />
