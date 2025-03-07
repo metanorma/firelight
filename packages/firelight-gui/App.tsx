@@ -887,69 +887,72 @@ export const VersionWorkspace: React.FC<{
       <main id="resources" ref={setUpInterceptor}>
         <Provider theme={defaultTheme} locale={locale}>
           {state.visibleResourceURIs.map((uri, idx) => {
-            const isFirst = idx === 0;
-            const shouldAnimateEntry = !isFirst;
-            const isOnlyOneShown = state.visibleResourceURIs.length < 2;
-            const Component = shouldAnimateEntry ? AnimatedResource : Resource;
             const isActive = state.activeResourceURI === uri;
+            const isOnlyOneShown = state.visibleResourceURIs.length < 2;
             const isMarkedActive = !isOnlyOneShown && isActive;
+            const isLoading = loadingResources.includes(uri);
             const data = uri === initialResource
               ? initialResourceData
-              : resourceDeps[uri] && typeof resourceDeps[uri] !== 'function'
+              : !isLoading
                 ? resourceDeps[uri]
                 : undefined;
+
+            // Animation
+            const isFirst = idx === 0;
+            const shouldAnimateEntry = !isFirst;
+            //const shouldAnimateEntry = false;
+            const Component = shouldAnimateEntry ? AnimatedResource : Resource;
+            const animateProps = shouldAnimateEntry
+              ? {
+                  initial: 'removed',
+                  animate: 'enteredView',
+                  variants: {
+                    removed: {
+                      opacity: 0,
+                      transform: 'translateY(100px)',
+                    },
+                    enteredView: {
+                      opacity: 1,
+                      transition: { duration: 1, delay: .2 * idx },
+                      transform: 'translateY(0)',
+                    },
+                  },
+                }
+              : {};
+
             return data !== undefined
               ? <React.Fragment key={uri}>
-                  <InView rootMargin="0% 0% -80% 0%">
+                  <InView rootMargin="-50% 0% -50% 0%">
                     {({ inView, ref }) => {
                       if (inView && state.activeResourceURI !== uri) {
                         // TODO: Intermittently(?) causes https://reactjs.org/link/setstate-in-render
                         // when it updates state during render
                         handleActivateByScroll(uri);
                       }
-                      return <div
+                      return <Component
+                        //key={uri}
+                        uri={uri}
                         ref={ref}
-                        style={{ position: 'relative', top: '50px' }}
-                        aria-label=""
-                        role="presentation"
+                        graph={data.graph}
+                        content={data.content}
+                        aria-selected={isMarkedActive}
+                        className={`
+                          ${state.browsingMode ? classNames.withNav : ''}
+                          ${isOnlyOneShown ? classNames.onlyOne : ''}
+                          ${isMarkedActive ? classNames.active : ''}
+                        `}
+                        nav={data.nav}
+                        document={document}
+                        locateResource={locateResource}
+                        getResourcePlainTitle={getResourceTitle}
+                        reverseResource={reverseResource}
+                        onIntegrityViolation={console.error}
+                        selectedLayout={layout}
+                        useDependency={getDependency}
+                        {...animateProps}
                       />;
                     }}
                   </InView>
-                  <Component
-                    //key={uri}
-                    uri={uri}
-                    graph={data.graph}
-                    content={data.content}
-                    aria-selected={isMarkedActive}
-                    className={`
-                      ${state.browsingMode ? classNames.withNav : ''}
-                      ${isOnlyOneShown ? classNames.onlyOne : ''}
-                      ${isMarkedActive ? classNames.active : ''}
-                    `}
-                    nav={data.nav}
-                    document={document}
-                    locateResource={locateResource}
-                    getResourcePlainTitle={getResourceTitle}
-                    reverseResource={reverseResource}
-                    onIntegrityViolation={console.error}
-                    selectedLayout={layout}
-                    useDependency={getDependency}
-                    {...(shouldAnimateEntry ? {
-                      initial: 'removed',
-                      animate: 'enteredView',
-                      variants: {
-                        removed: {
-                          opacity: 0,
-                          transform: 'translateY(100px)',
-                        },
-                        enteredView: {
-                          opacity: 1,
-                          transition: { duration: 1, delay: .2 * idx },
-                          transform: 'translateY(0)',
-                        },
-                      },
-                    } : {})}
-                  />
                 </React.Fragment>
               : <div
                     key={uri}
