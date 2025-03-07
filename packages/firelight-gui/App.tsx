@@ -913,7 +913,7 @@ export const VersionWorkspace: React.FC<{
                     },
                     enteredView: {
                       opacity: 1,
-                      transition: { duration: 1, delay: .2 * idx },
+                      transition: { duration: 1 },
                       transform: 'translateY(0)',
                     },
                   },
