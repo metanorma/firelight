@@ -328,13 +328,13 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     );
   }, [fetchJSON, getVersionedPath, getUnversionedPath]);
 
-  const primaryLanguage = useMemo((
+  const primaryLanguageDetected = useMemo((
     () => resourceMap && resourceMap[''] && resourceDescriptions[resourceMap['']]
       ? resourceDescriptions[resourceMap['']]?.primaryLanguageID ?? 'en'
-      : 'en'
+      : undefined
   ), [resourceDescriptions, resourceMap]); 
 
-  const [lunrInitialized, markLunrAsInitialized] = useState(false);
+  const primaryLanguage = primaryLanguageDetected ?? 'en';
 
   useEffect(() => {
     if (!lunrInitialized && primaryLanguage && lunrLanguageSupport[primaryLanguage as string]) {
