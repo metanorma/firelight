@@ -733,7 +733,6 @@ export const VersionWorkspace: React.FC<{
         return;
       }
       const url = new URL(href, document.baseURI);
-      //console.debug("Intercepted", href, resourceURI, url.hash, url);
       const maybePrefixedURL = decodeURIComponent(url.pathname) + url.hash;
 
       // NOTE: Technically, in current implementation, if url.hash is present

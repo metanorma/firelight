@@ -954,15 +954,6 @@ const generatorsByType: Record<string, ContentGenerator> = {
             }
           }
         }
-        //const xrefLabels = findPartsOfType(section, subj, 'fmt-xref-label');
-        //xrefLabels.reverse();
-        //for (const xrefLabel of xrefLabels) {
-        //  contents.splice(0, 0, pm.node(
-        //    'xrefLabel',
-        //    null,
-        //    generateContent(xrefLabel, pm.nodes.xrefLabel!),
-        //  ));
-        //}
         if (captionParts.length > 0) {
           contents.splice(0, 0, pm.node(
             'figCaption',
