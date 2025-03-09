@@ -355,30 +355,59 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
 
   const primaryLanguage = primaryLanguageDetected ?? 'en';
 
-  useEffect(() => {
-    if (!lunrInitialized && primaryLanguage && lunrLanguageSupport[primaryLanguage as string]) {
-      console.debug(
-        `Primary language is “${primaryLanguage}”, `,
-        'enabling multi-language Lunr mode & mixed tokenizer',
-        lunrLanguageSupport[primaryLanguage]);
-      lunrLanguageSupport[primaryLanguage as string](lunr);
-      enableLunrMultiLanguage(lunr);
+  const lunrIndex = useMemo(() => {
+    const serializedIndex = versionDeps?.['/search-index.json'];
 
-      ((lunr as any).multiLanguage('en', primaryLanguage));
+    if (serializedIndex && primaryLanguageDetected) {
+      const enableLanguageSupport = (
+        (primaryLanguageDetected && primaryLanguageDetected !== 'en')
+          ? lunrLanguageSupport[primaryLanguageDetected as string]
+          : undefined
+      ) ?? undefined;
 
-      const lunrTokenizer = lunr.tokenizer;
-      (lunr as any).tokenizer = function(x: any) {
-        return lunrTokenizer(x).concat((lunr as any)[primaryLanguage].tokenizer(x));
-      };
-      markLunrAsInitialized(true);
+      if (enableLanguageSupport) {
+        console.debug(`Lunr: enabling language “${primaryLanguage}”`);
+
+        enableLanguageSupport(lunr);
+      }
+
+      const index = lunr.Index.load(serializedIndex);
+
+      // This should run only once, since primaryLanguage wouldn’t change.
+      // NOTE: Load multi-language after loading index, because we need its pipeline
+      // and it doesn’t get serialized for some reason.
+      if (enableLanguageSupport) {
+        console.debug(`Lunr: enabling multi-language support for “${primaryLanguage}”`);
+
+        enableLunrMultiLanguage(lunr);
+        ((lunr as any).multiLanguage('en', primaryLanguage));
+
+        const lunrTokenizer = lunr.tokenizer;
+        (lunr as any).tokenizer = function(x: any) {
+          // Combine basic Lunr tokens with tokens obtained
+          // from language-specific tokenizer, deduplicating them
+          const baseLunrTokens = lunrTokenizer(x);
+          const langTokens = (lunr as any)[primaryLanguage].tokenizer(x);
+          const tokens = [
+            ...baseLunrTokens,
+            ...langTokens.filter(t => !baseLunrTokens.find(bt => bt.str === t.str)),
+          ];
+          return tokens;
+        };
+        const lunrStopWordFilter = lunr.stopWordFilter;
+        (lunr as any).stopWordFilter = function(token: any) {
+          return (
+            lunrStopWordFilter(token)
+            && (lunr as any)[primaryLanguage].stopWordFilter(token)
+          ) ? token : undefined;
+        };
+      }
+
+      return index;
+    } else {
+      return undefined;
     }
-  }, [lunrInitialized, primaryLanguage]);
-
-  const lunrIndex = useMemo(() => (
-    versionDeps?.['/search-index.json'] && lunrInitialized
-      ? lunr.Index.load(versionDeps['/search-index.json'])
-      : undefined
-    ), [lunrInitialized, versionDeps?.['/search-index.json']]);
+  }, [primaryLanguageDetected, versionDeps?.['/search-index.json']]);
 
 
   // Persisting state crudely
