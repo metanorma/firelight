@@ -275,6 +275,10 @@ when working on something else to save the time fetching module data.
 Local Anafero
 ^^^^^^^^^^^^^
 
+.. note:: For GUI-side typechecking, it is currently *required*
+          to run ``yarn compile`` inside ``firelight-gui`` package separately.
+          ``yarn cbp`` will not reveal all typing issues.
+
 After building ``anafero-cli`` with ``yarn cbp``, to test the changes
 before making a release invoke the CLI via NPX on your machine
 as follows (where tgz is the artifact within ``anafero-cli`` package)::
