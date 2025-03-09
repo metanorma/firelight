@@ -126,7 +126,6 @@ export const Hierarchy: React.FC<{
   return <ListView
       flexGrow={1}
       items={items}
-      isQuiet
       selectedKeys={selected}
       disallowEmptySelection
       ref={listElRef}

@@ -19,7 +19,6 @@ export const Bookmarks: React.FC<{
 }> = function ({ bookmarkedResources, locateResource, getPlainTitle, onRemoveBookmark }) {
   return <ListView
       flexGrow={1}
-      isQuiet
       items={Array.from(bookmarkedResources).map(res => ({ id: res }))}
       renderEmptyState={() => <>There are no bookmarks.</>}>
     {(res =>
@@ -144,12 +143,10 @@ export const Search: React.FC<{
         flex={1}
         items={results}
         aria-label="Matching resources found"
-        isQuiet
         renderEmptyState={() => <></>}>
       {renderItem}
     </ListView>
     <SearchField
-      isQuiet
       width="100%"
       autoFocus
       alignSelf="stretch"
