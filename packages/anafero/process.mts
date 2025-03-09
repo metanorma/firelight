@@ -624,7 +624,7 @@ export async function * generateVersion(
         const entry: LunrIndexEntry = {
           name: uri,
           body,
-        }
+        };
         this.add(entry);
       } else {
         //console.debug("Indexing", uri, 'no text');
