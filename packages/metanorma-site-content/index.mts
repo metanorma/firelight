@@ -609,12 +609,13 @@ const mod: ContentAdapterModule = {
       ?? relations.
            find(([s, p, o]) =>
              s === ROOT_SUBJECT
-             && p !== 'type'
+             && p === 'hasPart'
              && o.trim() !== ''
              // TODO: Stop testing URI by urn: prefix
              && !o.startsWith('urn:'))?.[2].
-           slice(0, 20)
-      ?? "Untitled resource";
+           slice(0, 42)
+      // Type or generic “resource”
+      ?? `${relations.find(([s, p, o]) => s === 'type')?.[2] ?? 'unnamed'}`;
 
     return (primaryLanguageID
       ? { labelInPlainText, primaryLanguageID }
