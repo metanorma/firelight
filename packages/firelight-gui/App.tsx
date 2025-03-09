@@ -1012,6 +1012,7 @@ export const VersionWorkspace: React.FC<{
             const shouldAnimateEntry = !isFirst;
             //const shouldAnimateEntry = false;
             const Component = shouldAnimateEntry ? AnimatedResource : Resource;
+            //const Loader = shouldAnimateEntry ? AnimatedDiv : 'div';
             const animateProps = shouldAnimateEntry
               ? {
                   initial: 'removed',
@@ -1161,6 +1162,7 @@ export const VersionWorkspace: React.FC<{
 
 
 const AnimatedResource = motion.create(Resource);
+//const AnimatedDiv = motion.create('div');
 
 
 // TODO: Stop requiring parent’s resource navigation data to locate siblings
