@@ -15,7 +15,7 @@ import { ResourceHelmet, Resource, type ResourceData } from './Resource.jsx';
 import { type LoadProgress, makeLoader } from './loader.mjs';
 import interceptNav from './intercept-nav.mjs';
 import { Bookmarks, Search } from './Nav.jsx';
-import { Hierarchy, pathListToHierarchy, findMatchingItemParents } from './NavHierarchy.jsx';
+import { Hierarchy as Hierarchy2, findMatchingItemParents } from './NavHierarchy2.jsx';
 import classNames from './style.module.css';
 
 
@@ -800,23 +800,30 @@ export const VersionWorkspace: React.FC<{
     dispatch({ type: 'activated_resource', uri: resourceURI, pageURI: getContainingPageResourceURI(resourceURI) });
   }, [reverseResource, jumpTo, getContainingPageResourceURI]);
 
-  const hierarchy = useMemo(
-    // If there’s no map, it may be loading (undefined) or broken (null),
-    // return as is. Otherwise, make a hierarchy out of it
-    (() => pathListToHierarchy(
-      Object.keys(resourceMap ?? {}),
-      ((path) => ({
-        path,
-        id: resourceMap?.[path] ?? `cannot get URI for ${path}`,
-        name: getResourceTitle(resourceMap?.[path] ?? path),
-      })),
-    )),
-    [resourceMap, getResourceTitle]);
+  const pageMap: Record<string, string> = useMemo(
+    function computePageMap () {
+      const pageMap = { ...resourceMap };
+      for (const key of Object.keys(pageMap).filter(p => p.includes('#'))) {
+        delete pageMap[key];
+      }
+      return pageMap;
+    },
+    [resourceMap]);
 
   /** We ignore/disallow arbitrary selection for now. */
   const actualSelectedPageResources = useMemo((() =>
     new Set([activePageResourceURI])
   ), [activePageResourceURI]);
+
+  const implicitlyExpanded = useMemo(() => {
+    return new Set([
+      ...findMatchingItemParents(
+        pageMap,
+        (id) => actualSelectedPageResources.has(id),
+        [],
+      ),
+    ]);
+  }, [pageMap, actualSelectedPageResources]);
 
   /**
    * For hierarchy sidebar.
@@ -825,15 +832,11 @@ export const VersionWorkspace: React.FC<{
    */
   const actualExpanded: Set<string> = useMemo((() => {
     return new Set([
-      hierarchy[0]!.id,
+      resourceMap['']!,
       ...Array.from(state.expandedResourceURIs),
-      ...findMatchingItemParents(
-        hierarchy,
-        (i) => actualSelectedPageResources.has(i.id),
-        [],
-      ),
+      ...Array.from(implicitlyExpanded),
     ])
-  }), [hierarchy, state.expandedResourceURIs, actualSelectedPageResources]);
+  }), [implicitlyExpanded, resourceMap, state.expandedResourceURIs, actualSelectedPageResources]);
 
   const routerProps = useMemo(() => ({ router: { navigate } }), [navigate]);
 
@@ -1127,10 +1130,12 @@ export const VersionWorkspace: React.FC<{
                   ${classNames.nav}
                   ${state.browsingMode === 'hierarchy' ? classNames.navWithHierarchy : ''}
                 `}>
-              {state.browsingMode === 'hierarchy' && hierarchy
-                ? <Hierarchy
-                    hierarchy={hierarchy}
+              {state.browsingMode === 'hierarchy' && pageMap && getResourceTitle
+                ? <Hierarchy2
+                    pageMap={pageMap}
+                    getResourceTitle={getResourceTitle}
                     expanded={actualExpanded}
+                    implicitlyExpanded={implicitlyExpanded}
                     onExpand={(expandedURIs) => {
                       expandedURIs.forEach(uri =>
                         dispatch({ type: 'expanded_resource', uri })
