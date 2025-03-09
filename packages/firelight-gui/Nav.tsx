@@ -67,14 +67,20 @@ export const Search: React.FC<{
 
       try {
 
-        const exact =
-          (index.query(query => {
-            query.term(debouncedQuery, {
-              presence: lunr.Query.presence.REQUIRED,
-              wildcard: lunr.Query.wildcard.LEADING | lunr.Query.wildcard.TRAILING,
-            });
-          }) ?? []).
-          slice(0, MAX_SEARCH_RESULT_COUNT);
+        let exact: lunr.Result[];
+        try {
+          exact =
+            (index.query(query => {
+              query.term(debouncedQuery, {
+                presence: lunr.Query.presence.REQUIRED,
+                wildcard: lunr.Query.wildcard.LEADING | lunr.Query.wildcard.TRAILING,
+              });
+            }) ?? []).
+            slice(0, MAX_SEARCH_RESULT_COUNT);
+        } catch (e) {
+          exact = [];
+          console.error("Failed exact search", e);
+        }
 
         const full = exact.length < 1 || showMore
           ? (index.query(query => {
@@ -98,7 +104,8 @@ export const Search: React.FC<{
         return [{ exact, full, partial }, null];
 
       } catch (e) {
-        return [{ exact: [], full: [], partial: [] }, `${(e as any).message}`];
+        console.error(e);
+        return [{ exact: [], full: [], partial: [] }, "Sorry, something went wrong"];
       }
 
     } else {
