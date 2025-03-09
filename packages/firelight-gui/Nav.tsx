@@ -139,6 +139,7 @@ export const Search: React.FC<{
     <ListView
         flex={1}
         items={results}
+        aria-label="Matching resources found"
         isQuiet
         renderEmptyState={() => <></>}>
       {renderItem}
