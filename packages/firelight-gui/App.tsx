@@ -4,7 +4,7 @@ import { defaultTheme, ProgressBar, Flex, Provider } from '@adobe/react-spectrum
 import { useInView, InView } from 'react-intersection-observer';
 import { useThrottledCallback, useDebouncedCallback } from 'use-debounce';
 import lunr, { type Index as LunrIndex } from 'lunr';
-import React, { useCallback, createContext, useState, useReducer, useMemo, useEffect } from 'react';
+import React, { useCallback, createContext, useState, useReducer, useMemo, useEffect, useLayoutEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { LayoutModule, type ResourceNav, ResourceNavSchema } from 'anafero/index.mjs';
 import { type Versioning, VersioningSchema } from 'anafero/index.mjs';
@@ -183,11 +183,28 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   ), [versionPrefix, getSiteRootRelativePath]);
 
   //const normalizedResourcePathFromPathname =
-  const initialResourceURI: string | undefined = resourceMap && getUnversionedPath
-    ? resourceMap[stripLeadingSlash(stripTrailingSlash(
-        getUnversionedPath(decodeURIComponent(window.location.pathname))
-      ))]
+  const initialResourceURI_: string | undefined = resourceMap && getUnversionedPath
+    ? resourceMap[stripLeadingSlash(
+        getUnversionedPath(
+          stripTrailingSlash(decodeURIComponent(window.location.pathname))
+          + window.location.hash)
+      )]
     : undefined;
+
+  const initialResourceURI = initialResourceURI_ ?? (
+    // Try once again but without the fragment (in case it is malformed)
+    getUnversionedPath && resourceMap
+    ? resourceMap[stripLeadingSlash(
+        getUnversionedPath(
+          stripTrailingSlash(decodeURIComponent(window.location.pathname))
+        )
+      )]
+    : undefined
+  );
+
+  if (resourceMap && getUnversionedPath && !initialResourceURI) {
+    throw new Error("Unable to obtain initial resource URI based on URL");
+  }
 
   const fetchJSON = useCallback(function fetchJSON<T extends string>(
     paths: T[],
@@ -505,9 +522,16 @@ export const VersionWorkspace: React.FC<{
   onStoreState,
 }) {
 
+  const getContainingPageResourceURI = useCallback((uri: string) => {
+    const path = locateResource(uri).split('#')[0];
+    return reverseResource(path) ?? '';
+  }, [locateResource, reverseResource]);
+
+  const initialPage = getContainingPageResourceURI(initialResource);
+
   const [state, dispatch] = useReducer(
     reducer,
-    { initialResource, stored: storedState },
+    { initialResource, initialPage, stored: storedState },
     createInitialState);
 
   // Resource dependencies keyed by resource ID.
@@ -517,40 +541,56 @@ export const VersionWorkspace: React.FC<{
   // Testing for whether the value is a function is a way of testing
   // whether resource data is still loading.
   const [resourceDeps, setResourceDeps] =
-    useState<Record<string, ResourceData | (() => void)>>({});
+    useState<Record<string, ResourceData | undefined>>({});
 
   useEffect(() => {
     const { expandedResourceURIs, bookmarkedResourceURIs, searchQuery } = state;
     onStoreState?.({ expandedResourceURIs, bookmarkedResourceURIs, searchQuery });
   }, [state]);
 
+
+  // Fetch dependencies for newly visible resources
+
+  const resourceIDsPendingDependencies = state.visibleResourceURIs.
+    filter(uri => resourceDeps[uri] === undefined);
+  const [loadingResources, setLoadingResources] = useState<string[]>([]);
   useEffect(() => {
     let cancelled = false;
 
-    //const newDeps = { ...resourceDeps };
+    if (resourceIDsPendingDependencies.length < 1) {
+      return;
+    }
 
-    // Fetch dependencies for any newly visible resources
-    const resourceIDsPendingDependencies = state.visibleResourceURIs.
-      filter(uri => resourceDeps[uri] === undefined);
+    const fetchDependencies = async function () {
+      const promises: Promise<Record<string, ResourceData>>[] =
+      resourceIDsPendingDependencies.map(id =>
+        new Promise((resolve, reject) => {
+          fetchResourceData(id, (data) => {
+            resolve({ [id]: data });
+          })
+        })
+      )
+      const data: Record<string, ResourceData> =
+        (await Promise.all(promises)).
+        reduce((prev, curr) => ({ ...prev, ...curr }), {});
 
-    //console.debug("Fetching deps effect", new Date());
+      setLoadingResources(ids =>
+        ids.filter(id => !Object.keys(data).includes(id))
+      );
 
-    for (const resourceID of resourceIDsPendingDependencies) {
+      if (cancelled) {
+        return;
+      }
+
       setResourceDeps(deps => ({
         ...deps,
-        [resourceID]: fetchResourceData(resourceID, (data) => {
-          setResourceDeps(deps => ({
-            ...deps,
-            [resourceID]: (
-                !cancelled
-                && typeof deps[resourceID] === 'function'
-                && state.visibleResourceURIs.includes(resourceID))
-              ? data
-              : deps[resourceID],
-          }));
-        }),
+        ...data,
       }));
-    }
+    };
+
+    setLoadingResources(resourceIDsPendingDependencies);
+
+    fetchDependencies();
 
     // // Clean up deps for resources that are no longer visible?
     // // Maybe should debounce that, e.g., if the user scrolls back and forth
@@ -568,9 +608,9 @@ export const VersionWorkspace: React.FC<{
     //setResourceDeps(newDeps);
 
     return function cleanup() {
-      //cancelled = true;
+      cancelled = true;
     };
-  }, [resourceDeps, state.visibleResourceURIs.join(', ')]);
+  }, [resourceIDsPendingDependencies.join(','), fetchResourceData]);
 
   const layout =
     (dependencies[dependencyIndex.layouts[0]!]! as LayoutModule).layouts[0];
@@ -587,21 +627,11 @@ export const VersionWorkspace: React.FC<{
     return dependencies[modID] as T;
   }, [dependencies]);
 
-  // History stuff
+  const activePageResourceURI = useMemo(() => {
+    return getContainingPageResourceURI(state.activeResourceURI);
+  }, [state.activeResourceURI, getContainingPageResourceURI]);
 
-  /**
-   * From resource path (as in resource map),
-   * obtain root-relative (including version) path to structural resource,
-   * and in-page resource as a separate string.
-   */
-  const expandResourcePath = useCallback(((rpath: string): [path: string, inPageResourceHashFragment: string | null] => {
-    const hasFragment = rpath.indexOf('#') >= 1;
-    const withTrailing = `${rpath}${(rpath !== '' && rpath !== '/') ? '/' : ''}`
-    return [
-      withTrailing,
-      hasFragment ? `#${rpath.split('#')[1]!}` : null,
-    ] as [string, string];
-  }), []);
+  // History stuff
 
   // Handle the pop
   useEffect(() => {
@@ -622,14 +652,10 @@ export const VersionWorkspace: React.FC<{
       }
       if (uri && path) {
         const [, fragment] = expandResourcePath(path);
-        dispatch({ type: 'activated_resource', uri });
+        dispatch({ type: 'activated_resource', uri, pageURI: getContainingPageResourceURI(uri) });
 
-        // This is probably ineffective right now as we don’t store
-        // hashes as part of resource URI in history state.
         if (fragment) {
-          setTimeout(() => {
-            setQueuedFragment(fragment.slice(1));
-          }, 200);
+          setQueuedFragment(fragment.slice(1));
         }
       } else {
         console.warn("While popping state, could not resolve resource URI or locate resource path", uri, history.state?.res);
@@ -642,9 +668,9 @@ export const VersionWorkspace: React.FC<{
     return function cleanUp() {
       window.removeEventListener('popstate', handlePopState);
     }
-  }, [dispatch, locateResource, expandResourcePath]);
+  }, [dispatch, locateResource, getContainingPageResourceURI]);
 
-  // Do the push
+  // Push to history and set queuedFragment if needed
   useEffect(() => {
     const res = state.activeResourceURI;
     const rpath = locateResource(res);
@@ -654,12 +680,10 @@ export const VersionWorkspace: React.FC<{
     } else if (history.state.res !== res) {
       history.pushState({ res }, '', expandedPath);
     }
-    // We can’t select non-structural resources yet, so we patch up
-    // selected resource to nearest structural parent.
     if (fragment) {
-      dispatch({ type: 'activated_resource', uri: res });
+      setQueuedFragment(fragment.slice(1));
     }
-  }, [expandResourcePath, locateResource, state.activeResourceURI]);
+  }, [locateResource, state.activeResourceURI]);
 
   const [resourceContainerElement, setResourceContainerElement] =
     useState<null | HTMLDivElement>(null);
@@ -680,29 +704,68 @@ export const VersionWorkspace: React.FC<{
         return;
       }
       const url = new URL(href, document.baseURI);
-      const absoluteHref = decodeURIComponent(url.pathname);
-      const resourceURI = reverseResource(absoluteHref);
       //console.debug("Intercepted", href, resourceURI, url.hash, url);
+      const maybePrefixedURL = decodeURIComponent(url.pathname) + url.hash;
+
+      // NOTE: Technically, in current implementation, if url.hash is present
+      // then the hash fragment IS the actual resource URI of the subresource
+      // on page. However, perhaps we don’t want to rely on that being true?
+      // const resourceURI = url.hash
+      //   ? decodeURIComponent(url.hash)
+      //   : reverseResource(maybePrefixedURL);
+
+      const resourceURI = reverseResource(maybePrefixedURL);
+      //console.debug("Intercepted", maybePrefixedURL, resourceURI, url.hash, url);
+
       if (resourceURI) {
-        dispatch({ type: 'activated_resource', uri: resourceURI });
-        // Selecting in-page resource is semi-broken
-        if (url.hash) {
-          setQueuedFragment(decodeURIComponent(url.hash.slice(1)));
-        }
+        dispatch({ type: 'activated_resource', uri: resourceURI, pageURI: getContainingPageResourceURI(resourceURI) });
         evt.stopPropagation();
         evt.preventDefault();
         return false;
       } else {
-        console.error("Failed to get resource URI", absoluteHref, stripLeadingSlash(getVersionLocalPath(stripTrailingSlash(absoluteHref))));
+        console.error(
+          "Failed to get resource URI",
+          maybePrefixedURL,
+          stripLeadingSlash(getVersionLocalPath(stripTrailingSlash(maybePrefixedURL))),
+        );
         return true;
       }
     })
-  }, [reverseResource, getVersionLocalPath]);
+  }, [reverseResource, getVersionLocalPath, getContainingPageResourceURI]);
 
+  // Queue hash fragment to navigate to subresources more precisely
+  // after page load is finished. If no subresource was requested,
+  // then set to string NONE to distinguish from empty state.
+  const [queuedFragment, setQueuedFragment] = useState('');
+
+  // Navigate to a resource specifically by jumping via some link
+  // (in navigation or content), not say by scrolling.
+  // Handles the case where the link goes to a subresource.
+  const jumpTo = useCallback((uri: string) => {
+    //const path = locateResource(uri);
+    if (getContainingPageResourceURI(uri) === uri) {
+      setQueuedFragment('NONE');
+    }
+
+    console.debug("Jumping & activating resource", uri);
+
+    dispatch({ type: 'activated_resource', uri, pageURI: getContainingPageResourceURI(uri) });
+  }, [setQueuedFragment, getContainingPageResourceURI, dispatch]);
+
+  // Navigate to a resource specifically by jumping via some link
+  // (in navigation or content), not say by scrolling.
+  // Handles the case where the link goes to a subresource.
   const navigate = useCallback(function navigate(path: string) {
     const resourceURI = reverseResource(path);
-    dispatch({ type: 'activated_resource', uri: resourceURI });
-  }, [reverseResource]);
+    if (!resourceURI) {
+      console.error("Unable to reverse resource URI for path", path);
+      throw new Error("Unable to reverse resource URI for path");
+    }
+
+    console.debug("Navigating & activating resource", resourceURI);
+
+    dispatch({ type: 'activated_resource', uri: resourceURI, pageURI: getContainingPageResourceURI(resourceURI) });
+  }, [reverseResource, jumpTo, getContainingPageResourceURI]);
 
   const hierarchy = useMemo(
     // If there’s no map, it may be loading (undefined) or broken (null),
@@ -718,58 +781,75 @@ export const VersionWorkspace: React.FC<{
     [resourceMap, getResourceTitle]);
 
   /** We ignore/disallow arbitrary selection for now. */
-  const actualSelected = useMemo((() =>
-    new Set([state.activeResourceURI])
-  ), [state.activeResourceURI]);
+  const actualSelectedPageResources = useMemo((() =>
+    new Set([activePageResourceURI])
+  ), [activePageResourceURI]);
 
-  /** Always expanded: 1) root, 2) selected & parents of selected. */
+  /**
+   * For hierarchy sidebar.
+   * Adds to resources user specifically expanded
+   * the always expanded resources: 1) root, 2) selected & parents of selected.
+   */
   const actualExpanded = useMemo((() => {
     return new Set([
       hierarchy[0].id,
       ...Array.from(state.expandedResourceURIs),
       ...findMatchingItemParents(
         hierarchy,
-        (i) => actualSelected.has(i.id),
+        (i) => actualSelectedPageResources.has(i.id),
         [],
       ),
     ])
-  }), [hierarchy, state.expandedResourceURIs, actualSelected]);
+  }), [hierarchy, state.expandedResourceURIs, actualSelectedPageResources]);
 
   const routerProps = useMemo(() => ({ router: { navigate } }), [navigate]);
 
-  const isLoading = Object.values(resourceDeps).find(val => typeof val === 'function');
+  const isLoading = loadingResources.length > 0;
 
-  // Queue hash fragment to navigate to subresources more precisely
-  // after page load is finished.
-  const [queuedFragment, setQueuedFragment] = useState('');
+  // Scroll to selected subresource
+  useLayoutEffect(() => {
+    if (!isLoading && resourceContainerElement && queuedFragment) {
+      function scrollToResource() {
+        if (!queuedFragment) {
+          return;
+        }
+        if (queuedFragment === 'NONE') {
+          setQueuedFragment('');
 
-  const scrollToResource = useCallback(() => {
-    if (!queuedFragment) {
-      return;
-    }
-    if (!resourceContainerElement) {
-      console.warn("Cannot scroll to resource: no resource container element");
-      return;
-    }
-    //const encoded = encodeURIComponent(queuedFragment);
-    const el = document.getElementById(queuedFragment)
-      ?? resourceContainerElement.querySelector(`[about="${queuedFragment}"]`);
-    if (el) {
-      try {
-        el.scrollIntoView();
-      } catch (e) {
-        console.error("Failed to scroll element into view", queuedFragment);
+          window.scrollTo(0, 0);
+          // TODO: Don’t break own abstraction
+          // Needed because the following can cause glitchy behavior otherwise:
+          // 1. Open a resource page with child resource subpages
+          // 2. Scroll through all subpages to the bottom until auto-load stops
+          // 3. Click on the first subpage. Since scroll position is bottom,
+          //    the marker will trigger loading all subsequent subpages.
+
+        } else {
+          if (!resourceContainerElement) {
+            console.warn("Cannot scroll to resource: no resource container element");
+            return;
+          }
+          const resourceURI = decodeURIComponent(queuedFragment);
+          const el = document.getElementById(resourceURI)
+            ?? resourceContainerElement.querySelector(`[about="${resourceURI}"]`);
+          if (el) {
+            try {
+              //if (el.hasOwnProperty('scrollIntoViewIfNeeded')) {
+              //  el.scrollIntoViewIfNeeded();
+              //} else {
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              //}
+            } catch (e) {
+              console.error("Failed to scroll element into view", resourceURI);
+            }
+            console.debug("Scrolled to element for resource", resourceURI);
+            setQueuedFragment('');
+          } else {
+            console.warn("Element not found for resource to scroll to", resourceURI);
+          }
+        }
       }
-      setQueuedFragment('');
-    } else {
-      console.error("Element not found for resource to scroll to", queuedFragment);
-    }
-  }, [resourceContainerElement, queuedFragment]);
 
-  useEffect(() => {
-    if (!isLoading && queuedFragment && resourceContainerElement) {
-      const resourceID = queuedFragment;
-      window.location.hash = `#${encodeURIComponent(resourceID)}`;
       // In case there’s a delay in element’s appearing in DOM tree:
       const observer = new MutationObserver(scrollToResource);
       scrollToResource();
@@ -779,30 +859,32 @@ export const VersionWorkspace: React.FC<{
         characterData: false,
         subtree: true,
       });
+
       // Clean up queued fragment if DOM tree is stuck for some reason
       // (shouldn’t happen)
       const timeout = setTimeout(() => {
         setQueuedFragment('');
       }, 5000);
+
       return function () {
         observer.disconnect();
         window.clearTimeout(timeout);
       };
     }
     return function () {};
-  }, [isLoading, queuedFragment, scrollToResource, resourceContainerElement]);
+  }, [isLoading, queuedFragment, resourceContainerElement]);
 
   const lastVisibleResourceMarkerIntersection = useInView({
     threshold: 0,
-    initialInView: true,
+    initialInView: false,
   });
 
   const loadNextResource = useCallback((lastResource: string, lastResourceParentPath: string) => {
     const abortController = new AbortController();
     (async () => {
-      let nextResourceURI: string | null = null;
+      let nextResourceURI: string | undefined = undefined;
       try {
-        const lastResourcePath = locateResource(lastResource);
+        const lastResourcePath = locateResource(getContainingPageResourceURI(lastResource));
         const nextResourcePath = await getAdjacentResource(
           lastResourcePath,
           lastResourceParentPath,
@@ -824,14 +906,14 @@ export const VersionWorkspace: React.FC<{
     return function cleanUpLoadingNext() {
       abortController.abort();
     }
-  }, [dispatch, locateResource]);
+  }, [dispatch, locateResource, reverseResource, getContainingPageResourceURI]);
 
   useEffect(() => {
     if (lastVisibleResourceMarkerIntersection.inView
         && state.selectedResourceURIs.length === 1) {
       const lastResource = state.visibleResourceURIs[state.visibleResourceURIs.length - 1];
       const lastResourceData = resourceDeps[lastResource];
-      if (!lastResourceData || typeof lastResourceData === 'function') {
+      if (!lastResourceData) {
         return;
       }
       const lastResourceParentPath = lastResourceData.nav.breadcrumbs[0]?.path;
@@ -845,9 +927,8 @@ export const VersionWorkspace: React.FC<{
     state.visibleResourceURIs,
     state.selectedResourceURIs,
     resourceDeps,
-    locateResource,
     reverseResource,
-    dispatch,
+    loadNextResource,
   ]);
 
   const handleActivateByScroll = useThrottledCallback((uri: string) => {
@@ -863,10 +944,7 @@ export const VersionWorkspace: React.FC<{
 
   const activeResourceContent = useMemo(() => {
     const dep = resourceDeps[state.activeResourceURI];
-    const activeResourceContent = (dep && typeof dep !== 'function')
-      ? dep.content?.content ?? undefined
-      : undefined;
-    return activeResourceContent;
+    return dep?.content?.content ?? undefined;
   }, [resourceDeps, state.activeResourceURI]);
 
   return (
@@ -889,11 +967,11 @@ export const VersionWorkspace: React.FC<{
       <main id="resources" ref={setUpInterceptor}>
         <Provider theme={defaultTheme} locale={locale}>
           {state.visibleResourceURIs.map((uri, idx) => {
-            const isActive = state.activeResourceURI === uri;
+            const isActive = uri === activePageResourceURI;
             const isOnlyOneShown = state.visibleResourceURIs.length < 2;
             const isMarkedActive = !isOnlyOneShown && isActive;
             const isLoading = loadingResources.includes(uri);
-            const data = uri === initialResource
+            const data = uri === initialPage
               ? initialResourceData
               : !isLoading
                 ? resourceDeps[uri]
@@ -923,39 +1001,40 @@ export const VersionWorkspace: React.FC<{
               : {};
 
             return data !== undefined
-              ? <React.Fragment key={uri}>
-                  <InView rootMargin="-50% 0% -50% 0%">
-                    {({ inView, ref }) => {
-                      if (inView && state.activeResourceURI !== uri) {
-                        // TODO: Intermittently(?) causes https://reactjs.org/link/setstate-in-render
-                        // when it updates state during render
-                        handleActivateByScroll(uri);
-                      }
-                      return <Component
-                        //key={uri}
-                        uri={uri}
-                        ref={ref}
-                        graph={data.graph}
-                        content={data.content}
-                        aria-selected={isMarkedActive}
-                        className={`
-                          ${state.browsingMode ? classNames.withNav : ''}
-                          ${isOnlyOneShown ? classNames.onlyOne : ''}
-                          ${isMarkedActive ? classNames.active : ''}
-                        `}
-                        nav={data.nav}
-                        document={document}
-                        locateResource={locateResource}
-                        getResourcePlainTitle={getResourceTitle}
-                        reverseResource={reverseResource}
-                        onIntegrityViolation={console.error}
-                        selectedLayout={layout}
-                        useDependency={getDependency}
-                        {...animateProps}
-                      />;
-                    }}
-                  </InView>
-                </React.Fragment>
+              ? <InView key={uri} rootMargin="0% 0% -100% 0%" initialInView={isActive}>
+                  {({ inView, ref }) => {
+                    if (inView && activePageResourceURI !== uri) {
+                      // TODO: Intermittently(?) causes https://reactjs.org/link/setstate-in-render
+                      // when it updates state during render
+                      handleActivateByScroll(uri);
+                    }
+                    return <Component
+                      ref={ref}
+                      key={uri}
+                      uri={uri}
+                      requestedResourceURI={state.activeResourceURI}
+                      searchQueryText={state.searchQuery.text}
+                      graph={data.graph}
+                      content={data.content}
+                      aria-selected={isMarkedActive}
+                      className={state.browsingMode || isMarkedActive
+                        ? `
+                            ${state.browsingMode ? classNames.withNav : ''}
+                            ${isMarkedActive ? classNames.active : ''}
+                          `
+                        : undefined}
+                      nav={data.nav}
+                      document={document}
+                      locateResource={locateResource}
+                      getResourcePlainTitle={getResourceTitle}
+                      reverseResource={reverseResource}
+                      onIntegrityViolation={console.error}
+                      selectedLayout={layout}
+                      useDependency={getDependency}
+                      {...animateProps}
+                    />;
+                  }}
+                </InView>
               : <div
                     key={uri}
                     className={`
@@ -963,7 +1042,7 @@ export const VersionWorkspace: React.FC<{
                       ${state.browsingMode ? classNames.withNav : ''}
                     `}>
                   <a href={locateResource(uri)}>{getResourceTitle(uri)}</a>
-                  {typeof resourceDeps[uri] === 'function'
+                  {isLoading
                     ? <ProgressBar
                         labelPosition="side"
                         label="Loading next resource…"
@@ -983,7 +1062,8 @@ export const VersionWorkspace: React.FC<{
             key={`
               ${state.activeResourceURI}
               ${state.visibleResourceURIs.join(' ')}
-              ${Object.values(resourceDeps).map(d => typeof d === 'function' ? 'f' : 't').join(' ')}
+              ${loadingResources.join(' ')}
+              ${Object.keys(resourceDeps).join(' ')}
             `}
             {...activeResourceContent}
           />
@@ -1011,8 +1091,6 @@ export const VersionWorkspace: React.FC<{
                 ? <Hierarchy
                     hierarchy={hierarchy}
                     expanded={actualExpanded}
-                    selected={actualSelected}
-                    onSelect={(uri) => dispatch({ type: 'activated_resource', uri })}
                     onExpand={(expandedURIs) => {
                       expandedURIs.forEach(uri =>
                         dispatch({ type: 'expanded_resource', uri })
@@ -1023,6 +1101,8 @@ export const VersionWorkspace: React.FC<{
                         dispatch({ type: 'collapsed_resource', uri })
                       );
                     }}
+                    selected={actualSelectedPageResources}
+                    onSelect={jumpTo}
                   />
                 : state.browsingMode === 'search'
                   ? <Search
@@ -1038,7 +1118,7 @@ export const VersionWorkspace: React.FC<{
                         onRemoveBookmark={(uri) => dispatch({ type: 'removed_resource_bookmark', uri })}
                         getPlainTitle={getResourceTitle}
                         locateResource={locateResource}
-                        onNavigate={(uri) => dispatch({ type: 'activated_resource', uri })}
+                        onNavigate={(uri) => dispatch({ type: 'activated_resource', uri, pageURI: getContainingPageResourceURI(uri) })}
                       />
                     : null}
             </Flex>
@@ -1084,6 +1164,33 @@ async function getAdjacentResource(
   }
 }
 
+/**
+ * From resource path (as in resource map),
+ * obtain root-relative (including version) path to structural resource,
+ * and in-page resource hash fragment as a separate string.
+ *
+ * Page resource path is returned with trailing slash
+ * if there’s no in-page subresource,
+ * in-page subresource is returned with leading hash,
+ */
+function expandResourcePath(rpath: string): [path: string, hash: string | null] {
+  const hasFragment = rpath.indexOf('#') >= 0;
+  const [beforeFragment, maybeFragment] = hasFragment
+    ? rpath.split('#') as [string, string]
+    : [rpath.split('#')[0], null] as [string, null];
+  const maybeTrailingSlash = (beforeFragment !== '' && beforeFragment !== '/')
+    ? '/'
+    : '';
+  const maybeFragmentSeparator = hasFragment
+    ? '#'
+    : '';
+  const withTrailing =
+    `${beforeFragment}${maybeTrailingSlash}${maybeFragmentSeparator}${maybeFragment ?? ''}`
+  return [
+    withTrailing,
+    maybeFragment ? `#${maybeFragment}` : null,
+  ] as [string, string | null];
+}
 
 function stripLeadingSlash(aPath: string): string {
   return aPath.replace(/^\//, '');

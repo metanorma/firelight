@@ -29,9 +29,12 @@ interface AppState {
    * Implicitly expanded can also be a thing, but they don’t count here.
    */
   expandedResourceURIs: Set<string>;
-  /** Resources loaded in view. */
+  /** *Page* resources (no subresources!) loaded in view. */
   visibleResourceURIs: string[];
-  /** Selected resource, affects URL, maintains top position in the viewport. */
+  /**
+   * Selected resource, affects URL, maintains top position in the viewport.
+   * Can be a subresource.
+   */
   activeResourceURI: string;
   bookmarkedResourceURIs: Set<string>;
   searchQuery: SearchQuery;
@@ -60,7 +63,12 @@ type Action =
   | { type: 'scrolled_previous_resource_into_view', uri: string }
   | { type: 'activated_resource_by_scrolling', uri: string }
 
-  | { type: 'activated_resource', uri: string }
+  | {
+      type: 'activated_resource',
+      uri: string,
+      /** URI of containing page resource */
+      pageURI: string,
+    }
 
   | { type: 'added_resource_to_selection', uri: string }
   | { type: 'removed_resource_from_selection', uri: string }
@@ -74,11 +82,17 @@ type Action =
   | { type: 'edited_search_query_text', newText: string }
 ;
 
-export function createInitialState(opts: { initialResource: string, stored?: StoredAppState }): AppState {
+export function createInitialState(
+  opts: {
+    initialResource: string,
+    initialPage: string,
+    stored?: StoredAppState,
+  }
+): AppState {
   return {
     activeResourceURI: opts.initialResource,
     selectedResourceURIs: [opts.initialResource],
-    visibleResourceURIs: [opts.initialResource],
+    visibleResourceURIs: [opts.initialPage],
     browsingMode: undefined,
 
     ...(opts.stored ? opts.stored : {
@@ -177,7 +191,7 @@ export function reducer(state: AppState, action: Action): AppState {
 
       const visibleAfterActivation = selectedAfterActivation.length > 1
         ? [...selectedAfterActivation]
-        : [action.uri];
+        : [action.pageURI];
       // Selected items are pushed to the end of the list,
       // but should be visible first
       visibleAfterActivation.reverse();
