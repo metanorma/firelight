@@ -532,7 +532,7 @@ export const VersionWorkspace: React.FC<{
   initialResourceData: ResourceData;
   versioning: Versioning;
   resourceMap: Record<string, string>;
-  storedState?: StoredAppState;
+  storedState?: StoredAppState | undefined;
   onStoreState?: (newState: StoredAppState) => void;
 }> = function ({
   workspaceTitle,
@@ -555,7 +555,7 @@ export const VersionWorkspace: React.FC<{
 }) {
 
   const getContainingPageResourceURI = useCallback((uri: string) => {
-    const path = locateResource(uri).split('#')[0];
+    const path = locateResource(uri).split('#')[0]!;
     return reverseResource(path) ?? '';
   }, [locateResource, reverseResource]);
 
@@ -645,7 +645,7 @@ export const VersionWorkspace: React.FC<{
   }, [resourceIDsPendingDependencies.join(','), fetchResourceData]);
 
   const layout =
-    (dependencies[dependencyIndex.layouts[0]!]! as LayoutModule).layouts[0];
+    (dependencies[dependencyIndex.layouts[0]!]! as LayoutModule).layouts[0]!;
 
   const getResourceTitle = useCallback((
     (uri: string) => resourceDescriptions[uri]?.labelInPlainText ?? uri
@@ -823,7 +823,7 @@ export const VersionWorkspace: React.FC<{
    */
   const actualExpanded = useMemo((() => {
     return new Set([
-      hierarchy[0].id,
+      hierarchy[0]!.id,
       ...Array.from(state.expandedResourceURIs),
       ...findMatchingItemParents(
         hierarchy,
@@ -945,6 +945,9 @@ export const VersionWorkspace: React.FC<{
     if (lastVisibleResourceMarkerIntersection.inView
         && state.selectedResourceURIs.length === 1) {
       const lastResource = state.visibleResourceURIs[state.visibleResourceURIs.length - 1];
+      if (!lastResource) {
+        return;
+      }
       const lastResourceData = resourceDeps[lastResource];
       if (!lastResourceData) {
         return;

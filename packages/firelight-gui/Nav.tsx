@@ -152,13 +152,13 @@ export const Search: React.FC<{
       width="100%"
       autoFocus
       alignSelf="stretch"
-      onChange={onEditQueryText}
+      onChange={onEditQueryText ?? (() => {})}
       isReadOnly={!onEditQueryText}
       label="Search resources"
       value={query.text}
       errorMessage={error}
       UNSAFE_className={classNames.navStickyHeader}
-      validationState={error ? 'invalid' : undefined}
+      validationState={error ? 'invalid' : 'valid'}
       description={results.length > 0
         ? <>
             {results.length >= MAX_SEARCH_RESULT_COUNT ? 'At least ' : ''}
