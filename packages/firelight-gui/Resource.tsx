@@ -226,8 +226,10 @@ export const Resource = React.forwardRef(function ({
         <ErrorBoundaryWithCustomFallback fallback={fallback}>
           <ProseMirror
               defaultState={initialState!}
+              mount={contentElement}
               editable={() => false}
               nodeViews={adapter!.resourceContentProseMirrorOptions.nodeViews}>
+            <article ref={contentRef} />
             <ProseMirrorDoc ref={contentRef} as={<article />} />
           </ProseMirror>
         </ErrorBoundaryWithCustomFallback>

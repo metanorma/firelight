@@ -869,18 +869,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nytimes/react-prosemirror@npm:^0.7.0-next.10":
-  version: 0.7.0-next.10
-  resolution: "@nytimes/react-prosemirror@npm:0.7.0-next.10"
-  dependencies:
-    classnames: "npm:^2.3.2"
+"@nytimes/react-prosemirror@npm:^1.0.0":
+  version: 1.0.3
+  resolution: "@nytimes/react-prosemirror@npm:1.0.3"
   peerDependencies:
     prosemirror-model: ^1.0.0
     prosemirror-state: ^1.0.0
-    prosemirror-view: 1.34.2
-    react: ">=17"
-    react-dom: ">=17"
-  checksum: 10c0/4116cbad1f4f4690a3570c139be0443f2d37d74afe3b353b2448d488a2210aa8a60287fbebc5c83bc36ea26130cbd1a5bbe2c99da4ce54197a7b4363f532dc58
+    prosemirror-view: ^1.0.0
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 10c0/18a1f76471bb10ca0d3cb65d67fd4b81948e5091c556a3b052880149726940658ad75efb0848f477a000aac8743b692bae99494187d2a57d3262081548567ad2
   languageName: node
   linkType: hard
 
@@ -4297,7 +4295,7 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:3.37.1"
     "@effect/schema": "npm:^0.74.0"
-    "@nytimes/react-prosemirror": "npm:^0.7.0-next.10"
+    "@nytimes/react-prosemirror": "npm:^1.0.0"
     "@react-spectrum/provider": "npm:3.9.12"
     "@react-spectrum/tree": "npm:3.0.0-beta.1"
     "@spectrum-icons/workflow": "npm:4.2.15"
@@ -4449,13 +4447,6 @@ __metadata:
   version: 2.0.0
   resolution: "chownr@npm:2.0.0"
   checksum: 10c0/594754e1303672171cc04e50f6c398ae16128eb134a88f801bf5354fd96f205320f23536a045d9abd8b51024a149696e51231565891d4efdab8846021ecf88e6
-  languageName: node
-  linkType: hard
-
-"classnames@npm:^2.3.2":
-  version: 2.5.1
-  resolution: "classnames@npm:2.5.1"
-  checksum: 10c0/afff4f77e62cea2d79c39962980bf316bacb0d7c49e13a21adaadb9221e1c6b9d3cdb829d8bb1b23c406f4e740507f37e1dcf506f7e3b7113d17c5bab787aa69
   languageName: node
   linkType: hard
 
@@ -5119,7 +5110,7 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:3.37.1"
     "@effect/schema": "npm:^0.74.0"
-    "@nytimes/react-prosemirror": "npm:^0.7.0-next.10"
+    "@nytimes/react-prosemirror": "npm:^1.0.0"
     "@react-spectrum/provider": "npm:3.9.12"
     "@react-spectrum/tree": "npm:3.0.0-beta.1"
     "@spectrum-icons/workflow": "npm:4.2.15"

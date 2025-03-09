@@ -496,10 +496,6 @@ const RAW_RUNTIME_STATE =
       "npm:2.0.0"\
     ],\
     [\
-      "classnames",\
-      "npm:2.5.1"\
-    ],\
-    [\
       "clean-git-ref",\
       "npm:2.0.1"\
     ],\
@@ -2739,23 +2735,22 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@nytimes/react-prosemirror", [\
-      ["npm:0.7.0-next.10", {\
-        "packageLocation": "./.yarn/cache/@nytimes-react-prosemirror-npm-0.7.0-next.10-e58854b316-4116cbad1f.zip/node_modules/@nytimes/react-prosemirror/",\
+      ["npm:1.0.3", {\
+        "packageLocation": "./.yarn/cache/@nytimes-react-prosemirror-npm-1.0.3-015aa5f435-18a1f76471.zip/node_modules/@nytimes/react-prosemirror/",\
         "packageDependencies": [\
-          ["@nytimes/react-prosemirror", "npm:0.7.0-next.10"]\
+          ["@nytimes/react-prosemirror", "npm:1.0.3"]\
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:0.7.0-next.10", {\
-        "packageLocation": "./.yarn/__virtual__/@nytimes-react-prosemirror-virtual-0f639ab06e/0/cache/@nytimes-react-prosemirror-npm-0.7.0-next.10-e58854b316-4116cbad1f.zip/node_modules/@nytimes/react-prosemirror/",\
+      ["virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:1.0.3", {\
+        "packageLocation": "./.yarn/__virtual__/@nytimes-react-prosemirror-virtual-04fc66df42/0/cache/@nytimes-react-prosemirror-npm-1.0.3-015aa5f435-18a1f76471.zip/node_modules/@nytimes/react-prosemirror/",\
         "packageDependencies": [\
-          ["@nytimes/react-prosemirror", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:0.7.0-next.10"],\
+          ["@nytimes/react-prosemirror", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:1.0.3"],\
           ["@types/prosemirror-model", null],\
           ["@types/prosemirror-state", null],\
           ["@types/prosemirror-view", null],\
           ["@types/react", "npm:18.3.11"],\
           ["@types/react-dom", "npm:18.3.0"],\
-          ["classnames", "npm:2.5.1"],\
           ["prosemirror-model", "npm:1.22.3"],\
           ["prosemirror-state", "npm:1.4.3"],\
           ["prosemirror-view", null],\
@@ -9245,7 +9240,7 @@ const RAW_RUNTIME_STATE =
           ["anafero", "workspace:packages/anafero"],\
           ["@adobe/react-spectrum", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:3.37.1"],\
           ["@effect/schema", "virtual:c7bab0322e7612345b7c9bf337b27e089711962409bb5b8cb2c23fd878ddf004bdb7bb8a72e2b11a3e3a0857d109013606bcc07d8e15a87d88db5ada7a83bdc1#npm:0.74.0"],\
-          ["@nytimes/react-prosemirror", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:0.7.0-next.10"],\
+          ["@nytimes/react-prosemirror", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:1.0.3"],\
           ["@react-spectrum/provider", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:3.9.12"],\
           ["@react-spectrum/tree", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:3.0.0-beta.1"],\
           ["@spectrum-icons/workflow", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:4.2.15"],\
@@ -9418,15 +9413,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/chownr-npm-2.0.0-638f1c9c61-594754e130.zip/node_modules/chownr/",\
         "packageDependencies": [\
           ["chownr", "npm:2.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["classnames", [\
-      ["npm:2.5.1", {\
-        "packageLocation": "./.yarn/cache/classnames-npm-2.5.1-c7273f3423-afff4f77e6.zip/node_modules/classnames/",\
-        "packageDependencies": [\
-          ["classnames", "npm:2.5.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10072,7 +10058,7 @@ const RAW_RUNTIME_STATE =
           ["firelight-gui", "workspace:packages/firelight-gui"],\
           ["@adobe/react-spectrum", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:3.37.1"],\
           ["@effect/schema", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:0.74.0"],\
-          ["@nytimes/react-prosemirror", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:0.7.0-next.10"],\
+          ["@nytimes/react-prosemirror", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:1.0.3"],\
           ["@react-spectrum/provider", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:3.9.12"],\
           ["@react-spectrum/tree", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:3.0.0-beta.1"],\
           ["@spectrum-icons/workflow", "virtual:bc3a9b04612c03e75465c7afdda846f575d0ae6609e21816990444c51dbe5096a45fe3418a2e690ac233f2be399207c69f83ec438e6650328a51f22061066b45#npm:4.2.15"],\

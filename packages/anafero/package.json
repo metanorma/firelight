@@ -9,7 +9,7 @@
   "dependencies": {
     "@adobe/react-spectrum": "3.37.1",
     "@effect/schema": "^0.74.0",
-    "@nytimes/react-prosemirror": "^0.7.0-next.10",
+    "@nytimes/react-prosemirror": "^1.0.0",
     "@react-spectrum/tree": "3.0.0-beta.1",
     "@spectrum-icons/workflow": "4.2.15",
     "effect": "^3.10.15",

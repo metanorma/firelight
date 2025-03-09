@@ -14,7 +14,11 @@ export type ReactProseMirrorNodeView =
 
 
 export interface NodeViews {
-  [proseMirrorNodeID: string]: ReactProseMirrorNodeView;
+  [proseMirrorNodeID: string]: {
+    component: ReactProseMirrorNodeView;
+    dom: HTMLElement;
+    contentDOM: HTMLElement;
+  };
 }
 
 
