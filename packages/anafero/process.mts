@@ -19,9 +19,11 @@ import enableLunrMultiLanguage from 'lunr-languages/lunr.multi';
 
 enableLunrStemmer(lunr);
 enableTinyLunrSegmenter(lunr);
-enableLunrFr(lunr);
-enableLunrJa(lunr);
-enableLunrMultiLanguage(lunr);
+
+const lunrLanguageSupport = {
+  ja: enableLunrJa,
+  fr: enableLunrFr,
+} as const;
 // End initialize search
 
 
@@ -427,6 +429,12 @@ export async function * generateVersion(
     // use that as primary language ID for resources that lack one.
     if (!maybePrimaryLanguageID) {
       if (resourceMeta.primaryLanguageID) {
+        console.debug(
+          "Setting primary language ID:",
+          resourceMeta.primaryLanguageID,
+          "based on resource",
+          resourceURI,
+        );
         maybePrimaryLanguageID = resourceMeta.primaryLanguageID;
       }
     } else if (!resourceMeta.primaryLanguageID) {
@@ -570,13 +578,21 @@ export async function * generateVersion(
   (lunr as any).utils.warn = console.warn;
 
   const lunrIndex = lunr(function () {
-    if (maybePrimaryLanguageID && lunr.hasOwnProperty(maybePrimaryLanguageID)) {
-      console.debug(`Primary language is “${maybePrimaryLanguageID}”, enabling multi-language Lunr mode & mixed tokenizer`);
+    console.debug(`Search index: primary language is “${maybePrimaryLanguageID}”`);
+    if (maybePrimaryLanguageID && maybePrimaryLanguageID !== 'en' && lunrLanguageSupport[maybePrimaryLanguageID as keyof typeof lunrLanguageSupport]) {
+      console.debug("Search index: enabling multi-language Lunr mode & mixed tokenizer");
+      lunrLanguageSupport[maybePrimaryLanguageID as keyof typeof lunrLanguageSupport](lunr);
+      enableLunrMultiLanguage(lunr);
       this.use((lunr as any).multiLanguage('en', maybePrimaryLanguageID));
       (this as any).tokenizer = function(x: any) {
         return lunr.tokenizer(x).concat((lunr as any)[maybePrimaryLanguageID].tokenizer(x));
       };
     }
+
+    // Reduce the effect of document length on term importance.
+    // this.b(0.3);
+    // Do something about frequent words that are not in stop word filter.
+    // this.k1(1.4);
 
     this.ref('name');
     this.field('body');
