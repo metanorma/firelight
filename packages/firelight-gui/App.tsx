@@ -15,7 +15,7 @@ import { ResourceHelmet, Resource, type ResourceData } from './Resource.jsx';
 import { type LoadProgress, makeLoader } from './loader.mjs';
 import interceptNav from './intercept-nav.mjs';
 import { Bookmarks, Search } from './Nav.jsx';
-import { Hierarchy as Hierarchy2, findMatchingItemParents } from './NavHierarchy2.jsx';
+import { Hierarchy as Hierarchy2, computeImplicitlyExpanded } from './NavHierarchy2.jsx';
 import classNames from './style.module.css';
 
 
@@ -816,13 +816,11 @@ export const VersionWorkspace: React.FC<{
   ), [activePageResourceURI]);
 
   const implicitlyExpanded = useMemo(() => {
-    return new Set([
-      ...findMatchingItemParents(
-        pageMap,
-        (id) => actualSelectedPageResources.has(id),
-        [],
-      ),
-    ]);
+    return new Set(computeImplicitlyExpanded(
+      pageMap,
+      (id) => actualSelectedPageResources.has(id),
+      [],
+    ));
   }, [pageMap, actualSelectedPageResources]);
 
   /**

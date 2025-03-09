@@ -149,7 +149,7 @@ export const Hierarchy: React.FC<{
 });
 
 
-export function findMatchingItemParents(
+export function computeImplicitlyExpanded(
   pageMap: Record<string, string>,
   predicate: (resourceID: string) => boolean,
   _parents: string[],
@@ -162,8 +162,11 @@ export function findMatchingItemParents(
     }
     if (predicate(resourceID)) {
       let remainder = pagePath;
-      while ((remainder = remainder.slice(0, remainder.lastIndexOf('/'))).includes('/')) {
+      while (remainder) {
 	foundParentPaths.push(remainder);
+	remainder = remainder.includes('/')
+	  ? remainder.slice(0, remainder.lastIndexOf('/'))
+	  : '';
       }
     }
   }
