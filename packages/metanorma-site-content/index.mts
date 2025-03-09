@@ -142,6 +142,7 @@ const clauseSchemaBase = new Schema({
       content: '(text | flow)*',
       group: 'block',
       toDOM(node) {
+        // FIXME: Find a way to do this without createElement
         const el = document.createElement('pre');
         el.innerHTML = node.attrs.formattedSource;
         return el;
@@ -1007,6 +1008,10 @@ const generatorsByType: Record<string, ContentGenerator> = {
         }
         //const aUUID = crypto.randomUUID();
         //const resourceID = `urn:x-metanorma-footnote:${aUUID}`
+
+        // In MN XML, footnotes have no IDs. We assign them an ID here
+        // based on the cue. It’s not great, since this ID isn’t reflected
+        // in the graph
         const madeUpDOMID = encodeURIComponent(cue);
         const footnoteContent = generateContent(subj, 'block', onAnnotation);
         onAnnotation?.(
