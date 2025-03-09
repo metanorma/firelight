@@ -6,7 +6,7 @@ import { SearchField, ActionGroup, ListView, Item, Text } from '@adobe/react-spe
 import Delete from '@spectrum-icons/workflow/Delete';
 //import BookmarkIcon from '@spectrum-icons/workflow/BookmarkSmallOutline';
 //import BookmarkIconActive from '@spectrum-icons/workflow/BookmarkSmall';
-import { SearchQuery } from './model.mjs';
+import { type SearchQuery } from './model.mjs';
 import classNames from './style.module.css';
 
 
