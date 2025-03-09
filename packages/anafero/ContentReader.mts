@@ -41,6 +41,7 @@ export interface ContentReader {
     directDescendants: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
   }>;
   getUnresolvedRelations: () => Readonly<RelationGraphAsList>;
+  findContainingPageResourceURI: (resourceURI: string) => string | undefined;
   findURL: (resourceURI: string) => string;
   countPaths: () => number;
   exists: (uri: string) => boolean;
@@ -508,6 +509,14 @@ export const makeContentReader: ContentReaderFactory = async function (
     },
     exists: function exists (resourceURI) {
       return cache.has(`path-for/${resourceURI}`);
+    },
+    findContainingPageResourceURI: function findPageURI (resourceURI) {
+      const path = cache.get<string>(`path-for/${resourceURI}`);
+      if (path.indexOf('#')) {
+        return cache.get<string>(path.split('#')[0]!);
+      } else {
+        return resourceURI;
+      }
     },
     findURL: function findURL (resourceURI) {
       const maybePath = cache.get<string>(`path-for/${resourceURI}`);
