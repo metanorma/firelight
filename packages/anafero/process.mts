@@ -620,36 +620,6 @@ export async function * generateVersion(
 }
 
 
-/**
- * Useful for search indexing.
- *
- * This should not be used, in favor of something more proper such as:
- *
- *  const transformer = new Transform(node)
- *  const content = transformer.doc.textContent.toString()
- *
- * (The latest versions of ProseMirror may have an even easier version.)
- *
- * However, since we return .toJSON()’ed representation of the doc for now
- * from content adapter, we have no choice.
- */
-function gatherTextFromJsonifiedProseMirrorNode(jsonifiedNode: any): string {
-  if (jsonifiedNode?.type === 'text') {
-    return typeof jsonifiedNode.text === 'string'
-      ? (jsonifiedNode.text ?? "")
-      : "";
-  } else {
-    if (Array.isArray(jsonifiedNode?.content) && jsonifiedNode.content.length > 0) {
-      return jsonifiedNode.content.
-        map(gatherTextFromJsonifiedProseMirrorNode).
-        join("\n");
-    } else {
-      return "";
-    }
-  }
-}
-
-
 /** Emits blobs keyed by root-relative paths. */
 export async function * generateStaticSiteAssets(
   versions: Record<string, VersionMeta>,
