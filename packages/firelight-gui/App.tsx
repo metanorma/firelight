@@ -9,7 +9,7 @@ import { Helmet } from 'react-helmet';
 import { type LayoutModule, type ResourceNav, ResourceNavSchema } from 'anafero/index.mjs';
 import { type Versioning, VersioningSchema } from 'anafero/index.mjs';
 import { fillInLocale, type ResourceMetadata } from 'anafero/index.mjs';
-import { reducer, createInitialState, type BrowsingMode, type StoredAppState, StoredAppStateSchema } from './model.mjs';
+import { reducer, createInitialState, type InitializerInput, type BrowsingMode, type StoredAppState, StoredAppStateSchema } from './model.mjs';
 import { BrowserBar } from './BrowseBar.jsx';
 import { ResourceHelmet, Resource, type ResourceData } from './Resource.jsx';
 import { type LoadProgress, makeLoader } from './loader.mjs';
@@ -559,9 +559,9 @@ export const VersionWorkspace: React.FC<{
 
   const initialPage = getContainingPageResourceURI(initialResource);
 
-  const [state, dispatch] = useReducer(
+  const [state, dispatch] = useReducer<typeof reducer, InitializerInput>(
     reducer,
-    { initialResource, initialPage, stored: storedState },
+    { initialResource, initialPage, stored: storedState } as InitializerInput,
     createInitialState);
 
   // Resource dependencies keyed by resource ID.

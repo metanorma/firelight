@@ -82,13 +82,12 @@ type Action =
   | { type: 'edited_search_query_text', newText: string }
 ;
 
-export function createInitialState(
-  opts: {
-    initialResource: string,
-    initialPage: string,
-    stored?: StoredAppState,
-  }
-): AppState {
+export interface InitializerInput {
+  initialResource: string;
+  initialPage: string;
+  stored?: StoredAppState;
+}
+export function createInitialState(opts: InitializerInput): AppState {
   return {
     activeResourceURI: opts.initialResource,
     selectedResourceURIs: [opts.initialResource],
