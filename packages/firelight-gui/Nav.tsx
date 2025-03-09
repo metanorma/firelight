@@ -2,7 +2,7 @@ import lunr, { type Index as LunrIndex } from 'lunr';
 
 import { useDebounce, useDebouncedCallback } from 'use-debounce';
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { SearchField, ActionGroup, ListView, Item, Text } from '@adobe/react-spectrum';
+import { SearchField, ActionGroup, ListView, Item, Text, type Selection } from '@adobe/react-spectrum';
 import { TreeView, TreeViewItem } from '@react-spectrum/tree';
 import Delete from '@spectrum-icons/workflow/Delete';
 //import BookmarkIcon from '@spectrum-icons/workflow/BookmarkSmallOutline';
@@ -234,7 +234,7 @@ export const Hierarchy: React.FC<{
       selectionStyle="highlight"
       selectionMode="single"
       expandedKeys={expanded}
-      onSelectionChange={selectedKeys => {
+      onSelectionChange={(selectedKeys: Selection) => {
         selectedKeys !== 'all'
           ? onSelect(selectedKeys.keys().next().value)
           : void 0}}
