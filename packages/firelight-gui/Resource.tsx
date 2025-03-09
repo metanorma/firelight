@@ -53,7 +53,7 @@ export interface ResourceProps extends ResourceData {
   className?: string;
   useDependency: SyncDependencyGetter;
   locateResource: (uri: string) => string;
-  reverseResource: (resourcePath: string) => string;
+  reverseResource: (resourcePath: string) => string | undefined;
   getResourcePlainTitle: (uri: string) => string;
   selectedLayout: { name: string, layout: Layout };
   uri: string;
@@ -316,7 +316,7 @@ function processGeneratedDOM(
   //resourceURI: string,
   el: Element,
   locateResource: (uri: string) => string,
-  reverseResource: (path: string) => string,
+  reverseResource: (path: string) => string | undefined,
   onIntegrityViolation: (msg: string) => void,
 ) {
   processAttributes(el, locateResource, reverseResource, onIntegrityViolation);
@@ -329,7 +329,7 @@ function processAttributes(
   //resourceURI: string,
   el: Element,
   locateResource: (uri: string) => string,
-  reverseResource: (path: string) => string,
+  reverseResource: (path: string) => string | undefined,
   onIntegrityViolation: (msg: string) => void,
 ) {
   for (const attr of Array.from(el.attributes)) {

@@ -472,7 +472,7 @@ export const VersionWorkspace: React.FC<{
   expandUnversionedPath: (path: string) => string;
   getVersionLocalPath: (path: string) => string;
   locateResource: (uri: string) => string;
-  reverseResource: (rpath: string) => string;
+  reverseResource: (rpath: string) => string | undefined;
   fetchResourceData: (uri: string, onDone: (data: ResourceData) => void) => () => void;
   resourceDescriptions: Record<string, ResourceMetadata>;
   dependencies: Record<string, unknown>;
