@@ -6,7 +6,7 @@ import { useThrottledCallback, useDebouncedCallback } from 'use-debounce';
 import lunr, { type Index as LunrIndex } from 'lunr';
 import React, { useCallback, createContext, useState, useReducer, useMemo, useEffect, useLayoutEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { LayoutModule, type ResourceNav, ResourceNavSchema } from 'anafero/index.mjs';
+import { type LayoutModule, type ResourceNav, ResourceNavSchema } from 'anafero/index.mjs';
 import { type Versioning, VersioningSchema } from 'anafero/index.mjs';
 import { fillInLocale, type ResourceMetadata } from 'anafero/index.mjs';
 import { reducer, createInitialState, type BrowsingMode, type StoredAppState, StoredAppStateSchema } from './model.mjs';
