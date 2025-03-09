@@ -31,6 +31,7 @@ export const Bookmarks: React.FC<{
         {onRemoveBookmark
           ? <ActionGroup onAction={() => onRemoveBookmark?.(res.id)}>
               <Item key="delete" aria-label="Delete bookmark" textValue="Delete bookmark">
+                {/* @ts-expect-error */}
                 <Delete />
               </Item>
             </ActionGroup>

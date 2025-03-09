@@ -364,7 +364,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     if (serializedIndex && primaryLanguageDetected) {
       const enableLanguageSupport = (
         (primaryLanguageDetected && primaryLanguageDetected !== 'en')
-          ? lunrLanguageSupport[primaryLanguageDetected as string]
+          ? lunrLanguageSupport[primaryLanguageDetected as keyof typeof lunrLanguageSupport]
           : undefined
       ) ?? undefined;
 
@@ -390,10 +390,12 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
           // Combine basic Lunr tokens with tokens obtained
           // from language-specific tokenizer, deduplicating them
           const baseLunrTokens = lunrTokenizer(x);
-          const langTokens = (lunr as any)[primaryLanguage].tokenizer(x);
+          const langTokens: lunr.Token[] = (lunr as any)[primaryLanguage].tokenizer(x);
           const tokens = [
             ...baseLunrTokens,
-            ...langTokens.filter(t => !baseLunrTokens.find(bt => bt.str === t.str)),
+            ...langTokens.filter(t =>
+              !baseLunrTokens.find(bt => bt.toString() === t.toString())
+            ),
           ];
           return tokens;
         };
@@ -821,7 +823,7 @@ export const VersionWorkspace: React.FC<{
    * Adds to resources user specifically expanded
    * the always expanded resources: 1) root, 2) selected & parents of selected.
    */
-  const actualExpanded = useMemo((() => {
+  const actualExpanded: Set<string> = useMemo((() => {
     return new Set([
       hierarchy[0]!.id,
       ...Array.from(state.expandedResourceURIs),
