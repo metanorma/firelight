@@ -1,0 +1,171 @@
+import React, { useCallback, useMemo, useState } from 'react';
+import { ListView, ActionButton, Item, Text, type Selection } from '@adobe/react-spectrum';
+import CollapsedIcon from '@spectrum-icons/workflow/ChevronLeft';
+import ExpandedIcon from '@spectrum-icons/workflow/ChevronDown';
+import { useDebouncedCallback } from 'use-debounce';
+
+
+interface Item {
+  readonly id: string;
+  readonly title: string;
+  readonly path: string;
+  readonly level: number;
+  readonly hasChildren: boolean;
+}
+
+
+export const Hierarchy: React.FC<{
+  pageMap: Record<string, string>;
+  getResourceTitle: (uri: string) => string;
+  expanded: Set<string>;
+  implicitlyExpanded: Set<string>;
+  onExpand?: (uri: Set<string>) => void;
+  selected: Set<string>;
+  onSelect: (uri: string) => void;
+}> = React.memo(function ({ pageMap, getResourceTitle, selected, onSelect, implicitlyExpanded, expanded, onExpand }) {
+
+  const allPaths = useMemo(() => Object.keys(pageMap), [pageMap]);
+  const items: Item[] = useMemo(() => {
+    return Object.entries(pageMap).
+    // Exclude children of collapsed parents
+    filter(([path, ]) => {
+      const parentPath = path.includes('/')
+	? `${path.slice(0, path.lastIndexOf('/'))}`
+	: '';
+      const parentURI = pageMap[parentPath];
+      if (!parentURI) {
+	console.warn("Unable to find URI for parent path", parentPath);
+      }
+      const shouldAppear = !!expanded.values().
+      find(expandedURI => expandedURI === parentURI);
+      //console.debug("Checking if should appear", path, parentURI, expanded, isExpanded);
+      return shouldAppear;
+    }).
+    map(([path, id]) => {
+      const level = path === ''
+	? 0
+	: ((path.match(/\//g) ?? []).length + 1);
+      return {
+	path,
+	id,
+	title: getResourceTitle(id),
+	// Count slashes
+	level,
+	hasChildren: allPaths.find(p => p.startsWith(`${path}/`)) !== undefined,
+      };
+    });
+  }, [expanded, allPaths, pageMap, getResourceTitle]);
+
+  const [hasScrolled, setHasScrolled] = useState<string | null>(null);
+  // const [isScrolling, setIsScrolling] = useState(false);
+
+  const scrollToMe = useDebouncedCallback((id: string, el: Element) => {
+    if (hasScrolled !== id) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      setHasScrolled(id);
+    }
+  }, 200);
+
+  const listElRef = useCallback((elRef: { UNSAFE_getDOMNode(): HTMLElement } | null) => {
+    const sel = selected.values().next().value as string;
+    if (sel) {
+      const el = elRef?.UNSAFE_getDOMNode()?.querySelector(`[data-resource-id="${sel}"]`);
+      if (el) {
+        scrollToMe(sel, el);
+      }
+    }
+  }, [selected, hasScrolled]);
+
+  //const selectedItemRef = useCallback((itemID: string, item: { UNSAFE_getDOMNode(): HTMLElement } | null) => {
+  //  //const el = item?.UNSAFE_getDOMNode();
+  //  //if (el && itemID !== hasScrolled && !isScrolling) {
+  //  //  el.scrollIntoView({
+  //  //    behavior: hasScrolled ? 'smooth' : 'instant',
+  //  //    block: 'center',
+  //  //  });
+  //  //  setHasScrolled(itemID);
+  //  //  setIsScrolling(true);
+  //  //  setTimeout(() => setIsScrolling(false), 500);
+  //  //}
+  //}, [hasScrolled, setHasScrolled, isScrolling]);
+
+  const toggleExpanded = useCallback(function toggleExpanded(itemID: string) {
+    if (expanded.has(itemID)) {
+      onExpand?.(new Set([...expanded].filter(i => i !== itemID)));
+    } else {
+      onExpand?.(new Set([...expanded, itemID]));
+    }
+  }, [expanded, onExpand]);
+
+  const itemView = useCallback((item: Item) => {
+    const isExpanded = expanded.has(item.id);
+    const isForceExpanded = implicitlyExpanded.has(item.id);
+    return (
+      <Item
+	  key={item.id}
+	  href={`/${item.path}`}
+	  //hasChildItems={item.hasChildren}
+	  textValue={item.title}>
+	<Text UNSAFE_style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginLeft: `${item.level * 1}em` }}>
+	  {item.title}
+	</Text>
+	{item.hasChildren
+	  ? <ActionButton
+		isDisabled={isForceExpanded}
+		onPress={() => toggleExpanded(item.id)}>
+	      {/* @ts-expect-error */}
+	      {isExpanded ? <ExpandedIcon /> : <CollapsedIcon />}
+	    </ActionButton>
+	  : null}
+
+	<div role="presentation" data-resource-id={item.id} />
+      </Item>
+    );
+  }, [implicitlyExpanded, expanded, toggleExpanded, selected]);
+
+  return <ListView
+      flexGrow={1}
+      items={items}
+      isQuiet
+      selectedKeys={selected}
+      disallowEmptySelection
+      ref={listElRef}
+      selectionMode="single"
+      selectionStyle="highlight"
+      onSelectionChange={(selectedKeys: Selection) => {
+	const key = selectedKeys !== 'all'
+	  ? `${selectedKeys.keys().next().value}`
+	  : undefined;
+	if (key) {
+	  onSelect(key);
+	}
+      }}
+      //onExpandedChange={useMemo(() => (onExpand
+      //  ? (keys => onExpand(new Set(Array.from(keys).filter(k => typeof k === 'string'))))
+      //  : undefined), [onExpand])}
+      aria-label="Resource hierarchy">
+    {itemView}
+  </ListView>
+});
+
+
+export function findMatchingItemParents(
+  pageMap: Record<string, string>,
+  predicate: (resourceID: string) => boolean,
+  _parents: string[],
+): string[] {
+  const foundParents: string[] = [];
+  const foundParentPaths: string[] = [''];
+  for (const [pagePath, resourceID] of Object.entries(pageMap)) {
+    if (foundParents.includes(pagePath)) {
+      continue;
+    }
+    if (predicate(resourceID)) {
+      let remainder = pagePath;
+      while ((remainder = remainder.slice(0, remainder.lastIndexOf('/'))).includes('/')) {
+	foundParentPaths.push(remainder);
+      }
+    }
+  }
+  return foundParentPaths.map(p => pageMap[p]).filter(uri => uri !== undefined);
+}
