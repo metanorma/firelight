@@ -149,10 +149,10 @@ export const Search: React.FC<{
         selectedKeys={new Set(selected ? [selected] : [])}
         onSelectionChange={(selectedKeys) => {
           const key = selectedKeys !== 'all'
-            ? `${selectedKeys.keys().next().value}`
+            ? selectedKeys.keys().next().value
             : undefined;
           if (key) {
-            onSelect(key);
+            onSelect(`${key}`);
           }
         }}
         selectionMode="single"
