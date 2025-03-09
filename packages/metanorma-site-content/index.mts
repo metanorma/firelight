@@ -709,7 +709,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'dt': 'dt',
       'br': 'linebreak',
       'tt': 'code',
-      'semx': 'span',
+      //'semx': 'span',
       //'tableCell': 'table_cell',
     };
 
