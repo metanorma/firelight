@@ -893,6 +893,8 @@ export const VersionWorkspace: React.FC<{
       // (shouldn’t happen)
       const timeout = setTimeout(() => {
         setQueuedFragment('');
+        observer.disconnect();
+        console.warn("Scroll to element timed out");
       }, 5000);
 
       return function () {
