@@ -1063,7 +1063,7 @@ export const VersionWorkspace: React.FC<{
                             ${state.browsingMode ? classNames.withNav : ''}
                             ${isMarkedActive ? classNames.active : ''}
                           `
-                        : undefined}
+                        : ''}
                       nav={data.nav}
                       document={document}
                       locateResource={locateResource}
