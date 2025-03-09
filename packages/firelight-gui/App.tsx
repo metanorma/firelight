@@ -229,6 +229,8 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   const reverseResource = useMemo((() =>
     (!resourceMap || !getUnversionedPath)
       ? undefined
+      // TODO: Inconsistent with locateResource,
+      // this is allowed to return undefined. Might want to reconsider
       : (path: string) => resourceMap[stripLeadingSlash(getUnversionedPath(path))]
   ), [resourceMap, getUnversionedPath]);
 
