@@ -50,7 +50,8 @@ export const Search: React.FC<{
   onEditQueryText?: (newText: string) => void;
   getPlainTitle: (resID: string) => string;
   locateResource: (resID: string) => string;
-}> = function ({ index, query, getPlainTitle, locateResource, onEditQueryText }) {
+  getContainingPageURI: (url: string) => string;
+}> = function ({ index, query, getPlainTitle, locateResource, getContainingPageURI, onEditQueryText }) {
   const [debouncedQuery] = useDebounce(query.text, 200);
 
   const [showMore, setShowMore] = useState(false);
@@ -125,8 +126,11 @@ export const Search: React.FC<{
         key={result.ref}
         textValue={title}>
       <Text>{title} </Text>
+      <Text slot="description">
+        {getPlainTitle(getContainingPageURI(result.ref))}
+      </Text>
     </Item>;
-  }, [showMore, getPlainTitle]);
+  }, [showMore, getPlainTitle, getContainingPageURI]);
 
   const showMoreButton =
     (matches.exact.length > 0 || matches.full.length > 0)

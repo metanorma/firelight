@@ -57,6 +57,8 @@ import {
 import { makeContentReader } from './ContentReader.mjs';
 import { type Cache } from './cache.mjs';
 
+import { isURIString } from './URI.mjs';
+
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -579,21 +581,37 @@ export async function * generateVersion(
     this.ref('name');
     this.field('body');
 
-    for (const [uri, content] of Object.entries(contentCache)) {
+    for (const [uri, desc] of Object.entries(resourceDescriptions)) {
       indexProgress({ state: `adding entry for ${uri}` });
-      const lang = resourceDescriptions[uri]?.primaryLanguageID;
+
+      const lang = desc.primaryLanguageID;
 
       if (lang && lang !== maybePrimaryLanguageID && lang !== 'en' && lunr.hasOwnProperty(lang)) {
         console.warn("Resource language is different from primary language, this may not work");
         this.use((lunr as any).multiLanguage('en', lang));
       }
-      if (content?.content) {
-        const { contentDoc, labelInPlainText } = content.content;
+
+      const rels = reader.resolve(uri);
+      const relationsExcludingReferences = rels.filter(([s, p, o]) =>
+        p === 'hasPart'
+        &&
+        (s === ROOT_SUBJECT || s === uri)
+        &&
+        !o.startsWith('data:')
+        &&
+        (!isURIString(o) || !reader.exists(o))
+      );
+      const body = relationsExcludingReferences.map(([s, p, o]) => o).join('').trim();
+
+      if (body) {
+        //console.debug("Indexing", uri, relationsExcludingReferences, body);
         const entry: LunrIndexEntry = {
           name: uri,
-          body: `${labelInPlainText} — ${gatherTextFromJsonifiedProseMirrorNode(contentDoc)}`,
-        };
+          body,
+        }
         this.add(entry);
+      } else {
+        //console.debug("Indexing", uri, 'no text');
       }
     }
   });
