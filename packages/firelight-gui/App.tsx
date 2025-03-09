@@ -9,7 +9,7 @@ import { Helmet } from 'react-helmet';
 import { LayoutModule, type ResourceNav, ResourceNavSchema } from 'anafero/index.mjs';
 import { type Versioning, VersioningSchema } from 'anafero/index.mjs';
 import { fillInLocale, type ResourceMetadata } from 'anafero/index.mjs';
-import { reducer, createInitialState, type StoredAppState, StoredAppStateSchema } from './model.mjs';
+import { reducer, createInitialState, type BrowsingMode, type StoredAppState, StoredAppStateSchema } from './model.mjs';
 import { BrowserBar } from './BrowseBar.jsx';
 import { ResourceHelmet, Resource, type ResourceData } from './Resource.jsx';
 import { type LoadProgress, makeLoader } from './loader.mjs';
@@ -876,7 +876,7 @@ export const VersionWorkspace: React.FC<{
         providerProps={routerProps}
         versioning={versioning}
         activeBrowsingMode={state.browsingMode}
-        onActivateBrowsingMode={useCallback((mode) => dispatch({
+        onActivateBrowsingMode={useCallback((mode: BrowsingMode) => dispatch({
           type: 'activated_browsing_mode',
           mode,
         }), [])}
