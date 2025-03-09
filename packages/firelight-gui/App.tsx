@@ -5,8 +5,8 @@ import { useInView, InView } from 'react-intersection-observer';
 import { useThrottledCallback, useDebouncedCallback } from 'use-debounce';
 import lunr, { type Index as LunrIndex } from 'lunr';
 import React, { useCallback, createContext, useState, useReducer, useMemo, useEffect } from 'react';
-import { LayoutModule, ResourceNavSchema } from 'anafero/index.mjs';
 import { Helmet } from 'react-helmet';
+import { LayoutModule, type ResourceNav, ResourceNavSchema } from 'anafero/index.mjs';
 import { type Versioning, VersioningSchema } from 'anafero/index.mjs';
 import { fillInLocale, type ResourceMetadata } from 'anafero/index.mjs';
 import { reducer, createInitialState, type StoredAppState, StoredAppStateSchema } from './model.mjs';
@@ -1063,7 +1063,7 @@ async function getAdjacentResource(
   }
   const parentNavPath = [parentPath, 'resource-nav.json'].join('/');
   const parentNav = S.decodeUnknownSync(ResourceNavSchema)
-    (await (await fetch(parentNavPath, { signal })).json());
+    (await (await fetch(parentNavPath, { signal })).json()) as ResourceNav;
   const currentPathTail = currentPath.slice(currentPath.lastIndexOf('/') + 1);
   const children = parentNav.children.map(
     ({ path }) => path.slice(path.lastIndexOf('/') + 1));
