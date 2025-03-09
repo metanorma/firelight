@@ -380,7 +380,9 @@ export const makeContentReader: ContentReaderFactory = async function (
         //console.debug("processResourceContents", containingResourcePath, resourceURI, rel);
         const key = JSON.stringify({ rel, resourceURI, containingResourcePath });
         if (seen.has(key)) {
-          throw new Error(`Duplicate ${rel.predicate} to ${rel.target} from ${resourceURI} at ${containingResourcePath}`);
+          console.warn(`Ignoring duplicate relation ${rel.predicate} to ${rel.target} from ${resourceURI} at ${containingResourcePath}`);
+          continue;
+          //throw new Error(`Duplicate ${rel.predicate} to ${rel.target} from ${resourceURI} at ${containingResourcePath}`);
         } else {
           seen.add(key);
           processResourceContents(rel.target, containingResourcePath, seen);
