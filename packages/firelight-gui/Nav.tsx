@@ -95,7 +95,7 @@ export const Search: React.FC<{
         return [{ exact, full, partial }, null];
 
       } catch (e) {
-        return [{ exact: [], full: [], partial: [] }, `${e.message}`];
+        return [{ exact: [], full: [], partial: [] }, `${(e as any).message}`];
       }
 
     } else {
