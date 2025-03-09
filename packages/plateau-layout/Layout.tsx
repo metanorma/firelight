@@ -4,6 +4,22 @@ import { type LayoutFC, type LayoutProps } from 'anafero/index.mjs';
 import * as classNames from './layout.css';
 
 
+/** Provisional. Might be useful for Japanese typesetting? */
+function convertToFullwidth (text: string) {
+  var output = "";
+  for (let i = 0; i < text.length; i++) {
+    if (text[i]! >= '!' && text[i]! <= '~') { // Check whether character is latin
+      output += String.fromCharCode(text.charCodeAt(i) - 0x20 + 0xff00); // Convert to fullwidth
+    } else if (text[i] == " ") { // Check if character is space
+      output += "　"; // Convert to fullwidth space
+    } else {
+      output += text[i]; // Leave it be
+    }
+  }
+  return output
+}
+
+
 const Layout: LayoutFC = React.forwardRef<
   HTMLDivElement,
   React.PropsWithChildren<LayoutProps>
