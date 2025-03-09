@@ -291,6 +291,8 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   useEffect(() => {
     if (initialResourceURI !== undefined && fetchResourceData) {
       return fetchResourceData(initialResourceURI, setInitialResourceData);
+    } else {
+      return;
     }
   }, [fetchJSON, initialResourceURI, fetchResourceData, setInitialResourceData]);
 
@@ -953,6 +955,7 @@ export const VersionWorkspace: React.FC<{
       }
       return loadNextResource(lastResource, lastResourceParentPath);
     }
+    return;
   }, [
     lastVisibleResourceMarkerIntersection.inView,
     state.visibleResourceURIs,
