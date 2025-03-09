@@ -597,8 +597,29 @@ export async function * generateVersion(
     this.ref('name');
     this.field('body');
 
+    let done = 0;
+    const total = Object.keys(contentCache).length + Object.keys(resourceDescriptions).length;
+    for (const [uri, content] of Object.entries(contentCache)) {
+      done += 1;
+      if (done % 50 === 0) {
+        indexProgress({ state: `adding entry for ${uri}`, total, done });
+      }
+      const label = content?.content?.labelInPlainText;
+      if (label) {
+        const entry: LunrIndexEntry = {
+          name: uri,
+          body: label,
+        };
+        this.add(entry);
+      } else {
+        console.warn("No label for", uri);
+      }
+    }
     for (const [uri, desc] of Object.entries(resourceDescriptions)) {
-      indexProgress({ state: `adding entry for ${uri}` });
+      done += 1;
+      if (done % 50 === 0) {
+        indexProgress({ state: 'adding entries for subresources', total, done });
+      }
 
       const lang = desc.primaryLanguageID;
 
