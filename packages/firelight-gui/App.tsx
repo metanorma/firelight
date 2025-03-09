@@ -14,7 +14,8 @@ import { BrowserBar } from './BrowseBar.jsx';
 import { ResourceHelmet, Resource, type ResourceData } from './Resource.jsx';
 import { type LoadProgress, makeLoader } from './loader.mjs';
 import interceptNav from './intercept-nav.mjs';
-import { Hierarchy, Bookmarks, Search, pathListToHierarchy, findMatchingItemParents } from './Nav.jsx';
+import { Bookmarks, Search } from './Nav.jsx';
+import { Hierarchy, pathListToHierarchy, findMatchingItemParents } from './NavHierarchy.jsx';
 import classNames from './style.module.css';
 
 
