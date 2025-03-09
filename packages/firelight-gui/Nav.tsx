@@ -1,6 +1,6 @@
 import lunr, { type Index as LunrIndex } from 'lunr';
 
-import { useDebounce, useDebouncedCallback } from 'use-debounce';
+import { useDebounce } from 'use-debounce';
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { SearchField, ActionGroup, ListView, Item, Text } from '@adobe/react-spectrum';
 import Delete from '@spectrum-icons/workflow/Delete';
