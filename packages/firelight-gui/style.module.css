@@ -25,6 +25,9 @@
     /* Fix to make resource border radius work despite Spectrum. */
     background: transparent;
   }
+  #resources {
+    padding-bottom: 40vh;
+  }
 }
 
 /** Added dynamically in Resource component as a child of body. */
