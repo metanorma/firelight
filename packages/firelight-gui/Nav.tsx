@@ -19,6 +19,7 @@ export const Bookmarks: React.FC<{
 }> = function ({ bookmarkedResources, locateResource, getPlainTitle, onRemoveBookmark }) {
   return <ListView
       flexGrow={1}
+      UNSAFE_className={classNames.navListView}
       items={Array.from(bookmarkedResources).map(res => ({ id: res }))}
       renderEmptyState={() => <>There are no bookmarks.</>}>
     {(res =>
@@ -144,6 +145,7 @@ export const Search: React.FC<{
     <ListView
         flex={1}
         items={results}
+        UNSAFE_className={classNames.navListView}
         selectedKeys={new Set(selected ? [selected] : [])}
         onSelectionChange={(selectedKeys) => {
           const key = selectedKeys !== 'all'

@@ -166,6 +166,13 @@
   }
 }
 
+/* Override for ListView in navigation, by default it’s too bright(?). */
+.navListView {
+  background: var(--spectrum-alias-background-color-default);
+  border: none;
+  border-radius: 0;
+}
+
 .browserBar {
   position: fixed;
   left: 0;

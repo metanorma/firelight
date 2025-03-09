@@ -3,6 +3,7 @@ import { ListView, ActionButton, Item, Text, type Selection } from '@adobe/react
 import CollapsedIcon from '@spectrum-icons/workflow/ChevronLeft';
 import ExpandedIcon from '@spectrum-icons/workflow/ChevronDown';
 import { useDebouncedCallback } from 'use-debounce';
+import classNames from './style.module.css';
 
 
 interface Item {
@@ -125,6 +126,7 @@ export const Hierarchy: React.FC<{
 
   return <ListView
       flexGrow={1}
+      UNSAFE_className={classNames.navListView}
       items={items}
       selectedKeys={selected}
       disallowEmptySelection
