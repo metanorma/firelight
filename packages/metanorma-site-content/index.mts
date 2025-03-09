@@ -764,6 +764,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
       (
         subj: string,
         onAnnotation?: AnnotationCallback,
+      // TODO: Allowing to return a single item or a list may
+      // be causing a lot of unnecessary checks…
       ) => ProseMirrorNode | undefined | (ProseMirrorNode | undefined)[]
     > = {
       'unorderedList': (subj, onAnnotation) => {
@@ -1018,6 +1020,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
           null,
           [
             // This is wrong, but works around current MN XML footnote behavior
+            // It will cause warnings during generation, because any href
+            // is supposed to be either an external link or point to a resource
             pm.node('resource_link', { href: `#${madeUpDOMID}` }, [pm.text(cue)])
           ],
         );
