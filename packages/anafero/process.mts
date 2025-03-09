@@ -512,15 +512,22 @@ export async function * generateVersion(
               const describedResourceIDs =
                 gatherDescribedResourcesFromJsonifiedProseMirrorNode(content.contentDoc);
               for (const inPageResourceID of describedResourceIDs) {
-                // We have a sub-resource represented by the page.
-                // Add it to resource map, too (with hash fragment).
-                const pathWithFragment = `${path}#${encodeURIComponent(inPageResourceID)}`;
-                resourceMap[pathWithFragment] = inPageResourceID;
-                resourceGraph.push([inPageResourceID, 'isDefinedBy', `${path}/resource.json`]);
-                resourceDescriptions[inPageResourceID] = {
-                  primaryLanguageID: maybePrimaryLanguageID,
-                  ...contentAdapter.describe(relativeGraph(relations, inPageResourceID)),
-                };
+                if (reader.exists(inPageResourceID)) {
+                  // We have a sub-resource represented by the page.
+                  // Add it to resource map, too (with hash fragment).
+                  const pathWithFragment = `${path}#${encodeURIComponent(inPageResourceID)}`;
+                  resourceMap[pathWithFragment] = inPageResourceID;
+                  resourceGraph.push([inPageResourceID, 'isDefinedBy', `${path}/resource.json`]);
+                  resourceDescriptions[inPageResourceID] = {
+                    primaryLanguageID: maybePrimaryLanguageID,
+                    ...contentAdapter.describe(relativeGraph(relations, inPageResourceID)),
+                  };
+                } else {
+                  console.warn(
+                    "Subresource on page does not exist in the graph",
+                    path,
+                    inPageResourceID);
+                }
               }
             }
           } else {

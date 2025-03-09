@@ -43,6 +43,7 @@ export interface ContentReader {
   getUnresolvedRelations: () => Readonly<RelationGraphAsList>;
   findURL: (resourceURI: string) => string;
   countPaths: () => number;
+  exists: (uri: string) => boolean;
   //traverseHierarchy: (subpath?: string) => AsyncGenerator<ResourceWithRelations>,
 }
 
@@ -504,6 +505,9 @@ export const makeContentReader: ContentReaderFactory = async function (
       } else {
         return [];
       }
+    },
+    exists: function exists (resourceURI) {
+      return cache.has(`path-for/${resourceURI}`);
     },
     findURL: function findURL (resourceURI) {
       const maybePath = cache.get<string>(`path-for/${resourceURI}`);
