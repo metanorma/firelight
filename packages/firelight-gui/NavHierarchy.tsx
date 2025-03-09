@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { TreeView, TreeViewItem } from '@react-spectrum/tree';
 import { Text, type Selection } from '@adobe/react-spectrum';
 import { useDebouncedCallback } from 'use-debounce';
@@ -78,12 +78,19 @@ export const Hierarchy: React.FC<{
       selectionMode="single"
       expandedKeys={expanded}
       onSelectionChange={(selectedKeys: Selection) => {
-        selectedKeys !== 'all'
-          ? onSelect(selectedKeys.keys().next().value)
-          : void 0}}
-      onExpandedChange={useMemo(() => (onExpand
-        ? (keys => onExpand(new Set(Array.from(keys).filter(k => typeof k === 'string'))))
-        : undefined), [onExpand])}
+	const key = selectedKeys !== 'all'
+	  ? selectedKeys.keys().next().value
+	  : undefined;
+        key
+          ? onSelect(`${key}`)
+          : void 0
+        //selectedKeys !== 'all'
+        //  ? onSelect(selectedKeys.keys().next().value)
+        //  : void 0}
+      }}
+      onExpandedChange={useCallback((keys) => {
+        onExpand?.(new Set(Array.from(keys).filter(k => typeof k === 'string')));
+      }, [onExpand])}
       aria-label="Resource hierarchy">
     {itemView}
   </TreeView>
