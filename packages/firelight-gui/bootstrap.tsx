@@ -3,30 +3,70 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { hydrateRoot } from 'react-dom/client';
 import { StrictMode } from 'react';
+import ErrorBoundaryWithCustomFallback from 'anafero/ErrorBoundaryWithCustomView.jsx';
 import { AppLoader } from './App.jsx';
 
 
 setTimeout(initApp, 50);
 
 
-async function initApp () {
+function initApp () {
 
   const appRoot = document.getElementById('app');
 
   if (!appRoot) {
     console.error("Can’t initialize the app: missing root");
+    return;
   }
 
   setUpExtensionImportMap();
 
   const useStrictMode = document.documentElement.dataset.useReactStrict === 'true';
 
+  const originalHTML = appRoot.innerHTML;
+
+  // Fixing body height helps avoid a flash when user opens
+  // a subresource (URL with a hash fragment) from outside.
+  // Browser hits SSR with the requisite ID, and when tree is replaced
+  // by React for an instant apparently body height collapses.
+  // There may be a better way to avoid this.
+  // The preferable way to avoid this is likely be clean hydration,
+  // but it appears to be unachievable(?).
+  document.body.style.height = `${appRoot.clientHeight}px`;
+
+  // If there’s an error, this will fall back to SSR’d DOM.
+  const app =
+    <ErrorBoundaryWithCustomFallback fallback={<div
+      dangerouslySetInnerHTML={{ __html: originalHTML }}
+      suppressHydrationWarning={true}
+    />}>
+      <AppLoader />
+    </ErrorBoundaryWithCustomFallback>;
+
   hydrateRoot(
     appRoot!,
     useStrictMode
-      ? <StrictMode><AppLoader /></StrictMode>
-      : <AppLoader />,
+      ? <StrictMode>{app}</StrictMode>
+      : app,
   );
+
+  const observer = new MutationObserver(function cleanUpLoad() {
+    const hasInitialized = !!document.documentElement.getAttribute('data-react-helmet');
+    if (hasInitialized) {
+      //console.debug("Cleaning up");
+
+      // Safe to assume that after data-react-helmet attribute shows up,
+      // React’s DOM tree is up?
+      setTimeout(() => document.body.style.removeProperty('height'), 500);
+      observer.disconnect();
+    }
+  });
+  observer.observe(document.documentElement, {
+    attributes: true,
+    childList: false,
+    characterData: false,
+    subtree: false,
+  });
 
 };
 
