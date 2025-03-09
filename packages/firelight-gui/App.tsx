@@ -1155,6 +1155,8 @@ export const VersionWorkspace: React.FC<{
                       locateResource={locateResource}
                       getContainingPageURI={getContainingPageResourceURI}
                       onEditQueryText={newText => dispatch({ type: 'edited_search_query_text', newText })}
+                      selected={state.activeResourceURI}
+                      onSelect={jumpTo}
                     />
                   : state.browsingMode === 'bookmarks'
                     ? <Bookmarks

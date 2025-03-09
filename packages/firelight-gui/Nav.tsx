@@ -46,11 +46,13 @@ const MAX_SEARCH_RESULT_COUNT = 100;
 export const Search: React.FC<{
   index: LunrIndex;
   query: SearchQuery;
+  selected?: string;
+  onSelect: (resID: string) => void;
   onEditQueryText?: (newText: string) => void;
   getPlainTitle: (resID: string) => string;
   locateResource: (resID: string) => string;
   getContainingPageURI: (url: string) => string;
-}> = function ({ index, query, getPlainTitle, locateResource, getContainingPageURI, onEditQueryText }) {
+}> = function ({ index, selected, onSelect, query, getPlainTitle, locateResource, getContainingPageURI, onEditQueryText }) {
   const [debouncedQuery] = useDebounce(query.text, 200);
 
   const [showMore, setShowMore] = useState(false);
@@ -142,6 +144,17 @@ export const Search: React.FC<{
     <ListView
         flex={1}
         items={results}
+        selectedKeys={new Set(selected ? [selected] : [])}
+        onSelectionChange={(selectedKeys) => {
+          const key = selectedKeys !== 'all'
+            ? `${selectedKeys.keys().next().value}`
+            : undefined;
+          if (key) {
+            onSelect(key);
+          }
+        }}
+        selectionMode="single"
+        selectionStyle="highlight"
         aria-label="Matching resources found"
         renderEmptyState={() => <></>}>
       {renderItem}
