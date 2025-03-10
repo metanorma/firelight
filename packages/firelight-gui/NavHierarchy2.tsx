@@ -37,7 +37,7 @@ export const Hierarchy: React.FC<{
       if (!parentURI) {
 	console.warn("Unable to find URI for parent path", parentPath);
       }
-      const shouldAppear = !!expanded.values().
+      const shouldAppear = !![...expanded.values()].
       find(expandedURI => expandedURI === parentURI);
       //console.debug("Checking if should appear", path, parentURI, expanded, isExpanded);
       return shouldAppear;
