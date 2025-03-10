@@ -4029,6 +4029,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-helmet: "npm:^6.1.0"
     typescript: "npm:^5.6.2"
+    use-debounce: "npm:10.0.4"
     xpath: "npm:^0.0.34"
     yoga-wasm-web: "npm:0.3.3"
   bin:

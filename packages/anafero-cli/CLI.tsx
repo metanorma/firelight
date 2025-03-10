@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { produce } from 'immer'
 import { Text, Box, Static } from 'ink';
+import { useThrottledCallback } from 'use-debounce';
 import { Badge, ProgressBar, Spinner, StatusMessage } from '@inkjs/ui';
 import { type Progress, type TaskProgressCallback, type TaskProgressCallbackReturnValue } from 'anafero/progress.mjs';
 
@@ -27,6 +28,8 @@ export const Processor: React.FC<ProcessorProps> = function({ rootTaskName, onSt
   useEffect(() => {
     onStart({ onProgress: handleProgress });
   }, []);
+
+  // TODO: Rewrite this to make throttling CLI progress updates easier?
 
   function updateTask(taskPath: string, progress: Progress | null) {
     const taskPathComponents = taskPath.split('|');
@@ -56,11 +59,19 @@ export const Processor: React.FC<ProcessorProps> = function({ rootTaskName, onSt
     }));
   }
 
+  const updateTaskThrottled = useThrottledCallback(updateTask, 500, { leading: false, trailing: false });
+
   function handleProgress(taskPath: string, progress?: Progress | null): TaskProgressCallbackReturnValue {
     updateTask(taskPath, progress === undefined ? {} : progress);
     return [
       function handleSubsequentTaskProgress(progress: Progress | null) {
-        updateTask(taskPath, progress);
+        if (progress !== null) {
+          updateTaskThrottled(taskPath, progress);
+        } else {
+          // progress === null is a marker that task is completed,
+          // so we can’t throttle that (or it will left uncompleted in TUI)
+          updateTask(taskPath, progress);
+        }
       },
       function handleSubtask(subtaskRef: string, progress: Progress | null) {
         return handleProgress(`${taskPath}|${subtaskRef}`, progress);
