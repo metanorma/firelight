@@ -1014,8 +1014,6 @@ const generatorsByType: Record<string, ContentGenerator> = {
           console.error("Cannot create a footnote without reference");
           return undefined;
         }
-        //const aUUID = crypto.randomUUID();
-        //const resourceID = `urn:x-metanorma-footnote:${aUUID}`
 
         // In MN XML, footnotes have no IDs. We assign them an ID here
         // based on the cue. It’s not great, since this ID isn’t reflected
