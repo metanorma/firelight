@@ -9,6 +9,8 @@ import {
 } from 'anafero/index.mjs';
 import nodeViews from './nodeViews.jsx';
 
+import { sha256 } from './sha.mjs';
+
 import * as classNames from './style.css';
 
 
@@ -1012,8 +1014,10 @@ const generatorsByType: Record<string, ContentGenerator> = {
         // In MN XML, footnotes have no IDs. We assign them an ID here
         // based on the cue. It’s not great, since this ID isn’t reflected
         // in the graph
-        const madeUpDOMID = encodeURIComponent(cue);
         const footnoteContent = generateContent(subj, 'block', onAnnotation);
+        const hash = sha256();
+        footnoteContent.map(node => hash.add(node.textContent.toString()));
+        const madeUpDOMID = `${encodeURIComponent(cue)}-${hash.digest().hex()}`;
         onAnnotation?.(
           'footnote',
           footnoteContent,
