@@ -259,6 +259,7 @@ async function fetchDependency(
       Function,
       setTimeout,
       setInterval,
+      TextEncoder,
     });
     const mod = new vm.SourceTextModule(code, {
       identifier: 'test',
