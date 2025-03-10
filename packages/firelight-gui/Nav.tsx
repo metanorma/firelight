@@ -67,7 +67,7 @@ export const Search: React.FC<{
 
       try {
 
-        let exact: lunr.Result[];
+        let exact: any[];
         try {
           exact =
             (index.query(query => {
