@@ -91,6 +91,13 @@ span.underlined {
     flex-flow: row nowrap;
     gap: 1em;
 
+    &:focus-within {
+      outline-style: auto;
+      outline-offset: 2px;
+      background: var(--spectrum-accent-color-300);
+      outline-color: var(--spectrum-alias-focus-color);
+    }
+
     .footnoteCue {
       flex-grow: 0;
       flex-shrink: 0;
@@ -98,6 +105,23 @@ span.underlined {
       min-width: 2em;
       font-size: unset;
       vertical-align: unset;
+      line-height: unset;
+
+      &:link, &:visited, &:hover {
+        text-decoration: none;
+        color: unset;
+      }
+      &:focus {
+        &::before {
+          content: "→";
+          font-weight: bold;
+          width: 1em;
+          margin-left: -1em;
+          display: inline-block;
+          color: var(--spectrum-alias-focus-ring-color);
+        }
+        background: var(--spectrum-accent-color-300);
+      }
     }
     .footnoteBody {
       flex: 1;

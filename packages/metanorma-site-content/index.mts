@@ -116,11 +116,11 @@ const clauseSchemaBase = new Schema({
         return ['aside',
           {
             class: classNames.footnote,
-            id: node.attrs.resourceID,
             //about: node.attrs.resourceID,
           },
-          ['div', { class: classNames.footnoteCue }, node.attrs.cue],
+          ['a', { href: 'javascript: void 0;', name: node.attrs.resourceID, id: node.attrs.resourceID, class: classNames.footnoteCue }, node.attrs.cue],
           ['div', { class: classNames.footnoteBody }, 0],
+          ['a', { href: `#footnote-cue-${node.attrs.resourceID}` }, '⤴︎'],
         ];
       }
     },
@@ -129,9 +129,15 @@ const clauseSchemaBase = new Schema({
       inline: true,
       group: 'flow',
       content: 'resource_link',
-      toDOM() {
+      attrs: {
+        resourceID: {
+          default: undefined,
+        },
+      },
+      toDOM(node) {
         return ['span', {
           class: classNames.footnoteCue,
+          id: `footnote-cue-${node.attrs.resourceID}`,
         }, 0];
       },
     },
@@ -1026,7 +1032,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         );
         return pm.node(
           'footnote_cue',
-          null,
+          { resourceID: madeUpDOMID },
           [
             // This is wrong, but works around current MN XML footnote behavior
             // It will cause warnings during generation, because any href
