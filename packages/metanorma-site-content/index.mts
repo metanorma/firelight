@@ -1021,12 +1021,14 @@ const generatorsByType: Record<string, ContentGenerator> = {
         const footnoteContent = generateContent(subj, 'block', onAnnotation);
         const hash = sha256();
         footnoteContent.map(node => hash.add(node.textContent.toString()));
-        const madeUpDOMID = `${encodeURIComponent(cue)}-${hash.digest().hex()}`;
+        const scope = footnoteScope();
+        const scopedCue = scope ? `${scope}: ${cue}` : cue;
+        const madeUpDOMID = `${encodeURIComponent(scopedCue)}-${hash.digest().hex()}`;
         onAnnotation?.(
           'footnote',
           footnoteContent,
           madeUpDOMID,
-          cue,
+          scopedCue,
         );
         return pm.node(
           'footnote_cue',
@@ -1042,6 +1044,18 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'table': function (subj, onAnnotation) {
         const caption = findValue(section, subj, 'hasFmtName');
         //const caption = name ? findValue(section, name, 'hasPart') : null;
+
+        const xrefLabel = findValue(section, subj, 'hasFmtXrefLabel');
+        const xrefLabelContent = xrefLabel
+          ? generateContent(xrefLabel, pm.nodes.xrefLabel!)
+          : null;
+        const newFootnoteScope = xrefLabelContent
+          ? xrefLabelContent.map(n => n.textContent).join('')
+          : null;
+
+        if (!newFootnoteScope) {
+          console.warn("No footnote scope for table", subj, xrefLabel);
+        }
 
         const tbody = findValue(section, subj, 'hasTableBody');
         const thead = findValue(section, subj, 'hasTableHeader');
@@ -1070,6 +1084,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           }
         }
 
+        if (newFootnoteScope) { footnoteScope(newFootnoteScope); }
         tableContents.push(...rows.map(rowID =>
           pm.node(
             'table_row',
@@ -1092,6 +1107,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
             ),
           )
         ));
+        if (newFootnoteScope) { footnoteScope(null); }
 
         if (tableContents.length < 1) {
           return undefined;
@@ -1397,6 +1413,16 @@ const generatorsByType: Record<string, ContentGenerator> = {
     const titleContent = title
       ? generateContent(title, pm.nodes.title!)
       : undefined;
+
+    // FIXME: Too hacky and global-y
+    let currentFootnoteScope: null | string = null;
+    function footnoteScope(subj?: string | undefined | null) {
+      if (subj !== undefined) {
+        currentFootnoteScope = subj;
+      } else {
+        return currentFootnoteScope;
+      }
+    }
 
     type FootnoteNode = ProseMirrorNode & { type: 'footnote' }
     // Footnote nodes mapped to resource IDs
