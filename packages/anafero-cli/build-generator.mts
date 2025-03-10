@@ -74,7 +74,7 @@ async function buildBootstrapScript(opts: ReportingOptions) {
     absWorkingDir: join(PACKAGE_ROOT, '..', 'firelight-gui'),
     entryNames: '[dir]/[name]',
     assetNames: '[dir]/[name]',
-    format: 'esm',
+    format: 'iife',
     target: ['esnext'],
     bundle: true,
     minify: false,
