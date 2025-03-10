@@ -262,7 +262,9 @@ async function fetchDependency(
       TextEncoder,
     });
     const mod = new vm.SourceTextModule(code, {
-      identifier: 'test',
+      // TODO: Try moduleRef as VM module identifier?
+      // Take care of special characters, though.
+      identifier: 'anafero-dependency',
       context,
     });
 
