@@ -437,6 +437,15 @@ async function * generateSite(
         join(PACKAGE_ROOT, './bootstrap.css')),
     };
 
+    if (opts?.debug) {
+      yield {
+        '/bootstrap.js.map': await readFile(
+          join(PACKAGE_ROOT, './bootstrap.js.map')),
+        '/bootstrap.css.map': await readFile(
+          join(PACKAGE_ROOT, './bootstrap.css.map')),
+      };
+    }
+
     yield * generateStaticSiteAssets(
       refsToBuild,
       revisionsToBuild.currentRevision,
@@ -490,7 +499,7 @@ async function writeBlobs(root: string, blobs: Record<string, Uint8Array>) {
 const copyBootstrapScript = (packagePath: string, outdir: string) =>
 Effect.gen(function * (_) {
   const fs = yield * _(FileSystem.FileSystem);
-  const bootstrapFiles = ['bootstrap.js', 'bootstrap.css'];
+  const bootstrapFiles = ['bootstrap.js', 'bootstrap.css', 'bootstrap.js.map', 'bootstrap.css.map'];
   yield * _(
     Console.withTime(`Copy generator package from ${packagePath} into ${outdir}`)(
       Effect.all(bootstrapFiles.map(fn =>
