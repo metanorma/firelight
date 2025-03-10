@@ -7,7 +7,7 @@
  */
 
 import { resolve, isAbsolute, join } from 'node:path';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 
 import { Logger, Effect } from 'effect';
 import { NodeContext, NodeRuntime } from '@effect/platform-node';
@@ -66,8 +66,7 @@ Effect.
 
 async function buildBootstrapScript(opts: ReportingOptions) {
   const { logLevel } = opts;
-  const outfile = join(PACKAGE_ROOT, 'bootstrap.js');
-  const result = await esbuild({
+  return await esbuild({
     entryPoints: [
       './bootstrap.tsx',
       //join(PACKAGE_ROOT, 'site', 'index.tsx'),
@@ -82,7 +81,7 @@ async function buildBootstrapScript(opts: ReportingOptions) {
     treeShaking: true,
     sourcemap: true,
     platform: 'browser',
-    outfile,
+    outfile: join(PACKAGE_ROOT, 'bootstrap.js'),
     //outdir: 'layout',
     write: true,
     loader: {
@@ -93,23 +92,6 @@ async function buildBootstrapScript(opts: ReportingOptions) {
     },
     logLevel,
   });
-
-
-  // This unbreaks react-aria’s virtualizer ScrollView
-  // interfering with ProseMirror
-  //
-  // Ideally, this could be an esbuild plugin.
-  // Even more ideally, a proper package manager patch
-  // (yarn patch didn’t work for me).
-  console.debug("Patching ProseMirror");
-  let contents = await readFile(outfile, 'utf8');
-  contents = contents.replace(
-    'if (!runCustomHandler(view, event)',
-    'if (event && !runCustomHandler(view, event)',
-  );
-  await writeFile(outfile, contents);
-
-  return result;
 }
 
 /**
