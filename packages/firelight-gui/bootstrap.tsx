@@ -9,6 +9,41 @@ import { AppLoader } from './App.jsx';
 
 setTimeout(initApp, 50);
 
+// Patch lunr
+import lunr from 'lunr';
+
+// - https://github.com/olivernn/lunr.js/issues/279#issuecomment-2539409162
+// - https://github.com/olivernn/lunr.js/issues/503
+declare global {
+  namespace lunr {
+    interface TokenSet {
+      _str: string;
+      final: boolean;
+      edges: Record<string, lunr.TokenSet>;
+      id: number;
+    }
+  }
+}
+lunr.TokenSet.prototype.toString = function () {
+  if (this._str) {
+    return this._str;
+  }
+
+  let str = this.final ? '1' : '0',
+    labels = Object.keys(this.edges).sort(),
+    len = labels.length;
+
+  for (var i = 0; i < len; i++) {
+    let label = labels[i], node = label ? this.edges[label] : undefined;
+    if (node) {
+      str = str + ', L(' + label + ')I(' + node.id + ')';
+    }
+  }
+
+  return str;
+};
+// End patch lunr
+
 
 function initApp () {
 
