@@ -290,6 +290,19 @@ as follows (where tgz is the artifact within ``anafero-cli`` package)::
       [--rev <other-revision-or-spec>]
       [--debug]
 
+Gotchas
+~~~~~~~
+
+- If you work on styling and confusingly what you defined in your local CSS
+  is overridden by library CSS, make sure that your local CSS is not imported
+  before library CSS in the total import tree (this can accidentally happen
+  if you have components split across multiple files that import class names
+  from a single shared local CSS module).
+
+  If you see that in CSS bundle some library CSS appears after your local
+  CSS, then somehow that went wrong. Project’s local CSS always comes last.
+
+
 Conventions
 ~~~~~~~~~~~
 
