@@ -7,7 +7,8 @@ import ErrorBoundaryWithCustomFallback from 'anafero/ErrorBoundaryWithCustomView
 import { AppLoader } from './App.jsx';
 
 
-setTimeout(initApp, 50);
+initApp();
+
 
 // Patch lunr
 import lunr from 'lunr';
@@ -45,7 +46,7 @@ lunr.TokenSet.prototype.toString = function () {
 // End patch lunr
 
 
-function initApp () {
+async function initApp () {
 
   const appRoot = document.getElementById('app');
 
@@ -54,7 +55,7 @@ function initApp () {
     return;
   }
 
-  setUpExtensionImportMap();
+  await setUpExtensionImportMap();
 
   const useStrictMode = document.documentElement.dataset.useReactStrict === 'true';
 
