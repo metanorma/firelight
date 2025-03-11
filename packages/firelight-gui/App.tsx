@@ -9,13 +9,13 @@ import { Helmet } from 'react-helmet';
 import { type LayoutModule, type ResourceNav, ResourceNavSchema } from 'anafero/index.mjs';
 import { type Versioning, VersioningSchema } from 'anafero/index.mjs';
 import { fillInLocale, type ResourceMetadata } from 'anafero/index.mjs';
+import { Bookmarks, Search } from './Nav.jsx';
+import { Hierarchy as Hierarchy2, computeImplicitlyExpanded } from './NavHierarchy2.jsx';
 import { reducer, createInitialState, type InitializerInput, type BrowsingMode, type StoredAppState, StoredAppStateSchema } from './model.mjs';
 import { BrowserBar } from './BrowseBar.jsx';
 import { ResourceHelmet, Resource, type ResourceData } from './Resource.jsx';
 import { type LoadProgress, makeLoader } from './loader.mjs';
 import interceptNav from './intercept-nav.mjs';
-import { Bookmarks, Search } from './Nav.jsx';
-import { Hierarchy as Hierarchy2, computeImplicitlyExpanded } from './NavHierarchy2.jsx';
 import classNames from './style.module.css';
 
 
