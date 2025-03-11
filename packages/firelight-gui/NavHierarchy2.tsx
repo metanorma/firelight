@@ -67,7 +67,7 @@ export const Hierarchy: React.FC<{
     }
   }, 200);
 
-  const listElRef = useCallback((elRef: { UNSAFE_getDOMNode(): HTMLElement } | null) => {
+  const listElRef = useCallback((elRef: { UNSAFE_getDOMNode(): HTMLElement | null } | null) => {
     const sel = selected.values().next().value as string;
     if (sel) {
       const el = elRef?.UNSAFE_getDOMNode()?.querySelector(`[data-resource-id="${sel}"]`);
