@@ -24,6 +24,9 @@
     "packages/metanorma-xml-store",
     "packages/metanorma-site-content"
   ],
+  "resolutions": {
+    "@react-spectrum/utils": "3.12.0"
+  },
   "devDependencies": {
     "@effect/cli": "^0.44.4",
     "@effect/platform": "^0.65.4",
