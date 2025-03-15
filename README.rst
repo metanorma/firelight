@@ -351,6 +351,21 @@ Other conventions
 Known issues
 ~~~~~~~~~~~~
 
+- There is `an issue <https://github.com/yarnpkg/berry/issues/6724>`_
+  with duplicate virtual Yarn packages. With packages in Spectrum family,
+  this causes breakages (at least one that prevents a smooth migration
+  to the latest Spectrum version).
+
+  This can be revealed by running ``yarn constraints``, which may output
+  messages along the lines of::
+
+      Package <some package 1> has peer dependency <some package 2> satisfied in multiple ways
+
+  It should not output this once this issue is dealt with, but it does currently.
+
+  Generally speaking, we want to avoid any *new* issues of this sort
+  and only reduce their number.
+
 - There are 16 typing errors when compiling. While they don’t stop ``yarn cbp``
   from otherwise completing, we aim to get rid of them when possible.
   Some of the errors are caused by apparent mismatch between
