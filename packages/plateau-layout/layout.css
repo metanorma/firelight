@@ -201,8 +201,8 @@
     }
 
     table {
-      --table-highlight-background: rgba(120, 120, 120, 0.5);
-      --table-border: 1px solid var(--table-highlight-background);
+      --table-highlight-background: var(--spectrum-gray-200);
+      --table-border: 1px solid var(--spectrum-alias-border-color-mid);
 
       width: 100%;
 
