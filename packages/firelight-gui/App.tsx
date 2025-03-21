@@ -320,7 +320,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
           ) as SharedDeps);
         },
     );
-  }, [fetchJSON, getDomainRelativePath]);
+  }, [fetchJSON, getSiteRootRelativePath, getDomainRelativePath]);
 
   useEffect(() => {
     if (!getVersionedPath || !getUnversionedPath) { return; }
