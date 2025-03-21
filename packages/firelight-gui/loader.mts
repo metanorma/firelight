@@ -50,10 +50,14 @@ export function makeLoader<Src extends string>(
 
         xhr.open('GET', assetSrc, true);
         xhr.onload = function (e) {
-          if (xhr.readyState === 2) {
-            LOAD_STATUS[assetSrc]!.total = parseInt(
-              xhr.getResponseHeader('content-length') || '0',
-              10);
+          if (!LOAD_STATUS[assetSrc]!.total && xhr.readyState > 1) {
+            const rawTotal = xhr.getResponseHeader('content-length');
+            if (rawTotal) {
+              const total = parseInt(rawTotal || '0', 10);
+              if (total) {
+                LOAD_STATUS[assetSrc]!.total = total;
+              }
+            }
           }
           if (xhr.readyState === 4) {
             if (xhr.status === 200) {
@@ -71,7 +75,9 @@ export function makeLoader<Src extends string>(
             throw new Error(`XHR reported progress on unknown asset ${assetSrc} (not being loaded)`);
           }
           LOAD_STATUS[assetSrc].done = e.loaded;
-          LOAD_STATUS[assetSrc].total = e.total;
+          if (e.total) {
+            LOAD_STATUS[assetSrc].total = e.total;
+          }
           onProgress(
             Object.values(LOAD_STATUS).map(e => e['done']),
             Object.values(LOAD_STATUS).map(e => e['total']),
