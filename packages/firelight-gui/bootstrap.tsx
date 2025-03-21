@@ -8,13 +8,13 @@ import { AppLoader } from './App.jsx';
 import patchLunr from './lunrPatch.mjs';
 
 
-initApp();
-
-
 patchLunr();
 
 
-async function initApp () {
+getExtensionImports().then(setUpExtensionImportMap).then(initApp);
+
+
+function initApp () {
 
   const appRoot = document.getElementById('app');
 
@@ -22,8 +22,6 @@ async function initApp () {
     console.error("Can’t initialize the app: missing root");
     return;
   }
-
-  await setUpExtensionImportMap();
 
   const useStrictMode = document.documentElement.dataset.useReactStrict === 'true';
 
@@ -96,18 +94,17 @@ async function getExtensionImports(): Promise<Record<string, unknown>> {
   };
 }
 
-let registered = false;
+// let registered = false;
 
 /**
- * Uses importMapper to make select dependencies available within code
+ * Uses importMapper to make given dependencies available within code
  * that was dynamically `import()`ed from an object URL.
  */
-async function setUpExtensionImportMap() {
-  const deps = await getExtensionImports();
-
-  if (registered) {
-    return deps;
-  }
+async function setUpExtensionImportMap(deps: Record<string, unknown>) {
+  // if (registered) {
+  //   throw new Error("Already set up imports");
+  //   //return deps;
+  // }
 
   const imports: Record<string, string> = {};
   for (const [moduleID, moduleData] of Object.entries(deps)) {
@@ -124,7 +121,7 @@ async function setUpExtensionImportMap() {
   const mapper = new ImportMapper(imports);
   mapper.register();
 
-  registered = true;
+  //registered = true;
 
   return deps;
 }
