@@ -42,7 +42,7 @@
     "@xmldom/xmldom": "^0.9.3",
     "anafero": "workspace:~",
     "effect": "^3.10.15",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.25.0",
     "import-mapper": "0.0.4",
     "ink": "5.0.1",
     "isomorphic-git": "^1.27.1",
