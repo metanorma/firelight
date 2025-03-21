@@ -374,7 +374,9 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
         enableLanguageSupport(lunr);
       }
 
+      console.time("Lunr: load index");
       const index = lunr.Index.load(serializedIndex);
+      console.timeEnd("Lunr: load index");
 
       // This should run only once, since primaryLanguage wouldn’t change.
       // NOTE: Load multi-language after loading index, because we need its pipeline
