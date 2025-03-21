@@ -123,8 +123,14 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
                       aria-label="Loading…"
                       minValue={0}
                       isIndeterminate={
-                        (loadProgress.total - 0.1) < (loadProgress.total - loadProgress.done)
+                        // Set to indeterminate if:
+                        // No total:
+                        !loadProgress.total
                         ||
+                        // Stuck in almost ending:
+                        (loadProgress.total - 0.1) < loadProgress.done
+                        ||
+                        // Stuck in just beginning:
                         (loadProgress.total - loadProgress.done) < 0.1
                       }
                       maxValue={loadProgress.total}
