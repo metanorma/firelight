@@ -45,6 +45,9 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
     setInitialRender(false);
   }, []);
   const showToolbar = onActivateBrowsingMode || activeBrowsingMode;
+  useEffect(() => {
+    console.debug("Load progress", loadProgress);
+  }, [loadProgress]);
   return (
     <Provider theme={defaultTheme} {...providerProps}>
       <div className={classNames.browserBar}>
