@@ -9,6 +9,7 @@ import { Helmet } from 'react-helmet';
 import { type LayoutModule, type ResourceNav, ResourceNavSchema } from 'anafero/index.mjs';
 import { type Versioning, VersioningSchema } from 'anafero/index.mjs';
 import { fillInLocale, type ResourceMetadata } from 'anafero/index.mjs';
+import { stripLeadingSlash, stripTrailingSlash } from 'anafero/index.mjs';
 import { Bookmarks, Search } from './Nav.jsx';
 import { Hierarchy as Hierarchy2, computeImplicitlyExpanded } from './NavHierarchy2.jsx';
 import { reducer, createInitialState, type InitializerInput, type BrowsingMode, type StoredAppState, StoredAppStateSchema } from './model.mjs';
@@ -1239,12 +1240,4 @@ function expandResourcePath(rpath: string): [path: string, hash: string | null] 
     withTrailing,
     maybeFragment ? `#${maybeFragment}` : null,
   ] as [string, string | null];
-}
-
-function stripLeadingSlash(aPath: string): string {
-  return aPath.replace(/^\//, '');
-}
-
-function stripTrailingSlash(aPath: string): string {
-  return aPath.replace(/\/$/, '');
 }
