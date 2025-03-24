@@ -1227,7 +1227,7 @@ function expandResourcePath(rpath: string): [path: string, hash: string | null] 
   const [beforeFragment, maybeFragment] = hasFragment
     ? rpath.split('#') as [string, string]
     : [rpath.split('#')[0], null] as [string, null];
-  const maybeTrailingSlash = (beforeFragment !== '' && beforeFragment !== '/')
+  const maybeTrailingSlash = (beforeFragment !== '' && !beforeFragment.endsWith('/'))
     ? '/'
     : '';
   const maybeFragmentSeparator = hasFragment
