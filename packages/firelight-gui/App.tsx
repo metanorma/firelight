@@ -841,7 +841,7 @@ export const VersionWorkspace: React.FC<{
       ...Array.from(state.expandedResourceURIs),
       ...Array.from(implicitlyExpanded),
     ])
-  }), [implicitlyExpanded, resourceMap, state.expandedResourceURIs, actualSelectedPageResources]);
+  }), [implicitlyExpanded, resourceMap, state.expandedResourceURIs]);
 
   const routerProps = useMemo(() => ({ router: { navigate } }), [navigate]);
 
