@@ -3,6 +3,7 @@ import { ListView, ActionButton, Item, Text, type Selection } from '@adobe/react
 import CollapsedIcon from '@spectrum-icons/workflow/ChevronLeft';
 import ExpandedIcon from '@spectrum-icons/workflow/ChevronDown';
 import { useDebouncedCallback } from 'use-debounce';
+import { getAllParentPaths } from 'anafero/index.mjs';
 import classNames from './style.module.css';
 
 
@@ -35,17 +36,16 @@ export const Hierarchy: React.FC<{
   const allPaths = useMemo(() => Object.keys(pageMap), [pageMap]);
   const items: Item[] = useMemo(() => {
     return Object.entries(pageMap).
-    // Exclude children of collapsed parents
+    // The logic of
+    // “only show an item if *all* of its parents are expanded”
+    // seems, at second approach, good enough for a tree-style view.
     filter(([path, ]) => {
-      const parentPath = path.includes('/')
-        ? `${path.slice(0, path.lastIndexOf('/'))}`
-        : '';
-      const parentURI = pageMap[parentPath];
-      if (!parentURI) {
-        console.warn("Unable to find URI for parent path", parentPath);
-      }
-      const shouldAppear = !![...expanded.values()].
-      find(expandedURI => expandedURI === parentURI);
+      // TODO: Retrieving parent paths for each path could be optimized?
+      const parentPaths = getAllParentPaths(path);
+      const parentURIs = new Set(parentPaths.
+        map(p => pageMap[p]).
+        filter(p => p !== undefined));
+      const shouldAppear = parentURIs.isSubsetOf(expanded);
       //console.debug("Checking if should appear", path, parentURI, expanded, isExpanded);
       return shouldAppear;
     }).
