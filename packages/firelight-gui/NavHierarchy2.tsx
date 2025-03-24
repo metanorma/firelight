@@ -31,11 +31,11 @@ export const Hierarchy: React.FC<{
     // Exclude children of collapsed parents
     filter(([path, ]) => {
       const parentPath = path.includes('/')
-	? `${path.slice(0, path.lastIndexOf('/'))}`
-	: '';
+        ? `${path.slice(0, path.lastIndexOf('/'))}`
+        : '';
       const parentURI = pageMap[parentPath];
       if (!parentURI) {
-	console.warn("Unable to find URI for parent path", parentPath);
+        console.warn("Unable to find URI for parent path", parentPath);
       }
       const shouldAppear = !![...expanded.values()].
       find(expandedURI => expandedURI === parentURI);
@@ -44,15 +44,15 @@ export const Hierarchy: React.FC<{
     }).
     map(([path, id]) => {
       const level = path === ''
-	? 0
-	: ((path.match(/\//g) ?? []).length + 1);
+        ? 0
+        : ((path.match(/\//g) ?? []).length + 1);
       return {
-	path,
-	id,
-	title: getResourceTitle(id),
-	// Count slashes
-	level,
-	hasChildren: allPaths.find(p => p.startsWith(`${path}/`)) !== undefined,
+        path,
+        id,
+        title: getResourceTitle(id),
+        // Count slashes
+        level,
+        hasChildren: allPaths.find(p => p.startsWith(`${path}/`)) !== undefined,
       };
     });
   }, [expanded, allPaths, pageMap, getResourceTitle]);
