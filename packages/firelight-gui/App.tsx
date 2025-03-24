@@ -818,6 +818,12 @@ export const VersionWorkspace: React.FC<{
     new Set([activePageResourceURI])
   ), [activePageResourceURI]);
 
+  /**
+   * Implicitly expanded resources include:
+   *
+   * 1) root resource,
+   * 2) selected & parents of selected resource.
+   */
   const implicitlyExpanded = useMemo(() => {
     return new Set(computeImplicitlyExpanded(
       pageMap,
@@ -827,9 +833,7 @@ export const VersionWorkspace: React.FC<{
   }, [pageMap, actualSelectedPageResources]);
 
   /**
-   * For hierarchy sidebar.
-   * Adds to resources user specifically expanded
-   * the always expanded resources: 1) root, 2) selected & parents of selected.
+   * Resources specifically expanded by the user + implicitly expanded ones.
    */
   const actualExpanded: Set<string> = useMemo((() => {
     return new Set([

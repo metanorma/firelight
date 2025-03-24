@@ -16,10 +16,17 @@ interface Item {
 
 
 export const Hierarchy: React.FC<{
+  /** Map of page paths (no fragments) to resource URIs. */
   pageMap: Record<string, string>;
+
   getResourceTitle: (uri: string) => string;
+
+  /** URIs of all expanded resources, implicitly or explicitly. */
   expanded: Set<string>;
+
+  /** URIs of implicitly expanded resources. */
   implicitlyExpanded: Set<string>;
+
   onExpand?: (uri: Set<string>) => void;
   selected: Set<string>;
   onSelect: (uri: string) => void;
