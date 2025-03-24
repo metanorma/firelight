@@ -717,9 +717,9 @@ export async function * generateStaticSiteAssets(
     path: string,
   ): string {
     const expanded = path.startsWith('/')
-      ? `${opts.pathPrefix}${path}`
+      ? `${opts.pathPrefix ?? ''}${path}`
       : `${prefixWithTrailing}${path}` ;
-    //console.debug("Expanding path", path, expanded);
+    //console.debug("Expanding path", JSON.stringify({ pp: opts.pathPrefix, prefixWithTrailing, path, expanded }, null, 2));
     return expanded;
   }
 
@@ -801,7 +801,7 @@ export async function * generateStaticSiteAssets(
           ? path
           : `/${versionID}${path}`;
         const expanded = expandGlobalPath(withVersion);
-        //console.debug("Expanding version-relative path", versionRelativePath, expanded);
+        //console.debug("Expanding version-relative path", JSON.stringify({ versionRelativePath, withVersion, expanded }, null, 2));
         return expanded;
       },
     );
