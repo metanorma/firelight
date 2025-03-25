@@ -22,7 +22,8 @@ are particularly large and run into some Git infrastructure limitations.)
 Usage
 -----
 
-You’ll need Node 22.
+- Intended to be run on macOS and Linux. Not tested on Windows.
+- Requires Node 22.
 
 ::
 
@@ -34,7 +35,7 @@ You’ll need Node 22.
       [--debug]
 
 The command must be run from the root of a Git repository that has
-Anafero config file versioned in it.
+Anafero config file versioned in it (see below).
 
 Anafero config
 --------------
