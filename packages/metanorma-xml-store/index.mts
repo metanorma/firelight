@@ -13,9 +13,15 @@ import {
 } from './util.mjs';
 
 
-function urnFromID(id: string): string {
-  return `urn:x-metanorma-xml-id:${id}`;
-}
+const sectionLikeElements = [
+  'clause',
+  'abstract',
+  'references',
+  'definitions',
+  'terms',
+  'annex',
+  'indexsect',
+] as const;
 
 const tagNameAliases: Record<string, string> = {
   'p': 'paragraph',
@@ -33,20 +39,67 @@ const tagNameAliases: Record<string, string> = {
   'g': 'pathGroup',
 } as const;
 
+/**
+ * For these tags, children are output
+ * not via hasPart but via has<child tag name>.
+ */
+const TAGS_WITH_DIRECT_CHILDREN_NOT_AS_GENERIC_PARTS: string[] = [
+  'bibdata',
+  'bibitem',
+  'figure',
+  'image',
+  'table',
+  'colgroup',
+  'thead',
+  'tbody',
+  'tfoot',
+  'tr',
+  'bibitem',
+] as const;
+
+const TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS: string[] = [
+  'bibdata',
+] as const;
+const TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS_SELECTOR =
+  TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS.join(', ');
 
 function mangleXMLIdentifier(id: string): string {
   return unescape(id.replaceAll('___x', '%u').replaceAll('__x', '%u'));
 }
 
-const sectionLikeElements = [
-  'clause',
-  'abstract',
-  'references',
-  'definitions',
-  'terms',
-  'annex',
-  'indexsect',
-] as const;
+const processClauseLike: CustomElementProcessor =
+function processClauseLike(el: Element) {
+  return [
+    [[
+      ROOT_SUBJECT,
+      'hasClauseIdentifier',
+      mangleXMLIdentifier(
+        el.getAttribute('id')
+        ?? `unidentified-section-${crypto.randomUUID()}`
+      ),
+    ], [
+      ROOT_SUBJECT,
+      'type',
+      'section',
+    ]],
+    {
+      getChildPredicate: () => 'hasPart',
+    },
+  ];
+}
+
+const processAsGenericContainer: CustomElementProcessor =
+function processGeneric() {
+  return [[], { getChildPredicate: () => 'hasPart' }];
+}
+
+function tagNameToHasPredicate(tagName: string): string {
+  return `has${dekebab(tagNameAliases[tagName] ?? tagName)}`;
+}
+
+function urnFromID(id: string): string {
+  return `urn:x-metanorma-xml-id:${id}`;
+}
 
 const mod: StoreAdapterModule = {
   name: 'Metanorma XML store adapter',
@@ -54,60 +107,6 @@ const mod: StoreAdapterModule = {
   canResolve: (path) => path.endsWith('.xml'),
   readerFromBlob: async function (blob, helpers) {
     const dom = helpers.decodeXML(blob);
-
-    const processClauseLike: CustomElementProcessor =
-    function processClauseLike(el: Element) {
-      return [
-        [[
-          ROOT_SUBJECT,
-          'hasClauseIdentifier',
-          mangleXMLIdentifier(
-            el.getAttribute('id')
-            ?? `unidentified-section-${crypto.randomUUID()}`
-          ),
-        ], [
-          ROOT_SUBJECT,
-          'type',
-          'section',
-        ]],
-        {
-          getChildPredicate: () => 'hasPart',
-        },
-      ];
-    }
-
-    const processAsGenericContainer: CustomElementProcessor =
-    function processGeneric() {
-      return [[], { getChildPredicate: () => 'hasPart' }];
-    }
-
-    function tagNameToHasPredicate(tagName: string): string {
-      return `has${dekebab(tagNameAliases[tagName] ?? tagName)}`;
-    }
-
-    /**
-     * For these tags, children are output
-     * not via hasPart but via has<child tag name>.
-     */
-    const TAGS_WITH_DIRECT_CHILDREN_NOT_AS_GENERIC_PARTS: string[] = [
-      'bibdata',
-      'bibitem',
-      'figure',
-      'image',
-      'table',
-      'colgroup',
-      'thead',
-      'tbody',
-      'tfoot',
-      'tr',
-      'bibitem',
-    ];
-
-    const TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS: string[] = [
-      'bibdata',
-    ];
-    const TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS_SELECTOR =
-      TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS.join(', ');
 
     return [
       [],
