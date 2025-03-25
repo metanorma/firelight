@@ -29,14 +29,15 @@ import { isURIString } from './URI.mjs';
 export interface ContentReader {
   resolve: (resourceURI: string) => Readonly<RelationGraphAsList>;
   generatePaths: (fromSubpath?: string) => Generator<{
-    /** Path with leading but no trailing slash. Empty string for root. */
-    path: string;
     /**
-     * URI identifying a resource.
-     * A file: URI means there was no reader that could resolve it,
-     * and it is expected to be emitted under that path
+     * URI identifying a resource, obtained from store adapter.
      */
     resourceURI: string;
+    /**
+     * Path to webpage for this resource,
+     * with leading but no trailing slash. Empty string for root.
+     */
+    path: string;
     parentChain: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
     directDescendants: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
   }>;
