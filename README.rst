@@ -22,6 +22,8 @@ are particularly large and run into some Git infrastructure limitations.)
 Usage
 -----
 
+You’ll need Node 22.
+
 ::
 
     npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli \
@@ -34,8 +36,8 @@ Usage
 .. note:: ``--path-prefix`` is currently required
           due to a `regression <https://github.com/metanorma/firelight/issues/26>`_.
 
-The command must be run from the root of a repository that has
-Anafero config file versioned in the root.
+The command must be run from the root of a Git repository that has
+Anafero config file versioned in it.
 
 Anafero config
 --------------
