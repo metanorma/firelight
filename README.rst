@@ -33,9 +33,6 @@ You’ll need Node 22.
       [--rev <other-revision-or-spec>]
       [--debug]
 
-.. note:: ``--path-prefix`` is currently required
-          due to a `regression <https://github.com/metanorma/firelight/issues/26>`_.
-
 The command must be run from the root of a Git repository that has
 Anafero config file versioned in it.
 
