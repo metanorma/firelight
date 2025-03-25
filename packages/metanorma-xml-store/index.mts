@@ -25,6 +25,7 @@ const tagNameAliases: Record<string, string> = {
   'li': 'listItem',
   'tbody': 'tableBody',
   'thead': 'tableHeader',
+  'tfoot': 'tableFooter',
   'table': 'table',
   'tr': 'tableRow',
   'th': 'tableHeaderCell',
@@ -97,6 +98,7 @@ const mod: StoreAdapterModule = {
       'colgroup',
       'thead',
       'tbody',
+      'tfoot',
       'tr',
       'bibitem',
     ];

@@ -1057,17 +1057,23 @@ const generatorsByType: Record<string, ContentGenerator> = {
           console.warn("No footnote scope for table", subj, xrefLabel);
         }
 
-        const tbody = findValue(section, subj, 'hasTableBody');
         const thead = findValue(section, subj, 'hasTableHeader');
         let rows: string[] = [];
         if (thead) {
           rows.push(...findAll(section, thead, 'hasTableRow'));
         }
+
+        const tbody = findValue(section, subj, 'hasTableBody');
         if (!tbody) {
           console.warn("Tables without tbody are not expected");
           rows.push(...findAll(section, subj, 'hasTableRow'));
         } else {
           rows.push(...findAll(section, tbody, 'hasTableRow'));
+        }
+
+        const tfoot = findValue(section, subj, 'hasTableFooter');
+        if (tfoot) {
+          rows.push(...findAll(section, tfoot, 'hasTableRow'));
         }
 
         const tableContents: ProseMirrorNode[] = [];
