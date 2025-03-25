@@ -670,7 +670,7 @@ const mod: ContentAdapterModule = {
   resourceContentProseMirrorOptions: {
     nodeViews,
   },
-}
+};
 
 export default mod;
 
