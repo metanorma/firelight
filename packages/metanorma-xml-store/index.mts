@@ -172,7 +172,7 @@ const mod: StoreAdapterModule = {
               terms: processClauseLike,
               annex: processClauseLike,
               definitions: processClauseLike,
-              xref: function processXref(el) {
+              'fmt-xref': function processXref(el) {
                 const maybeTarget = el.getAttribute('target');
                 const graph: RelationGraphAsList = [];
                 if (!maybeTarget) {
