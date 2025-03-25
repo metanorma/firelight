@@ -900,7 +900,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           content,
         );
       },
-      'xref': (subj: string) => {
+      'fmt-xref': (subj: string) => {
         const target = findValue(section, subj, 'hasTarget');
         if (!target) {
           console.warn("Cannot create a resource link without target/href");
