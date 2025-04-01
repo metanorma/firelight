@@ -21,6 +21,7 @@
     "packages/anafero-cli",
     "packages/firelight-gui",
     "packages/plateau-layout",
+    "packages/relaton-collection-xml-store",
     "packages/metanorma-xml-store",
     "packages/metanorma-site-content"
   ],

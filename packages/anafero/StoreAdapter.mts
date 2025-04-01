@@ -78,6 +78,18 @@ export interface StoreAdapterModule {
 
 export interface ResourceReader {
 
+  /**
+   * A reader can be instantiated from a URI of an entry point
+   * that is not necessarily the correct, authoritative one.
+   *
+   * This can return an URI that can be treated as one.
+   *
+   * Especially useful for blob readers, which are created
+   * from file: URIs, which are very local by their nature.
+   */
+  getCanonicalRootURI?: () => string | undefined;
+
+
   /** This should be fast. Doesn’t have to be exact. */
   estimateRelationCount: () => number;
 

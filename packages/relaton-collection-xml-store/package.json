@@ -1,0 +1,15 @@
+{
+  "name": "relaton-collection-xml-store",
+  "packageManager": "yarn@4.5.0",
+  "type": "module",
+  "scripts": {
+    "compile": "tsc --outdir compiled"
+  },
+  "dependencies": {
+    "@effect/schema": "^0.75.3",
+    "anafero": "workspace:~"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

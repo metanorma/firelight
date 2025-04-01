@@ -304,19 +304,28 @@ export async function * generateVersion(
 
   const extraHead = `${dependencyCSS}\n${inject.head ?? ''}`;
 
-  /** The first content adapter specified. */
-  const contentAdapter = contentAdapters[cfg.contentAdapters[0]]!;
+  ///** The first content adapter specified. */
+  //const contentAdapter = contentAdapters[cfg.contentAdapters[0]]!;
 
   /**
    * For now we only allow one content adapter.
    *
-   * Technically, it should probably return the first content adapter
-   * that finds any content-contributing relations, or null.
+   * Returns the first content adapter that reports being able
+   * to generate content for given resource URI, or null.
    */
   const findContentAdapter = function (
-    relations: Readonly<RelationGraphAsList>,
-  ): [string, ContentAdapterModule] | null {
-    return [cfg.contentAdapters[0], contentAdapter];
+    resourceURI: string,
+    //relations: Readonly<RelationGraphAsList>,
+  ): [string, ContentAdapterModule] {
+    for (const [moduleID, contentAdapter] of Object.entries(contentAdapters)) {
+      if (contentAdapter.canGenerateContent(resourceURI)) {
+        return [moduleID, contentAdapter];
+      }
+    }
+    throw new Error(`No content adapters report capability to generate content for ${resourceURI}`);
+    //return null;
+
+    //return [cfg.contentAdapters[0], contentAdapter];
 
     // If we allow multiple content adapters?..
     //
@@ -340,7 +349,9 @@ export async function * generateVersion(
   const reader = await makeContentReader(
     cfg.entryPoint,
     Object.values(storeAdapters),
-    contentAdapter,
+    function _findContentAdapter(resourceURI) {
+      return findContentAdapter(resourceURI)[1];
+    },
     {
       fetchBlob: fetchBlobAtThisVersion,
       decodeXML,
@@ -399,7 +410,15 @@ export async function * generateVersion(
     reportProgress('build page content', { total: totalPaths, done });
   const hierarchicalResources = reader.generatePaths();
   for (const { path, resourceURI, parentChain, directDescendants } of hierarchicalResources) {
-    //console.debug("Got resource", resourceURI, path);
+    console.debug("Got resource", resourceURI, path);
+
+    let contentAdapter: ContentAdapterModule;
+    try {
+      contentAdapter = findContentAdapter(resourceURI)?.[1];
+    } catch (e) {
+      console.error("Unable to find content adapter for resource", resourceURI, e);
+      continue;
+    }
 
     done += 1;
     allPathProgress({ total: totalPaths, done });
@@ -496,15 +515,15 @@ export async function * generateVersion(
       { head: extraHead, tail: inject.tail, htmlAttrs: inject.htmlAttrs },
       maybeMainTitle ?? 'Workspace',
       resourceMeta.primaryLanguageID ?? maybePrimaryLanguageID ?? 'en',
-      function describe(relations) {
-        const maybeAdapter = findContentAdapter(relations);
+      function describe(relations, uri) {
+        const maybeAdapter = findContentAdapter(uri);
         return maybeAdapter ? maybeAdapter[1].describe(relations) : null;
       },
       function generateContent(relations, uri: string) {
         if (!contentCache[uri]) {
           let content: ResourceContent | null;
           //console.debug("Generating resource content from relations", resourceURI, maybePrimaryLanguageID);
-          const maybeAdapter = findContentAdapter(relations);
+          const maybeAdapter = findContentAdapter(uri);
           if (maybeAdapter) {
             try {
               content = maybeAdapter[1].generateContent(
@@ -539,7 +558,7 @@ export async function * generateVersion(
                   resourceGraph.push([inPageResourceID, 'isDefinedBy', `${path}/resource.json`]);
                   resourceDescriptions[inPageResourceID] = {
                     primaryLanguageID: maybePrimaryLanguageID,
-                    ...contentAdapter.describe(relativeGraph(relations, inPageResourceID)),
+                    ...maybeAdapter[1].describe(relativeGraph(relations, inPageResourceID)),
                   };
                 } else {
                   console.warn(

@@ -104,6 +104,11 @@ function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | 
 const mod: ContentAdapterModule = {
   name: "Metanorma site content",
   version: "0.0.1",
+  canGenerateContent: (uri: string) => {
+    return uri.startsWith('urn:metanorma:doc-part:')
+      || uri.startsWith('urn:metanorma:doc:')
+      || uri.startsWith('urn:metanorma:collection:');
+  },
   describe: (relations) => {
     // We may not know the language in some cases, like if it’s a section :(
     const primaryLanguageID = getCurrentLanguage(relations);
@@ -173,6 +178,28 @@ export default mod;
 
 type ContentGenerator = ContentAdapterModule['generateContent'];
 const generatorsByType: Record<string, ContentGenerator> = {
+
+  collection: function generateCollection (graph) {
+    const pm = coverBibdataSchema;
+    const title = findValue(graph, ROOT_SUBJECT, 'hasTitle')!;
+    return {
+      contentSchemaID: 'cover',
+      primaryLanguageID: 'en',
+      labelInPlainText: title,
+      title: titleSchema.node('doc', null, [
+        titleSchema.text(title),
+      ]).toJSON(),
+      contentDoc: pm.node('doc', null, [
+        pm.node('docMeta', null, [
+          pm.node('primaryDocID', null, [pm.text('unknown docid')]),
+          pm.node('edition', null, [pm.text('unknown edition')]),
+          pm.node('pubDate', null, [pm.text('unknown pubdate')]),
+          pm.node('author', null, [pm.text('unknown author')]),
+        ]),
+        pm.node('mainTitle', null, [pm.text(title)]),
+      ]).toJSON(),
+    };
+  },
 
   document: function generateDoc (doc, helpers) {
     const bibdataID = doc.find(([s, p,]) => s === ROOT_SUBJECT && p === 'hasBibdata')?.[2];
