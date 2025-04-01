@@ -284,6 +284,11 @@ function processResource(
   if (!rules.skipChildren?.(el)) {
     addRelationsToChildren(el, graph, getURI, rules);
   }
+  // if (!rules.skipChildren?.(el)) {
+  //   graph.push(
+  //     ...Array.from(el.childNodes).
+  //   //addRelationsToChildren(el, graph, getURI, rules);
+  // }
 
   return graph;
 }
