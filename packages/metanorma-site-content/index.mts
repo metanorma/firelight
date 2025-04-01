@@ -490,23 +490,23 @@ const clauseSchema = new Schema({
 });
 
 
-const collectionEntrySchema = new Schema({
-  nodes: {
-    text: {},
-    doc: {
-      content: 'title',
-      toDOM() {
-        return ['article', 0];
-      },
-    },
-    title: {
-      content: 'text*',
-      toDOM() {
-        return ['h1', 0];
-      },
-    },
-  },
-});
+// const collectionEntrySchema = new Schema({
+//   nodes: {
+//     text: {},
+//     doc: {
+//       content: 'title',
+//       toDOM() {
+//         return ['article', 0];
+//       },
+//     },
+//     title: {
+//       content: 'text*',
+//       toDOM() {
+//         return ['h1', 0];
+//       },
+//     },
+//   },
+// });
 
 
 const coverBibdataSchema = new Schema({
