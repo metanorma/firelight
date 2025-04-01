@@ -217,6 +217,17 @@
 
       font-size: 16px;
 
+      /** Table legend */
+      tr:last-child td:only-child:has(dl:only-child) {
+        padding: 0 10px;
+        dl {
+          grid-template-columns: fit-content(10px) 100%;
+          dd {
+            margin: 0;
+          }
+        }
+      }
+
       tr {
         border-bottom: var(--table-border);
       }
