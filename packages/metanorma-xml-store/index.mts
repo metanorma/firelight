@@ -222,7 +222,7 @@ const mod: StoreAdapterModule = {
               },
               semx: 'bypass',
               eref: 'bypass',
-              origin: 'bypass',
+              origin: 'ignore',
               title: function processTitle(el, getURI) {
                 if (el.parentElement
                     && sectionLikeElements.includes(el.parentElement.tagName as any)) {
