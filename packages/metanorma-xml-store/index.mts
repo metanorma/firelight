@@ -98,7 +98,17 @@ function tagNameToHasPredicate(tagName: string): string {
 }
 
 function urnFromID(id: string): string {
-  return `urn:x-metanorma-xml-id:${id}`;
+  return `urn:metanorma:doc-part:${id}`;
+}
+
+function getResourceURI(el: Element): string {
+  const maybeID = el.getAttribute('id');
+  const prefix = `urn:metanorma:doc-part-unstable:${el.tagName}`;
+  return maybeID
+    // We have a proper (hopefully stable) ID
+    ? urnFromID(maybeID)
+    // We need to make up an ID
+    : `${prefix}-${crypto.randomUUID()}`;
 }
 
 const mod: StoreAdapterModule = {
@@ -115,6 +125,7 @@ const mod: StoreAdapterModule = {
         discoverAllResources: (onRelationChunk, opts) => {
           processResources(dom, onRelationChunk, {
             getResourceURIFromID: urnFromID,
+            getResourceURI,
             getChildPredicate: function getChildPredicate(el: Element, childEl: Element) {
               if (TAGS_WITH_DIRECT_CHILDREN_NOT_AS_GENERIC_PARTS.includes(el.tagName)
                   || childEl.closest(TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS_SELECTOR)) {
