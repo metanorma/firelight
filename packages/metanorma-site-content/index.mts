@@ -1029,7 +1029,9 @@ const generatorsByType: Record<string, ContentGenerator> = {
         const hash = sha256();
         footnoteContent.map(node => hash.add(node.textContent.toString()));
         const scope = footnoteScope();
-        const scopedCue = scope ? `${scope}: ${cue}` : cue;
+        // Append a parenthesis to turn Metanorma-given “a” into “a)”
+        const formattedCue = `${cue})`;
+        const scopedCue = scope ? `${scope}: ${formattedCue}` : formattedCue;
         const madeUpDOMID = `${encodeURIComponent(scopedCue)}-${hash.digest().hex()}`;
         onAnnotation?.(
           'footnote',
@@ -1044,7 +1046,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
             // This is wrong, but works around current MN XML footnote behavior
             // It will cause warnings during generation, because any href
             // is supposed to be either an external link or point to a resource
-            pm.node('resource_link', { href: `#${madeUpDOMID}` }, [pm.text(cue)])
+            pm.node('resource_link', { href: `#${madeUpDOMID}` }, [pm.text(formattedCue)])
           ],
         );
       },
