@@ -37,6 +37,10 @@ const RAW_RUNTIME_STATE =
     {\
       "name": "plateau-layout",\
       "reference": "workspace:packages/plateau-layout"\
+    },\
+    {\
+      "name": "relaton-collection-xml-store",\
+      "reference": "workspace:packages/relaton-collection-xml-store"\
     }\
   ],\
   "enableTopLevelFallback": true,\
@@ -48,7 +52,8 @@ const RAW_RUNTIME_STATE =
     ["firelight-monorepo", ["workspace:."]],\
     ["metanorma-site-content", ["workspace:packages/metanorma-site-content"]],\
     ["metanorma-xml-store", ["workspace:packages/metanorma-xml-store"]],\
-    ["plateau-layout", ["workspace:packages/plateau-layout"]]\
+    ["plateau-layout", ["workspace:packages/plateau-layout"]],\
+    ["relaton-collection-xml-store", ["workspace:packages/relaton-collection-xml-store"]]\
   ],\
   "fallbackPool": [\
     [\
@@ -1158,6 +1163,10 @@ const RAW_RUNTIME_STATE =
     [\
       "regenerator-runtime",\
       "npm:0.14.1"\
+    ],\
+    [\
+      "relaton-collection-xml-store",\
+      "workspace:packages/relaton-collection-xml-store"\
     ],\
     [\
       "requires-port",\
@@ -11869,6 +11878,18 @@ const RAW_RUNTIME_STATE =
           ["regenerator-runtime", "npm:0.14.1"]\
         ],\
         "linkType": "HARD"\
+      }]\
+    ]],\
+    ["relaton-collection-xml-store", [\
+      ["workspace:packages/relaton-collection-xml-store", {\
+        "packageLocation": "./packages/relaton-collection-xml-store/",\
+        "packageDependencies": [\
+          ["relaton-collection-xml-store", "workspace:packages/relaton-collection-xml-store"],\
+          ["@effect/schema", "virtual:070476d311f720e9d02d25ca605014d530cdbc1f8aa33c62092b53b14c5ef33cba7de536d79a2924f39ff5c739c1a151459137f6c5be337398ea393ad5d4da2b#npm:0.75.3"],\
+          ["anafero", "workspace:packages/anafero"],\
+          ["typescript", "patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"]\
+        ],\
+        "linkType": "SOFT"\
       }]\
     ]],\
     ["requires-port", [\

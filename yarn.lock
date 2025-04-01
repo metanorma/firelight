@@ -6515,6 +6515,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"relaton-collection-xml-store@workspace:packages/relaton-collection-xml-store":
+  version: 0.0.0-use.local
+  resolution: "relaton-collection-xml-store@workspace:packages/relaton-collection-xml-store"
+  dependencies:
+    "@effect/schema": "npm:^0.75.3"
+    anafero: "workspace:~"
+    typescript: "npm:^5.6.3"
+  languageName: unknown
+  linkType: soft
+
 "requires-port@npm:^1.0.0":
   version: 1.0.0
   resolution: "requires-port@npm:1.0.0"

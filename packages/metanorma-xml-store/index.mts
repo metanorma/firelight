@@ -129,6 +129,14 @@ const mod: StoreAdapterModule = {
     return [
       [],
       {
+        getCanonicalRootURI: () => {
+          const primaryDocid =
+            dom.querySelector('bibdata docidentifier[primary="true"]')?.textContent
+            ?? undefined;
+          return primaryDocid
+            ? `urn:metanorma:doc:${encodeURIComponent(primaryDocid)}`
+            : undefined;
+        },
         estimateRelationCount: () => estimateRelationCount(dom),
         discoverAllResources: (onRelationChunk, opts) => {
           processResources(dom, onRelationChunk, {
