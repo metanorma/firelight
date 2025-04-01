@@ -699,7 +699,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       (relativeGraph(doc, bibdataID), helpers);
   },
 
-  section: function generateDoc (section) {
+  section: function generateSection (section) {
 
     const simpleNodes: Record<string, string> = {
       //'unorderedList': 'bullet_list',
