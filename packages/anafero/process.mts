@@ -179,6 +179,7 @@ export function * generateResourceAssets(
     }));
   const browseBarHTML = renderToString(React.createElement(BrowserBar, {
     title: workspaceTitle,
+    rootURL: expandVersionedPath('/'),
   }));
 
   const helmet = Helmet.renderStatic();

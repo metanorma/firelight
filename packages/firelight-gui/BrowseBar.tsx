@@ -16,6 +16,7 @@ import classNames from './style.module.css';
 interface BrowserBarProps {
   title: string;
   //navigate?: (path: string) => void | undefined;
+  rootURL: string;
   providerProps?: Omit<ProviderProps, 'children'>,
   loadProgress?: LoadProgress | true | undefined;
   activeBrowsingMode?: BrowsingMode | undefined;
@@ -34,6 +35,7 @@ interface BrowserBarProps {
 export const BrowserBar: React.FC<BrowserBarProps> = function ({
   providerProps,
   title,
+  rootURL,
   loadProgress,
   activeBrowsingMode,
   onActivateBrowsingMode,
@@ -52,7 +54,11 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
     <Provider theme={defaultTheme} {...providerProps}>
       <div className={classNames.browserBar}>
         <header className={classNames.browserBarTitle}>
-          <h1>{title}</h1>
+          <h1>
+            <a href={rootURL} className={classNames.browserBarTitleLink}>
+              {title}
+            </a>
+          </h1>
         </header>
         {showToolbar
           ? <Toolbar

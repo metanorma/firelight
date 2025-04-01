@@ -502,7 +502,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
       />
       // Try not to overwrite SSR’d DOM except for browser bar’s loader
     : <>
-        <BrowserBar title={workspaceTitle} loadProgress={loadProgress} />
+        <BrowserBar rootURL={`${pathPrefix}/`} title={workspaceTitle} loadProgress={loadProgress} />
         <main id="resources">
           <div
             dangerouslySetInnerHTML={{ __html: '' }}
@@ -1003,6 +1003,7 @@ export const VersionWorkspace: React.FC<{
         providerProps={routerProps}
         versioning={versioning}
         activeBrowsingMode={state.browsingMode}
+        rootURL={expandUnversionedPath('/')}
         onActivateBrowsingMode={useCallback((mode: BrowsingMode) => dispatch({
           type: 'activated_browsing_mode',
           mode,

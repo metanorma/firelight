@@ -197,6 +197,16 @@
     flex-flow: column nowrap;
     align-items: center;
 
+    .browserBarTitleLink {
+      &:link, &:visited {
+        color: inherit;
+        text-decoration: none;
+      }
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
     h1 {
       /* By default we achieve vertical rendition of LTR TB scripts
        * by rotating the text, ensuring that typeface bottom
