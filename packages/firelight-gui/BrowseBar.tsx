@@ -14,8 +14,9 @@ import classNames from './style.module.css';
 
 
 interface BrowserBarProps {
+  /** Workspace title. */
   title: string;
-  //navigate?: (path: string) => void | undefined;
+  /** Domain-relative URL to workspace root. */
   rootURL: string;
   providerProps?: Omit<ProviderProps, 'children'>,
   loadProgress?: LoadProgress | true | undefined;
