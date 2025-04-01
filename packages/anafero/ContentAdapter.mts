@@ -148,6 +148,15 @@ export interface ContentAdapterModule {
   name: string;
   version: string;
 
+  /**
+   * Based on URI, returns the capability of generating content for it.
+   *
+   * If this returns false, describe() or generateContent()
+   * should not be called for this resource’s graph
+   * (some other content adapter should be used instead).
+   */
+  canGenerateContent: (uri: string) => boolean;
+
   // TODO: Support creating hierarchy when editing
   // - An API to generate a blank page with all requisite relations?
   // - or just leverage contentToRelations()? probably is enough

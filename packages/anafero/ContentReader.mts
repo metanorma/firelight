@@ -53,7 +53,7 @@ export interface ContentReader {
 type ContentReaderFactory = (
   entryPointURI: string,
   storeAdapters: StoreAdapterModule[],
-  contentAdapter: ContentAdapterModule,
+  findContentAdapter: (resourceURI: string) => ContentAdapterModule,
   // /** Whether content adapter thinks this should contribute to content. */
   //relationContributesToContent: (relation: ResourceRelation) => boolean,
   opts: {
@@ -84,9 +84,24 @@ type ContentReaderFactory = (
 export const makeContentReader: ContentReaderFactory = async function (
   entryPointURI,
   storeAdapters,
-  contentAdapter,
+  findContentAdapter,
   { fetchBlob, reportProgress, decodeXML, cache },
 ): Promise<ContentReader> {
+
+  /**
+   * Maps entry point URI which was given by the author
+   * to canonical URI obtained from the reader.
+   *
+   * If reader did not return a canonical URI,
+   * the entry point URI is considered such.
+   */
+  const canonicalURIs: Record<string, string> = {};
+
+  /** The reverse of ``canonicalURIs``. */
+  const originalURIs: Record<string, string> = {};
+
+  /** Maps each resource URI to respective content adapter. */
+  const contentAdapters: Record<string, ContentAdapterModule> = {};
 
   let totalPathCount = 0;
 
@@ -140,16 +155,24 @@ export const makeContentReader: ContentReaderFactory = async function (
       }
       doneRelationCount += triples.length;
       onProgress({ done: doneRelationCount, total: totalRelationCount });
+
+      //console.debug("Got relations from reader", triples, scopedTriples);
     }
 
     const reader = await startReader(entryPointURI);
     totalRelationCount += reader.estimateRelationCount();
 
+    const canonicalRootResourceURI =
+      reader.getCanonicalRootURI?.() ?? entryPointURI;
+
+    canonicalURIs[entryPointURI] = canonicalRootResourceURI;
+    originalURIs[canonicalRootResourceURI] = entryPointURI;
+
     onProgress({ total: totalRelationCount });
     reader.discoverAllResources(handleRelations, {
       onProgress: function (msg) {
         onProgress({
-          state: `${entryPointURI}->…->${msg}`,
+          state: `${decodeURIComponent(canonicalRootResourceURI)}->…->${msg}`,
         });
       }
     });
@@ -184,7 +207,11 @@ export const makeContentReader: ContentReaderFactory = async function (
     }
   }
 
-  function maybeGetPathComponent(relation: ResourceRelation) {
+  /**
+   * Returns a path component based on `relation` of `resourceURI`,
+   * if that relation should create hierarchy.
+   */
+  function maybeGetPathComponent(contentAdapter: ContentAdapterModule, relation: ResourceRelation) {
     if (!isURIString(relation.target) || contentAdapter.crossReferences?.(relation)) {
       // If this is not a relation to another resource but a primitive value,
       // it cannot generate hierarchy.
@@ -305,9 +332,16 @@ export const makeContentReader: ContentReaderFactory = async function (
    * Relies on result of processHierarchy().
    */
   function getResourceGraph(
-    resourceURI: string,
+    _resourceURI: string,
   ): Readonly<RelationGraphAsList> {
+    // Un-canonicalize entry point URI, if needed
+    const resourceURI = originalURIs[_resourceURI] ?? _resourceURI;
     if (!cache.has(`graphs/${resourceURI}`)) {
+      const contentAdapter = contentAdapters[resourceURI];
+      if (!contentAdapter) {
+        throw new Error("Resource does not have associated content adapter on record");
+      }
+
       //const resourcePath = cache.get<string>(`path-for/${resourceURI}`);
       const queue: string[] = [resourceURI];
       while (queue.length > 0) {
@@ -367,12 +401,15 @@ export const makeContentReader: ContentReaderFactory = async function (
    * under containing resource path.
    */
   function processResourceContents(
+    contentAdapter: ContentAdapterModule,
     resourceURI: string,
     containingResourcePath: string,
 
     /** Used for recursion, callers must not specify. */
     _seen?: Set<string>,
   ) {
+    contentAdapters[resourceURI] = contentAdapter;
+
     const seen = _seen ?? new Set<string>();
     cache.set({
       [`path-for/${resourceURI}`]: `${containingResourcePath}#${resourceURI}`,
@@ -388,7 +425,7 @@ export const makeContentReader: ContentReaderFactory = async function (
           //throw new Error(`Duplicate ${rel.predicate} to ${rel.target} from ${resourceURI} at ${containingResourcePath}`);
         } else {
           seen.add(key);
-          processResourceContents(rel.target, containingResourcePath, seen);
+          processResourceContents(contentAdapter, rel.target, containingResourcePath, seen);
         }
       }
     }
@@ -401,7 +438,7 @@ export const makeContentReader: ContentReaderFactory = async function (
    * that generated subpaths.
    *
    * For related resources that did not generate subpaths,
-   * their paths (with URI fragment) would be added to cache.
+   * their paths (with URI fragment) will be added to cache.
    */
   function processHierarchy(
     resourceURI: string,
@@ -411,6 +448,8 @@ export const makeContentReader: ContentReaderFactory = async function (
 
     onProgress: (msg: string) => void,
   ) {
+    const contentAdapter = findContentAdapter(canonicalURIs[resourceURI] ?? resourceURI);
+    contentAdapters[resourceURI] = contentAdapter;
 
     cache.add('all-paths', [pathPrefix]);
     cache.set({ [pathPrefix]: resourceURI });
@@ -444,7 +483,7 @@ export const makeContentReader: ContentReaderFactory = async function (
     }
 
     for (const rel of generateRelations(resourceURI)) {
-      const maybePathComponent = maybeGetPathComponent(rel);
+      const maybePathComponent = maybeGetPathComponent(contentAdapter, rel);
       if (maybePathComponent) {
         if (!isValidPathComponent(maybePathComponent)) {
           throw new Error("Generated path component is not valid");
@@ -456,10 +495,22 @@ export const makeContentReader: ContentReaderFactory = async function (
         // NOTE: Allow recursion, since no sane hierarchy
         // is expected to be too large for that to become an issue.
         processHierarchy(rel.target, newPath, onProgress);
-      } else {
-        processResourceContents(rel.target, pathPrefix);
+      } else if (isURIString(rel.target)) {
+        processResourceContents(contentAdapter, rel.target, pathPrefix);
       }
     }
+  }
+
+  function getCachedResourceURIForPath(path: string) {
+    const resourceURI = cache.get<string>(path);
+    if (!resourceURI) {
+      throw new Error("Unable to obtain resource URI for path");
+    }
+    const canonicalURI = canonicalURIs[resourceURI] ?? resourceURI;
+    //if (canonicalURI !== resourceURI) {
+    //  console.info("Got canonical URI", canonicalURI, 'for', resourceURI);
+    //}
+    return canonicalURI;
   }
 
   function * generateAllPaths(): Generator<{
@@ -475,22 +526,19 @@ export const makeContentReader: ContentReaderFactory = async function (
     directDescendants: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
   }> {
     for (const path of cache.iterate<string>('all-paths')) {
-      const resourceURI = cache.get<string>(path);
-      if (!resourceURI) {
-        throw new Error("Have path, but not its resource URI during processing");
-      }
+      const resourceURI = getCachedResourceURIForPath(path);
       yield {
         path,
         resourceURI,
         directDescendants: cache.has(`${path}/direct-descendants`)
           ? cache.list<string>(`${path}/direct-descendants`).map(path => {
-              const res = cache.get<string>(path);
+              const res = getCachedResourceURIForPath(path);
               return [`/${path}`, res, getResourceGraph(res)];
             })
           : [],
         parentChain: path !== ''
           ? cache.list<string>(`${path}/parents`).map(path => {
-              const res = cache.get<string>(path);
+              const res = getCachedResourceURIForPath(path);
               return [`/${path}`, res, getResourceGraph(res)];
             })
           : [],
@@ -538,15 +586,18 @@ export const makeContentReader: ContentReaderFactory = async function (
     if (!resourceURI.startsWith('file:')) {
       throw new Error("Cannot start reader for resource: only file: URIs are supported");
     }
+    //console.debug("starting reader for", resourceURI);
     const filePath = resourceURI.split('file:')[1]!;
     const blob = await fetchBlob(filePath);
     const validAdapters = storeAdapters.filter(mod =>
       mod.canResolve(resourceURI) && mod.readerFromBlob !== undefined);
     for (const mod of validAdapters) {
       try {
-        return (await mod.readerFromBlob!(blob, { decodeXML }))[1];
+        const reader = (await mod.readerFromBlob!(blob, { decodeXML }))[1];
+        //console.debug("using", mod.name);
+        return reader;
       } catch (e) {
-        console.warn("Failed to create resource reader for URI", mod.name, resourceURI);
+        //console.warn("Failed to create resource reader for URI", mod.name, resourceURI);
       }
     }
     throw new Error("Failed to initialize resource reader");
@@ -581,6 +632,7 @@ function joinFileURI(baseFileURI: string, fileURI: string): string {
   const dirname = baseFilePath.indexOf('/') >= 1
     ? baseFilePath.slice(0, baseFilePath.lastIndexOf('/'))
     : '';
+  //console.debug("joinFileURI", baseFileURI, filePath, fileURI, `file:${dirname}${dirname ? '/' : ''}${filePath}`);
   return filePath.startsWith('/')
     ? fileURI
     // ^ Treat given fileURI as root-relative
