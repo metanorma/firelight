@@ -940,7 +940,7 @@ export const VersionWorkspace: React.FC<{
           throw new Error("Can’t reverse next resource URI");
         }
       } catch (e) {
-        console.error("Failed to load next resource", e);
+        console.warn("Failed to load next resource", e);
       }
       if (nextResourceURI) {
         dispatch({ type: 'scrolled_next_resource_into_view', uri: nextResourceURI });
