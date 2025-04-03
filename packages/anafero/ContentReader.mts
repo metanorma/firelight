@@ -135,14 +135,26 @@ export const makeContentReader: ContentReaderFactory = async function (
     entryPointURI: string,
     onProgress: (prog: Progress) => void,
   ) {
+    function expandRelationTarget(relationTarget: string): string {
+      const isFileURI = relationTarget.startsWith('file:');
+      return isFileURI
+          // Since file URIs can be relative to each other,
+          // try joining target with current entry point
+          // (unless target starts with a slash).
+        ? joinFileURI(entryPointURI, relationTarget)
+        : relationTarget;
+    }
     function handleRelations(triples: readonly RelationTriple<any, any>[]) {
       //cache.add(`${entryPointURI}/edges`, triples);
       const subjectRelations: Record<string, ResourceRelation[]> = {};
-      for (const [s, predicate, target] of triples) {
-
+      for (const [s, predicate, t] of triples) {
         // Resource reader would indicate topmost relations
         // as being from the _:root blank node.
         const subject = s === ROOT_SUBJECT ? entryPointURI : s;
+
+        const target = expandRelationTarget(t);
+
+        console.debug("    Got relation", { s, subject, predicate, t, target });
 
         subjectRelations[subject] ??= [];
         subjectRelations[subject].push({ predicate, target });
@@ -155,9 +167,9 @@ export const makeContentReader: ContentReaderFactory = async function (
       }
       doneRelationCount += triples.length;
       onProgress({ done: doneRelationCount, total: totalRelationCount });
-
-      //console.debug("Got relations from reader", triples, scopedTriples);
     }
+
+    console.debug("=== Got entry point ===", entryPointURI);
 
     const reader = await startReader(entryPointURI);
     totalRelationCount += reader.estimateRelationCount();
@@ -184,17 +196,13 @@ export const makeContentReader: ContentReaderFactory = async function (
       for (const relation of cache.iterate<ResourceRelation>(`edges-from/${subject}`)) {
         if (isURIString(relation.target)) {
           if (!cache.has(`edges-from/${relation.target}`)) {
-            if (relation.target.startsWith('file:')) {
-              // Since file URIs can be relative to each other,
-              // try joining target with current entry point
-              // (unless target starts with a slash).
-              const fullFileURI = joinFileURI(entryPointURI, relation.target);
-
+            const isFileURI = relation.target.startsWith('file:');
+            if (isFileURI) {
               // Process this resource as new entry point.
               //
               // NOTE: Allow recursion here for now,
               // but re-assess if we have very deep reader chains.
-              processRelations(fullFileURI, onProgress);
+              processRelations(relation.target, onProgress);
             } else {
               // TODO: Implement storage adapter for for non-file: URIs
               //console.warn("Unable to follow relation", relation.target);
