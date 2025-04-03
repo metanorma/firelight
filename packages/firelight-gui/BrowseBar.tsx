@@ -47,7 +47,9 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
   useEffect(() => {
     setInitialRender(false);
   }, []);
+
   const showToolbar = onActivateBrowsingMode || activeBrowsingMode;
+
   useEffect(() => {
     if (loadProgress) {
       console.time("BrowserBar progress spinner");
