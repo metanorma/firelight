@@ -118,6 +118,14 @@ const mod: StoreAdapterModule = {
   readerFromBlob: async function (blob, helpers) {
     const dom = helpers.decodeXML(blob);
 
+    if (!(
+      dom.documentElement.tagName === 'metanorma'
+      && dom.documentElement.getAttribute('type') === 'presentation'
+      && dom.querySelector('bibdata docidentifier[primary="true"]')?.textContent
+    )) {
+      throw new Error("Not a valid Metanorma presentation XML file");
+    }
+
     return [
       [],
       {
