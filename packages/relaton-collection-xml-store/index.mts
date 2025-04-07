@@ -13,7 +13,7 @@ const mod: StoreAdapterModule = {
     const dom = helpers.decodeXML(blob);
 
     if (dom.documentElement.tagName !== 'relaton-collection') {
-      throw new Error("Not a Relaton collection");
+      throw new Error("Not a valid Relaton collection XML file");
     }
 
     const title = dom.querySelector('title')!.textContent!;
