@@ -263,7 +263,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
           //}
           return Object.entries(RESOURCE_DATA_PATHS).
             map(([propID, path]) =>
-              ({ [propID]: [rpath === '/' ? '' : rpath, path].join('/') })).
+              ({ [propID]: [stripTrailingSlash(rpath), path].join('/') })).
             reduce((prev, curr) =>
               ({ ...prev, ...curr }), {}
             ) as Record<keyof ResourceData, string>;
