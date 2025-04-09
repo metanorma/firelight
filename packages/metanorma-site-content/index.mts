@@ -20,12 +20,44 @@ import { coverBibdataSchema, clauseSchema } from './schema.mjs';
 import { resolveChain, findValue, findAll, findPartsOfType, relativeGraph, hasSubject } from './util.mjs';
 
 
-type AnnotationCallback = (
-  type: 'footnote',
-  nodes: ProseMirrorNode[],
-  id: string,
-  cue?: string,
-) => void
+/** Transforms given resource to ProseMirror node(s). */
+type NodeProcessorBase<T> = (
+  /** Subject URI of the root resource. */
+  resource: string,
+  /**
+   * Mutable state shared between node processors
+   * for non-locality.
+   * Non-locality is bad and best avoided.
+   * IMPORTANT: If you have to use it, keep lean and specific.
+   */
+  state: T,
+) => ProseMirrorNode | undefined | (ProseMirrorNode | undefined)[];
+// TODO: This union probably causes a lot of unnecessary checks…
+
+type NodeProcessor = NodeProcessorBase<NodeProcessorState>;
+
+interface NodeProcessorState {
+  annotations: {
+    /* Footnotes resource IDs mapped to footnote data. */
+    footnotes: Record<string, Footnote>;
+    /**
+     * Must be set before processing a container
+     * to which footnotes should be scoped
+     * (e.g. a table in case of PLATEAU documents),
+     * and unset after.
+     */
+    currentFootnoteScope: string | null;
+  };
+}
+
+interface Footnote {
+  /** Body of footnote. */
+  content: ProseMirrorNode[];
+  /** Cue in the text. */
+  cue?: string;
+  /** How many times this footnote had been referenced so far. */
+  referenceCount: number;
+}
 
 
 function getCurrentLanguage(doc: Readonly<RelationGraphAsList>): string | undefined {
@@ -194,13 +226,13 @@ const generatorsByType: Record<string, ContentGenerator> = {
      * Processes content for a list, wrapping non-list-item nodes
      * (e.g., notes) in list items.
      */
-    function makeListContents(subj: string, onAnnotation?: AnnotationCallback) {
+    function makeListContents(subj: string, state: NodeProcessorState) {
       const parts = findAll(section, subj, 'hasPart');
       const contents: ProseMirrorNode[] = [];
       for (const part of parts) {
         const type = findValue(section, part, 'type');
         if (type) {
-          const maybeNodes = makeNodeOrNot(part, type, onAnnotation);
+          const maybeNodes = makeNodeOrNot(part, type, state);
           const maybeNode = (Array.isArray(maybeNodes))
             ? maybeNodes[0]
             : maybeNodes;
@@ -230,22 +262,14 @@ const generatorsByType: Record<string, ContentGenerator> = {
      * and referenced from the contents, providing the callback
      * with annotation type (e.g., footnote), nodes, and a unique reference.
      */
-    const customNodes: Record<
-      string,
-      (
-        subj: string,
-        onAnnotation?: AnnotationCallback,
-      // TODO: Allowing to return a single item or a list may
-      // be causing a lot of unnecessary checks…
-      ) => ProseMirrorNode | undefined | (ProseMirrorNode | undefined)[]
-    > = {
-      'unorderedList': (subj, onAnnotation) => {
-        return pm.node('bullet_list', { resourceID: subj }, makeListContents(subj, onAnnotation));
+    const customNodes: Record<string, NodeProcessor> = {
+      'unorderedList': (subj, state) => {
+        return pm.node('bullet_list', { resourceID: subj }, makeListContents(subj, state));
       },
-      'orderedList': (subj, onAnnotation) => {
-        return pm.node('ordered_list', { resourceID: subj }, makeListContents(subj, onAnnotation));
+      'orderedList': (subj, state) => {
+        return pm.node('ordered_list', { resourceID: subj }, makeListContents(subj, state));
       },
-      'paragraph': (subj, onAnnotation) => {
+      'paragraph': (subj, state) => {
         const nodes: ProseMirrorNode[] = [];
 
         let paragraphCounter = 0;
@@ -266,7 +290,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
               // This part is a nested element
               const partType = findValue(section, currentPart, 'type');
               if (partType) {
-                const nodes = makeNodeOrNot(currentPart, partType, onAnnotation);
+                const nodes = makeNodeOrNot(currentPart, partType, state);
                 for (const node of (Array.isArray(nodes) ? nodes : [nodes]).filter(n => n !== undefined)) {
                   paragraphContents.push(node);
                 }
@@ -292,7 +316,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           const partType = findValue(section, part, 'type');
           if (partType && blockNodesNestedInParagraphs.includes(partType)) {
             flushParagraph();
-            const _blockNodes = customNodes[partType]!(part, onAnnotation);
+            const _blockNodes = customNodes[partType]!(part, state);
             const blockNodes = Array.isArray(_blockNodes)
               ? _blockNodes
               : [_blockNodes];
@@ -307,14 +331,14 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
         return nodes;
       },
-      'fmt-link': (subj: string) => {
+      'fmt-link': (subj: string, state) => {
         const target = findValue(section, subj, 'hasTarget');
         if (!target) {
           console.warn("Cannot create a link without target/href");
           return undefined;
         }
         if (target.startsWith('http')) {
-          return pm.node('external_link', { href: target }, generateContent(subj, pm.nodes.external_link!));
+          return pm.node('external_link', { href: target }, generateContent(subj, pm.nodes.external_link!, state));
         } else {
           console.warn("Unexpected link target!", target);
           return undefined;
@@ -324,7 +348,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         const mathML = findValue(section, subj, 'hasMathML');
         return pm.node('math', { mathML });
       },
-      'formula': (subj: string) => {
+      'formula': (subj: string, state) => {
         const mathSubj = findPartsOfType(section, subj, 'stem')[0];
         if (!mathSubj) {
           return undefined;
@@ -336,12 +360,12 @@ const generatorsByType: Record<string, ContentGenerator> = {
         ];
         if (caption) {
           figureContents.push(
-            pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!)),
+            pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!, state)),
           );
         }
         return pm.node('figure', { resourceID: subj }, figureContents);
       },
-      'sourcecode': (subj: string) => {
+      'sourcecode': (subj: string, state) => {
         const formattedSource = findValue(section, subj, 'hasFormattedSource');
         if (!formattedSource) {
           console.error("Sourcecode lacks formatted source");
@@ -353,7 +377,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           content.push(pm.node(
             'figCaption',
             null,
-            generateContent(captionID, pm.nodes.figCaption!),
+            generateContent(captionID, pm.nodes.figCaption!, state),
           ));
         }
         return pm.node(
@@ -363,7 +387,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         );
       },
 
-      'fmt-xref': (subj: string) => {
+      'fmt-xref': (subj: string, state) => {
         const target = findValue(section, subj, 'hasTarget');
         if (!target) {
           console.warn("Cannot create a resource link without target/href");
@@ -372,13 +396,13 @@ const generatorsByType: Record<string, ContentGenerator> = {
         return pm.node(
           'resource_link',
           { href: target },
-          generateContent(subj, pm.nodes.resource_link!));
+          generateContent(subj, pm.nodes.resource_link!, state));
       },
       // 'xref': function (subj: string, onAnnotation) {
       //   return this['fmt-xref']!(subj, onAnnotation);
       // },
 
-      'term': function (subj, onAnnotation) {
+      'term': function (subj, state) {
         const xrefLabel = findPartsOfType(section, subj, 'fmt-xref-label')[0];
         const preferred = findPartsOfType(section, subj, 'fmt-preferred')[0];
         const preferredContents = preferred
@@ -391,23 +415,23 @@ const generatorsByType: Record<string, ContentGenerator> = {
           return undefined;
         }
 
-        const definitionContent = generateContent(definition, pm.nodes.definition!, onAnnotation);
+        const definitionContent = generateContent(definition, pm.nodes.definition!, state);
         const notes = findPartsOfType(section, subj, 'termnote');
-        definitionContent.push(...notes.flatMap(subj => this['note']!(subj, onAnnotation)).filter(n => n !== undefined));
+        definitionContent.push(...notes.flatMap(subj => this['note']!(subj, state)).filter(n => n !== undefined));
 
         const content = [
           pm.node('term', { preferred: true },
             preferredContents.
-              flatMap(subj => generateContent(subj, pm.nodes.term!, onAnnotation))),
+              flatMap(subj => generateContent(subj, pm.nodes.term!, state))),
           pm.node('definition', null, definitionContent),
         ];
         if (xrefLabel) {
-          content.splice(0, 0, pm.node('termXrefLabel', null, generateContent(xrefLabel, pm.nodes.termXrefLabel!)));
+          content.splice(0, 0, pm.node('termXrefLabel', null, generateContent(xrefLabel, pm.nodes.termXrefLabel!, state)));
         }
 
         const sources = findPartsOfType(section, subj, 'fmt-termsource');
         content.push(...sources.map(subj =>
-          pm.node('termSource', null, generateContent(subj, pm.nodes.termSource!, onAnnotation))
+          pm.node('termSource', null, generateContent(subj, pm.nodes.termSource!, state))
         ));
 
         return pm.node(
@@ -416,7 +440,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           content,
         );
       },
-      'example': (subj, onAnnotation) => {
+      'example': (subj, state) => {
         //const caption = findValue(section, subj, 'hasFmtName');
         const captionParts = findPartsOfType(section, subj, 'fmt-name');
 
@@ -425,7 +449,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         for (const part of findAll(section, subj, 'hasPart')) {
           const type = findValue(section, part, 'type');
           if (type) {
-            const node = makeNodeOrNot(part, type, onAnnotation);
+            const node = makeNodeOrNot(part, type, state);
             const nodes = Array.isArray(node) ? node : [node];
             for (const node of nodes.filter(n => n !== undefined)) {
               contents.push(node);
@@ -439,14 +463,14 @@ const generatorsByType: Record<string, ContentGenerator> = {
             captionParts.flatMap(part => generateContent(
               part,
               pm.nodes.figCaption!,
-              onAnnotation,
+              state,
             )),
           ));
         }
         // We will wrap the example in a figure.
         return pm.node('example', { resourceID: subj }, contents);
       },
-      'note': (subj, onAnnotation) => {
+      'note': (subj, state) => {
         const tags = ['note'];
         const type = findValue(section, subj, 'hasType') ?? '';
         if (type) {
@@ -459,7 +483,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           filter(([, partType]) => {
             return partType && ['fmt-xref-label', 'fmt-name'].indexOf(partType) < 0;
           }).
-          flatMap(([part, partType]) => makeNodeOrNot(part!, partType!, onAnnotation)).
+          flatMap(([part, partType]) => makeNodeOrNot(part!, partType!, state)).
           filter(n => n !== undefined);
 
         const xrefLabels = findPartsOfType(section, subj, 'fmt-xref-label');
@@ -468,14 +492,14 @@ const generatorsByType: Record<string, ContentGenerator> = {
           contents.splice(0, 0, pm.node(
             'xrefLabel',
             null,
-            generateContent(xrefLabel, pm.nodes.xrefLabel!),
+            generateContent(xrefLabel, pm.nodes.xrefLabel!, state),
           ));
         }
 
         return pm.node('admonition', { resourceID: subj, tags }, contents);
       },
       'tab': () => pm.text('	'),
-      'footnote': (subj, onAnnotation) => {
+      'footnote': (subj, state) => {
         const cue = findValue(section, subj, 'hasReference');
         if (!cue) {
           console.error("Cannot create a footnote without reference");
@@ -487,38 +511,45 @@ const generatorsByType: Record<string, ContentGenerator> = {
         // In MN XML, footnotes have no IDs. We assign them an ID here
         // based on the cue. It’s not great, since this ID isn’t reflected
         // in the graph
-        const footnoteContent = generateContent(subj, 'block', onAnnotation);
+        const footnoteContent = generateContent(subj, 'block', state);
         const hash = sha256();
         footnoteContent.map(node => hash.add(node.textContent.toString()));
-        const scope = footnoteScope();
-        // Append a parenthesis to turn Metanorma-given “a” into “a)”
+        const scope = state.annotations.currentFootnoteScope;
+        // Append a closing parenthesis to turn Metanorma-given “a” into “a)”
         const formattedCue = `${cue})`;
         const scopedCue = scope ? `${scope}: ${formattedCue}` : formattedCue;
         const madeUpDOMID = `${encodeURIComponent(scopedCue)}-${hash.digest().hex()}`;
-        onAnnotation?.(
-          'footnote',
-          footnoteContent,
-          madeUpDOMID,
-          scopedCue,
-        );
+
+        if (!state.annotations.footnotes[madeUpDOMID]) {
+          state.annotations.footnotes[madeUpDOMID] = {
+            cue: scopedCue,
+            content: footnoteContent,
+            referenceCount: 1,
+          };
+        } else {
+          state.annotations.footnotes[madeUpDOMID]!.referenceCount += 1;
+        }
+
+        const refCount = state.annotations.footnotes[madeUpDOMID]!.referenceCount;
+
         return pm.node(
           'footnote_cue',
-          { resourceID: madeUpDOMID },
+          { resourceID: `${madeUpDOMID}-${refCount}` },
           [
             // This is wrong, but works around current MN XML footnote behavior
             // It will cause warnings during generation, because any href
             // is supposed to be either an external link or point to a resource
-            pm.node('resource_link', { href: `#${madeUpDOMID}` }, [pm.text(formattedCue)])
+            pm.node('resource_link', { href: `#${madeUpDOMID}` }, [pm.text(formattedCue)]),
           ],
         );
       },
-      'table': function (subj, onAnnotation) {
+      'table': function (subj, state) {
         const caption = findValue(section, subj, 'hasFmtName');
         //const caption = name ? findValue(section, name, 'hasPart') : null;
 
         const xrefLabel = findValue(section, subj, 'hasFmtXrefLabel');
         const xrefLabelContent = xrefLabel
-          ? generateContent(xrefLabel, pm.nodes.xrefLabel!)
+          ? generateContent(xrefLabel, pm.nodes.xrefLabel!, state)
           : null;
         const newFootnoteScope = xrefLabelContent
           ? xrefLabelContent.map(n => n.textContent).join('')
@@ -561,7 +592,9 @@ const generatorsByType: Record<string, ContentGenerator> = {
           }
         }
 
-        if (newFootnoteScope) { footnoteScope(newFootnoteScope); }
+        if (newFootnoteScope) {
+          state.annotations.currentFootnoteScope = newFootnoteScope;
+        }
         tableContents.push(...rows.map(rowID =>
           pm.node(
             'table_row',
@@ -579,12 +612,14 @@ const generatorsByType: Record<string, ContentGenerator> = {
                   colspan: findValue(section, cellID, 'hasColspan'),
                   rowspan: findValue(section, cellID, 'hasRowspan'),
                 },
-                generateContent(cellID, pm.nodes.table_cell!, onAnnotation),
+                generateContent(cellID, pm.nodes.table_cell!, state),
               )
             ),
           )
         ));
-        if (newFootnoteScope) { footnoteScope(null); }
+        if (newFootnoteScope) {
+          state.annotations.currentFootnoteScope = null;
+        }
 
         if (tableContents.length < 1) {
           return undefined;
@@ -596,7 +631,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
             tableContents),
         ];
         if (caption) {
-          contents.splice(0, 0, pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!, onAnnotation)));
+          contents.splice(0, 0, pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!, state)));
         }
 
         // TODO: Direct paragraph descendants not allowed by the spec?
@@ -604,17 +639,17 @@ const generatorsByType: Record<string, ContentGenerator> = {
         if (paragraphs.length > 0) {
           // NOTE: If there are nodes not allowed by table node spec intermingled
           // then it will fail to create the table.
-          contents.push(...paragraphs.flatMap(subj => this['paragraph']!(subj, onAnnotation)).filter(n => n !== undefined));
+          contents.push(...paragraphs.flatMap(subj => this['paragraph']!(subj, state)).filter(n => n !== undefined));
         }
         // TODO: Direct source descendants not allowed by the spec?
         const sources = findAll(section, subj, 'hasSource');
         if (sources.length > 0) {
-          contents.push(...sources.flatMap(subj => this['paragraph']!(subj, onAnnotation)).filter(n => n !== undefined));
+          contents.push(...sources.flatMap(subj => this['paragraph']!(subj, state)).filter(n => n !== undefined));
         }
 
         const notes = findAll(section, subj, 'hasNote');
         if (notes.length > 0) {
-          contents.push(...notes.flatMap(subj => this['note']!(subj, onAnnotation)).filter(n => n !== undefined));
+          contents.push(...notes.flatMap(subj => this['note']!(subj, state)).filter(n => n !== undefined));
         }
 
         // We will wrap the table in a figure, because PM’s default tables
@@ -727,7 +762,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
     function makeNodeOrNot(
       subj: string,
       subjType: string,
-      onAnnotation?: AnnotationCallback,
+      state: NodeProcessorState,
     ):
     ProseMirrorNode | undefined | (ProseMirrorNode | undefined)[] {
       //console.debug(subj, subjType);
@@ -738,7 +773,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           console.error("No node defined in schema", nodeID);
           return undefined;
         }
-        const content = generateContent(subj, nodeType, onAnnotation);
+        const content = generateContent(subj, nodeType, state);
         return pm.node(
           nodeID,
           { resourceID: subj },
@@ -755,7 +790,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         //  return undefined;
         //}
       } else if (customNodes[subjType]) {
-        return customNodes[subjType](subj, onAnnotation);
+        return customNodes[subjType](subj, state);
       } else {
         return undefined;
       }
@@ -763,7 +798,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
     function generateContent(
       subject: string,
       subjectNodeType: ProseMirrorNodeType | 'block' | 'inline',
-      onAnnotation?: AnnotationCallback,
+      state: NodeProcessorState,
     ): ProseMirrorNode[] {
       const allSubparts: ProseMirrorNode[] =
       // TODO: subject is really only used to resolve relations,
@@ -800,7 +835,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           // Test against every type relation of this subject,
           // and take the first for which we can create a node.
           for (const type of types) {
-            const maybeNode = makeNodeOrNot(partValue, type, onAnnotation);
+            const maybeNode = makeNodeOrNot(partValue, type, state);
             if (maybeNode) {
               //if (canCreate(maybeNode, subjectNodeType)) {
               if (Array.isArray(maybeNode)) {
@@ -886,41 +921,53 @@ const generatorsByType: Record<string, ContentGenerator> = {
       throw new Error("Cannot generate clause: missing title");
     }
 
+    const processorState: NodeProcessorState = {
+      annotations: {
+        footnotes: {},
+        currentFootnoteScope: null,
+      },
+    };
+
     const title = findPartsOfType(section, ROOT_SUBJECT, 'fmt-title')[0];
     const titleContent = title
-      ? generateContent(title, pm.nodes.title!)
+      ? generateContent(title, pm.nodes.title!, processorState)
       : undefined;
 
-    // FIXME: Too hacky and global-y
-    let currentFootnoteScope: null | string = null;
-    function footnoteScope(subj?: string | undefined | null) {
-      if (subj !== undefined) {
-        currentFootnoteScope = subj;
-      } else {
-        return currentFootnoteScope;
-      }
-      return;
-    }
+    // // FIXME: Too hacky and global-y
+    // let currentFootnoteScope: null | string = null;
+    // function footnoteScope(subj?: string | undefined | null) {
+    //   if (subj !== undefined) {
+    //     currentFootnoteScope = subj;
+    //   } else {
+    //     return currentFootnoteScope;
+    //   }
+    //   return;
+    // }
 
     type FootnoteNode = ProseMirrorNode & { type: 'footnote' }
-    // Footnote nodes mapped to resource IDs
-    const footnotes: Record<string, FootnoteNode> = {};
-    const handleAnnotation: AnnotationCallback =
-    function handleAnnotation (type, nodes, resourceID, cue) {
-      // For now there are no other types of annotations,
-      // so no need to compare `type`
-      footnotes[resourceID] =
-        pm.node('footnote', { resourceID, cue }, nodes) as FootnoteNode;
+    //// Footnote nodes mapped to resource IDs
+    //const footnotes: Record<string, FootnoteNode> = {};
+    function makeFootnote(resourceID: string, footnote: Footnote): ProseMirrorNode {
+      return pm.node(
+        'footnote',
+        { resourceID, cue: footnote.cue },
+        footnote.content,
+      ) as FootnoteNode;
     }
 
     const docContents = generateContent(
       ROOT_SUBJECT,
       pm.nodes.doc!,
-      handleAnnotation,
+      processorState,
     );
 
-    if (Object.keys(footnotes).length > 0) {
-      docContents.push(pm.node('footnotes', null, Object.values(footnotes)));
+    if (Object.keys(processorState.annotations.footnotes).length > 0) {
+      docContents.push(pm.node(
+        'footnotes',
+        null,
+        Object.entries(processorState.annotations.footnotes).
+        map(([id, fn]) => makeFootnote(id, fn)),
+      ));
     }
 
     //const clauses = makeTableOfClauses(section);

@@ -106,7 +106,10 @@ const clauseSchemaBase = new Schema({
           },
           ['a', { href: 'javascript: void 0;', name: node.attrs.resourceID, id: node.attrs.resourceID, class: classNames.footnoteCue }, node.attrs.cue],
           ['div', { class: classNames.footnoteBody }, 0],
-          ['a', { href: `#footnote-cue-${node.attrs.resourceID}` }, '⤴︎'],
+
+          // Always go back to the first reference, even if the footnote
+          // was referenced multiple times.
+          ['a', { href: `#footnote-cue-${node.attrs.resourceID}-1` }, '⤴︎'],
         ];
       }
     },
