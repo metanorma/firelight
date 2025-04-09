@@ -229,7 +229,7 @@ const mod: StoreAdapterModule = {
                 ];
               },
               semx: 'bypass',
-              eref: 'bypass',
+              eref: 'ignore',
               origin: 'ignore',
               source: 'bypass',
               title: function processTitle(el, getURI) {
