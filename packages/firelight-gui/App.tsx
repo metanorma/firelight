@@ -257,7 +257,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     !locateResource
       ? undefined
       : function getResourceDataPaths(uri: string): Record<keyof ResourceData, string> {
-          const rpath = locateResource(uri).split('#')[0];
+          const rpath = locateResource(uri).split('#')[0]!;
           //if (rpath.includes('#')) {
           //  throw new Error("Will not return data asset paths for a resource that does not have its own page");
           //}
