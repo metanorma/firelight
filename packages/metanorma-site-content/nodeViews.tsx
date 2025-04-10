@@ -69,7 +69,11 @@ const ResourceLinkView: NodeViews[string] = React.forwardRef(function ResourceLi
     return;
   }, [resolvedHref, children]);
 
-  return <a ref={ref} href={resolvedHref ?? href}>{resourceRepr}</a>;
+  return <a
+    ref={ref}
+    href={resolvedHref ?? href}
+    download={nodeProps.node.attrs?.download ?? undefined}
+  >{resourceRepr}</a>;
 });
 
 
