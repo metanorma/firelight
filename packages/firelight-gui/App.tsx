@@ -48,7 +48,7 @@ export const BrowsingContext = createContext({
 /** Files shared between all versions. */
 const SHARED_DEPS = [
   '/versions.json',
-];
+] as const;
 type SharedDeps = Record<typeof SHARED_DEPS[number], any>;
 
 /** Version-wide data. */
