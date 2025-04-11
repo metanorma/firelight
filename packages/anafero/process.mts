@@ -450,16 +450,24 @@ export async function * generateVersion(
       if (o.startsWith('file:')) {
         // Some resource on the page is referencing a file.
         const filePath = o.split('file:')[1]!;
-        const filename = encodeURIComponent(filePath);
+        const filename = o.replaceAll('/', '_').replaceAll(':', '_');
         // Unless it was seen before, add to assets and resource map.
         // encodeURIComponent should preserve original filename extension.
         if (!assetsToWrite[filename]) {
-          assetsToWrite[filename] = await fetchBlobAtThisVersion(filePath);
-          resourceGraph.push([resourceURI, 'isDownloadableAt', filename]);
-          resourceMap[filename] = o;
-          resourceDescriptions[o] = {
-            labelInPlainText: filePath,
-          };
+          try {
+            assetsToWrite[filename] = await fetchBlobAtThisVersion(filePath);
+            resourceGraph.push([
+              o,
+              'isDownloadableAt',
+              filename,
+            ]);
+            resourceMap[filename] = o;
+            resourceDescriptions[o] = {
+              labelInPlainText: filePath,
+            };
+          } catch (e) {
+            console.error("Failed to fetch asset", filePath);
+          }
         }
       }
     }
