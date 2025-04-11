@@ -556,6 +556,9 @@ export const makeContentReader: ContentReaderFactory = async function (
 }
 
 
+// Utils
+
+
 function isValidPathComponent(val: string): boolean {
   return val.indexOf('/') < 0 && val.indexOf(':') < 0 && val.indexOf('#') < 0;
 }
