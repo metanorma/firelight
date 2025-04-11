@@ -916,10 +916,10 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
     const pm = clauseSchema;
 
-    const labelInPlainText = getSectionPlainTitle(section);
-    if (!labelInPlainText) {
-      throw new Error("Cannot generate clause: missing title");
-    }
+    const labelInPlainText = getSectionPlainTitle(section) ?? 'untitled clause';
+    //if (!labelInPlainText) {
+    //  throw new Error("Cannot generate clause: missing title");
+    //}
 
     const processorState: NodeProcessorState = {
       annotations: {
