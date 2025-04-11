@@ -204,10 +204,13 @@ export const makeContentReader: ContentReaderFactory = async function (
     if (maybeContributingRelations.length > 0) {
       // Resolve chains that start with this relation’s predicate 
       // relative to resource being considered
-      return resolvePredicateChainsToFirstValue(
+      const result = resolvePredicateChainsToFirstValue(
         relation.target,
         maybeContributingRelations,
       );
+      return result
+        ? result.replaceAll(':', '_').replaceAll('/', '_')
+        : result;
     }
 
     return null;
@@ -449,10 +452,9 @@ export const makeContentReader: ContentReaderFactory = async function (
         if (!isValidPathComponent(maybePathComponent)) {
           throw new Error("Generated path component is not valid");
         }
-        const encodedComponent = maybePathComponent.replace(':', '_');
         const newPath = pathPrefix
-          ? `${pathPrefix}/${encodedComponent}`
-          : encodedComponent;
+          ? `${pathPrefix}/${maybePathComponent}`
+          : maybePathComponent;
         // NOTE: Allow recursion, since no sane hierarchy
         // is expected to be too large for that to become an issue.
         processHierarchy(rel.target, newPath, onProgress);
@@ -555,7 +557,7 @@ export const makeContentReader: ContentReaderFactory = async function (
 
 
 function isValidPathComponent(val: string): boolean {
-  return val.indexOf('/') < 0 && val.indexOf('#') < 0;
+  return val.indexOf('/') < 0 && val.indexOf(':') < 0 && val.indexOf('#') < 0;
 }
 
 
