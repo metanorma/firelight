@@ -521,9 +521,26 @@ export const coverBibdataSchema = new Schema({
       },
     },
     docMeta: {
-      content: 'primaryDocID edition pubDate author',
+      content: 'primaryDocID edition pubDate author resource_link*',
       toDOM() {
         return ['div', { class: classNames.docMeta }, 0];
+      },
+    },
+    resource_link: {
+      attrs: {
+        href: {},
+        download: {
+          default: false,
+        },
+      },
+      content: 'text*',
+      toDOM(node) {
+        return ['a', {
+          href: node.attrs.href,
+          ...(node.attrs.download
+            ? { download: node.attrs.download }
+            : {}),
+        }, 0];
       },
     },
     primaryDocID: {
