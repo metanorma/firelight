@@ -410,7 +410,7 @@ export async function * generateVersion(
     reportProgress('build page content', { total: totalPaths, done });
   const hierarchicalResources = reader.generatePaths();
   for (const { path, resourceURI, parentChain, directDescendants } of hierarchicalResources) {
-    console.debug("Got resource", resourceURI, path);
+    //console.debug("Got resource", resourceURI, path);
 
     let contentAdapter: ContentAdapterModule;
     try {
