@@ -94,8 +94,8 @@ function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | 
   const plainTitles = plainTitleIDs.map(id =>
     findAll(section, id, 'hasPart').join(' '));
 
-  return plainTitles[0]
-    ? `${clauseNumber ?? ''}${clauseNumber ? '  ' : ''}${plainTitles[0]}`
+  return (plainTitles[0] || clauseNumber)
+    ? `${clauseNumber ?? ''}${clauseNumber ? '  ' : ''}${plainTitles[0] ?? ''}`
     : undefined;
 }
 
