@@ -190,8 +190,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
     if (!currentLanguage) {
       throw new Error("Cannot generate document: missing current language");
     }
-    return generateCoverPage(currentLanguage, docid)
-      (relativeGraph(doc, bibdataID), helpers);
+    return generateCoverPage(
+      currentLanguage,
+      docid,
+      findAll(doc, ROOT_SUBJECT, 'hasAlternative'),
+    )(relativeGraph(doc, bibdataID), helpers);
   },
 
   section: function generateSection (section) {
@@ -1019,8 +1022,9 @@ const generatorsByType: Record<string, ContentGenerator> = {
 // }
 
 
-const generateCoverPage: (lang: string, docid: string) => ContentGenerator =
-(currentLanguage, primaryDocid) => function (bibdata) {
+const generateCoverPage:
+(lang: string, docid: string, dlLinks: string[]) => ContentGenerator =
+(currentLanguage, primaryDocid, dlLinks) => function (bibdata) {
   const titles = resolveChain(bibdata, ['hasTitle', 'hasPart']);
   const plainMainTitles = titles.filter(([titleID, ]) =>
     findValue(bibdata, titleID, 'hasType') === 'main' &&
@@ -1081,6 +1085,17 @@ const generateCoverPage: (lang: string, docid: string) => ContentGenerator =
         pm.node('edition', null, [pm.text(edition)]),
         pm.node('pubDate', null, [pm.text(pubDate)]),
         pm.node('author', null, [pm.text(author)]),
+        ...dlLinks.map(href =>
+          pm.node(
+            'resource_link',
+            {
+              href,
+              download:
+                `${primaryDocid}${href.slice(href.lastIndexOf('.'))}`,
+            },
+            pm.text(href.slice(href.lastIndexOf('.'))),
+          )
+        ),
       ]),
       pm.node('mainTitle', null, [pm.text(mainTitleInCurrentLanguage[1])]),
       // The rest of the main titles, excluding the main one
