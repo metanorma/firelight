@@ -88,8 +88,9 @@ function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | 
 
   const parts = resolveChain(section, ['hasPart', 'type'], ROOT_SUBJECT);
 
-  const plainTitleIDs = parts.filter(([pID, type]) => type === 'title').
-    map(([pID]) => pID);
+  const plainTitleIDs = parts.
+  filter(([pID, type]) => type === 'title' || type === 'fmt-title').
+  map(([pID]) => pID);
   const plainTitles = plainTitleIDs.map(id =>
     findAll(section, id, 'hasPart').join(' '));
 
