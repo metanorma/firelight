@@ -768,6 +768,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
       subj: string,
       subjType: string,
       state: NodeProcessorState,
+      /**
+       * If provided, only include parts for which this returns true.
+       * Recursively passed down.
+       */
+      partPredicate?: (partValue: string, partType?: string) => boolean,
     ):
     ProseMirrorNode | undefined | (ProseMirrorNode | undefined)[] {
       //console.debug(subj, subjType);
@@ -778,7 +783,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           console.error("No node defined in schema", nodeID);
           return undefined;
         }
-        const content = generateContent(subj, nodeType, state);
+        const content = generateContent(subj, nodeType, state, partPredicate);
         return pm.node(
           nodeID,
           { resourceID: subj },
@@ -804,6 +809,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
       subject: string,
       subjectNodeType: ProseMirrorNodeType | 'block' | 'inline',
       state: NodeProcessorState,
+      /**
+       * If provided, only include parts for which this returns true.
+       * Recursively passed down.
+       */
+      partPredicate?: (partValue: string, partType?: string) => boolean,
     ): ProseMirrorNode[] {
       const allSubparts: ProseMirrorNode[] =
       // TODO: subject is really only used to resolve relations,
@@ -813,6 +823,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
         // TODO: Don’t rely on urn: prefix when determining subjectness
         if (!isURIString(partValue)) {
           // Part itself is not a subject, so treat as text.
+
+          if (partPredicate && !partPredicate(partValue)) {
+            return [undefined];
+          }
+
           if (partValue.trim() !== '') {
             return [pm.text(partValue)];
             //if (subjectNodeType.inlineContent) {
@@ -840,7 +855,10 @@ const generatorsByType: Record<string, ContentGenerator> = {
           // Test against every type relation of this subject,
           // and take the first for which we can create a node.
           for (const type of types) {
-            const maybeNode = makeNodeOrNot(partValue, type, state);
+            if (partPredicate && !partPredicate(partValue, type)) {
+              continue;
+            }
+            const maybeNode = makeNodeOrNot(partValue, type, state, partPredicate);
             if (maybeNode) {
               //if (canCreate(maybeNode, subjectNodeType)) {
               if (Array.isArray(maybeNode)) {
