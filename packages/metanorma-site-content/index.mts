@@ -212,7 +212,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'strong': 'strong',
       'bookmark': 'anchor',
 
-      'dl': 'definition_list',
+      //'dl': 'definition_list',
       'dd': 'dd',
       'dt': 'dt',
       'br': 'linebreak',
@@ -335,6 +335,28 @@ const generatorsByType: Record<string, ContentGenerator> = {
         flushParagraph();
 
         return nodes;
+      },
+      'dl': function (subj, state): (ProseMirrorNode | undefined)[] {
+        const nodeID = 'definition_list';
+        const nodeType = pm.nodes[nodeID]!;
+        const maybeNoteSubject = findPartsOfType(section, subj, 'note')[0];
+        const content = generateContent(
+          subj,
+          nodeType,
+          state,
+          maybeNoteSubject
+            ? ((part) => part !== maybeNoteSubject)
+            : undefined);
+        return [
+          pm.node(
+            nodeID,
+            { resourceID: subj },
+            content,
+          ),
+          ...(maybeNoteSubject
+            ? [this['note']!(maybeNoteSubject, state)].flat()
+            : []),
+        ];
       },
       'fmt-link': (subj: string, state) => {
         const target = findValue(section, subj, 'hasTarget');
