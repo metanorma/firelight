@@ -806,7 +806,12 @@ export const VersionWorkspace: React.FC<{
   const pageMap: Record<string, string> = useMemo(
     function computePageMap () {
       const pageMap = { ...resourceMap };
-      for (const key of Object.keys(pageMap).filter(p => p.includes('#'))) {
+      for (const key of Object.keys(pageMap).filter(p =>
+          // Exclude in-page resources from page map
+          p.includes('#')
+          // TODO: Find a better way to exclude static files from page map
+          // This can have both false negatives and false positives
+          || p.includes('.'))) {
         delete pageMap[key];
       }
       return pageMap;
