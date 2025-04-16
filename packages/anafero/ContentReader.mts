@@ -453,6 +453,7 @@ export const makeContentReader: ContentReaderFactory = async function (
       const maybePathComponent = maybeGetPathComponent(rel);
       if (maybePathComponent) {
         if (!isValidPathComponent(maybePathComponent)) {
+          console.error("Generated path component is not valid", maybePathComponent, rel);
           throw new Error("Generated path component is not valid");
         }
         const newPath = pathPrefix
@@ -549,12 +550,15 @@ export const makeContentReader: ContentReaderFactory = async function (
       mod.canResolve(resourceURI) && mod.readerFromBlob !== undefined);
     for (const mod of validAdapters) {
       try {
-        return (await mod.readerFromBlob!(blob, { decodeXML }))[1];
+        //console.debug("trying", mod.name, resourceURI);
+        const reader = (await mod.readerFromBlob!(blob, { decodeXML }))[1];
+        //console.debug("using", mod.name, resourceURI);
+        return reader;
       } catch (e) {
-        console.warn("Failed to create resource reader for URI", mod.name, resourceURI);
+        //console.warn("Failed to create resource reader for URI", mod.name, resourceURI, e);
       }
     }
-    throw new Error("Failed to initialize resource reader");
+    throw new Error(`Failed to initialize resource reader for ${resourceURI}`);
   }
 }
 
