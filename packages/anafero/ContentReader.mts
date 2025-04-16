@@ -151,7 +151,7 @@ export const makeContentReader: ContentReaderFactory = async function (
         onProgress({
           state: `${entryPointURI}->…->${msg}`,
         });
-      }
+      },
     });
 
     // Init storage adapters for any newly related targets and read them
