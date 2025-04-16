@@ -311,6 +311,9 @@ export const makeContentReader: ContentReaderFactory = async function (
     resourceURI: string,
   ): Readonly<RelationGraphAsList> {
     if (!cache.has(`graphs/${resourceURI}`)) {
+
+      // Ensure there is an empty graph
+      cache.add(`graphs/${resourceURI}`, []);
       //const resourcePath = cache.get<string>(`path-for/${resourceURI}`);
       const queue: string[] = [resourceURI];
       while (queue.length > 0) {
