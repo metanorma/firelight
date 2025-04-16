@@ -9,6 +9,7 @@ import {
   type RelationGraphAsList,
   titleSchema,
   ROOT_SUBJECT,
+  isURIString,
 } from 'anafero/index.mjs';
 
 import nodeViews from './nodeViews.jsx';
@@ -810,7 +811,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       resolveChain(section, ['hasPart'], subject).
       flatMap(([, partValue]) => {
         // TODO: Don’t rely on urn: prefix when determining subjectness
-        if (!partValue.startsWith('urn:')) {
+        if (!isURIString(partValue)) {
           // Part itself is not a subject, so treat as text.
           if (partValue.trim() !== '') {
             return [pm.text(partValue)];
