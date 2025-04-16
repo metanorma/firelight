@@ -354,6 +354,7 @@ export const makeContentReader: ContentReaderFactory = async function (
 
       const contentAdapter = contentAdapters[resourceURI];
       if (!contentAdapter) {
+        console.error("Resource does not have associated content adapter on record", resourceURI);
         throw new Error("Resource does not have associated content adapter on record");
       }
 
