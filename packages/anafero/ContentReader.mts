@@ -97,11 +97,18 @@ export const makeContentReader: ContentReaderFactory = async function (
    */
   const canonicalURIs: Record<string, string> = {};
 
-  /** The reverse of ``canonicalURIs``. */
+  /**
+   * More or less, the reverse of ``canonicalURIs``,
+   * except the orignial URI here would be expanded
+   * (for file URIs).
+   */
   const originalURIs: Record<string, string> = {};
 
   /** Maps each resource URI to respective content adapter. */
   const contentAdapters: Record<string, ContentAdapterModule> = {};
+
+  /** Maps entry point URI to respective resource reader. */
+  const resourceReaders: Record<string, ResourceReader> = {};
 
   let totalPathCount = 0;
 
@@ -114,9 +121,13 @@ export const makeContentReader: ContentReaderFactory = async function (
     relationsProgress(null);
 
     const [hierarchyProgress] = reportProgress('prepare site structure');
-    processHierarchy(entryPointURI, '', function reportHierarchyProgress(state) {
-      hierarchyProgress({ state });
-    });
+    processHierarchy(
+      canonicalURIs[entryPointURI] ?? entryPointURI,
+      '',
+      function reportHierarchyProgress(state) {
+        hierarchyProgress({ state });
+      },
+    );
     hierarchyProgress(null);
   }
 
@@ -134,60 +145,129 @@ export const makeContentReader: ContentReaderFactory = async function (
   async function processRelations(
     entryPointURI: string,
     onProgress: (prog: Progress) => void,
+
+    /** Entry points that were already processed. */
+    _seenEntryPoints?: Set<string>,
   ) {
-    function expandRelationTarget(relationTarget: string): string {
-      const isFileURI = relationTarget.startsWith('file:');
-      return isFileURI
-          // Since file URIs can be relative to each other,
-          // try joining target with current entry point
-          // (unless target starts with a slash).
-        ? joinFileURI(entryPointURI, relationTarget)
-        : relationTarget;
+    const seenEntryPoints = _seenEntryPoints ?? new Set<string>();
+
+    /**
+     * Given an URI of some relation target,
+     * - expands it if it’s relative to current entry point path
+     *   (the logic is different depending on whether it’s
+     *   a local file: URI or not),
+     * - attempts to start a resource reader
+     *   (for supported URIs, currently file: only),
+     *   if successful:
+     *   - obtains a canonical URI from resource reader
+     *   - caches resource reader,
+     *     stores expanded original URI & canonical URI
+     *     in respective maps,
+     * - returns expanded version of the URI
+     */
+    async function expandURI(
+      /** Must be an URI string, not a plain value. */
+      uri: string,
+    ): Promise<string> {
+
+      const originalURI = originalURIs[uri];
+      // ^ In case this URI was expanded before
+
+      const isFileURI = (originalURI ?? uri).startsWith('file:');
+
+      //console.debug("Expanding URI", uri, originalURI, entryPointURI);
+      let expanded;
+      if (isFileURI) {
+        // Make URI relative to data repo root.
+        const fullFileURI = originalURI ?? (entryPointURI === uri
+          ? (originalURI ?? uri)
+            // Since file URIs can be relative to each other,
+            // try joining target with current entry point
+            // (unless target starts with a slash).
+          : joinFileURI(entryPointURI, uri));
+        // Initialize reader, cache it and canonical/original URI
+        try {
+          resourceReaders[fullFileURI] ??= await startReader(fullFileURI);
+          const canonicalRootResourceURI =
+            resourceReaders[fullFileURI]?.getCanonicalRootURI?.() ?? uri;
+          canonicalURIs[fullFileURI] = canonicalRootResourceURI;
+          originalURIs[canonicalRootResourceURI] = fullFileURI;
+          expanded = canonicalRootResourceURI;
+        } catch (e) {
+          // If unable to start a reader, just return the expanded URI.
+          expanded = fullFileURI;
+        }
+      } else {
+        // It’s unclear whether there are other URIs that can be expanded.
+        // Technically, a relative HTTP URL is not an URI
+        // since it lacks the scheme.
+
+        // This mangles a URI that can be only unique within
+        // this entry point to a URI that is globally unique
+        // across the whole site
+        // by adding entry point URI.
+        expanded = `${uri}---${entryPointURI}`;
+        // XXX: https://github.com/metanorma/firelight/issues/80
+      }
+      return expanded;
     }
+
+    const subjectRelations: Record<string, ResourceRelation[]> = {};
+
+    /**
+     * Handles a chunk of relations from resource reader.
+     * Basically, populates `subjectRelations`.
+     */
     function handleRelations(triples: readonly RelationTriple<any, any>[]) {
-      //cache.add(`${entryPointURI}/edges`, triples);
-      const subjectRelations: Record<string, ResourceRelation[]> = {};
       for (const [s, predicate, t] of triples) {
         // Resource reader would indicate topmost relations
         // as being from the _:root blank node.
         const subject = s === ROOT_SUBJECT ? entryPointURI : s;
+        const target = t;
 
-        const target = expandRelationTarget(t);
-
-        console.debug("    Got relation", { s, subject, predicate, t, target });
+        //console.debug("Got relation", { s, subject, predicate, t, target });
 
         subjectRelations[subject] ??= [];
         subjectRelations[subject].push({ predicate, target });
-
-        cache.add(`edges-from/${subject}/${predicate}`, [target]);
-      }
-      for (const [subject, relations] of Object.entries(subjectRelations)) {
-        cache.add(`edges-from/${subject}`, relations);
-        cache.add(`${entryPointURI}/subjects`, [subject]);
       }
       doneRelationCount += triples.length;
       onProgress({ done: doneRelationCount, total: totalRelationCount });
     }
 
-    console.debug("=== Got entry point ===", entryPointURI);
+    const canonicalURI = await expandURI(entryPointURI);
+    const originalURI = originalURIs[canonicalURI] ?? canonicalURI;
+    const reader = resourceReaders[originalURI];
 
-    const reader = await startReader(entryPointURI);
-    totalRelationCount += reader.estimateRelationCount();
+    if (reader) {
+      totalRelationCount += reader.estimateRelationCount();
 
-    const canonicalRootResourceURI =
-      reader.getCanonicalRootURI?.() ?? entryPointURI;
+      onProgress({ total: totalRelationCount });
+      reader.discoverAllResources(handleRelations, {
+        onProgress: function (msg) {
+          onProgress({
+            state: `${decodeURIComponent(canonicalURI)}->…->${msg}`,
+          });
+        }
+      });
+    }
 
-    canonicalURIs[entryPointURI] = canonicalRootResourceURI;
-    originalURIs[canonicalRootResourceURI] = entryPointURI;
+    // Process accumulated subjectRelations into cache
 
-    onProgress({ total: totalRelationCount });
-    reader.discoverAllResources(handleRelations, {
-      onProgress: function (msg) {
-        onProgress({
-          state: `${decodeURIComponent(canonicalRootResourceURI)}->…->${msg}`,
-        });
-      },
-    });
+    for (const [subject, relations] of Object.entries(subjectRelations)) {
+      delete subjectRelations[subject];
+      const expandedSubject = await expandURI(subject);
+      const expandedRelations = [];
+      for (const { predicate, target } of relations) {
+        let expandedTarget: string;
+        expandedTarget = isURIString(target)
+          ? await expandURI(target)
+          : target;
+        cache.add(`edges-from/${expandedSubject}/${predicate}`, [expandedTarget]);
+        expandedRelations.push({ predicate, target: expandedTarget });
+      }
+      cache.add(`edges-from/${expandedSubject}`, expandedRelations);
+      cache.add(`${entryPointURI}/subjects`, [expandedSubject]);
+    }
 
     // Init storage adapters for any newly related targets and read them
     // recursively
@@ -195,20 +275,39 @@ export const makeContentReader: ContentReaderFactory = async function (
       // Bad time complexity…
       for (const relation of cache.iterate<ResourceRelation>(`edges-from/${subject}`)) {
         if (isURIString(relation.target)) {
-          if (!cache.has(`edges-from/${relation.target}`)) {
-            const isFileURI = relation.target.startsWith('file:');
+          // It could be an entry point.
+          if (!seenEntryPoints.has(relation.target)) {
+          //if (!cache.has(`edges-from/${relation.target}`)) {
+            seenEntryPoints.add(relation.target);
+            const originalURI = originalURIs[relation.target] ?? relation.target;
+            const isFileURI = originalURI.startsWith('file:');
             if (isFileURI) {
-              // Process this resource as new entry point.
-              //
-              // NOTE: Allow recursion here for now,
-              // but re-assess if we have very deep reader chains.
-              processRelations(relation.target, onProgress);
-            } else {
-              // TODO: Implement storage adapter for for non-file: URIs
-              //console.warn("Unable to follow relation", relation.target);
-              cache.add('unresolved-relations', [[subject, relation.predicate, relation.target]]);
-              //cache.add(`unresolved-relations-from/${subject}`, [relation]);
+              if (resourceReaders[originalURI]) {
+                // Process this resource as new entry point.
+                //
+                // NOTE: Allow recursion here for now,
+                // but re-assess if we have very deep reader chains.
+                await processRelations(
+                  relation.target,
+                  onProgress,
+                  seenEntryPoints,
+                );
+              } else {
+                // TODO: Implement storage adapter for for non-file: URIs
+                //console.warn("Unable to follow relation", relation.target);
+                cache.add(
+                  'unresolved-relations',
+                  [[subject, relation.predicate, relation.target]],
+                );
+                //cache.add(`unresolved-relations-from/${subject}`, [relation]);
+                console.debug(
+                  "Not processing relations for",
+                  relation.target,
+                  originalURI);
+              }
             }
+          } else {
+            console.debug("URI relation is seen again", relation.target);
           }
         }
       }
@@ -343,10 +442,8 @@ export const makeContentReader: ContentReaderFactory = async function (
    * Relies on result of processHierarchy().
    */
   function getResourceGraph(
-    _resourceURI: string,
+    resourceURI: string,
   ): Readonly<RelationGraphAsList> {
-    // Un-canonicalize entry point URI, if needed
-    const resourceURI = originalURIs[_resourceURI] ?? _resourceURI;
     if (!cache.has(`graphs/${resourceURI}`)) {
 
       // Ensure there is an empty graph
@@ -362,6 +459,7 @@ export const makeContentReader: ContentReaderFactory = async function (
       const queue: string[] = [resourceURI];
       while (queue.length > 0) {
         const currentResource = queue.pop()!;
+        //const currentResource = originalURIs[_currentResource] ?? currentResource;
         if (!cache.has(`edges-from/${currentResource}`)) {
           //console.warn("No graph for", currentResource);
           if (entryPointURI === currentResource) {
@@ -464,12 +562,15 @@ export const makeContentReader: ContentReaderFactory = async function (
 
     onProgress: (msg: string) => void,
   ) {
-    const contentAdapter = findContentAdapter(canonicalURIs[resourceURI] ?? resourceURI);
-    contentAdapters[resourceURI] = contentAdapter;
+    //console.debug("processHierarchy", resourceURI, canonicalURIs[resourceURI]);
+
+    const canonicalURI = canonicalURIs[resourceURI] ?? resourceURI;
+    const contentAdapter = findContentAdapter(canonicalURI);
+    contentAdapters[canonicalURI] = contentAdapter;
 
     cache.add('all-paths', [pathPrefix]);
-    cache.set({ [pathPrefix]: resourceURI });
-    cache.set({ [`path-for/${resourceURI}`]: pathPrefix });
+    cache.set({ [pathPrefix]: canonicalURI });
+    cache.set({ [`path-for/${canonicalURI}`]: pathPrefix });
 
     onProgress(`${pathPrefix ?? '/'}: ${resourceURI}`);
 
@@ -498,7 +599,7 @@ export const makeContentReader: ContentReaderFactory = async function (
       });
     }
 
-    for (const rel of generateRelations(resourceURI)) {
+    for (const rel of generateRelations(canonicalURI)) {
       const maybePathComponent = maybeGetPathComponent(contentAdapter, rel);
       if (maybePathComponent) {
         if (!isValidPathComponent(maybePathComponent)) {
