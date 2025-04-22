@@ -275,6 +275,12 @@ const mod: StoreAdapterModule = {
               preface: 'bypass',
               sections: 'bypass',
               bibliography: 'bypass',
+
+              'boilerplate': 'bypass',
+              'copyright-statement': 'bypass',
+              'legal-statement': 'bypass',
+              'feedback-statement': 'bypass',
+
               'metanorma-extension': 'ignore',
               'localized-strings': 'ignore',
               'presentation-metadata': 'ignore',
