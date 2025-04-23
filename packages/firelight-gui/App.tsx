@@ -853,6 +853,7 @@ export const VersionWorkspace: React.FC<{
   const isLoading = loadingResources.length > 0;
 
   // Scroll to selected subresource
+  // NOTE: Why don’t we do it in nodeView instead?
   useLayoutEffect(() => {
     if (!isLoading && resourceContainerElement && queuedFragment) {
       function scrollToResource() {
