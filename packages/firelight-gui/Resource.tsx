@@ -48,6 +48,14 @@ export const ResourceHelmet: React.FC<ResourceMetadata> = function (props) {
 
 
 export interface ResourceProps extends ResourceData {
+
+  /**
+   * URI of the resource represented by the page.
+   * Tentatively obsolete, do not use.
+   */
+  uri: string;
+  // TODO: Remove?
+
   'aria-selected'?: boolean;
   className?: string;
   useDependency: SyncDependencyGetter;
@@ -55,7 +63,6 @@ export interface ResourceProps extends ResourceData {
   reverseResource: (resourcePath: string) => string | undefined;
   getResourcePlainTitle: (uri: string) => string;
   selectedLayout: { name: string, layout: Layout };
-  uri: string;
   //content: AdapterGeneratedResourceContent;
   document: Document,
   onIntegrityViolation: (rel: RelationTriple<string, string>, msg: string) => void;
