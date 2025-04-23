@@ -209,11 +209,14 @@
       border-collapse: collapse;
       border: var(--table-border);
 
-      /* Some trickery to make border radius possible (for now unused) */
+      /* Some trickery to make border radius possible (for now unused)
       overflow: hidden;
       outline: 1px solid;
       outline-offset: -1px;
       outline-color: var(--spectrum-alias-border-color);
+      */
+
+      overflow: visible;
 
       font-size: 16px;
 
