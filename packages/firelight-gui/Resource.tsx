@@ -84,6 +84,7 @@ export interface ResourceProps extends ResourceData {
 
   /** For ProseMirror rendering purposes. */
   document: Document,
+
   onIntegrityViolation: (rel: RelationTriple<string, string>, msg: string) => void;
 
   /** Ref of the container div. */
@@ -95,9 +96,6 @@ export interface ResourceProps extends ResourceData {
 const reactKeysPlugin = reactKeys();
 
 
-/**
- * Renders a single resource view.
- */
 export const Resource = React.forwardRef(function ({
   className,
   requestedResourceURI,
@@ -115,6 +113,7 @@ export const Resource = React.forwardRef(function ({
     content.content?.contentSchemaID ?? '',
     adapter);
 
+  /** Pre-rendered HTML is only used as fallback. */
   const preRenderedHTML = useMemo(() => {
     const preRenderingContent = content.content;
     let doc: ProseMirrorNode | undefined;
@@ -168,7 +167,8 @@ export const Resource = React.forwardRef(function ({
     };
   }, [graph, adapter, locateResource]);
 
-  // Editor state only has effect for fetched (not pre-rendered) content
+  // Editor state only has effect for client-rendered content.
+  // If this fails, pre-rendered HTML is used.
   const initialState = useMemo(() =>
     content.content?.contentDoc && schema
       ? EditorState.create({
