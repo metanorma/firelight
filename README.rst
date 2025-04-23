@@ -108,7 +108,22 @@ Architecture
     between certain source (currently, a blob in Git repository)
     and a set of resource relations.
 
-  - Content adapter module: determines how resources form website hierarchy.
+  - Content adapter module: determines how resources create the website.
+
+    One key aspect is distinguishing between relations
+    that 1) form site hierarchy (e.g., document X contains section Y),
+    2) form page hierarchy (e.g., section Y has title foobar),
+    or 3) cross-reference resources without regard for hierarchy
+    (e.g., link A has target resource M).
+
+    .. note:: This will probably be done instead through a custom ontology
+              and thus become a responsibility of store adapter,
+              which would have to output relations using that ontology.
+
+    Another key aspect is defining PM schema for page content
+    and transforming relations to page content & vice-versa.
+
+    .. note:: This will likely become the sole aspect of content adapter.
 
   - Layout module: allows some custom CSS to control resource rendering.
 
