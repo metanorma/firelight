@@ -74,7 +74,6 @@ export interface ResourceProps extends ResourceData {
   reverseResource: (resourcePath: string) => string | undefined;
   getResourcePlainTitle: (uri: string) => string;
   selectedLayout: { name: string, layout: Layout };
-  //content: AdapterGeneratedResourceContent;
 
   /** For ProseMirror rendering purposes. */
   document: Document,
