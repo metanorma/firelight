@@ -15,23 +15,25 @@ const makeResourceNodeView:
   const elID = nodeProps.node.attrs?.resourceID
     ? encodeURIComponent(nodeProps.node.attrs.resourceID)
     : undefined;
+
   const resourceID = nodeProps.node.attrs?.resourceID;
 
-  const maybeClassName: string | undefined = nodeProps.node.attrs?.className;
-  const maybeActiveSubresourceClassName: string | null | undefined =
+  const maybeClassName: string = nodeProps.node.attrs?.className ?? '';
+
+  const isActive: boolean | undefined =
     resourceID && navCtx.requestedResourceURI
       ? navCtx.requestedResourceURI === resourceID
-        ? classNames.activeSubresource
-        : null
       : undefined;
 
-  const className: string = `
-    ${maybeClassName ?? ''}
-    ${maybeActiveSubresourceClassName ?? ''}
+  const maybeActiveSubresourceClassName: string =
+    isActive === true
+      ? classNames.activeSubresource
+      : '';
+
+  const effectiveClassName = `
+    ${maybeClassName}
+    ${maybeActiveSubresourceClassName}
   `;
-  const extraProps = maybeClassName
-    ? { className: maybeClassName }
-    : {};
 
   // NB: Using focusVisible can supersede both assigning a className
   // and the necessity to scrollIntoView for the active resource:
@@ -65,8 +67,7 @@ const makeResourceNodeView:
       ref={ref}
       id={elID}
       about={resourceID}
-      {...extraProps}
-      className={className}>
+      className={effectiveClassName}>
     {children}
   </Tag>;
 });
