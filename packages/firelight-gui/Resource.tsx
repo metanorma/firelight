@@ -69,7 +69,6 @@ export interface ResourceProps extends ResourceData {
   // TODO: Remove?
 
   'aria-selected'?: boolean;
-  className?: string;
   useDependency: SyncDependencyGetter;
   locateResource: (uri: string) => string;
   reverseResource: (resourcePath: string) => string | undefined;
@@ -81,6 +80,7 @@ export interface ResourceProps extends ResourceData {
 
   /** Ref of the container div. */
   ref?: (element: HTMLDivElement) => void;
+  className?: string | undefined;
 }
 
 
