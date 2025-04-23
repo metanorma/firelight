@@ -11,7 +11,9 @@ import patchLunr from './lunrPatch.mjs';
 patchLunr();
 
 
-getExtensionImports().then(setUpExtensionImportMap).then(initApp);
+getExtensionImports().
+then(setUpExtensionImportMap).
+then(initApp);
 
 
 function initApp () {
