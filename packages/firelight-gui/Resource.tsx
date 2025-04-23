@@ -75,6 +75,9 @@ export interface ResourceProps extends ResourceData {
    */
   requestedResourceURI?: string | undefined;
   // TODO: Move to context?
+
+  searchQueryText?: string | undefined;
+
   'aria-selected'?: boolean;
   useDependency: SyncDependencyGetter;
   locateResource: (uri: string) => string;
