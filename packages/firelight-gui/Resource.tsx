@@ -31,8 +31,20 @@ import classNames from './style.module.css';
 
 
 export interface ResourceData {
+  /**
+   * Relations comprising this resource.
+   *
+   * That is, relations from this resource, recursively,
+   * but stopping when it comes to references
+   * to resources elsewhere in the hierarchy tree.
+   *
+   * See also: cross-referencing relations.
+   */
   graph: Readonly<RelationGraphAsList>;
+
+  /** Representation of relations as content. */
   content: AdapterGeneratedResourceContent;
+
   nav: ResourceNav;
 }
 
