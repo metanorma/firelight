@@ -255,8 +255,8 @@ export interface ContentAdapterModule {
 
   /**
    * Determines what constitutes a cross-reference: a relation that does not
-   * include target as content or hierarchy, but instead points to another
-   * resource anywhere in hierarchy.
+   * include the target as content or hierarchy, but instead points to another
+   * resource, which can be outside in hierarchy.
    */
   crossReferences?: (
     relation: ResourceRelation,
