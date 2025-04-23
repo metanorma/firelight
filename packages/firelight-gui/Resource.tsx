@@ -75,6 +75,8 @@ export interface ResourceProps extends ResourceData {
   getResourcePlainTitle: (uri: string) => string;
   selectedLayout: { name: string, layout: Layout };
   //content: AdapterGeneratedResourceContent;
+
+  /** For ProseMirror rendering purposes. */
   document: Document,
   onIntegrityViolation: (rel: RelationTriple<string, string>, msg: string) => void;
 
