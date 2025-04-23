@@ -68,6 +68,13 @@ export interface ResourceProps extends ResourceData {
   uri: string;
   // TODO: Remove?
 
+  /**
+   * URI of a resource described within the graph.
+   * Only provided when client-rendering. Used in cases
+   * like following cross-references or searching.
+   */
+  requestedResourceURI?: string | undefined;
+  // TODO: Move to context?
   'aria-selected'?: boolean;
   useDependency: SyncDependencyGetter;
   locateResource: (uri: string) => string;
@@ -93,6 +100,7 @@ const reactKeysPlugin = reactKeys();
  */
 export const Resource = React.forwardRef(function ({
   className,
+  requestedResourceURI,
   useDependency, locateResource, document,
   getResourcePlainTitle: resolvePlainTitle,
   selectedLayout: layout,
@@ -244,7 +252,11 @@ export const Resource = React.forwardRef(function ({
 
   const mainView = somethingStillLoading || typeof window?.document?.createElement === 'undefined'
     ? fallback
-    : <ResourceNavigationContext.Provider value={{ locateResource, resolvePlainTitle }}>
+    : <ResourceNavigationContext.Provider value={{
+        locateResource,
+        resolvePlainTitle,
+        requestedResourceURI,
+      }}>
         <ErrorBoundaryWithCustomFallback fallback={fallback}>
           <ProseMirror
               defaultState={initialState!}

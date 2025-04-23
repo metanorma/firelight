@@ -26,6 +26,26 @@
   width: 75%;
 }
 
+.activeSubresource {
+  /* Note: keep consistent with focused footnote,
+   * for as long as focused footnotes do not utilize the same mechanism. */
+  outline-style: auto;
+  outline-offset: 2px;
+  background: var(--spectrum-accent-color-300);
+  outline-color: var(--spectrum-alias-focus-color);
+
+  background: var(--spectrum-accent-color-300);
+
+  &::before {
+    content: "→";
+    font-weight: bold;
+    width: 1em;
+    margin-left: -1em;
+    display: inline-block;
+    color: var(--spectrum-alias-focus-ring-color);
+  }
+}
+
 p.extraTitle {
   text-align: left;
   /* Since extra title is optional, bottom margin should be the same as main title.

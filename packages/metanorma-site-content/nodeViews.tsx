@@ -10,18 +10,34 @@ const makeResourceNodeView:
   children,
   nodeProps,
 }, ref) {
+  const navCtx = React.useContext(ResourceNavigationContext);
+
   const elID = nodeProps.node.attrs?.resourceID
     ? encodeURIComponent(nodeProps.node.attrs.resourceID)
     : undefined;
-  const maybeClassName = nodeProps.node.attrs?.className;
+  const resourceID = nodeProps.node.attrs?.resourceID;
+
+  const maybeClassName: string | undefined = nodeProps.node.attrs?.className;
+  const maybeActiveSubresourceClassName: string | null | undefined =
+    resourceID && navCtx.requestedResourceURI
+      ? navCtx.requestedResourceURI === resourceID
+        ? classNames.activeSubresource
+        : null
+      : undefined;
+
+  const className: string = `
+    ${maybeClassName ?? ''}
+    ${maybeActiveSubresourceClassName ?? ''}
+  `;
   const extraProps = maybeClassName
     ? { className: maybeClassName }
     : {};
   return <Tag
       ref={ref}
       id={elID}
-      about={nodeProps.node.attrs?.resourceID}
-      {...extraProps}>
+      about={resourceID}
+      {...extraProps}
+      className={className}>
     {children}
   </Tag>;
 });
