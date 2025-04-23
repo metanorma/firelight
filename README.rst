@@ -133,8 +133,8 @@ Architecture
 Known issues
 ------------
 
-- Language support is limited, for now just Japanese, English
-  and possibly French work.
+- Language support is limited. For now, tested with Japanese, English.
+  The elements of the GUI are only in English for now.
 
 - GHA only: LFS resolution for version other than current may be broken.
   It is required to specify ``with: { lfs: true }`` for the checkout step,
