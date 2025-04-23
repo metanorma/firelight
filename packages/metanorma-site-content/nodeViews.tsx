@@ -32,6 +32,35 @@ const makeResourceNodeView:
   const extraProps = maybeClassName
     ? { className: maybeClassName }
     : {};
+
+  // NB: Using focusVisible can supersede both assigning a className
+  // and the necessity to scrollIntoView for the active resource:
+  //
+  //     const maybeActive: boolean | undefined =
+  //       resourceID && navCtx.requestedResourceURI
+  //         ? navCtx.requestedResourceURI === resourceID
+  //         : undefined;
+  //     const [elRef, setEl] = React.useState<HTMLElement | null>(null);
+  //     const elRefSetter = React.useCallback(
+  //       (el: HTMLElement | null) => setEl(el ?? null),
+  //       []);
+  //     React.useImperativeHandle(ref, () => elRef, [elRef]);
+  //     React.useEffect(() => {
+  //       if (maybeActive && elRef) {
+  //         (elRef.focus as any)({ focusVisible: true });
+  //       }
+  //       return;
+  //     }, [maybeActive, elRef]);
+  //
+  // However, it doesn’t work as expected
+  // with random non-input/non-link elements.
+  //
+  // It might be possible to make it work by inserting an anchor child
+  // and focusing THAT instead (and styling parent by way of ::focus-within),
+  // but that has not been tried yet.
+  //
+  // (Extra element can interfere with editing mode?)
+
   return <Tag
       ref={ref}
       id={elID}
