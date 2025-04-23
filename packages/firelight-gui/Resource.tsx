@@ -48,7 +48,6 @@ export const ResourceHelmet: React.FC<ResourceMetadata> = function (props) {
 
 
 export interface ResourceProps extends ResourceData {
-  ref?: (element: HTMLDivElement) => void;
   'aria-selected'?: boolean;
   className?: string;
   useDependency: SyncDependencyGetter;
@@ -60,6 +59,9 @@ export interface ResourceProps extends ResourceData {
   //content: AdapterGeneratedResourceContent;
   document: Document,
   onIntegrityViolation: (rel: RelationTriple<string, string>, msg: string) => void;
+
+  /** Ref of the container div. */
+  ref?: (element: HTMLDivElement) => void;
 }
 
 
