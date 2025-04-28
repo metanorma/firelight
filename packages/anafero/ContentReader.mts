@@ -179,23 +179,28 @@ export const makeContentReader: ContentReaderFactory = async function (
       let expanded;
       if (isFileURI) {
         // Make URI relative to data repo root.
-        const fullFileURI = originalURI ?? (entryPointURI === uri
-          ? (originalURI ?? uri)
-            // Since file URIs can be relative to each other,
-            // try joining target with current entry point
-            // (unless target starts with a slash).
-          : joinFileURI(entryPointURI, uri));
+        //
+        // Since file URIs can be relative to each other,
+        // try joining target with current entry point
+        // (unless target starts with a slash).
+        //
+        // If originalURI is recorded already, then this was already done.
+        const normalizedFileURI = originalURI ?? normalizeFileURI(
+          uri,
+          uri === entryPointURI ? undefined : entryPointURI,
+        );
         // Initialize reader, cache it and canonical/original URI
         try {
-          resourceReaders[fullFileURI] ??= await startReader(fullFileURI);
+          resourceReaders[normalizedFileURI] ??=
+            await startReader(normalizedFileURI);
           const canonicalRootResourceURI =
-            resourceReaders[fullFileURI]?.getCanonicalRootURI?.() ?? uri;
-          canonicalURIs[fullFileURI] = canonicalRootResourceURI;
-          originalURIs[canonicalRootResourceURI] = fullFileURI;
+            resourceReaders[normalizedFileURI]?.getCanonicalRootURI?.() ?? uri;
+          canonicalURIs[normalizedFileURI] = canonicalRootResourceURI;
+          originalURIs[canonicalRootResourceURI] = normalizedFileURI;
           expanded = canonicalRootResourceURI;
         } catch (e) {
           // If unable to start a reader, just return the expanded URI.
-          expanded = fullFileURI;
+          expanded = normalizedFileURI;
         }
       } else {
         // It’s unclear whether there are other URIs that can be expanded.
@@ -293,16 +298,16 @@ export const makeContentReader: ContentReaderFactory = async function (
                   seenEntryPoints,
                 );
               } else {
-                //console.warn("Unable to follow relation", relation.target);
+                console.warn("Unable to follow relation", relation.target, originalURI);
                 cache.add(
                   'unresolved-relations',
                   [[subject, relation.predicate, relation.target]],
                 );
                 //cache.add(`unresolved-relations-from/${subject}`, [relation]);
-                console.debug(
-                  "Not processing relations for",
-                  relation.target,
-                  originalURI);
+                //console.debug(
+                //  "Not processing relations for",
+                //  relation.target,
+                //  originalURI);
               }
             } else {
               // TODO: Implement storage adapter for for non-file: URIs
@@ -743,18 +748,35 @@ function isValidPathComponent(val: string): boolean {
  *
  * Guarantees to return a `file:` URI or throw.
  */
-function joinFileURI(baseFileURI: string, fileURI: string): string {
+function normalizeFileURI(
+  rawFileURI: string,
+  baseFileURI?: string | undefined,
+): string {
+  const fileURI = rawFileURI.startsWith('./')
+    ? rawFileURI.split('./')[1]!
+    : rawFileURI;
+
+  if (fileURI.startsWith('./') || fileURI.startsWith('../')) {
+    throw new Error("Malformed file URI");
+  }
+
+  if (baseFileURI === undefined) {
+    return fileURI;
+  }
+
   const baseFilePath = baseFileURI.startsWith('file:')
     ? baseFileURI.split('file:')[1]
     : undefined;
+
   if (!baseFilePath) {
-    throw new Error("Trying to expand a file: URI, but respective entry point is not using that scheme");
+    throw new Error("Trying to normalize a file: URI, but base URI is not using that scheme");
   }
+
   const filePath = fileURI.split('file:')[1]!;
   const dirname = baseFilePath.indexOf('/') >= 1
     ? baseFilePath.slice(0, baseFilePath.lastIndexOf('/'))
     : '';
-  //console.debug("joinFileURI", baseFileURI, filePath, fileURI, `file:${dirname}${dirname ? '/' : ''}${filePath}`);
+  //console.debug("normalizeFileURI", baseFileURI, filePath, fileURI, `file:${dirname}${dirname ? '/' : ''}${filePath}`);
   return filePath.startsWith('/')
     ? fileURI
     // ^ Treat given fileURI as root-relative
