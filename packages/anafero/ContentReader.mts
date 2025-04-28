@@ -293,7 +293,6 @@ export const makeContentReader: ContentReaderFactory = async function (
                   seenEntryPoints,
                 );
               } else {
-                // TODO: Implement storage adapter for for non-file: URIs
                 //console.warn("Unable to follow relation", relation.target);
                 cache.add(
                   'unresolved-relations',
@@ -305,6 +304,8 @@ export const makeContentReader: ContentReaderFactory = async function (
                   relation.target,
                   originalURI);
               }
+            } else {
+              // TODO: Implement storage adapter for for non-file: URIs
             }
           } else {
             console.debug("URI relation is seen again", relation.target);
