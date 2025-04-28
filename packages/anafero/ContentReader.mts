@@ -737,6 +737,13 @@ function isValidPathComponent(val: string): boolean {
 }
 
 
+function unprefixLocalPath(filePath: string): string {
+  return filePath.startsWith('./')
+    ? filePath.split('./')[1]!
+    : filePath;
+}
+
+
 /**
  * Given two `file:` URIs, makes a new one where
  * they are joined, unless the second one starts with slash in which
@@ -749,37 +756,36 @@ function isValidPathComponent(val: string): boolean {
  * Guarantees to return a `file:` URI or throw.
  */
 function normalizeFileURI(
-  rawFileURI: string,
+  fileURI: string,
   baseFileURI?: string | undefined,
 ): string {
-  const fileURI = rawFileURI.startsWith('./')
-    ? rawFileURI.split('./')[1]!
-    : rawFileURI;
+  const normalizedPath = unprefixLocalPath(fileURI.split('file:')[1]!);
 
-  if (fileURI.startsWith('./') || fileURI.startsWith('../')) {
-    throw new Error("Malformed file URI");
+  if (normalizedPath.startsWith('./') || normalizedPath.startsWith('../')) {
+    throw new Error("Malformed path in file URI");
   }
+
+  const normalizedURI = `file:${normalizedPath}`;
 
   if (baseFileURI === undefined) {
-    return fileURI;
+    return normalizedURI;
   }
 
-  const baseFilePath = baseFileURI.startsWith('file:')
-    ? baseFileURI.split('file:')[1]
+  const basePath = baseFileURI.startsWith('file:')
+    ? unprefixLocalPath(baseFileURI.split('file:')[1]!)
     : undefined;
 
-  if (!baseFilePath) {
+  if (!basePath) {
     throw new Error("Trying to normalize a file: URI, but base URI is not using that scheme");
   }
 
-  const filePath = fileURI.split('file:')[1]!;
-  const dirname = baseFilePath.indexOf('/') >= 1
-    ? baseFilePath.slice(0, baseFilePath.lastIndexOf('/'))
+  const dirname = basePath.indexOf('/') >= 1
+    ? basePath.slice(0, basePath.lastIndexOf('/'))
     : '';
   //console.debug("normalizeFileURI", baseFileURI, filePath, fileURI, `file:${dirname}${dirname ? '/' : ''}${filePath}`);
-  return filePath.startsWith('/')
-    ? fileURI
+  return normalizedPath.startsWith('/')
+    ? normalizedURI
     // ^ Treat given fileURI as root-relative
-    : `file:${dirname}${dirname ? '/' : ''}${filePath}`
+    : `file:${dirname}${dirname ? '/' : ''}${normalizedPath}`
     // ^ Join dirname of base path with apparently relative file path
 }
