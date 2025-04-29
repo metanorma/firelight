@@ -23,6 +23,8 @@ import {
   type Progress,
 } from './progress.mjs';
 
+import normalizePath from './util/normalizePath.mjs';
+
 import { isURIString } from './URI.mjs';
 
 
@@ -737,13 +739,6 @@ function isValidPathComponent(val: string): boolean {
 }
 
 
-function unprefixLocalPath(filePath: string): string {
-  return filePath.startsWith('./')
-    ? filePath.split('./')[1]!
-    : filePath;
-}
-
-
 /**
  * Given two `file:` URIs, makes a new one where
  * they are joined, unless the second one starts with slash in which
@@ -759,29 +754,26 @@ function normalizeFileURI(
   fileURI: string,
   baseFileURI?: string | undefined,
 ): string {
-  const normalizedPath = unprefixLocalPath(fileURI.split('file:')[1]!);
-
-  if (normalizedPath.startsWith('./') || normalizedPath.startsWith('../')) {
-    throw new Error("Malformed path in file URI");
-  }
-
+  const rawPath = fileURI.split('file:')[1]!;
+  const normalizedPath = normalizePath(rawPath);
   const normalizedURI = `file:${normalizedPath}`;
 
   if (baseFileURI === undefined) {
     return normalizedURI;
   }
 
-  const basePath = baseFileURI.startsWith('file:')
-    ? unprefixLocalPath(baseFileURI.split('file:')[1]!)
+  const normalizedBasePath = baseFileURI.startsWith('file:')
+    ? normalizePath(baseFileURI.split('file:')[1]!)
     : undefined;
 
-  if (!basePath) {
+  if (!normalizedBasePath) {
     throw new Error("Trying to normalize a file: URI, but base URI is not using that scheme");
   }
 
-  const dirname = basePath.indexOf('/') >= 1
-    ? basePath.slice(0, basePath.lastIndexOf('/'))
+  const dirname = normalizedBasePath.indexOf('/') >= 1
+    ? normalizedBasePath.slice(0, normalizedBasePath.lastIndexOf('/'))
     : '';
+
   //console.debug("normalizeFileURI", baseFileURI, filePath, fileURI, `file:${dirname}${dirname ? '/' : ''}${filePath}`);
   return normalizedPath.startsWith('/')
     ? normalizedURI
