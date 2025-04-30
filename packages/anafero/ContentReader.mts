@@ -749,9 +749,24 @@ function isValidPathComponent(val: string): boolean {
  * in which case “bar” will be assume to be under “doc”.
  *
  * Guarantees to return a `file:` URI or throw.
+ *
+ * The path following `file:` declaration will be heavily normalized,
+ * not allowed to step outside current directory with '..',
+ * stripped of trailing slash or repetitive slashes.
+ *
+ * NOTE: Only POSIX paths are supported in file: URIs.
+ * NOTE: All paths must point to files, not directories.
  */
 function normalizeFileURI(
+  /**
+   * Current resource URI to normalize.
+   */
   fileURI: string,
+  /**
+   * Base resource URI to normalize relative to.
+   * Has no effect if given fileURI contains an absolute path
+   * (callers should treat it as relative to data repository root).
+   */
   baseFileURI?: string | undefined,
 ): string {
   const rawPath = fileURI.split('file:')[1]!;
@@ -770,6 +785,7 @@ function normalizeFileURI(
     throw new Error("Trying to normalize a file: URI, but base URI is not using that scheme");
   }
 
+  // Given base resource must be a file, this obtains its containing directory
   const dirname = normalizedBasePath.indexOf('/') >= 1
     ? normalizedBasePath.slice(0, normalizedBasePath.lastIndexOf('/'))
     : '';
@@ -779,5 +795,5 @@ function normalizeFileURI(
     ? normalizedURI
     // ^ Treat given fileURI as root-relative
     : `file:${dirname}${dirname ? '/' : ''}${normalizedPath}`
-    // ^ Join dirname of base path with apparently relative file path
+    // ^ Join base resource’s directory with the apparently relative file path
 }
