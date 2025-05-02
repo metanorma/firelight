@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Link, ListView, ActionButton, Item, Text, type Selection } from '@adobe/react-spectrum';
+import { Link, ListView, ActionButton, Item, type Selection } from '@adobe/react-spectrum';
 import CollapsedIcon from '@spectrum-icons/workflow/ChevronLeft';
 import ExpandedIcon from '@spectrum-icons/workflow/ChevronDown';
 import { useDebouncedCallback } from 'use-debounce';
