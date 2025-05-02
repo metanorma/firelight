@@ -301,7 +301,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
 
   useEffect(() => {
     const depURLs = SHARED_DEPS.map(getDomainRelativePath);
-    return fetchJSON<keyof SharedDeps>(
+    return fetchJSON(
       depURLs,
       (done, total) => setLoadProgressThrottled({
         done,
@@ -313,7 +313,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
           total: 100,
         })
         setSharedDeps(Object.entries(results).
-          filter(([src]) => depURLs.includes(src as keyof SharedDeps)).
+          filter(([src]) => depURLs.includes(src as any)).
           map(([src, resp]) => ({ [getSiteRootRelativePath(src)]: resp })).
           reduce((prev, curr) =>
             ({ ...prev, ...curr }),
