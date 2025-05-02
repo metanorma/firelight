@@ -91,11 +91,13 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
       }), [pathPrefix]);
 
   /** Ensures global path prefix. */
-  const getDomainRelativePath = useMemo(() => pathPrefix === ''
-    ? ((slashPrependedPath: string) => slashPrependedPath)
-    : ((slashPrependedPath: string) => {
+  const getDomainRelativePath:
+  <T extends string>(s: T) => T | `${string}${T}` =
+  useMemo(() => pathPrefix === ''
+    ? ((slashPrependedPath) => slashPrependedPath)
+    : ((slashPrependedPath) => {
         const prefixed = !slashPrependedPath.startsWith(pathPrefix)
-          ? `${pathPrefix}${slashPrependedPath}`
+          ? `${pathPrefix}${slashPrependedPath}` as `${string}${typeof slashPrependedPath}`
           : slashPrependedPath;
         return prefixed;
       }), [pathPrefix]);
