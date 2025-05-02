@@ -298,6 +298,6 @@ const mod: StoreAdapterModule = {
       },
     ];
   },
-};
+} as const;
 
 export default mod;

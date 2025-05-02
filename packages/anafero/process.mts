@@ -543,7 +543,7 @@ export async function * generateVersion(
               content: content
                 ? { primaryLanguageID: maybePrimaryLanguageID, ...content }
                 : null,
-            };
+            } as const;
             if (content) {
               // Add sub-resources described by the page
               // to resource map/graph
