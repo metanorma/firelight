@@ -149,194 +149,194 @@ async function fetchDependency(
   moduleRef,
   onProgress,
 ) {
-  if (depRegistry[moduleRef]) {
-    return await depRegistry[moduleRef];
-  }
-  depRegistry[moduleRef] = async function resolveDep() {
-    let sourceDir: string;
 
-    const localPath = moduleRef.split('file:')[1];
-    if (!localPath) {
-      //throw new Error("Only dependencies on local filesystem are supported for now.");
-      onProgress({ state: `fetching ${moduleRef} to ${localPath}` });
-      sourceDir = await fetchSourceFromGit(moduleRef, onProgress);
-    } else {
-      sourceDir = localPath;
-    }
+  if (!depRegistry[moduleRef]) {
+    depRegistry[moduleRef] = async function resolveDep() {
+      let sourceDir: string;
 
-    const buildDir = await mkdtemp(join(
-      tmpRoot,
-      `anafero-dist-${moduleRef.replace(/[^a-z0-9]/gi, '_')}-`,
-    ));
+      const localPath = moduleRef.split('file:')[1];
+      if (!localPath) {
+        //throw new Error("Only dependencies on local filesystem are supported for now.");
+        onProgress({ state: `fetching ${moduleRef} to ${localPath}` });
+        sourceDir = await fetchSourceFromGit(moduleRef, onProgress);
+      } else {
+        sourceDir = localPath;
+      }
 
-    onProgress({ state: `copying into build dir ${buildDir}` });
+      const buildDir = await mkdtemp(join(
+        tmpRoot,
+        `anafero-dist-${moduleRef.replace(/[^a-z0-9]/gi, '_')}-`,
+      ));
 
-    await cp(sourceDir, buildDir, { recursive: true });
+      onProgress({ state: `copying into build dir ${buildDir}` });
 
-    //const outfile = join(buildDir, 'out.mjs');
-    //await esbuildTransform('oi');
+      await cp(sourceDir, buildDir, { recursive: true });
 
-    onProgress({ state: "compiling" });
+      //const outfile = join(buildDir, 'out.mjs');
+      //await esbuildTransform('oi');
 
-    const result = await esbuild({
-      //entryPoints: [join(buildDir, 'index.mts')],
-      stdin: {
-        contents: await readFile(join(buildDir, 'index.mts')),
-        loader: 'ts',
+      onProgress({ state: "compiling" });
 
-        // TODO: This means we use filesystem when resolving
-        // imports in the entry point. That’s not great, if we
-        // want to build e.g. in the browser.
-        // It may be possible to avoid this by writing a custom
-        // resolver plugin for esbuild. See
-        // - https://github.com/evanw/esbuild/issues/591#issuecomment-742962090
-        // - https://esbuild.github.io/plugins/#on-resolve-arguments
-        resolveDir: buildDir,
+      const result = await esbuild({
+        //entryPoints: [join(buildDir, 'index.mts')],
+        stdin: {
+          contents: await readFile(join(buildDir, 'index.mts')),
+          loader: 'ts',
 
-        sourcefile: 'index.mts',
-      },
-      loader: {
-        '.mts': 'ts',
-        '.css': 'local-css',
-      },
-      entryNames: '[dir]/[name]',
-      assetNames: '[dir]/[name]',
-      format: 'esm',
-      target: ['es2022'],
-      tsconfigRaw: '{}',
-      //external: [],
-      packages: 'external',
-      //plugins: [{
-      //  name: 'plugin-resolver',
-      //  setup(build) {
-      //    build.onLoad({ filter: /^prosemirror-model-metanorma/ }, args => {
-      //      return import(args.path);
-      //    });
-      //  },
-      //}],
-      minify: false,
-      platform: 'browser',
-      write: false,
-      logLevel: 'silent',
-      //logLevel: 'info',
-      sourcemap: true,
-      bundle: true,
-      outfile: 'index.js',
-      treeShaking: true,
-      //outfile,
-    });
+          // TODO: This means we use filesystem when resolving
+          // imports in the entry point. That’s not great, if we
+          // want to build e.g. in the browser.
+          // It may be possible to avoid this by writing a custom
+          // resolver plugin for esbuild. See
+          // - https://github.com/evanw/esbuild/issues/591#issuecomment-742962090
+          // - https://esbuild.github.io/plugins/#on-resolve-arguments
+          resolveDir: buildDir,
 
-    const otherFiles: Record<string, Uint8Array> = {};
+          sourcefile: 'index.mts',
+        },
+        loader: {
+          '.mts': 'ts',
+          '.css': 'local-css',
+        },
+        entryNames: '[dir]/[name]',
+        assetNames: '[dir]/[name]',
+        format: 'esm',
+        target: ['es2022'],
+        tsconfigRaw: '{}',
+        //external: [],
+        packages: 'external',
+        //plugins: [{
+        //  name: 'plugin-resolver',
+        //  setup(build) {
+        //    build.onLoad({ filter: /^prosemirror-model-metanorma/ }, args => {
+        //      return import(args.path);
+        //    });
+        //  },
+        //}],
+        minify: false,
+        platform: 'browser',
+        write: false,
+        logLevel: 'silent',
+        //logLevel: 'info',
+        sourcemap: true,
+        bundle: true,
+        outfile: 'index.js',
+        treeShaking: true,
+        //outfile,
+      });
 
-    const mainOutput = result.outputFiles.
-      find(({ path }) => basename(path) === 'index.js')?.contents;
+      const otherFiles: Record<string, Uint8Array> = {};
 
-    if (!mainOutput) {
-      throw new Error("Fetching dependency: no main output after building");
-    } else if (result.outputFiles.length > 1) {
-      for (const { path, contents } of result.outputFiles) {
-        if (!path.endsWith('/index.js')) {
-          otherFiles[basename(path)] = contents;
+      const mainOutput = result.outputFiles.
+        find(({ path }) => basename(path) === 'index.js')?.contents;
+
+      if (!mainOutput) {
+        throw new Error("Fetching dependency: no main output after building");
+      } else if (result.outputFiles.length > 1) {
+        for (const { path, contents } of result.outputFiles) {
+          if (!path.endsWith('/index.js')) {
+            otherFiles[basename(path)] = contents;
+          }
         }
       }
-    }
 
-    const code = decoder.decode(mainOutput);
+      const code = decoder.decode(mainOutput);
 
-    onProgress({ state: "instantiating module" });
+      onProgress({ state: "instantiating module" });
 
-    // const fn = `${process.cwd()}/test.js`;
-    // console.debug("Will write to", fn);
-    // await writeFile(fn, result.outputFiles[0]!.contents, { encoding: 'utf-8' })
+      // const fn = `${process.cwd()}/test.js`;
+      // console.debug("Will write to", fn);
+      // await writeFile(fn, result.outputFiles[0]!.contents, { encoding: 'utf-8' })
 
-    const context = vm.createContext({
-      Array,
-      Object,
-      crypto,
-      XPathResult,
-      document: getDoc(),
-      console,
-      Function,
-      setTimeout,
-      setInterval,
-      TextEncoder,
-    });
-    const mod = new vm.SourceTextModule(code, {
-      // TODO: Try moduleRef as VM module identifier?
-      // Take care of special characters, though.
-      identifier: 'anafero-dependency',
-      context,
-    });
+      const context = vm.createContext({
+        Array,
+        Object,
+        crypto,
+        XPathResult,
+        document: getDoc(),
+        console,
+        Function,
+        setTimeout,
+        setInterval,
+        TextEncoder,
+      });
+      const mod = new vm.SourceTextModule(code, {
+        // TODO: Try moduleRef as VM module identifier?
+        // Take care of special characters, though.
+        identifier: 'anafero-dependency',
+        context,
+      });
 
-    async function link(specifier: string, referencingModule: VMModule) {
-      if (specifier.startsWith('https://')) {
-        // Create a new absolute URL from the imported
-        // module's URL (specifier) and the parent module's
-        // URL (referencingModule.identifier).
-        const url = new URL(
-          specifier,
-          referencingModule.identifier,
-        ).toString();
-        // Download the raw source code.
-        const source = await (await fetch(url)).text();
-        // Instantiate a new module and return it.
-        return new vm.SourceTextModule(source, {
-          identifier: url,
-          context: referencingModule.context,
-        });
-      } else {
-        const madeAvailable = preloaded[specifier]
-          ? preloaded[specifier]
-          // TODO: Don’t do the following
-          : await import(specifier);
-        const exportNames = Object.keys(madeAvailable);
-        // Construct a new module from the actual import
-        return new vm.SyntheticModule(
-          exportNames,
-          function () {
-            for (const name of exportNames) {
-              this.setExport(name, madeAvailable[name]);
-            }
-          },
-          { 
-            identifier: specifier,
+      async function link(specifier: string, referencingModule: VMModule) {
+        if (specifier.startsWith('https://')) {
+          // Create a new absolute URL from the imported
+          // module's URL (specifier) and the parent module's
+          // URL (referencingModule.identifier).
+          const url = new URL(
+            specifier,
+            referencingModule.identifier,
+          ).toString();
+          // Download the raw source code.
+          const source = await (await fetch(url)).text();
+          // Instantiate a new module and return it.
+          return new vm.SourceTextModule(source, {
+            identifier: url,
             context: referencingModule.context,
-          },
-        );
+          });
+        } else {
+          const madeAvailable = preloaded[specifier]
+            ? preloaded[specifier]
+            // TODO: Don’t do the following
+            : await import(specifier);
+          const exportNames = Object.keys(madeAvailable);
+          // Construct a new module from the actual import
+          return new vm.SyntheticModule(
+            exportNames,
+            function () {
+              for (const name of exportNames) {
+                this.setExport(name, madeAvailable[name]);
+              }
+            },
+            { 
+              identifier: specifier,
+              context: referencingModule.context,
+            },
+          );
 
+        }
       }
-    }
 
-    await mod.link(link);
+      await mod.link(link);
 
-    await mod.evaluate();
+      await mod.evaluate();
 
-    const defaultExport = (mod.namespace as any).default as any;
+      const defaultExport = (mod.namespace as any).default as any;
 
-    onProgress({ state: `removing build dir ${buildDir}` });
+      onProgress({ state: `removing build dir ${buildDir}` });
 
-    await rmdir(buildDir, { recursive: true });
+      await rmdir(buildDir, { recursive: true });
 
-    dependencySources[moduleRef] = code;
-    dependencySupportingFiles[moduleRef] = otherFiles;
+      dependencySources[moduleRef] = code;
+      dependencySupportingFiles[moduleRef] = otherFiles;
 
-    return defaultExport;
+      return defaultExport;
 
-    // It would be nice if this did work…
-    //let module = {};
-    //const req = (pkg: string) => {
-    //  console.debug("REQUIRED", pkg);
-    //  const result = import(pkg);
-    //  console.debug("GOT", result);
-    //  return result;
-    //};
-    //console.debug((new Function('module', 'require', decoder.decode(result.outputFiles[0]!.contents)))(module, req));
-    //const out = await import(fn);
-    //console.debug(out.name);
-    //throw new Error("TODO");
-    //const data = await readFile(outfile, { encoding: 'utf-8' });
-    //return new Function(data);
-  }();
+      // It would be nice if this did work…
+      //let module = {};
+      //const req = (pkg: string) => {
+      //  console.debug("REQUIRED", pkg);
+      //  const result = import(pkg);
+      //  console.debug("GOT", result);
+      //  return result;
+      //};
+      //console.debug((new Function('module', 'require', decoder.decode(result.outputFiles[0]!.contents)))(module, req));
+      //const out = await import(fn);
+      //console.debug(out.name);
+      //throw new Error("TODO");
+      //const data = await readFile(outfile, { encoding: 'utf-8' });
+      //return new Function(data);
+    }();
+  }
 
   return await depRegistry[moduleRef] as any;
 };
