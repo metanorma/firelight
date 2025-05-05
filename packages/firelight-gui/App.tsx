@@ -516,7 +516,11 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
       />
       // Try not to overwrite SSR’d DOM except for browser bar’s loader
     : <>
-        <BrowserBar rootURL={`${pathPrefix}/`} title={workspaceTitle} loadProgress={loadProgress} />
+        <BrowserBar
+          rootURL={`${pathPrefix}/`}
+          title={workspaceTitle}
+          loadProgress={loadProgress}
+        />
         <main id="resources">
           <div
             dangerouslySetInnerHTML={{ __html: '' }}
