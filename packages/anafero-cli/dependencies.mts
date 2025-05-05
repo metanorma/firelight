@@ -225,6 +225,9 @@ async function fetchDependency(
         //outfile,
       });
 
+      onProgress({ state: `removing build dir ${buildDir}` });
+      await rmdir(buildDir, { recursive: true });
+
       const otherFiles: Record<string, Uint8Array> = {};
 
       const mainOutput = result.outputFiles.
@@ -311,10 +314,6 @@ async function fetchDependency(
       await mod.evaluate();
 
       const defaultExport = (mod.namespace as any).default as any;
-
-      onProgress({ state: `removing build dir ${buildDir}` });
-
-      await rmdir(buildDir, { recursive: true });
 
       dependencySources[moduleRef] = code;
       dependencySupportingFiles[moduleRef] = otherFiles;
