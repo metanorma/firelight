@@ -86,49 +86,73 @@ Example specifying ``metanorma/firelight`` Github repo at tag ``1.2.3``
 and layout under a subdirectory:
 ``git+https://github.com/metanorma/firelight#1.2.3/packages/plateau-layout``.
 
+
 Architecture
 ------------
 
-- Firelight implements:
+Anafero
+~~~~~~~
 
-  - Metanorma XML store adapter that transforms between MN presentation
-    XML and a set of resources representing document structure.
+Implements the base engine for transforming between various data sources
+and resource hierarchy, using the following pluggable components.
 
-  - A content adapter that expects a set of resources representing
-    a MN document or document collection.
+- Store adapter module: provides API for transforming
+  between certain source (currently, a blob in Git repository)
+  and a set of resource relations.
 
-  - Layout for PLATEAU documents.
+- Content adapter module: determines how resources create the website.
 
-  - The main GUI entry point.
+  One key aspect is distinguishing between relations
+  that 1) form site hierarchy (e.g., document X contains section Y),
+  2) form page hierarchy (e.g., section Y has title foobar),
+  or 3) cross-reference resources without regard for hierarchy
+  (e.g., link A has target resource M).
 
-- Anafero: implements the engine for transforming between various data sources
-  and resource hierarchy, using the following pluggable components.
+  .. note:: This will probably be done instead through a custom ontology
+            and thus become a responsibility of store adapter,
+            which would have to output relations using that ontology.
 
-  - Store adapter module: provides API for transforming
-    between certain source (currently, a blob in Git repository)
-    and a set of resource relations.
+  Another key aspect is defining PM schema for page content
+  and transforming relations to page content & vice-versa.
 
-  - Content adapter module: determines how resources create the website.
+  .. note:: This will likely become the sole aspect of content adapter.
 
-    One key aspect is distinguishing between relations
-    that 1) form site hierarchy (e.g., document X contains section Y),
-    2) form page hierarchy (e.g., section Y has title foobar),
-    or 3) cross-reference resources without regard for hierarchy
-    (e.g., link A has target resource M).
+- Layout module: allows some custom CSS to control resource rendering.
 
-    .. note:: This will probably be done instead through a custom ontology
-              and thus become a responsibility of store adapter,
-              which would have to output relations using that ontology.
+- App shell: the high-level React component that renders the content.
+  (Provisional—for now Firelight GUI is hard-coded as the only option.)
 
-    Another key aspect is defining PM schema for page content
-    and transforming relations to page content & vice-versa.
+Versioning
+^^^^^^^^^^
 
-    .. note:: This will likely become the sole aspect of content adapter.
+Currently, versioning is required.
 
-  - Layout module: allows some custom CSS to control resource rendering.
+Git commit tree is used to generate versions, with CLI flags
+``--current-rev`` and ``--rev`` controlling which commits are used
+to generate current & other version.
 
-  - App shell: the high-level React component that renders the content.
-    (Provisional—for now Firelight GUI is hard-coded as the only option.)
+Glossary:
+
+- Active version: the version being viewed
+- Current version: the latest (a.k.a. living, head, trunk) version
+
+Resource URLs are prefixed with version ID of the active version,
+unless the active version is current version.
+
+Firelight
+~~~~~~~~~
+
+Implements:
+
+- Metanorma XML store adapter that transforms between MN presentation
+  XML and a set of resources representing document structure.
+
+- A content adapter that expects a set of resources representing
+  a MN document or document collection.
+
+- Layout for PLATEAU documents.
+
+- The main GUI entry point.
 
 Known issues
 ------------
