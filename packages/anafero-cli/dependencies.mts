@@ -339,4 +339,4 @@ async function fetchDependency(
   }();
 
   return await depRegistry[moduleRef] as any;
-}
+};
