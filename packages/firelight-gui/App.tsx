@@ -121,6 +121,10 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     map(([k, v]) => [v, k]))
   ), [resourceMap]);
 
+  /**
+   * Based on current URL, returns active version ID,
+   * or null if it’s the current version.
+   */
   const nonCurrentActiveVersionID = useMemo(() =>
     !sharedDeps?.['/versions.json']
       ? undefined
@@ -146,6 +150,13 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     })
   }, [nonCurrentActiveVersionID, sharedDeps?.['/versions.json']]);
 
+  /**
+   * Version prefix is undefined if versioning information is N/A
+   * (e.g., still loading),
+   * and empty string if the active version is also current
+   * (i.e., latest/living/trunk/head) version.
+   * Otherwise, is a slash-prepended active version ID.
+   */
   const versionPrefix: string | undefined =
     nonCurrentActiveVersionID === undefined
       ? undefined
@@ -153,7 +164,10 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
         ? `/${nonCurrentActiveVersionID}`
         : '';
 
-  /** Returns versioned & prefixed path. */
+  /**
+   * Returns versioned & prefixed path,
+   * i.e. “absolute” path (relative only to domain name).
+   */
   const getAbsolutePath = useMemo(() => (
     versionPrefix !== undefined || pathPrefix !== ''
       ? function (slashPrependedPath: string): string {
@@ -164,7 +178,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
       : undefined
   ), [pathPrefix, versionPrefix]);
 
-  /** Returns unversioned & unprefixed path. */
+  /** Returns unversioned & unprefixed path (relative to current version). */
   const getVersionRelativePath = useMemo(() => (
     versionPrefix !== undefined
       ? function getVersionRelativePath(slashPrependedPath: string): string {
