@@ -31,7 +31,7 @@ const preloaded = {
   'prosemirror-schema-list': pmSchemaList,
   'react-helmet': helmet,
   'react': react,
-} as Record<string, unknown>;
+} as Readonly<Record<string, unknown>>;
 
 
 const depRegistry: Record<string, Promise<unknown>> = {};
