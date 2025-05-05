@@ -153,23 +153,21 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
         ? `/${nonCurrentActiveVersionID}`
         : '';
 
-  // TODO: Rename to getAbsolutePath or split into two functions
   /** Returns versioned & prefixed path. */
-  const getVersionedPath = useMemo(() => (
+  const getAbsolutePath = useMemo(() => (
     versionPrefix !== undefined || pathPrefix !== ''
       ? function (slashPrependedPath: string): string {
           const versioned = `${pathPrefix}${versionPrefix}${slashPrependedPath}`;
-          //console.debug("getVersionedPath", slashPrependedPath, versioned);
+          //console.debug("getAbsolutePath", slashPrependedPath, versioned);
           return versioned;
         }
       : undefined
   ), [pathPrefix, versionPrefix]);
 
-  // TODO: Rename to getVersionRelativePath or split into two functions
   /** Returns unversioned & unprefixed path. */
-  const getUnversionedPath = useMemo(() => (
+  const getVersionRelativePath = useMemo(() => (
     versionPrefix !== undefined
-      ? function (slashPrependedPath: string): string {
+      ? function getVersionRelativePath(slashPrependedPath: string): string {
           const siteRootRelative = getSiteRootRelativePath(slashPrependedPath);
           if (!versionPrefix) {
             return siteRootRelative;
@@ -178,7 +176,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
             ? siteRootRelative.replace(versionPrefix, '')
             : siteRootRelative;
           if (!unversioned.startsWith('/')) {
-            console.error("Non-slash-prepended path in getUnversionedPath!");
+            console.error("Non-slash-prepended path in getVersionRelativePath!");
           }
           //console.debug("Version-relative path", slashPrependedPath, unversioned);
           return unversioned;
@@ -187,9 +185,9 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   ), [versionPrefix, getSiteRootRelativePath]);
 
   //const normalizedResourcePathFromPathname =
-  const initialResourceURI_: string | undefined = resourceMap && getUnversionedPath
+  const initialResourceURI_: string | undefined = resourceMap && getVersionRelativePath
     ? resourceMap[stripLeadingSlash(
-        getUnversionedPath(
+        getVersionRelativePath(
           stripTrailingSlash(decodeURIComponent(window.location.pathname))
           + window.location.hash)
       )]
@@ -197,16 +195,16 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
 
   const initialResourceURI = initialResourceURI_ ?? (
     // Try once again but without the fragment (in case it is malformed)
-    getUnversionedPath && resourceMap
+    getVersionRelativePath && resourceMap
     ? resourceMap[stripLeadingSlash(
-        getUnversionedPath(
+        getVersionRelativePath(
           stripTrailingSlash(decodeURIComponent(window.location.pathname))
         )
       )]
     : undefined
   );
 
-  if (resourceMap && getUnversionedPath && !initialResourceURI) {
+  if (resourceMap && getVersionRelativePath && !initialResourceURI) {
     throw new Error("Unable to obtain initial resource URI based on URL");
   }
 
@@ -235,25 +233,25 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   }, []);
 
   const locateResource = useMemo((() =>
-    (!reverseResourceMap || !getVersionedPath)
+    (!reverseResourceMap || !getAbsolutePath)
       ? undefined
       : (uri: string) => {
           if (reverseResourceMap[uri] !== undefined) {
-            return getVersionedPath(`/${reverseResourceMap[uri]}`);
+            return getAbsolutePath(`/${reverseResourceMap[uri]}`);
           } else {
             console.error("Failed to get path for resource", uri, reverseResourceMap);
             throw new Error("Failed to get path for resource");
           }
         }
-  ), [getVersionedPath, reverseResourceMap]);
+  ), [getAbsolutePath, reverseResourceMap]);
 
   const reverseResource = useMemo((() =>
-    (!resourceMap || !getUnversionedPath)
+    (!resourceMap || !getVersionRelativePath)
       ? undefined
       // TODO: Inconsistent with locateResource,
       // this is allowed to return undefined. Might want to reconsider
-      : (path: string) => resourceMap[stripLeadingSlash(getUnversionedPath(path))]
-  ), [resourceMap, getUnversionedPath]);
+      : (path: string) => resourceMap[stripLeadingSlash(getVersionRelativePath(path))]
+  ), [resourceMap, getVersionRelativePath]);
 
   const getResourceDataPaths = useMemo(() =>
     !locateResource
@@ -326,12 +324,12 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   }, [fetchJSON, getSiteRootRelativePath, getDomainRelativePath]);
 
   useEffect(() => {
-    if (!getVersionedPath || !getUnversionedPath) { return; }
+    if (!getAbsolutePath || !getVersionRelativePath) { return; }
     // Fetch version-wide data & make it available in the object under
     // non-versioned paths
     // (e.g., /<version>/resource-map.json will be available as /resource-map.json).
     return fetchJSON<keyof VersionDeps>(
-      VERSION_DEPS.map(dep => getVersionedPath(dep)) as (keyof VersionDeps)[],
+      VERSION_DEPS.map(dep => getAbsolutePath(dep)) as (keyof VersionDeps)[],
       (done, total) => setLoadProgressThrottled({
         done,
         total,
@@ -343,15 +341,15 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
         })
         setVersionDeps(Object.entries(results).
           filter(([src]) =>
-            VERSION_DEPS.includes(getUnversionedPath(src) as keyof VersionDeps)).
-          map(([src, resp]) => ({ [getUnversionedPath(src)]: resp })).
+            VERSION_DEPS.includes(getVersionRelativePath(src) as keyof VersionDeps)).
+          map(([src, resp]) => ({ [getVersionRelativePath(src)]: resp })).
           reduce((prev, curr) =>
             ({ ...prev, ...curr }),
             {},
           ) as VersionDeps);
         },
     );
-  }, [fetchJSON, getVersionedPath, getUnversionedPath]);
+  }, [fetchJSON, getAbsolutePath, getVersionRelativePath]);
 
   const primaryLanguageDetected = useMemo((
     () => resourceMap && resourceMap[''] && resourceDescriptions[resourceMap['']]
@@ -471,7 +469,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   const mainView = (
     resourceMap
     && primaryLanguage
-    && getUnversionedPath
+    && getVersionRelativePath
     && locateResource
     && reverseResource
     && fetchResourceData
@@ -481,7 +479,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     && initialResourceData
     && loadedDependencies
     && dependencyIndex
-    && getVersionedPath)
+    && getAbsolutePath)
 
     ? <VersionWorkspace
         workspaceTitle={workspaceTitle}
@@ -489,8 +487,8 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
         dependencies={loadedDependencies}
         locateResource={locateResource}
         reverseResource={reverseResource}
-        expandUnversionedPath={getVersionedPath}
-        getVersionLocalPath={getUnversionedPath}
+        getAbsolutePath={getAbsolutePath}
+        getVersionRelativePath={getVersionRelativePath}
         dependencyIndex={dependencyIndex}
         initialResource={initialResourceURI}
         initialResourceData={initialResourceData}
@@ -527,8 +525,8 @@ export const VersionWorkspace: React.FC<{
   workspaceTitle: string;
   primaryLanguage: string;
   searchIndex: LunrIndex;
-  expandUnversionedPath: (path: string) => string;
-  getVersionLocalPath: (path: string) => string;
+  getAbsolutePath: (path: string) => string;
+  getVersionRelativePath: (path: string) => string;
   locateResource: (uri: string) => string;
   reverseResource: (rpath: string) => string | undefined;
   fetchResourceData: (uri: string, onDone: (data: ResourceData) => void) => () => void;
@@ -548,8 +546,8 @@ export const VersionWorkspace: React.FC<{
   initialResourceData,
   fetchResourceData,
   dependencies,
-  expandUnversionedPath,
-  getVersionLocalPath,
+  getAbsolutePath,
+  getVersionRelativePath,
   dependencyIndex,
   searchIndex,
   locateResource,
@@ -739,7 +737,7 @@ export const VersionWorkspace: React.FC<{
     }, function handleIntercept (evt: MouseEvent | KeyboardEvent, el: Element) {
 
       const href = el.getAttribute('href');
-      if (!href || !getVersionLocalPath) {
+      if (!href || !getVersionRelativePath) {
         return;
       }
       const url = new URL(href, document.baseURI);
@@ -764,12 +762,12 @@ export const VersionWorkspace: React.FC<{
         console.error(
           "Failed to get resource URI",
           maybePrefixedURL,
-          stripLeadingSlash(getVersionLocalPath(stripTrailingSlash(maybePrefixedURL))),
+          stripLeadingSlash(getVersionRelativePath(stripTrailingSlash(maybePrefixedURL))),
         );
         return true;
       }
     })
-  }, [reverseResource, getVersionLocalPath, getContainingPageResourceURI]);
+  }, [reverseResource, getVersionRelativePath, getContainingPageResourceURI]);
 
   // Queue hash fragment to navigate to subresources more precisely
   // after page load is finished. If no subresource was requested,
@@ -1011,7 +1009,7 @@ export const VersionWorkspace: React.FC<{
         providerProps={routerProps}
         versioning={versioning}
         activeBrowsingMode={state.browsingMode}
-        rootURL={expandUnversionedPath('/')}
+        rootURL={getAbsolutePath('/')}
         onActivateBrowsingMode={useCallback((mode: BrowsingMode) => dispatch({
           type: 'activated_browsing_mode',
           mode,
