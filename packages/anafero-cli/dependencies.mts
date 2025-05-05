@@ -140,6 +140,9 @@ const decoder = new TextDecoder();
  * with instantiated module and a map of any other generated files.
  * NOTE: Doesn’t really validate that returned module conforms to anything.
  *
+ * Handles caching (if a module was already requested, will resolve
+ * the same promise).
+ *
  * This currently relies on Node, and is therefore here in the CLI module;
  * see TODO about resolveDir about making dependencies buildable
  * in the browser.
