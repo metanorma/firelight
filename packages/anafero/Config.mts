@@ -9,7 +9,7 @@ import { type Progress as TaskProgress } from './progress.mjs';
 /**
  * Synchronously obtains a dependency that was pre-loaded.
  */
-export type SyncDependencyGetter = <T>(moduleID: string) => T
+export type SyncDependencyGetter = <T>(moduleID: string) => T;
 
 /**
  * Retrieves and loads a dependency asynchronously.
