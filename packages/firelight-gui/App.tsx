@@ -121,6 +121,9 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     map(([k, v]) => [v, k]))
   ), [resourceMap]);
 
+  const resourceDescriptions: Record<string, ResourceMetadata> =
+    versionDeps?.['/resource-descriptions.json'];
+
   /**
    * Based on current URL, returns active version ID,
    * or null if it’s the current version.
@@ -134,9 +137,6 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
             window.location.pathname.startsWith(`${pathPrefix ?? '/'}${vID}/`)
           ) ?? null),
     [sharedDeps?.['/versions.json']]);
-
-  const resourceDescriptions: Record<string, ResourceMetadata> =
-    versionDeps?.['/resource-descriptions.json'];
 
   const versioning = useMemo(() => {
     if (!sharedDeps?.['/versions.json'] || nonCurrentActiveVersionID === undefined) {
