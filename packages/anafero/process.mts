@@ -101,7 +101,10 @@ interface StringsToInjectIntoHTML {
  */
 type ResourceContentCache = Record<string, AdapterGeneratedResourceContent>;
 
-/** Emits blobs keyed by resource-relative paths. */
+/**
+ * Emits assets for a particular resource (HTML, JSON, any supporting files)
+ * as blobs keyed by resource-relative paths.
+ */
 export function * generateResourceAssets(
   resourceURI: string,
   relations: Readonly<RelationGraphAsList>,
@@ -211,6 +214,16 @@ export function * generateResourceAssets(
 }
 
 
+// NOTE: Below func generates a version, but it shouldn’t be a concern
+// Mentions of “version” can be removed and it should still make sense
+/**
+ * This function is probably the most involved
+ * and is responsible for taking a build config,
+ * reading resources, converting them to hierarchy of content.
+ *
+ * Emits blobs for physical assets (HTML, JSON, etc.)
+ * keyed by filename relative to content root.
+ */
 export async function * generateVersion(
   cfg: BuildConfig,
   fetchBlobAtThisVersion: (objectPath: string) => Promise<Uint8Array>,
