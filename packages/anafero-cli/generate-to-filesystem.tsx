@@ -42,6 +42,8 @@ import { type VersionBuildConfig, type VersionMeta } from 'anafero/index.mjs';
 
 import {
   fetchDependency,
+  buildDependency,
+  writePreBuiltAssets,
   getDependencySources,
   getDependencySupportingFiles,
 } from './dependencies.mjs';
@@ -68,13 +70,50 @@ Effect.
     NodeRuntime.runMain,
   );
 
+
 function unpackOption<T>(opt: Option.Option<T>, df?: T): T | undefined {
   return Option.isNone(opt) ? df : opt.value;
 }
 
-const build = Command.
+
+const dispatch = Command.
   make(
-    'build',
+    "npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli",
+    {},
+    () => Effect.log("Pass --help for usage instructions")).
+  pipe(
+    Command.withDescription("Anafero builder. Use with a subcommand."),
+  );
+
+const buildPackage = Command.
+  make('build-package', reportingOptions, () => Effect.gen(function * (_) {
+    const moduleRef = yield * _(
+      Effect.tryPromise(() => readFile(join(cwd, 'package.json'))),
+      Effect.flatMap(blob => Effect.try(() => decoder.decode(blob))),
+      Effect.flatMap(pkgRaw => Effect.try(() => JSON.parse(pkgRaw))),
+      Effect.flatMap(pkg => Effect.succeed(pkg['name'])),
+    );
+    yield * _(Effect.log(`Building package ${moduleRef}`));
+    const [bundledCode, assets] = yield * _(Effect.tryPromise(() => {
+      return buildDependency(
+        moduleRef,
+        cwd,
+        (progress) => console.debug(JSON.stringify(progress)),
+      );
+    }));
+    yield * _(Effect.tryPromise(() => writePreBuiltAssets(
+      cwd,
+      bundledCode,
+      assets,
+    )));
+  })).
+  pipe(
+    Command.withDescription("For developers: builds adapter in current directory into `./dist`."),
+  );
+
+const buildSite = Command.
+  make(
+    'build-site',
     {
 
       targetDirectoryPath: Options.directory('target-dir'),
@@ -178,11 +217,11 @@ const build = Command.
     ),
   ).
   pipe(
-    Command.withDescription('build site'),
+    Command.withDescription("Builds a website using current directory as source."),
   );
 
 
-const dev = Command.
+const devSite = Command.
   make(
     'develop',
     {
@@ -202,14 +241,14 @@ const dev = Command.
     ({ pkg, skipBuild }) =>
       Effect.
         gen(function * (_) {
-          const buildCfg = yield * _(build);
+          const buildCfg = yield * _(buildSite);
 
           const { targetDirectoryPath } = buildCfg;
 
           // Maybe build
 
           if (!skipBuild) {
-            yield * build.handler(buildCfg);
+            yield * buildSite.handler(buildCfg);
           }
 
 
@@ -275,14 +314,17 @@ const dev = Command.
         })
   ).
   pipe(
-    Command.withDescription('dev mode (watching for changes & copying client-side JS)'),
+    Command.withDescription("Build site in dev mode (watching for changes & copying client-side JS)."),
   );
 
 
 
-const main = build.
+const main = dispatch.
   pipe(
-    Command.withSubcommands([dev]),
+    Command.withSubcommands([
+      buildSite.pipe(Command.withSubcommands([devSite])),
+      buildPackage,
+    ]),
     Command.run({
       name: "Anafero builder",
       version: "N/A",

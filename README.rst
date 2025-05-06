@@ -28,6 +28,7 @@ Usage
 ::
 
     npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli \
+      build-site \
       --target-dir <path/to/site/output/dir> \
       --current-rev <main-revision> \
       [--path-prefix </slash-prepended-path-prefix>]

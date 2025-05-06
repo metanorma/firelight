@@ -1,5 +1,5 @@
 import { join, basename } from 'node:path';
-import { rmdir, readFile, cp, mkdtemp, stat } from 'node:fs/promises';
+import { readdir, rmdir, readFile, cp, mkdtemp, stat, mkdir, writeFile } from 'node:fs/promises';
 import vm, { type Module as VMModule } from 'node:vm';
 import { tmpdir } from 'node:os';
 import fs from 'node:fs';
@@ -166,87 +166,13 @@ async function fetchDependency(
         sourceDir = localPath;
       }
 
-      const buildDir = await mkdtemp(join(
-        tmpRoot,
-        `anafero-dist-${moduleRef.replace(/[^a-z0-9]/gi, '_')}-`,
-      ));
+      const [bundledCode, otherFiles] = await getDependencyAssets(
+        moduleRef,
+        sourceDir,
+        onProgress,
+      );
 
-      onProgress({ state: `copying into build dir ${buildDir}` });
-
-      await cp(sourceDir, buildDir, { recursive: true });
-
-      //const outfile = join(buildDir, 'out.mjs');
-      //await esbuildTransform('oi');
-
-      onProgress({ state: "compiling" });
-
-      const result = await esbuild({
-        //entryPoints: [join(buildDir, 'index.mts')],
-        stdin: {
-          contents: await readFile(join(buildDir, 'index.mts')),
-          loader: 'ts',
-
-          // TODO: This means we use filesystem when resolving
-          // imports in the entry point. That’s not great, if we
-          // want to build e.g. in the browser.
-          // It may be possible to avoid this by writing a custom
-          // resolver plugin for esbuild. See
-          // - https://github.com/evanw/esbuild/issues/591#issuecomment-742962090
-          // - https://esbuild.github.io/plugins/#on-resolve-arguments
-          resolveDir: buildDir,
-
-          sourcefile: 'index.mts',
-        },
-        loader: {
-          '.mts': 'ts',
-          '.css': 'local-css',
-        },
-        entryNames: '[dir]/[name]',
-        assetNames: '[dir]/[name]',
-        format: 'esm',
-        target: ['es2022'],
-        tsconfigRaw: '{}',
-        //external: [],
-        packages: 'external',
-        //plugins: [{
-        //  name: 'plugin-resolver',
-        //  setup(build) {
-        //    build.onLoad({ filter: /^prosemirror-model-metanorma/ }, args => {
-        //      return import(args.path);
-        //    });
-        //  },
-        //}],
-        minify: false,
-        platform: 'browser',
-        write: false,
-        logLevel: 'silent',
-        //logLevel: 'info',
-        sourcemap: true,
-        bundle: true,
-        outfile: 'index.js',
-        treeShaking: true,
-        //outfile,
-      });
-
-      onProgress({ state: `removing build dir ${buildDir}` });
-      await rmdir(buildDir, { recursive: true });
-
-      const otherFiles: Record<string, Uint8Array> = {};
-
-      const mainOutput = result.outputFiles.
-        find(({ path }) => basename(path) === 'index.js')?.contents;
-
-      if (!mainOutput) {
-        throw new Error("Fetching dependency: no main output after building");
-      } else if (result.outputFiles.length > 1) {
-        for (const { path, contents } of result.outputFiles) {
-          if (!path.endsWith('/index.js')) {
-            otherFiles[basename(path)] = contents;
-          }
-        }
-      }
-
-      const code = decoder.decode(mainOutput);
+      const code = decoder.decode(bundledCode);
 
       onProgress({ state: "instantiating module" });
 
@@ -368,3 +294,201 @@ async function fetchDependency(
 
   return await depRegistry[moduleRef] as any;
 };
+
+
+/**
+ * Builds dependency from TypeScript if needed,
+ * returns dependency source as string.
+ *
+ * Does not cache anything.
+ */
+async function getDependencyAssets(
+  moduleRef: string,
+  sourceDirPath: string,
+  onProgress: (progress: Progress) => void,
+): Promise<[
+  dependency: Uint8Array,
+  assets: Record<string, Uint8Array>,
+]> {
+  if (await isPreBuilt(sourceDirPath)) {
+    console.debug("Using pre-built", moduleRef);
+    return await readPreBuiltDependency(sourceDirPath);
+  } else {
+    return await buildDependency(moduleRef, sourceDirPath, onProgress);
+  }
+}
+
+
+function getPreBuiltRoot(sourceDirPath: string): string {
+  return join(sourceDirPath, 'dist');
+}
+
+
+async function readPreBuiltJSBundle(sourceDirPath: string):
+Promise<Uint8Array> {
+  const bundlePath = join(
+    getPreBuiltRoot(sourceDirPath),
+    PRE_BUILT_JS_BUNDLE_FILENAME);
+  const bundleStat = await stat(bundlePath);
+  if (bundleStat.isFile()) {
+    return readFile(bundlePath);
+  } else {
+    throw new Error("Pre-built entry point is not a file");
+  }
+}
+
+
+const PRE_BUILT_JS_BUNDLE_FILENAME = 'index.js';
+
+
+async function readPreBuiltAssets(sourceDirPath: string):
+Promise<Record<string, Uint8Array>> {
+  const distroot = getPreBuiltRoot(sourceDirPath);
+  const filenames = await readdir(distroot);
+  const assets = filenames.filter(fn => fn !== PRE_BUILT_JS_BUNDLE_FILENAME);
+  return (
+    (await Promise.all(
+      assets.map(async (fn) => ({ [fn]: await readFile(join(distroot, fn)) }))
+    )).
+    reduce((prev, curr) => ({ ...prev, ...curr }), {})
+  );
+}
+
+
+export async function writePreBuiltAssets(
+  sourceDirPath: string,
+  bundledCode: Uint8Array,
+  assets: Record<string, Uint8Array>,
+) {
+  const distDir = getPreBuiltRoot(sourceDirPath);
+  await mkdir(distDir);
+  console.debug("Writing index.js");
+  await writeFile(join(distDir, PRE_BUILT_JS_BUNDLE_FILENAME), bundledCode);
+  for (const [fn, blob] of Object.entries(assets)) {
+    console.debug("Writing asset", fn);
+    await writeFile(join(distDir, fn), blob);
+  }
+}
+
+
+async function isPreBuilt(sourceDirPath: string): Promise<boolean> {
+  try {
+    // A pre-built dependency contains directory “dist”
+    // with index.js and possibly other assets.
+    // Subdirectories under dist are ignored.
+    await readPreBuiltJSBundle(sourceDirPath);
+    await readPreBuiltAssets(sourceDirPath);
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}
+
+
+async function readPreBuiltDependency(
+  sourceDirPath: string,
+): Promise<[
+  bundledCode: Uint8Array,
+  supportingAssets: Record<string, Uint8Array>,
+]> {
+  return [
+    await readPreBuiltJSBundle(sourceDirPath),
+    await readPreBuiltAssets(sourceDirPath),
+  ];
+}
+
+
+export async function buildDependency(
+  /**
+   * Acts only as cache key to avoid build directories clashing.
+   */
+  moduleRef: string,
+  sourceDir: string,
+  onProgress: (progress: Progress) => void,
+): Promise<[
+  bundledCode: Uint8Array,
+  supportingAssets: Record<string, Uint8Array>,
+]> {
+  const buildDir = await mkdtemp(join(
+    tmpRoot,
+    `anafero-dist-${moduleRef.replace(/[^a-z0-9]/gi, '_')}-`,
+  ));
+
+  onProgress({ state: `copying into build dir ${buildDir}` });
+
+  await cp(sourceDir, buildDir, { recursive: true });
+
+  //const outfile = join(buildDir, 'out.mjs');
+  //await esbuildTransform('oi');
+
+  onProgress({ state: "compiling" });
+
+  const result = await esbuild({
+    //entryPoints: [join(buildDir, 'index.mts')],
+    stdin: {
+      contents: await readFile(join(buildDir, 'index.mts')),
+      loader: 'ts',
+
+      // TODO: This means we use filesystem when resolving
+      // imports in the entry point. That’s not great, if we
+      // want to build e.g. in the browser.
+      // It may be possible to avoid this by writing a custom
+      // resolver plugin for esbuild. See
+      // - https://github.com/evanw/esbuild/issues/591#issuecomment-742962090
+      // - https://esbuild.github.io/plugins/#on-resolve-arguments
+      resolveDir: buildDir,
+
+      sourcefile: 'index.mts',
+    },
+    loader: {
+      '.mts': 'ts',
+      '.css': 'local-css',
+    },
+    entryNames: '[dir]/[name]',
+    assetNames: '[dir]/[name]',
+    format: 'esm',
+    target: ['es2022'],
+    tsconfigRaw: '{}',
+    //external: [],
+    packages: 'external',
+    //plugins: [{
+    //  name: 'plugin-resolver',
+    //  setup(build) {
+    //    build.onLoad({ filter: /^prosemirror-model-metanorma/ }, args => {
+    //      return import(args.path);
+    //    });
+    //  },
+    //}],
+    minify: false,
+    platform: 'browser',
+    write: false,
+    logLevel: 'silent',
+    //logLevel: 'info',
+    sourcemap: true,
+    bundle: true,
+    outfile: 'index.js',
+    treeShaking: true,
+    //outfile,
+  });
+
+  onProgress({ state: `removing build dir ${buildDir}` });
+  await rmdir(buildDir, { recursive: true });
+
+  const otherFiles: Record<string, Uint8Array> = {};
+
+  const mainOutput = result.outputFiles.
+    find(({ path }) => basename(path) === 'index.js')?.contents;
+
+  if (!mainOutput) {
+    throw new Error("Fetching dependency: no main output after building");
+  } else if (result.outputFiles.length > 1) {
+    for (const { path, contents } of result.outputFiles) {
+      if (!path.endsWith('/index.js')) {
+        otherFiles[basename(path)] = contents;
+      }
+    }
+  }
+
+  return [mainOutput, otherFiles];
+}
