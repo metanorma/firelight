@@ -57,6 +57,10 @@ console.debug("Package root", PACKAGE_ROOT);
 
 const decoder = new TextDecoder();
 
+const cwd = process.cwd();
+console.debug("Current working directory", cwd);
+
+
 Effect.
   suspend(() => main(process.argv)).
   pipe(
@@ -286,8 +290,8 @@ const main = build.
   );
 
 
-// TODO: Refactor gitdir handling, avoid the globa
-const gitdir = join(process.cwd(), '.git');
+// TODO: Refactor gitdir handling, avoid the global
+const gitdir = join(cwd, '.git');
 
 async function areWeInGitRepoRoot(): Promise<boolean> {
   const gitRepoStat = await stat(gitdir);
