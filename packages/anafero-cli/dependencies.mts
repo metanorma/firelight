@@ -263,8 +263,13 @@ async function fetchDependency(
         console,
         Function,
         setTimeout,
+        clearTimeout,
         setInterval,
         TextEncoder,
+        TextDecoder,
+        Blob,
+        btoa,
+        atob,
       });
       const mod = new vm.SourceTextModule(code, {
         // TODO: Try moduleRef as VM module identifier?
