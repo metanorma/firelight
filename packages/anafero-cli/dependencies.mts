@@ -380,7 +380,6 @@ async function isPreBuilt(sourceDirPath: string): Promise<boolean> {
     await readPreBuiltAssets(sourceDirPath);
     return true;
   } catch (e) {
-    console.error(e);
     return false;
   }
 }
