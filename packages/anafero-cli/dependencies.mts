@@ -274,22 +274,44 @@ async function fetchDependency(
       });
 
       async function link(specifier: string, referencingModule: VMModule) {
-        if (specifier.startsWith('https://')) {
+        const isAbsoluteURL = specifier.startsWith('https://');
+        let base: string | undefined;
+        try {
+          new URL(referencingModule.identifier);
+          base = referencingModule.identifier;
+          // The module that does the importing is referenced by URL.
+        } catch (e) {
+          // The module that does the importing is not referenced by URL.
+          base = undefined;
+        }
+        const isRelativePath =
+          specifier.startsWith('/')
+          || specifier.startsWith('./')
+          || specifier.startsWith('../');
+        const isRelativeURL = isRelativePath && base !== undefined;
+
+        if (isAbsoluteURL || isRelativeURL) {
           // Create a new absolute URL from the imported
           // module's URL (specifier) and the parent module's
           // URL (referencingModule.identifier).
-          const url = new URL(
-            specifier,
-            referencingModule.identifier,
-          ).toString();
+          //console.debug("anafero: building module URL", specifier, 'imported from', referencingModule.identifier);
+          if (isRelativeURL && base === undefined) {
+            throw new Error("Unable to resolve relative specifier without a base");
+          }
+          const url = new URL(specifier, base).toString();
           // Download the raw source code.
+          //console.debug("anafero: fetching module", url);
           const source = await (await fetch(url)).text();
+          // TODO: Fetched source needs to be cached appropriately
+          // Version needs to be taken into account?
+
           // Instantiate a new module and return it.
           return new vm.SourceTextModule(source, {
             identifier: url,
             context: referencingModule.context,
           });
         } else {
+          //console.debug("anafero: fetching preloaded", specifier);
           const madeAvailable = preloaded[specifier]
             ? preloaded[specifier]
             // TODO: Don’t do the following
@@ -308,7 +330,6 @@ async function fetchDependency(
               context: referencingModule.context,
             },
           );
-
         }
       }
 
