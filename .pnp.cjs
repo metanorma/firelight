@@ -10798,6 +10798,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["metanorma-xml-store", "workspace:packages/metanorma-xml-store"],\
           ["@effect/schema", "virtual:070476d311f720e9d02d25ca605014d530cdbc1f8aa33c62092b53b14c5ef33cba7de536d79a2924f39ff5c739c1a151459137f6c5be337398ea393ad5d4da2b#npm:0.75.3"],\
+          ["@types/jsdom", "npm:20.0.1"],\
           ["anafero", "workspace:packages/anafero"],\
           ["typescript", "patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"],\
           ["xpath", "npm:0.0.34"]\

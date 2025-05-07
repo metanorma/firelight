@@ -5750,6 +5750,7 @@ __metadata:
   resolution: "metanorma-xml-store@workspace:packages/metanorma-xml-store"
   dependencies:
     "@effect/schema": "npm:^0.75.3"
+    "@types/jsdom": "npm:^20.0.0"
     anafero: "workspace:~"
     typescript: "npm:^5.6.3"
     xpath: "npm:^0.0.34"

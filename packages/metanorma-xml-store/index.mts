@@ -1,3 +1,5 @@
+import { JSDOM } from 'https://esm.sh/jsdom@20.0.0';
+
 import {
   ROOT_SUBJECT,
   type RelationGraphAsList,
@@ -111,12 +113,19 @@ function getResourceURI(el: Element): string {
     : `${prefix}-${crypto.randomUUID()}`;
 }
 
+function decodeXML(blob: Uint8Array): Document {
+  return new JSDOM(
+    (new TextDecoder()).decode(blob).replace('xmlns', 'wtf'), // xpath?
+    { contentType: 'application/xhtml+xml' },
+  ).window.document;
+}
+
 const mod: StoreAdapterModule = {
   name: 'Metanorma XML store adapter',
   version: '0.0.1',
   canResolve: (path) => path.endsWith('.xml'),
-  readerFromBlob: async function (blob, helpers) {
-    const dom = helpers.decodeXML(blob);
+  readerFromBlob: async function (blob) {
+    const dom = decodeXML(blob);
 
     if (!(
       dom.documentElement.tagName === 'metanorma'
