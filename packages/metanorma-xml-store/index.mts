@@ -118,12 +118,18 @@ const mod: StoreAdapterModule = {
   readerFromBlob: async function (blob, helpers) {
     const dom = helpers.decodeXML(blob);
 
-    if (!(
+    const isValidDocumentEntryPoint =
       dom.documentElement.tagName === 'metanorma'
       && dom.documentElement.getAttribute('type') === 'presentation'
-      && dom.querySelector('bibdata docidentifier[primary="true"]')?.textContent
-    )) {
-      throw new Error("Not a valid Metanorma presentation XML file");
+      && dom.querySelector('metanorma > bibdata > docidentifier[primary="true"]')?.textContent
+
+    const isValidCollectionEntryPoint =
+      dom.documentElement.tagName === 'metanorma-collection'
+      && dom.documentElement.getAttribute('type') === 'presentation'
+      && dom.querySelector('metanorma-collection > bibdata > docidentifier[primary="true"]')?.textContent
+
+    if (!(isValidDocumentEntryPoint || isValidCollectionEntryPoint)) {
+      throw new Error("Invalid Metanorma document or collection presentation XML");
     }
 
     return [
@@ -131,7 +137,7 @@ const mod: StoreAdapterModule = {
       {
         getCanonicalRootURI: () => {
           const primaryDocid =
-            dom.querySelector('bibdata docidentifier[primary="true"]')?.textContent
+            dom.querySelector('metanorma > bibdata > docidentifier[primary="true"]')?.textContent
             ?? undefined;
           return primaryDocid
             ? `urn:metanorma:doc:${encodeURIComponent(primaryDocid)}`
@@ -151,6 +157,19 @@ const mod: StoreAdapterModule = {
             },
             resourceTypesByTagName: tagNameAliases,
             processTag: {
+              //'metanorma-collection': function processMetanormaCollectionRoot() {
+              //  return [
+              //    [[ROOT_SUBJECT, 'type', 'collection']],
+              //    // TODO
+              //    //
+              //    // {
+              //    //   getChildPredicate: (_, childEl) =>
+              //    //     childEl.tagName === 'bibdata'
+              //    //       ? tagNameToHasPredicate(childEl.tagName)
+              //    //       : 'hasPart',
+              //    // },
+              //  ] as [RelationGraphAsList, Rules];
+              //},
               metanorma: function processMetanormaRoot() {
                 return [
                   [[ROOT_SUBJECT, 'type', 'document']],
