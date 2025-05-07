@@ -151,7 +151,7 @@ const mod: StoreAdapterModule = {
             },
             resourceTypesByTagName: tagNameAliases,
             processTag: {
-              [dom.documentElement.tagName]: function processRootTag() {
+              metanorma: function processMetanormaRoot() {
                 return [
                   [[ROOT_SUBJECT, 'type', 'document']],
                   {
