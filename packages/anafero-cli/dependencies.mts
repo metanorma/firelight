@@ -331,7 +331,7 @@ Promise<Uint8Array> {
     PRE_BUILT_JS_BUNDLE_FILENAME);
   const bundleStat = await stat(bundlePath);
   if (bundleStat.isFile()) {
-    return readFile(bundlePath);
+    return await readFile(bundlePath);
   } else {
     throw new Error("Pre-built entry point is not a file");
   }
