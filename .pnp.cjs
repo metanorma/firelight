@@ -114,7 +114,7 @@ const RAW_RUNTIME_STATE =
     ],\
     [\
       "@babel/runtime",\
-      "npm:7.25.6"\
+      "npm:7.26.10"\
     ],\
     [\
       "@effect/cli",\
@@ -1787,10 +1787,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@babel/runtime", [\
-      ["npm:7.25.6", {\
-        "packageLocation": "./.yarn/cache/@babel-runtime-npm-7.25.6-6725f0979a-d6143adf5a.zip/node_modules/@babel/runtime/",\
+      ["npm:7.26.10", {\
+        "packageLocation": "./.yarn/cache/@babel-runtime-npm-7.26.10-d01a90d446-6dc6d88c79.zip/node_modules/@babel/runtime/",\
         "packageDependencies": [\
-          ["@babel/runtime", "npm:7.25.6"],\
+          ["@babel/runtime", "npm:7.26.10"],\
           ["regenerator-runtime", "npm:0.14.1"]\
         ],\
         "linkType": "HARD"\
@@ -9747,7 +9747,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/dom-helpers-npm-5.2.1-b38bb4470b-f735074d66.zip/node_modules/dom-helpers/",\
         "packageDependencies": [\
           ["dom-helpers", "npm:5.2.1"],\
-          ["@babel/runtime", "npm:7.25.6"],\
+          ["@babel/runtime", "npm:7.26.10"],\
           ["csstype", "npm:3.1.3"]\
         ],\
         "linkType": "HARD"\
@@ -11841,7 +11841,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/react-transition-group-virtual-42efd649f9/0/cache/react-transition-group-npm-4.4.5-98ea4ef96e-2ba754ba74.zip/node_modules/react-transition-group/",\
         "packageDependencies": [\
           ["react-transition-group", "virtual:6cbffae23c7c565d5c654d291a7db1f7bb84334899ffa1c0b10203693e5fdd3fa68152db57ce0364631c8bee2bdc938615524cde02977d10bba4e1a61886f69d#npm:4.4.5"],\
-          ["@babel/runtime", "npm:7.25.6"],\
+          ["@babel/runtime", "npm:7.26.10"],\
           ["@types/react", "npm:18.3.11"],\
           ["@types/react-dom", "npm:18.3.0"],\
           ["dom-helpers", "npm:5.2.1"],\
