@@ -149,7 +149,7 @@ export const Resource = React.forwardRef(function ({
         processGeneratedDOM(domEl, locateResource, () => '', (msg) => console.warn(msg));
         return domEl.innerHTML;
       } else {
-        console.warn("ProseMirror content DOM is not an Element; possibly a Node", domNode);
+        console.warn("ProseMirror content DOM is not an Element; possibly some other type of Node", domNode);
         return undefined;
       }
     } else {
