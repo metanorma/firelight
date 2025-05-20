@@ -69,23 +69,27 @@ function mangleXMLIdentifier(id: string): string {
 
 const processClauseLike: CustomElementProcessor =
 function processClauseLike(el: Element) {
-  return [
-    [[
-      ROOT_SUBJECT,
-      'hasClauseIdentifier',
-      mangleXMLIdentifier(
-        el.getAttribute('id')
-        ?? `unidentified-section-${crypto.randomUUID()}`
-      ),
-    ], [
-      ROOT_SUBJECT,
-      'type',
-      'section',
-    ]],
-    {
-      getChildPredicate: () => 'hasPart',
-    },
-  ];
+  if (el.getAttribute('hidden')) {
+    return [[], false];
+  } else {
+    return [
+      [[
+        ROOT_SUBJECT,
+        'hasClauseIdentifier',
+        mangleXMLIdentifier(
+          el.getAttribute('id')
+          ?? `unidentified-section-${crypto.randomUUID()}`
+        ),
+      ], [
+        ROOT_SUBJECT,
+        'type',
+        'section',
+      ]],
+      {
+        getChildPredicate: () => 'hasPart',
+      },
+    ];
+  }
 }
 
 const processAsGenericContainer: CustomElementProcessor =
