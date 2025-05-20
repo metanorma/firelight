@@ -181,7 +181,15 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
   collection: function generateCollection (graph) {
     const pm = coverBibdataSchema;
-    const title = findValue(graph, ROOT_SUBJECT, 'hasTitle')!;
+    // Quick and dirty title
+    const title = resolveChain(
+      graph,
+      ['hasBibdata', 'hasTitle', 'hasPart'],
+      ROOT_SUBJECT,
+    )[0]?.[1];
+    if (!title) {
+      throw new Error("Collection has no title");
+    }
     return {
       contentSchemaID: 'cover',
       primaryLanguageID: 'en',
