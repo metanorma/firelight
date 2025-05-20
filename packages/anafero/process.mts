@@ -270,9 +270,9 @@ export async function * generateVersion(
   const defaultLayout = layouts[0]!.layout;
 
   dependencyNotice(`Building with:
-  Store adapters: ${Object.values(storeAdapters).map(m => m.name).join(', ')}
-  Content adapters: ${Object.values(contentAdapters).map(m => m.name).join(', ')}
-  Layouts: ${Object.values(layoutModules).map(m => m.name).join(', ')}
+  Store adapters: ${Object.values(storeAdapters).map(m => `${m.name}:${m.version}`).join(', ')}
+  Content adapters: ${Object.values(contentAdapters).map(m => `${m.name}:${m.version}`).join(', ')}
+  Layouts: ${Object.values(layoutModules).map(m => `${m.name}:${m.version}`).join(', ')}
   `, 'info');
 
   if (!defaultLayout || cfg.storeAdapters.length < 1 || cfg.contentAdapters.length < 1) {
