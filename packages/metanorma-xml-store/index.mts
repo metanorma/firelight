@@ -105,14 +105,25 @@ function urnFromID(id: string): string {
   return `urn:metanorma:doc-part:${id}`;
 }
 
+const AUTO_GENERATED_URI_PREFIX = `urn:metanorma:doc-part-unstable`;
+
 function getResourceURI(el: Element): string {
-  const maybeID = el.getAttribute('id');
-  const prefix = `urn:metanorma:doc-part-unstable:${el.tagName}`;
+  let maybeID: string | null;
+  if (el.tagName === 'metanorma' && el.ownerDocument.documentElement.tagName === 'metanorma-collection') {
+    if (el.parentElement?.tagName === 'doc-container') {
+      // doc-container is bypassed, but we can grab its ID.
+      maybeID = el.parentElement.getAttribute('id');
+    } else {
+      maybeID = el.getAttribute('id');
+    }
+  } else {
+    maybeID = el.getAttribute('id');
+  }
   return maybeID
     // We have a proper (hopefully stable) ID
     ? urnFromID(maybeID)
     // We need to make up an ID
-    : `${prefix}-${crypto.randomUUID()}`;
+    : `${AUTO_GENERATED_URI_PREFIX}:${el.tagName}-${crypto.randomUUID()}`;
 }
 
 const mod: StoreAdapterModule = {
