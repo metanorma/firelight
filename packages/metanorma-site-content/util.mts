@@ -2,9 +2,9 @@ import { type RelationGraphAsList, ROOT_SUBJECT } from 'anafero/index.mjs';
 
 
 /**
- * Given a chain of predicates like [hasLanguage, hasText],
+ * Given a chain of predicates like `[hasLanguage, hasText]`,
  * returns a list of subjects that have that predicate and its value
- * (like [[someLanguageID, ja], [anotherLanguageID, en]]).
+ * (like `[[someLanguageID, ja], [anotherLanguageID, en]]`).
  */
 export function resolveChain(
   /** Graph to resolve the chain in. */
