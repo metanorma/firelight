@@ -274,6 +274,7 @@ const mod: StoreAdapterModule = {
               eref: 'ignore',
               origin: 'ignore',
               source: 'bypass',
+              quote: processAsGenericContainer,
               title: function processTitle(el, getURI) {
                 if (el.parentElement
                     && sectionLikeElements.includes(el.parentElement.tagName as any)) {

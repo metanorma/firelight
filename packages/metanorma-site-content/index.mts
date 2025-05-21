@@ -399,6 +399,13 @@ const generatorsByType: Record<string, ContentGenerator> = {
             : []),
         ];
       },
+      'quote': (subj, state) => {
+        return pm.node(
+          'blockquote',
+          { resourceID: subj },
+          generateContent(subj, pm.nodes.blockquote!, state),
+        );
+      },
       'fmt-link': (subj: string, state) => {
         const target = findValue(section, subj, 'hasTarget');
         if (!target) {

@@ -147,6 +147,14 @@ const clauseSchemaBase = new Schema({
       },
     },
 
+    blockquote: {
+      content: 'block+',
+      group: 'block',
+      toDOM() {
+        return ['blockquote', 0];
+      },
+    },
+
     definition_list: {
       content: '(dt | dd)+',
       group: 'block',
