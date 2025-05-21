@@ -18,7 +18,7 @@ import { sha256 } from './sha.mjs';
 
 import { coverBibdataSchema, clauseSchema } from './schema.mjs';
 
-import { resolveChain, findValue, findAll, findPartsOfType, relativeGraph, hasSubject } from './util.mjs';
+import { resolveChain, findValue, findAll, findPartsOfType, relativeGraph, hasSubject } from './graph-query-util.mjs';
 
 
 /** Transforms given resource to ProseMirror node(s). */
