@@ -474,7 +474,8 @@ const clauseSchemaBase = new Schema({
 export const clauseSchema = new Schema({
   nodes: addListNodes(
     clauseSchemaBase.spec.nodes,
-    'paragraph block*', 'block',
+    'paragraph block*',
+    'block',
   ),
   marks: clauseSchemaBase.spec.marks,
 });
