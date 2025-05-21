@@ -39,7 +39,7 @@ type NodeProcessor = NodeProcessorBase<NodeProcessorState>;
 
 interface NodeProcessorState {
   annotations: {
-    /* Footnotes resource IDs mapped to footnote data. */
+    /** Footnotes resource IDs mapped to footnote data. */
     footnotes: Record<string, Footnote>;
     /**
      * Must be set before processing a container
