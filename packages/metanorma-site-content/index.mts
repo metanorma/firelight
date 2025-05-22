@@ -92,8 +92,6 @@ function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | 
   const plainTitleIDs = parts.
   filter(([pID, type]) => type === 'title' || type === 'fmt-title').
   map(([pID]) => pID);
-  const plainTitles = plainTitleIDs.map(id =>
-    findAll(section, id, 'hasPart').join(' '));
 
   const plainTitleID = plainTitleIDs[0];
 
@@ -101,7 +99,7 @@ function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | 
     ? getTextContent(section, plainTitleID).join('')
     : '';
 
-  return (plainTitles[0] || clauseNumber)
+  return (titleText || clauseNumber)
     ? `${clauseNumber ?? ''}${clauseNumber ? '  ' : ''}${titleText}`
     : undefined;
 }
