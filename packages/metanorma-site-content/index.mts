@@ -1037,7 +1037,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
     //   return;
     // }
 
-    type FootnoteNode = ProseMirrorNode & { type: 'footnote' }
+    type FootnoteNode = ProseMirrorNode & { type: 'footnote' };
     //// Footnote nodes mapped to resource IDs
     //const footnotes: Record<string, FootnoteNode> = {};
     function makeFootnote(resourceID: string, footnote: Footnote): ProseMirrorNode {
