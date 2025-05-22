@@ -200,6 +200,27 @@
       max-width: 100%;
     }
 
+    blockquote {
+      --width: 40px;
+      --font-size: 100px;
+      position: relative;
+      margin: 1em 0;
+      padding: 0 0 0 var(--width);
+      &:before {
+        content: "“";
+        position: absolute;
+        font-size: var(--font-size);
+        line-height: 1;
+        display: block;
+        opacity: 1;
+        left: 0;
+        top: 0;
+        transform: translateY(-25%);
+        width: var(--width);
+        height: var(--width);
+      }
+    }
+
     table {
       --table-highlight-background: var(--spectrum-gray-200);
       --table-border: 1px solid var(--spectrum-alias-border-color-mid);
