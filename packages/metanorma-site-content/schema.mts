@@ -479,14 +479,59 @@ const clauseSchemaBase = new Schema({
 });
 
 
-export const clauseSchema = new Schema({
+const baseClauseSchemaSpec = {
   nodes: addListNodes(
     clauseSchemaBase.spec.nodes,
     'paragraph block*',
     'block',
   ),
   marks: clauseSchemaBase.spec.marks,
-});
+} as const;
+
+const baseOrderedListSpec = baseClauseSchemaSpec.nodes.get('ordered_list')!;
+const baseBulletListSpec = baseClauseSchemaSpec.nodes.get('bullet_list')!;
+function fillInAbout(
+  originalSpec: [string, ...any[]],
+  args: Parameters<Exclude<typeof baseOrderedListSpec['toDOM'], undefined>>,
+): ReturnType<Exclude<typeof baseOrderedListSpec['toDOM'], undefined>> {
+  const domAttrs = originalSpec[1] !== 0 ? originalSpec[1] : {};
+  const pmAttrs = args[0].attrs;
+  domAttrs.about = pmAttrs.resourceID;
+  return [originalSpec[0], domAttrs, 0];
+}
+const clauseSchemaSpec = {
+  ...baseClauseSchemaSpec,
+  nodes: baseClauseSchemaSpec.nodes.update(
+    'ordered_list',
+    {
+      ...baseOrderedListSpec,
+      attrs: {
+        ...baseOrderedListSpec.attrs,
+        resourceID: { default: '' },
+      },
+      toDOM: function toDOM(...args) {
+        return fillInAbout(
+          baseOrderedListSpec.toDOM!(...args) as [string, ...any[]],
+          args);
+      },
+    }
+  ).update(
+    'bullet_list',
+    {
+      ...baseBulletListSpec,
+      attrs: {
+        ...baseBulletListSpec.attrs,
+        resourceID: { default: '' },
+      },
+      toDOM: function toDOM(...args) {
+        return fillInAbout(
+          baseBulletListSpec.toDOM!(...args) as [string, ...any[]],
+          args);
+      },
+    },
+  ),
+};
+export const clauseSchema = new Schema(clauseSchemaSpec);
 
 
 // const collectionEntrySchema = new Schema({
