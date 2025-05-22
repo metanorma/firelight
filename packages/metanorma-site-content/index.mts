@@ -243,7 +243,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
     const simpleNodes: Record<string, string> = {
       //'unorderedList': 'bullet_list',
-      'orderedList': 'ordered_list',
+      //'orderedList': 'ordered_list',
       //'paragraph': 'paragraph',
       //'sourcecode': 'source_listing',
       'span': 'span',
