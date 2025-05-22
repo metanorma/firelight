@@ -1214,13 +1214,11 @@ function getTextContent(
    */
   partPredicate?: (partValue: string, partType?: string) => boolean,
 ): string[] {
-  console.debug("getTextContent1", subject);
   const allSubparts: string[] =
   // TODO: subject is really only used to resolve relations,
   // maybe this can be refactored out of this function.
   resolveChain(graph, ['hasPart'], subject).
   flatMap(([partID, partValue]) => {
-    console.debug("getTextContent", subject, partID, partValue);
     // TODO: Don’t rely on urn: prefix when determining subjectness
     if (!isURIString(partValue)) {
       // Part itself is not a subject, so treat as text.
