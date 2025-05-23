@@ -419,6 +419,14 @@ const clauseSchemaBase = new Schema({
         return ['strong', 0];
       },
     },
+    em: {
+      group: 'flow',
+      content: '(text | flow)*',
+      inline: true,
+      toDOM() {
+        return ['em', 0];
+      },
+    },
     underline: {
       group: 'flow',
       content: '(text | flow)*',

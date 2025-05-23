@@ -249,6 +249,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       // TODO: Figure out what to do with underlines. <u> isn’t fit
       'underline': 'underline',
       'strong': 'strong',
+      'em': 'em',
       'bookmark': 'anchor',
 
       //'dl': 'definition_list',
