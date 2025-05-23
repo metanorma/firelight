@@ -59,6 +59,7 @@ interface Footnote {
   /** How many times this footnote had been referenced so far. */
   referenceCount: number;
 }
+import getDocumentTitle from './getDocumentTitle.mjs';
 
 
 function getCurrentLanguage(doc: Readonly<RelationGraphAsList>): string | undefined {
@@ -1115,19 +1116,12 @@ const generatorsByType: Record<string, ContentGenerator> = {
 const generateCoverPage:
 (lang: string, docid: string, dlLinks: string[]) => ContentGenerator =
 (currentLanguage, primaryDocid, dlLinks) => function (bibdata) {
-  const titles = resolveChain(bibdata, ['hasTitle', 'hasPart']);
-  const plainMainTitles = titles.filter(([titleID, ]) =>
-    findValue(bibdata, titleID, 'hasType') === 'main' &&
-    findValue(bibdata, titleID, 'hasFormat') === 'text/plain'
-  );
-  const mainTitleInCurrentLanguage = plainMainTitles.find(([titleID, ]) =>
-    findValue(bibdata, titleID, 'hasLanguage') === currentLanguage
-  ) ?? titles.find(([titleID, ]) =>
-    findValue(bibdata, titleID, 'hasFormat') === 'text/plain'
-  );
+  const {
+    hopefullyASuitableTitle,
+    titlesInOtherLanguages,
+  } = getDocumentTitle(currentLanguage, bibdata);
 
-  if (!mainTitleInCurrentLanguage) {
-    console.error("Avialable titles", JSON.stringify(plainMainTitles));
+  if (!hopefullyASuitableTitle?.[0] || !hopefullyASuitableTitle?.[1]) {
     throw new Error("Cannot generate cover page: missing main title in current language");
   }
 
@@ -1165,9 +1159,9 @@ const generateCoverPage:
   return {
     contentSchemaID: 'cover',
     primaryLanguageID: currentLanguage,
-    labelInPlainText: mainTitleInCurrentLanguage[1],
+    labelInPlainText: hopefullyASuitableTitle[1],
     title: titleSchema.node('doc', null, [
-      titleSchema.text(mainTitleInCurrentLanguage[1]),
+      titleSchema.text(hopefullyASuitableTitle[1]),
     ]).toJSON(),
     contentDoc: pm.node('doc', null, [
       pm.node('docMeta', null, [
@@ -1187,10 +1181,9 @@ const generateCoverPage:
           )
         ),
       ]),
-      pm.node('mainTitle', null, [pm.text(mainTitleInCurrentLanguage[1])]),
+      pm.node('mainTitle', null, [pm.text(hopefullyASuitableTitle[1])]),
       // The rest of the main titles, excluding the main one
-      ...plainMainTitles.
-        filter(([uri, ]) => uri !== mainTitleInCurrentLanguage[0]).
+      ...titlesInOtherLanguages.
         map(([, titleText]) =>
           pm.node('someOtherTitle', null, [pm.text(titleText)]),
         ),
