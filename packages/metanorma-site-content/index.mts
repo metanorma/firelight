@@ -20,46 +20,15 @@ import { coverBibdataSchema, clauseSchema } from './schema.mjs';
 
 import { resolveChain, findValue, findAll, findPartsOfType, relativeGraph, hasSubject } from './graph-query-util.mjs';
 
-
-/** Transforms given resource to ProseMirror node(s). */
-type NodeProcessorBase<T> = (
-  /** Subject URI of the root resource. */
-  resource: string,
-  /**
-   * Mutable state shared between node processors
-   * for non-locality.
-   * Non-locality is bad and best avoided.
-   * IMPORTANT: If you have to use it, keep lean and specific.
-   */
-  state: T,
-) => ProseMirrorNode | undefined | (ProseMirrorNode | undefined)[];
-// TODO: This union probably causes a lot of unnecessary checks…
-
-type NodeProcessor = NodeProcessorBase<NodeProcessorState>;
-
-interface NodeProcessorState {
-  annotations: {
-    /** Footnotes resource IDs mapped to footnote data. */
-    footnotes: Record<string, Footnote>;
-    /**
-     * Must be set before processing a container
-     * to which footnotes should be scoped
-     * (e.g. a table in case of PLATEAU documents),
-     * and unset after.
-     */
-    currentFootnoteScope: string | null;
-  };
-}
-
-interface Footnote {
-  /** Body of footnote. */
-  content: ProseMirrorNode[];
-  /** Cue in the text. */
-  cue?: string;
-  /** How many times this footnote had been referenced so far. */
-  referenceCount: number;
-}
 import getDocumentTitle from './getDocumentTitle.mjs';
+
+import type {
+  Footnote,
+  NodeProcessor,
+  NodeProcessorState,
+} from './pm-transform-util.mjs';
+
+import { makeSplittingNodeProcessor } from './pm-transform-util.mjs';
 
 
 function getCurrentLanguage(doc: Readonly<RelationGraphAsList>): string | undefined {
@@ -268,36 +237,37 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'unorderedList',
     ];
 
-    /**
-     * Processes content for a list, wrapping non-list-item nodes
-     * (e.g., notes) in list items.
-     */
-    function makeListContents(subj: string, state: NodeProcessorState) {
-      const parts = findAll(section, subj, 'hasPart');
-      const contents: ProseMirrorNode[] = [];
-      for (const part of parts) {
-        const type = findValue(section, part, 'type');
-        if (type) {
-          const maybeNodes = makeNodeOrNot(part, type, state);
-          const maybeNode = (Array.isArray(maybeNodes))
-            ? maybeNodes[0]
-            : maybeNodes;
-          if (maybeNode) {
-            if (type !== 'listItem') {
-              const content = type === 'paragraph'
-                ? [maybeNode]
-                : [pm.node('paragraph', null, [pm.text(' ')]), maybeNode];
-              contents.push(pm.node(
-                'list_item',
-                null,
-                content));
-            } else {
-              contents.push(maybeNode);
-            }
+    function getProcessorForInvalidListPart(partType: string):
+    NodeProcessor | undefined {
+      if (partType === 'note') {
+        return customNodes.note;
+      }
+      return undefined;
+    }
+
+    const processValidListPart: NodeProcessor =
+    function processValidListPart(subj, state) {
+      const type = findValue(section, subj, 'type');
+      if (type) {
+        const maybeNodes = makeNodeOrNot(subj, type, state);
+        const maybeNode = (Array.isArray(maybeNodes))
+          ? maybeNodes[0]
+          : maybeNodes;
+        if (maybeNode) {
+          if (type !== 'listItem') {
+            const content = type === 'paragraph'
+              ? [maybeNode]
+              : [
+                  pm.node('paragraph', null, [pm.text(' ')]),
+                  maybeNode,
+                ];
+            return pm.node('list_item', null, content);
+          } else {
+            return maybeNode;
           }
         }
       }
-      return contents;
+      return undefined;
     }
 
     /**
@@ -309,74 +279,47 @@ const generatorsByType: Record<string, ContentGenerator> = {
      * with annotation type (e.g., footnote), nodes, and a unique reference.
      */
     const customNodes: Record<string, NodeProcessor> = {
-      'unorderedList': (subj, state) => {
-        return pm.node('bullet_list', { resourceID: subj }, makeListContents(subj, state));
-      },
-      'orderedList': (subj, state) => {
-        return pm.node('ordered_list', { resourceID: subj }, makeListContents(subj, state));
-      },
-      'paragraph': (subj, state) => {
-        const nodes: ProseMirrorNode[] = [];
-
-        let paragraphCounter = 0;
-        const currentParagraphParts: string[] = [];
-
-        /**
-         * Processes accumulated so far paragraph parts
-         * into a paragraph node and appends it to content.
-         */
-        function flushParagraph() {
-          if (currentParagraphParts.length < 1) {
-            return;
+      'unorderedList': makeSplittingNodeProcessor(
+        section,
+        getProcessorForInvalidListPart,
+        function makeBulletListNode(resourceID, parts) {
+          return pm.node('bullet_list', { resourceID }, parts);
+        },
+        processValidListPart,
+      ),
+      'orderedList': makeSplittingNodeProcessor(
+        section,
+        getProcessorForInvalidListPart,
+        function makeOrderedListNode(resourceID, parts) {
+          return pm.node('ordered_list', { resourceID }, parts);
+        },
+        processValidListPart,
+      ),
+      'paragraph': makeSplittingNodeProcessor(
+        section,
+        function getProcessorForInvalidParagraphPart(partType) {
+          if (blockNodesNestedInParagraphs.includes(partType)) {
+            return customNodes[partType];
           }
-          const paragraphContents: ProseMirrorNode[] = [];
-          let currentPart;
-          while ((currentPart = currentParagraphParts.shift()) !== undefined) {
-            if (hasSubject(section, currentPart)) {
-              // This part is a nested element
-              const partType = findValue(section, currentPart, 'type');
-              if (partType) {
-                const nodes = makeNodeOrNot(currentPart, partType, state);
-                for (const node of (Array.isArray(nodes) ? nodes : [nodes]).filter(n => n !== undefined)) {
-                  paragraphContents.push(node);
-                }
-              }
-            } else {
-              // This part is a text node
-              paragraphContents.push(pm.text(currentPart))
+          return undefined;
+        },
+        function makeParagraphNode(resourceID, parts) {
+          return pm.node('paragraph', { resourceID }, parts);
+        },
+        function processParagraphPart(subj, state) {
+          if (hasSubject(section, subj)) {
+            // This part is a nested element
+            const partType = findValue(section, subj, 'type');
+            if (partType) {
+              return makeNodeOrNot(subj, partType, state);
             }
+          } else if (subj) {
+            // This part is a text node
+            return pm.text(subj);
           }
-          const resourceID = paragraphCounter > 0
-            ? `${subj}-split-${paragraphCounter}`
-            : subj;
-          nodes.push(pm.node(
-            'paragraph',
-            { resourceID },
-            paragraphContents,
-          ));
-          paragraphCounter += 1;
-        }
-
-        const parts = findAll(section, subj, 'hasPart');
-        for (const part of parts) {
-          const partType = findValue(section, part, 'type');
-          if (partType && blockNodesNestedInParagraphs.includes(partType)) {
-            flushParagraph();
-            const _blockNodes = customNodes[partType]!(part, state);
-            const blockNodes = Array.isArray(_blockNodes)
-              ? _blockNodes
-              : [_blockNodes];
-            for (const node of blockNodes.filter(n => n !== undefined)) {
-              nodes.push(node);
-            }
-          } else {
-            currentParagraphParts.push(part);
-          }
-        }
-        flushParagraph();
-
-        return nodes;
-      },
+          return undefined;
+        },
+      ),
       'dl': function (subj, state): (ProseMirrorNode | undefined)[] {
         const nodeID = 'definition_list';
         const nodeType = pm.nodes[nodeID]!;
