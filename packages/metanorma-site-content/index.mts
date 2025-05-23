@@ -18,7 +18,7 @@ import { sha256 } from './sha.mjs';
 
 import { coverBibdataSchema, clauseSchema } from './schema.mjs';
 
-import { resolveChain, findValue, findAll, findPartsOfType, relativeGraph, hasSubject } from './graph-query-util.mjs';
+import { resolveChain, findValue, findAll, findPartsOfType, relativeGraph, hasSubject, getTextContent } from './graph-query-util.mjs';
 
 import getDocumentTitle from './getDocumentTitle.mjs';
 
@@ -1133,43 +1133,3 @@ const generateCoverPage:
     ]).toJSON(),
   };
 };
-
-
-/**
- * Recursively extracts text content
- * of given subject in given graph.
- *
- * The result is returned as an array of strings
- * that can be concatenated directly (without any spacing).
- */
-function getTextContent(
-  graph: Readonly<RelationGraphAsList>,
-  subject: string,
-  /**
-   * If provided, only include parts for which this returns true.
-   * Recursively passed down.
-   */
-  partPredicate?: (partValue: string, partType?: string) => boolean,
-): string[] {
-  const allSubparts: string[] =
-  // TODO: subject is really only used to resolve relations,
-  // maybe this can be refactored out of this function.
-  resolveChain(graph, ['hasPart'], subject).
-  flatMap(([partID, partValue]) => {
-    // TODO: Don’t rely on urn: prefix when determining subjectness
-    if (!isURIString(partValue)) {
-      // Part itself is not a subject, so treat as text.
-
-      if (partPredicate && !partPredicate(partValue)) {
-        return [''];
-      } else if (partValue.trim() === '') {
-        return [''];
-      } else {
-        return [partValue];
-      }
-    } else {
-      return getTextContent(graph, partValue);
-    }
-  });
-  return allSubparts;
-}
