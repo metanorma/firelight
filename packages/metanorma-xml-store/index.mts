@@ -292,7 +292,7 @@ const mod: StoreAdapterModule = {
                     graph.push([sectionURI, 'hasClauseNumber', clauseNumber]);
                   }
 
-                  const parts = Array.from(fmtTitleText?.childNodes ?? []).
+                  const parts = Array.from((fmtTitleText ?? el)?.childNodes ?? []).
                   //filter(n => n.nodeType === 3). // can’t only select text nodes, titles allow complex content
                   map(n => n.textContent ?? '').
                   filter(content => content !== '' && content !== clauseNumber);

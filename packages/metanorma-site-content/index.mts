@@ -1020,7 +1020,9 @@ const generatorsByType: Record<string, ContentGenerator> = {
       },
     };
 
-    const title = findPartsOfType(section, ROOT_SUBJECT, 'fmt-title')[0];
+    const title =
+      findPartsOfType(section, ROOT_SUBJECT, 'fmt-title')[0]
+      ?? findPartsOfType(section, ROOT_SUBJECT, 'title')[0];
     const titleContent = title
       ? generateContent(title, pm.nodes.title!, processorState)
       : undefined;
