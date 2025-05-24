@@ -177,7 +177,6 @@ export const makeContentReader: ContentReaderFactory = async function (
 
       const isFileURI = (originalURI ?? uri).startsWith('file:');
 
-      //console.debug("Expanding URI", uri, originalURI, entryPointURI);
       let expanded;
       if (isFileURI) {
         // Make URI relative to data repo root.
@@ -201,11 +200,12 @@ export const makeContentReader: ContentReaderFactory = async function (
           originalURIs[canonicalRootResourceURI] = normalizedFileURI;
           expanded = canonicalRootResourceURI;
         } catch (e) {
+          //console.debug("Could not start reader", e);
           // If unable to start a reader, just return the expanded URI.
           expanded = normalizedFileURI;
         }
       } else {
-        // It’s unclear whether there are other URIs that can be expanded.
+        // It’s unclear whether there are other URIs that should be expanded.
         // Technically, a relative HTTP URL is not an URI
         // since it lacks the scheme.
 
@@ -213,9 +213,12 @@ export const makeContentReader: ContentReaderFactory = async function (
         // this entry point to a URI that is globally unique
         // across the whole site
         // by adding entry point URI.
-        expanded = `${uri}---${entryPointURI}`;
+        //expanded = `${uri}---${entryPointURI}`;
         // XXX: https://github.com/metanorma/firelight/issues/80
+
+        expanded = uri;
       }
+      //console.debug("Expanded", uri, "->", expanded);
       return expanded;
     }
 
