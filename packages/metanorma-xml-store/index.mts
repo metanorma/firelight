@@ -64,7 +64,10 @@ const TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS_SELECTOR =
   TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS.join(', ');
 
 function mangleXMLIdentifier(id: string): string {
-  return unescape(id.replaceAll('___x', '%u').replaceAll('__x', '%u'));
+  if (!id) { return ''; }
+  //return unescape(id.replaceAll('___x', '%u').replaceAll('__x', '%u'));
+  const subbed = id.replace(/_?__x([0-9a-fA-F]{2})_?/g, '%$1');
+  return unescape(subbed);
 }
 
 const processClauseLike: CustomElementProcessor =
@@ -76,10 +79,10 @@ function processClauseLike(el: Element) {
       [[
         ROOT_SUBJECT,
         'hasClauseIdentifier',
-        mangleXMLIdentifier(
-          el.getAttribute('id')
-          ?? `unidentified-section-${crypto.randomUUID()}`
-        ),
+        (
+          el.getAttribute('anchor') ||
+          mangleXMLIdentifier(el.getAttribute('id') ?? '')
+        ) || `unidentified-${el.tagName}-${crypto.randomUUID()}`,
       ], [
         ROOT_SUBJECT,
         'type',
@@ -119,6 +122,10 @@ function getResourceURI(el: Element): string {
       // then we only expect <metanorma> inside <doc-container>s.
       maybeID = el.getAttribute('id');
     }
+  } else if (el.tagName === 'clause') {
+    maybeID =
+      el.getAttribute('anchor')
+      || mangleXMLIdentifier(el.getAttribute('id') ?? '');
   } else {
     maybeID = el.getAttribute('id');
   }
