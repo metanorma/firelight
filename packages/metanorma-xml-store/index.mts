@@ -114,6 +114,9 @@ function getResourceURI(el: Element): string {
       // doc-container is bypassed, but we can grab its ID.
       maybeID = el.parentElement.getAttribute('id');
     } else {
+      // This probably technically shouldn’t happen.
+      // If the root tag is <metanorma-collection>,
+      // then we only expect <metanorma> inside <doc-container>s.
       maybeID = el.getAttribute('id');
     }
   } else {
