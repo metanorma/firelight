@@ -903,7 +903,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
             map(n => n.isInline
               ? n
               //: (new Transform(n).doc.textContent.toString() ?? ''))
-              : pm.text(n.textContent))
+              : pm.text(n.textContent || '[no content]'))
           } else if (!subjectNodeType.inlineContent && allSubparts.find(node => node.isInline)) {
             //return allSubparts;
             if (allSubparts.find(node => !node.isInline)) {
@@ -928,7 +928,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           map(n => n.isInline
             ? n
             //: (new Transform(n).doc.textContent.toString() ?? ''))
-            : pm.text(n.textContent))
+            : pm.text(n.textContent || '[no content]'))
         } else if (subjectNodeType === 'block' && allSubparts.find(n => n.isInline)) {
           if (allSubparts.find(node => !node.isInline)) {
             console.error("Trying to create an inline node in a block-content node? Will wrap in a paragraph.", subjectNodeTypeRepr, allSubparts.filter(node => !node.isInline).map(n => n.toString()));
@@ -952,7 +952,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
     const pm = clauseSchema;
 
-    const labelInPlainText = getSectionPlainTitle(section) ?? 'untitled clause';
+    const labelInPlainText =
+      getSectionPlainTitle(section) || 'untitled clause';
     //if (!labelInPlainText) {
     //  throw new Error("Cannot generate clause: missing title");
     //}
@@ -1083,7 +1084,7 @@ const generateCoverPage:
   const dates = resolveChain(bibdata, ['hasDate', 'hasPart']);
   const pubDate = dates.find(([dateURI, ]) =>
     findValue(bibdata, dateURI, 'hasType') === 'published',
-  )?.[1] ?? 'unknown publication date';
+  )?.[1] || 'unknown publication date';
 
   const contributors = resolveChain(bibdata, ['hasContributor']);
   const authorAndPublisherOrgURIs = contributors.
@@ -1096,7 +1097,7 @@ const generateCoverPage:
   const authorsAndPublishers = Array.from(new Set(authorAndPublisherOrgURIs.map(uri =>
     resolveChain(bibdata, ['hasName', 'hasPart'], uri)[0]?.[1]
   ).filter(name => name !== undefined)));
-  const author = authorsAndPublishers[0] ?? 'unknown contributors';
+  const author = authorsAndPublishers[0] || 'unknown contributors';
 
   const pm = coverBibdataSchema;
   return {
@@ -1112,7 +1113,7 @@ const generateCoverPage:
         pm.node('edition', null, [pm.text(edition)]),
         pm.node('pubDate', null, [pm.text(pubDate)]),
         pm.node('author', null, [pm.text(author)]),
-        ...dlLinks.map(href =>
+        ...dlLinks.filter(href => href.trim() !== '').map(href =>
           pm.node(
             'resource_link',
             {
