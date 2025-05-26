@@ -150,8 +150,8 @@ const mod: StoreAdapterModule = {
 
     const isValidCollectionEntryPoint =
       dom.documentElement.tagName === 'metanorma-collection'
-      && dom.documentElement.getAttribute('type') === 'presentation'
-      && dom.querySelector('metanorma-collection > bibdata > docidentifier[primary="true"]')?.textContent
+      //&& dom.documentElement.getAttribute('type') === 'presentation'
+      && dom.querySelector('metanorma-collection > bibdata > docidentifier')?.textContent
 
     if (!(isValidDocumentEntryPoint || isValidCollectionEntryPoint)) {
       throw new Error("Invalid Metanorma document or collection presentation XML");
@@ -164,9 +164,15 @@ const mod: StoreAdapterModule = {
           const primaryDocid =
             dom.querySelector('metanorma > bibdata > docidentifier[primary="true"]')?.textContent
             ?? undefined;
+          const collectionID =
+            dom.querySelector('metanorma-collection > bibdata > docidentifier[primary="true"]')?.textContent
+            ?? dom.querySelector('metanorma-collection > bibdata > docidentifier')?.textContent
+            ?? undefined;
           return primaryDocid
             ? `urn:metanorma:doc:${encodeURIComponent(primaryDocid)}`
-            : undefined;
+            : collectionID
+              ? `urn:metanorma:collection:${encodeURIComponent(collectionID)}`
+              : undefined;
         },
         estimateRelationCount: () => estimateRelationCount(dom),
         discoverAllResources: (onRelationChunk, opts) => {
@@ -182,19 +188,18 @@ const mod: StoreAdapterModule = {
             },
             resourceTypesByTagName: tagNameAliases,
             processTag: {
-              //'metanorma-collection': function processMetanormaCollectionRoot() {
-              //  return [
-              //    [[ROOT_SUBJECT, 'type', 'collection']],
-              //    // TODO
-              //    //
-              //    // {
-              //    //   getChildPredicate: (_, childEl) =>
-              //    //     childEl.tagName === 'bibdata'
-              //    //       ? tagNameToHasPredicate(childEl.tagName)
-              //    //       : 'hasPart',
-              //    // },
-              //  ] as [RelationGraphAsList, Rules];
-              //},
+              'metanorma-collection': function processMetanormaCollectionRoot() {
+                return [
+                  [[ROOT_SUBJECT, 'type', 'collection']],
+                  {
+                    getChildPredicate: (_, childEl) =>
+                      childEl.tagName === 'metanorma'
+                        ? 'hasPart'
+                        : tagNameToHasPredicate(childEl.tagName),
+                  },
+                ] as [RelationGraphAsList, Rules];
+              },
+              'doc-container': 'bypass',
               metanorma: function processMetanormaRoot() {
                 return [
                   [[ROOT_SUBJECT, 'type', 'document']],
