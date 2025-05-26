@@ -298,7 +298,9 @@ const mod: StoreAdapterModule = {
                   //if (!id) {
                   //  throw new Error("Clause title seems to be missing ID");
                   //}
-                  const fmtTitleText = dom.documentElement.querySelector(`semx[element=title][source=${id}]`);
+                  const fmtTitleText = id
+                    ? dom.documentElement.querySelector(`semx[element=title][source=${id}]`)
+                    : null;
                   const fmtTitleRoot = fmtTitleText?.closest('fmt-title');
                   const clauseNumberEl = fmtTitleRoot?.querySelector('.fmt-caption-label');
                   const clauseNumber = clauseNumberEl?.textContent ?? '';
