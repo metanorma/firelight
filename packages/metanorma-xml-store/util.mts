@@ -363,7 +363,8 @@ export function dekebab(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).replace(/-./g, x => x[1]?.toUpperCase() ?? '');
 }
 
+// TODO: Make caller-suppliable
 function repr(el: Element) {
-  const maybeID = el.getAttribute('id');
+  const maybeID = el.getAttribute('anchor') || el.getAttribute('id');
   return `${el.tagName}${maybeID ? `#${maybeID}` : ''}`;
 }
