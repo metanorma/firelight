@@ -220,6 +220,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'underline': 'underline',
       'strong': 'strong',
       'em': 'em',
+      'sup': 'sup',
       'bookmark': 'anchor',
 
       //'dl': 'definition_list',
