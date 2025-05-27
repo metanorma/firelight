@@ -777,6 +777,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         return pm.node('figure', { resourceID: subj }, figureContents);
       },
     };
+
     function makeNodeOrNot(
       subj: string,
       subjType: string,
@@ -1055,7 +1056,6 @@ const generatorsByType: Record<string, ContentGenerator> = {
 //     return null;
 //   }
 // }
-
 
 const generateCoverPage:
 (lang: string, docid: string, dlLinks: string[]) => ContentGenerator =
