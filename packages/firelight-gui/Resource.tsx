@@ -102,6 +102,7 @@ const reactKeysPlugin = reactKeys();
 export const Resource = React.forwardRef(function ({
   className,
   requestedResourceURI,
+  searchQueryText,
   useDependency, locateResource, document,
   getResourcePlainTitle: resolvePlainTitle,
   selectedLayout: layout,

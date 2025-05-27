@@ -91,6 +91,14 @@
 
 .resource {
 
+  /*
+   * See: https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#highlighting_search_results
+   */
+  ::highlight(search-results) {
+    background-color: #f06;
+    color: white;
+  }
+
   padding: 0 2em 2em;
 
   font-size: 16px;
