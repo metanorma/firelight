@@ -726,7 +726,7 @@ export const makeContentReader: ContentReaderFactory = async function (
         //console.debug("using", mod.name);
         return reader;
       } catch (e) {
-        //console.warn("Failed to create resource reader for URI", mod.name, resourceURI);
+        //console.warn("Failed to create resource reader for URI", mod.name, resourceURI, e);
       }
     }
     throw new Error(`Failed to initialize resource reader for ${resourceURI}`);
