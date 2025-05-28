@@ -2,7 +2,7 @@ import lunr, { type Index as LunrIndex } from 'lunr';
 
 import { useDebounce } from 'use-debounce';
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { SearchField, ActionGroup, ListView, Item, Text } from '@adobe/react-spectrum';
+import { SearchField, ActionGroup, ListView, Item, Link, Text } from '@adobe/react-spectrum';
 import Delete from '@spectrum-icons/workflow/Delete';
 //import BookmarkIcon from '@spectrum-icons/workflow/BookmarkSmallOutline';
 //import BookmarkIconActive from '@spectrum-icons/workflow/BookmarkSmall';
@@ -134,7 +134,9 @@ export const Search: React.FC<{
         href={locateResource(result.ref)}
         key={result.ref}
         textValue={title}>
-      <Text>{title} </Text>
+      <Text UNSAFE_className={classNames.navListViewItemWithLink}>
+        <Link href={locateResource(result.ref)}>{title}</Link>
+      </Text>
       <Text slot="description">
         {getPlainTitle(getContainingPageURI(result.ref))}
       </Text>

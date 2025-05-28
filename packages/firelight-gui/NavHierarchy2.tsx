@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Link, ListView, ActionButton, Item, type Selection } from '@adobe/react-spectrum';
+import { Link, Text, ListView, ActionButton, Item, type Selection } from '@adobe/react-spectrum';
 import CollapsedIcon from '@spectrum-icons/workflow/ChevronLeft';
 import ExpandedIcon from '@spectrum-icons/workflow/ChevronDown';
 import { useDebouncedCallback } from 'use-debounce';
@@ -113,12 +113,11 @@ export const Hierarchy: React.FC<{
 	  key={item.id}
 	  //hasChildItems={item.hasChildren}
 	  textValue={item.title}>
-	<Link
-	    href={`/${item.path}`}
-	    UNSAFE_className={classNames.navListViewItemLink}
+	<Text
+	    UNSAFE_className={classNames.navListViewItemWithLink}
 	    UNSAFE_style={{ marginLeft: `${item.level * 1}em` }}>
-	  {item.title}
-	</Link>
+	  <Link href={`/${item.path}`}>{item.title}</Link>
+	</Text>
 	{item.hasChildren
 	  ? <ActionButton
 		isDisabled={isForceExpanded}

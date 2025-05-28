@@ -180,14 +180,16 @@
   border: none;
   border-radius: 0;
 
-  .navListViewItemLink {
+  .navListViewItemWithLink {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 
-    &:link, &:hover, &:visited {
-      text-decoration: none;
-      color: inherit;
+    & > a {
+      &:link, &:hover, &:visited {
+        text-decoration: none;
+        color: inherit;
+      }
     }
   }
 }
