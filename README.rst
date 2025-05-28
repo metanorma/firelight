@@ -11,7 +11,7 @@ of Firelight’s MN XML parsing & site content rendering extensions.
 
 `Example repository <https://github.com/metanorma/mn-samples-plateau/>`_
 built with this system;
-`deployed version <https://metanorma.github.io/mn-samples-plateau/001/>`_.
+`deployed version <https://metanorma.github.io/mn-samples-plateau/plateaudocument/>`_.
 (But note that the example does not follow best practices
 for source data & config versioning, and instead initializes an empty
 repository and generates the config in Github Action logic. That means
