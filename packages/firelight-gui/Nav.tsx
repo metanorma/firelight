@@ -131,7 +131,6 @@ export const Search: React.FC<{
   const renderItem = useCallback((result: { ref: string, score: number }) => {
     const title = getPlainTitle(result.ref);
     return <Item
-        href={locateResource(result.ref)}
         key={result.ref}
         textValue={title}>
       <Text UNSAFE_className={classNames.navListViewItemWithLink}>
