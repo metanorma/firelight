@@ -59,9 +59,15 @@ function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | 
 
   const parts = resolveChain(section, ['hasPart', 'type'], ROOT_SUBJECT);
 
+  // Prefer `<fmt-title>`
   const plainTitleIDs = parts.
-  filter(([pID, type]) => type === 'title' || type === 'fmt-title').
+  filter(([, type]) => type === 'fmt-title').
   map(([pID]) => pID);
+
+  // Use plain `<title>` as fallback
+  plainTitleIDs.push(...parts.
+    filter(([, type]) => type === 'title').
+    map(([pID]) => pID));
 
   const plainTitleID = plainTitleIDs[0];
 
