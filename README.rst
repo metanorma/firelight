@@ -344,8 +344,9 @@ Dependencies
   Try to architect the feature in a way that doesn’t require that dependency.
 
 - If you add or upgrade a dependency, run ``yarn`` and pay attention
-  if it reports any duplicate instance error. If there are such, you need
-  to eliminate them. They may cause subtle runtime bugs
+  if it reports a duplicate instance error at the end.
+  If there are duplicate instances, you need to eliminate them.
+  They may cause subtle runtime bugs
   (and/or spurious typing errors, possibly).
 
   You can investigate duplicate virtual instances using the command
