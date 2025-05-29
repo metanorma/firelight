@@ -134,7 +134,7 @@ export function getTextContent(
         return [partValue];
       }
     } else {
-      return getTextContent(graph, partValue);
+      return getTextContent(graph, partValue, partPredicate);
     }
   });
   return allSubparts;
