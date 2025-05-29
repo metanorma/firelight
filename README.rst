@@ -342,6 +342,20 @@ Gotchas
   If you see that in CSS bundle some library CSS appears after your local
   CSS, then somehow that went wrong. Project’s local CSS always comes last.
 
+- If you add or upgrade a dependency, run ``yarn`` and pay attention
+  if it reports any duplicate instance error. If there are such, you need
+  to eliminate them. They may cause subtle runtime bugs
+  (and/or spurious typing errors, possibly).
+
+  You can investigate duplicate virtual instances using the command
+  ``yarn check-for-multiple-instances``
+  together with ``yarn why [duplicate package name]``.
+
+  Duplicates may be caused by dependency specification
+  in one of the packages in this repository (e.g., some dependency
+  resolves to another version by another workspace),
+  or some downstream package’s own specification. The above commands
+  make it possible to narrow down the cause.
 
 Conventions
 ~~~~~~~~~~~
