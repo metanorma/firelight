@@ -330,17 +330,18 @@ as follows (where tgz is the artifact within ``anafero-cli`` package)::
       [--rev <other-revision-or-spec>]
       [--debug]
 
-Gotchas
-~~~~~~~
+Important conventions
+~~~~~~~~~~~~~~~~~~~~~
 
-- If you work on styling and confusingly what you defined in your local CSS
-  is overridden by library CSS, make sure that your local CSS is not imported
-  before library CSS in the total import tree (this can accidentally happen
-  if you have components split across multiple files that import class names
-  from a single shared local CSS module).
+- Do not export something that does not need exporting.
 
-  If you see that in CSS bundle some library CSS appears after your local
-  CSS, then somehow that went wrong. Project’s local CSS always comes last.
+Dependencies
+^^^^^^^^^^^^
+
+- Do not add a dependency unless warranted.
+  Inspect dependency’s dependency tree.
+  The bigger the tree, the less desirable the dependency.
+  Try to architect the feature in a way that doesn’t require that dependency.
 
 - If you add or upgrade a dependency, run ``yarn`` and pay attention
   if it reports any duplicate instance error. If there are such, you need
@@ -356,9 +357,6 @@ Gotchas
   resolves to another version by another workspace),
   or some downstream package’s own specification. The above commands
   make it possible to narrow down the cause.
-
-Conventions
-~~~~~~~~~~~
 
 Types & schema
 ^^^^^^^^^^^^^^
@@ -396,11 +394,19 @@ Types & schema
 - If the type in question was defined and can be inferred by TSC
   *and* by a human without explicit annotation, manual annotation can/should be omitted.
 
-Other conventions
-^^^^^^^^^^^^^^^^^
-
-- Do not export something that does not need exporting.
 - Use ``@ts-expect-error``, if necessary, but not the ignore directive.
+
+Gotchas
+~~~~~~~
+
+- If you work on styling and confusingly what you defined in your local CSS
+  is overridden by library CSS, make sure that your local CSS is not imported
+  before library CSS in the total import tree (this can accidentally happen
+  if you have components split across multiple files that import class names
+  from a single shared local CSS module).
+
+  If you see that in CSS bundle some library CSS appears after your local
+  CSS, then somehow that went wrong. Project’s local CSS always comes last.
 
 Known issues
 ~~~~~~~~~~~~
