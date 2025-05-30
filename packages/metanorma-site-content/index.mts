@@ -59,15 +59,12 @@ function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | 
 
   const parts = resolveChain(section, ['hasPart', 'type'], ROOT_SUBJECT);
 
-  // Prefer `<fmt-title>`
+  // Use plain `<title>`, it’s pre-processed to prefer
+  // fmt-title > semx[element=title], or full fmt-title, or title
+  // in that order.
   const plainTitleIDs = parts.
-  filter(([, type]) => type === 'fmt-title').
-  map(([pID]) => pID);
-
-  // Use plain `<title>` as fallback
-  plainTitleIDs.push(...parts.
     filter(([, type]) => type === 'title').
-    map(([pID]) => pID));
+    map(([pID]) => pID);
 
   const plainTitleID = plainTitleIDs[0];
 
