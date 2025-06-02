@@ -100,10 +100,11 @@
     */
 
     html[lang="en"] & h1 + p:first-letter {
-      font-size: 230%;
+      font-size: 3em;
       float: left;
-      line-height: 1;
-      display: inline-block;
+      line-height: 2rem;
+      margin-right: .25rem;
+      padding: .1em 0;
     }
 
     /* IMPORTANT: Only applicable in read-only mode. */
