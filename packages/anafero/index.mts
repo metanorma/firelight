@@ -21,4 +21,5 @@ export * from './ResourceNavigationContext.mjs';
 export * from './moduleRef.mjs';
 export * from './cache.mjs';
 export * from './path-utils.mjs';
+export * from './util/graph-query.mjs';
 export * from './URI.mjs';
