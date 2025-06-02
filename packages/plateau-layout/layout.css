@@ -99,7 +99,7 @@
     }
     */
 
-    html[lang="en"] & h1 + p:first-letter {
+    html:not([lang="ja"]) & h1 + p:not(:only-of-type):first-letter {
       font-size: 3em;
       float: left;
       line-height: 2rem;
