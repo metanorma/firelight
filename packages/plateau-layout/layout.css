@@ -107,6 +107,10 @@
       padding: .1em 0;
     }
 
+    sup {
+      line-height: 1;
+    }
+
     /* IMPORTANT: Only applicable in read-only mode. */
     &[contenteditable="false"] :global br.ProseMirror-trailingBreak {
       /* This <br /> is added by PM in editable mode, it’s
