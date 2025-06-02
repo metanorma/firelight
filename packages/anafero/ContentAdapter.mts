@@ -174,7 +174,9 @@ export interface ContentAdapterModule {
   /**
    * Should describe any resource, even if it does not contribute to hierarchy.
    */
-  describe: (relations: RelationGraphAsList | Readonly<RelationGraphAsList>) => ResourceMetadata;
+  describe:
+    (relations: RelationGraphAsList | Readonly<RelationGraphAsList>) =>
+      ResourceMetadata;
 
 
   // // TODO: WIP: Unify hierarchy API, umbrella for conditions + schema + transforms
