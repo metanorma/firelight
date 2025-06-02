@@ -115,3 +115,25 @@ export function makeSplittingNodeProcessor(
     return outputNodes;
   }
 }
+
+
+///** Returns true if given node is allowed in given node type. */
+//function canCreateInlineContent(inNodeOfType: ProseMirrorNodeType): boolean {
+//  try {
+//    return inNodeOfType.validContent(Fragment.from(node));
+//  } catch (e) {
+//    console.error("Cannot create node", e);
+//    return false;
+//  }
+//}
+
+// /** Returns true if given node is allowed in given node type. */
+// function canCreate(node: ProseMirrorNode, inNodeOfType: ProseMirrorNodeType): boolean {
+//   try {
+//     return inNodeOfType.validContent(Fragment.from(node));
+//   } catch (e) {
+//     console.error("Cannot create node", e);
+//     return false;
+//   }
+// }
+// 
