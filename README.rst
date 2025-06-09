@@ -25,7 +25,10 @@ Usage
 - Intended to be run on macOS and Linux. Not tested on Windows.
 - Requires Node 22.
 
-::
+The build command must be run from the root of a Git repository that has
+Anafero config file versioned in it (see below).
+
+The current official way of running the build command is via NPX::
 
     npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli \
       build-site \
@@ -35,8 +38,21 @@ Usage
       [--rev <other-revision-or-spec>]
       [--debug]
 
-The command must be run from the root of a Git repository that has
-Anafero config file versioned in it (see below).
+Example running in a container through Podman::
+
+    podman pull docker.io/library/node:22-alpine
+
+    podman [--log-level=debug] run --interactive --tty \
+    -v .:/data:ro -v ./path/to/site/output/dir:/out:rw \
+    --workdir=/data \
+    docker.io/library/node:22-alpine \
+      npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli \
+        build-site \
+        --target-dir /out \
+        --current-rev <main-revision> \
+        [--path-prefix </slash-prepended-path-prefix>]
+        [--rev <other-revision-or-spec>]
+        [--debug]
 
 Anafero config
 --------------
