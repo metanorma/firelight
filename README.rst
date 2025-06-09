@@ -22,13 +22,29 @@ are particularly large and run into some Git infrastructure limitations.)
 Usage
 -----
 
-- Intended to be run on macOS and Linux. Not tested on Windows.
+The current official way of running the build command is via NPX.
+
+The build command must be run from the root of a Git repository that has
+Anafero config file versioned in it (see the “Anafero config” section).
+
+In the following examples:
+
+- ``path/to/site/output/dir`` is where
+  you want the build artifact (HTML files & other assets) to appear.
+- ``main-revision`` is the current revision Git reference, e.g., ``main``.
+- ``rev`` is optional other Git references to build, for example, a tag name
+  or name pattern.
+- ``/slash-prepended-path-prefix`` is optional URL path prefix
+  used when serving the artifact.
+
+Direct
+~~~~~~
+
+- Tested on macOS and Linux. Not tested on Windows.
 - Requires Node 22.
 
 The build command must be run from the root of a Git repository that has
-Anafero config file versioned in it (see below).
-
-The current official way of running the build command is via NPX::
+Anafero config file versioned in it (see below)::
 
     npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli \
       build-site \
@@ -38,7 +54,12 @@ The current official way of running the build command is via NPX::
       [--rev <other-revision-or-spec>]
       [--debug]
 
-Example running in a container through Podman::
+Here, ``path/to/site/output/dir`` can be a relative or an absolute path.
+
+Container
+~~~~~~~~~
+
+Example running in a container via Podman::
 
     podman pull docker.io/library/node:22-alpine
 
@@ -53,6 +74,13 @@ Example running in a container through Podman::
         [--path-prefix </slash-prepended-path-prefix>]
         [--rev <other-revision-or-spec>]
         [--debug]
+
+This binds current directory as ``/data`` in the container,
+and output directory as ``/out`` in the container.
+
+.. note:: Podman’s ``--volume`` flag **requires** that host directory path
+          starts with `.` or `/`, otherwise it might be considered
+          a named volume reference.
 
 Anafero config
 --------------
