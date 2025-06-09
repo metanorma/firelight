@@ -43,8 +43,7 @@ Direct
 - Tested on macOS and Linux. Not tested on Windows.
 - Requires Node 22.
 
-The build command must be run from the root of a Git repository that has
-Anafero config file versioned in it (see below)::
+::
 
     npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli \
       build-site \
@@ -59,7 +58,7 @@ Here, ``path/to/site/output/dir`` can be a relative or an absolute path.
 Container
 ~~~~~~~~~
 
-Example running in a container via Podman::
+Podman example::
 
     podman pull docker.io/library/node:22-alpine
 
