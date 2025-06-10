@@ -330,7 +330,7 @@ Environment setup
 ~~~~~~~~~~~~~~~~~
 
 Use Node 22.
-Run `corepack enable` to ensure it can load correct Yarn
+Run ``corepack enable`` to ensure it can load correct Yarn
 for the package.
 
 .. important:: Extension modules are not being cleaned up after build as of now.
@@ -408,7 +408,7 @@ Types & schema
 - We try to make the most out of TypeScript while staying pragmatic
   and not going overboard type wrangling.
 
-- Using `any` or `unknown` is almost never acceptable.
+- Using ``any`` or ``unknown`` is almost never acceptable.
   For data constructed by the code directly at runtime, we make sure
   the interface or type is clearly defined somewhere.
 
