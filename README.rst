@@ -78,7 +78,7 @@ This binds current directory as ``/data`` in the container,
 and output directory as ``/out`` in the container.
 
 .. note:: Podman’s ``--volume`` flag **requires** that host directory path
-          starts with `.` or `/`, otherwise it might be considered
+          starts with ``.`` or ``/``, otherwise it might be considered
           a named volume reference.
 
 Anafero config
