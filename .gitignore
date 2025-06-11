@@ -1,4 +1,7 @@
 /compiled
+/dist
+/packages/*/dist
+/packages/*/compiled
 
 /package.mjs
 /build-*.mjs
