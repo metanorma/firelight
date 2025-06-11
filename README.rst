@@ -247,7 +247,7 @@ to build and run the container using a command like this::
     podman build --build-arg "project_path=$REPO_ABSPATH" \
       -f $DOCKERFILE_NAME -t "$DOCKER_IMAGE_NAME" . \
     && podman container run \
-      --cpus=0.5 --memory=4g \
+      --cpus=1 --memory=4g \
       --interactive --rm --network=none \
       --workdir="$REPO_ABSPATH" --volume="$REPO_ABSPATH:$REPO_ABSPATH:rw" \
       --name "$DOCKER_IMAGE_NAME-container" \
@@ -386,38 +386,76 @@ TBC.
 Local adapter testing/preflight
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Typechecking: When working on adapters, for typechecking you should
-  run ``yarn compile`` inside relevant adapter package explicitly.
-  ``yarn cbp`` will not reveal typing issues from adapter packages.
+During local development, instead of specifying ``git+https`` URLs
+it is possible to specify ``file:`` URLs
+in ``anafero-config.json``::
 
-- Testing with Anafero build: 
-  During local development, instead of specifying ``git+https`` URLs
-  it is possible to specify ``file:`` URLs
-  in ``anafero-config.json``::
-  
-      file:/path/to/store-adapter-directory
-  
-  This way it would fetch modules from local filesystem, and any changes
-  to adapters will have effect immediately without pushing them.
-  
-  This is helpful when working on modules, of course, but also
-  when working on something else to save the time fetching module data.
+    file:/path/to/adapter-directory
+
+This way it would fetch modules from local filesystem, and any changes
+to adapters will have effect immediately without pushing them.
+
+This is helpful when working on modules, of course, but also
+when working on something else to save the time fetching module data.
+
+Podman example (Fish shell)—similar to the regular Podman usage example,
+except additionally mounts inside the container (in read-only mode)
+the adapter directory specified in config JSON::
+
+    podman [--log-level=debug] run --interactive --tty \
+    -v (pwd):/data:ro -v (pwd)/path/to/site/output/dir:/out:rw \
+    -v /path/to/adapter-directory:/path/to/adapter-directory:ro \
+    --workdir=/data \
+    docker.io/library/node:22-alpine \
+      npx --node-options='--experimental-vm-modules' -y @riboseinc/anafero-cli \
+        build-site \
+        --target-dir /out \
+        --current-rev <main-revision> \
+        [--path-prefix </slash-prepended-path-prefix>]
+        [--rev <other-revision-or-spec>]
+        [--debug]
 
 Core development
 ~~~~~~~~~~~~~~~~
 
-This includes Anafero core packages and ``firelight-gui``.
+Compiling & building
+^^^^^^^^^^^^^^^^^^^^
 
-.. note:: When working on Firelight GUI, for typechecking you should
-          run ``yarn compile`` inside ``firelight-gui`` package explicitly.
+- ``yarn compile`` compiles a package.
+- ``yarn cbp`` within ``anafero-cli`` package builds the CLI into a tarball
+  ready for publishing or testing (see local testing section).
+
+.. note:: When working on Firelight GUI, or initial adapters,
+          for typechecking you should
+          run ``yarn compile`` inside respective packages, because
           ``yarn cbp`` may not reveal typing issues from other packages.
+
+Direct example::
+
+    # If you are in repo root
+    yarn workspace @riboseinc/anafero-cli cbp
+
+    # If you are in anafero-cli package directory
+    yarn cbp
+
+Podman example, Fish shell: executing ``yarn cbp`` in a container
+(assuming you are in repository root)::
+
+    dir=(pwd)/packages/anafero-cli \
+    podman --log-level=debug run --cpus=1 --memory=4g --interactive --tty \
+      -v "$dir"/dist:"$dir"/dist:rw -v "$dir"/compiled:"$dir"/compiled:rw \
+      --workdir=(pwd) \
+      localhost/fltest:latest \
+      yarn workspace @riboseinc/anafero-cli cbp
+
+The tarball will be under ``packages/anafero-cli/dist``.
 
 Testing changes locally
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 After building ``anafero-cli`` with ``yarn cbp``, to test the changes
-before making a release invoke the CLI via NPX on your machine
-as follows (where tgz is the artifact within ``anafero-cli`` package).
+before making a release invoke the CLI via NPX on your machine,
+giving it the path to the NPM tarball produced by ``yarn cbp``.
 
 Example without containerization::
 
