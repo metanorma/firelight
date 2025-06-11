@@ -247,11 +247,11 @@ to build and run the container using a command like this::
     podman build --build-arg "project_path=$REPO_ABSPATH" \
       -f $DOCKERFILE_NAME -t "$DOCKER_IMAGE_NAME" . \
     && podman container run \
-        --cpus=0.5 --memory=4g \
-        --interactive --rm --network=none \
-        --workdir="$REPO_ABSPATH" --volume="$REPO_ABSPATH:$REPO_ABSPATH:rw" \
-        --name "$DOCKER_IMAGE_NAME-container" \
-        "$DOCKER_IMAGE_NAME"
+      --cpus=0.5 --memory=4g \
+      --interactive --rm --network=none \
+      --workdir="$REPO_ABSPATH" --volume="$REPO_ABSPATH:$REPO_ABSPATH:rw" \
+      --name "$DOCKER_IMAGE_NAME-container" \
+      "$DOCKER_IMAGE_NAME"
 
 Where:
 
