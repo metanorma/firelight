@@ -11,7 +11,7 @@
     "bp": "rm -f riboseinc-anafero-*.tgz; yarn build-generator -- --debug && npm pack",
     "build-generator-builder": "yarn esbuild build-generator.mts --log-level=debug --packages=external --platform=node --target=node18 --minify=false --bundle --format=esm --outfile=build-generator.mjs",
     "build-generator": "yarn node build-generator.mjs --",
-    "clean-all": "rm -f riboseinc-anafero-*.tgz build-generator.mjs build-site.mjs bootstrap.js *.css",
+    "clean-all": "rm -f compiled/* dist/riboseinc-anafero-*.tgz build-generator.mjs build-site.mjs bootstrap.js *.css",
     "compile": "tsc --outdir compiled"
   },
   "dependencies": {
