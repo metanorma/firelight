@@ -41,7 +41,7 @@ Direct
 ~~~~~~
 
 - Tested on macOS and Linux. Not tested on Windows.
-- Requires Node 22.
+- Requires Node 22. You must have the ``npx`` executable in your path.
 
 ::
 
@@ -55,8 +55,8 @@ Direct
 
 Here, ``path/to/site/output/dir`` can be a relative or an absolute path.
 
-Container
-~~~~~~~~~
+Containerized
+~~~~~~~~~~~~~
 
 Podman example::
 
@@ -103,17 +103,18 @@ Example::
       ]
     }
 
-(Note that this example pins adapters to branch name, which is not ideal in real use.)
+- ``entryPoint``: path to entry point file, relative to repository root
+- Adapters: lists of module identifiers.
+  See module identifier shape section.
+  (Note that this example pins adapter identifiers to branch name,
+  which is not ideal in real use.)
 
 The file must be versioned, unless config is supplied via an override.
+
 Each version being built (e.g., different commits or tags)
 can have a different configuration (if a specified version does not have the config,
 the config will be sourced from the nearest more recent version that has it,
 or via config override if provided).
-
-For extension module reference format (adapters & layouts)
-see module identifier shape below.
-
 
 Module identifier shape
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -211,15 +212,74 @@ Known issues
 
   So far this was not reproduced in build environments other than GHA.
 
-Implementing adapter modules
-----------------------------
+Development
+-----------
+
+Environment setup
+~~~~~~~~~~~~~~~~~
+
+In many cases, you can use containers (via Podman or Docker),
+which would take care of runtime environment.
+This includes IDE LSP setup. Use the same 
+
+System requirements, when you don’t containerize
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Have Node 22 installed, with ``node``, ``corepack``, ``npx``
+  executables available in your path.
+- Run ``corepack enable`` to ensure it can load correct Yarn
+  for the package.
+
+.. important:: Extension modules are not being cleaned up after build as of now.
+               This is fine in cloud environments that can do the clean up,
+               but locally they may accumulate.
+               On macOS, you should be able to find temporary build directories
+               under ``/var/folders/ln/<long string>/<short string>/anafero-*``.
+               They can be safely deleted.
+
+Containerized IDE setup tips
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+An example Dockerfile with TypeScript language server
+is bundled (see ``tsls.Dockerfile``). You can set up your IDE
+to build and run the container using a command like this::
+
+    podman build --build-arg "project_path=$REPO_ABSPATH" \
+      -f $DOCKERFILE_NAME -t "$DOCKER_IMAGE_NAME" . \
+    && podman container run \
+        --cpus=0.5 --memory=4g \
+        --interactive --rm --network=none \
+        --workdir="$REPO_ABSPATH" --volume="$REPO_ABSPATH:$REPO_ABSPATH:rw" \
+        --name "$DOCKER_IMAGE_NAME-container" \
+        "$DOCKER_IMAGE_NAME"
+
+Where:
+
+- ``$DOCKERFILE_NAME`` is the Dockerfile that accepts one build arg
+  ``project_path``, the absolute path to the repository,
+  and runs a TypeScript language server in stdio mode.
+- ``$REPO_ABSPATH`` is the absolute path to your repository.
+- ``$DOCKER_IMAGE_NAME`` is an image name you want to use.
+
+.. note:: ``:rw`` technically shouldn’t be required for the volume,
+          but sometimes Yarn will need to write ``install-state.tgz``,
+          and if it’s unable to do so it will fail with:
+
+              Internal Error: EROFS: read-only file system, open '<repo path>/.yarn/install-state.gz'
+
+          You can use ``:ro``, but then you may need run the command by hand
+          to get rid of the error.
+
+
+Adapter development
+~~~~~~~~~~~~~~~~~~~
 
 Feel free to reference ``metanorma-xml-store`` for store adapter,
 ``metanorma-site-content`` for content adapter, ``plateau-layout`` for layout,
 but API may change shortly (particularly for content adapters).
 
 Store adapters
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 The job of a store adapter is to map an entry point file to resources
 and relations.
@@ -257,7 +317,7 @@ and then fail to instantiate a reader because upon closer
 inspection source data is not recognizable.
 
 Content adapters
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 .. note:: Content adapter API is likely to change in near future.
 
@@ -314,7 +374,7 @@ The main parts of content adapter API are:
     when editing.
 
 Layouts
-~~~~~~~
+^^^^^^^
 
 Layout module interface
 is defined by ``LayoutModule`` in ``anafero/Layout.mts``.
@@ -323,48 +383,43 @@ that conforms to this interface.
 
 TBC.
 
-Development
------------
+Local adapter testing/preflight
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Environment setup
-~~~~~~~~~~~~~~~~~
+- Typechecking: When working on adapters, for typechecking you should
+  run ``yarn compile`` inside relevant adapter package explicitly.
+  ``yarn cbp`` will not reveal typing issues from adapter packages.
 
-Use Node 22.
-Run ``corepack enable`` to ensure it can load correct Yarn
-for the package.
+- Testing with Anafero build: 
+  During local development, instead of specifying ``git+https`` URLs
+  it is possible to specify ``file:`` URLs
+  in ``anafero-config.json``::
+  
+      file:/path/to/store-adapter-directory
+  
+  This way it would fetch modules from local filesystem, and any changes
+  to adapters will have effect immediately without pushing them.
+  
+  This is helpful when working on modules, of course, but also
+  when working on something else to save the time fetching module data.
 
-.. important:: Extension modules are not being cleaned up after build as of now.
-               This is fine in cloud environments that can do the clean up,
-               but locally they may accumulate.
-               On macOS, you may likely find temporary build directories
-               under ``/var/folders/ln/<long string>/<short string>/anafero-*``.
-               They can be safely deleted.
+Core development
+~~~~~~~~~~~~~~~~
 
-Local modules
-^^^^^^^^^^^^^
+This includes Anafero core packages and ``firelight-gui``.
 
-During local development, instead of specifying ``git+https`` URLs
-it is possible to specify ``file:`` URLs
-in ``anafero-config.json``::
+.. note:: When working on Firelight GUI, for typechecking you should
+          run ``yarn compile`` inside ``firelight-gui`` package explicitly.
+          ``yarn cbp`` may not reveal typing issues from other packages.
 
-    file:/path/to/store-adapter-directory
-
-This way it would fetch modules from local filesystem, and any changes
-to adapters will have effect immediately without pushing them.
-
-This is helpful when working on modules, of course, but also
-when working on something else to save the time fetching module data.
-
-Local Anafero
-^^^^^^^^^^^^^
-
-.. note:: For GUI-side typechecking, it is currently *required*
-          to run ``yarn compile`` inside ``firelight-gui`` package separately.
-          ``yarn cbp`` will not reveal all typing issues.
+Testing changes locally
+^^^^^^^^^^^^^^^^^^^^^^^
 
 After building ``anafero-cli`` with ``yarn cbp``, to test the changes
 before making a release invoke the CLI via NPX on your machine
-as follows (where tgz is the artifact within ``anafero-cli`` package)::
+as follows (where tgz is the artifact within ``anafero-cli`` package).
+
+Example without containerization::
 
     npx --node-options='--experimental-vm-modules' -y file:/path/to/anafero.tgz \
       --target-dir <path/to/site/output/dir> \
@@ -373,8 +428,12 @@ as follows (where tgz is the artifact within ``anafero-cli`` package)::
       [--rev <other-revision-or-spec>]
       [--debug]
 
-Important conventions
-~~~~~~~~~~~~~~~~~~~~~
+Example with containerization: TBC
+(use the example from the main Usage section, but modified to mount
+anafero tarball from host filesystem?).
+
+Code conventions
+~~~~~~~~~~~~~~~~
 
 - Do not export something that does not need exporting.
 
