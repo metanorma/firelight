@@ -398,7 +398,7 @@ to adapters will have effect immediately without pushing them.
 This is helpful when working on modules, of course, but also
 when working on something else to save the time fetching module data.
 
-Podman example (Fish shell)—similar to the regular Podman usage example,
+Podman example, Fish shell: similar to the regular Podman usage example,
 except additionally mounts inside the container (in read-only mode)
 the adapter directory specified in config JSON::
 
