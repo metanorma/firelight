@@ -7,8 +7,8 @@
     "build-site": "build-site.mjs"
   },
   "scripts": {
-    "cbp": "yarn clean-all; yarn compile; yarn build-generator-builder && yarn build-generator -- --debug && sed 's#^import devtools#//import devtools#' build-site.mjs > ._tmp && mv ._tmp build-site.mjs && npm pack && cp *.tgz dist/",
     "bp": "rm -f riboseinc-anafero-*.tgz; yarn build-generator -- --debug && npm pack",
+    "cbp": "yarn clean-all; yarn compile; yarn build-generator-builder && yarn build-generator -- --debug && sed 's#^import devtools#//import devtools#' build-site.mjs > ._tmp && mv ._tmp build-site.mjs && npm pack && mv *.tgz dist/",
     "build-generator-builder": "yarn esbuild build-generator.mts --log-level=debug --packages=external --platform=node --target=node18 --minify=false --bundle --format=esm --outfile=build-generator.mjs",
     "build-generator": "yarn node build-generator.mjs --",
     "clean-all": "rm -f compiled/* dist/riboseinc-anafero-*.tgz build-generator.mjs build-site.mjs bootstrap.js *.css",
