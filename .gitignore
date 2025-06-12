@@ -1,7 +1,10 @@
 /compiled
 /dist
-/packages/*/dist
-/packages/*/compiled
+/packages/*/dist/*
+/packages/*/compiled/*
+!/packages/*/dist/README.rst
+!/packages/*/compiled/README.rst
+
 
 /package.mjs
 /build-*.mjs
