@@ -49,8 +49,8 @@ Direct
       build-site \
       --target-dir <path/to/site/output/dir> \
       --current-rev <main-revision> \
-      [--path-prefix </slash-prepended-path-prefix>]
-      [--rev <other-revision-or-spec>]
+      [--path-prefix </slash-prepended-path-prefix> \]
+      [--rev <other-revision-or-spec> \]
       [--debug]
 
 Here, ``path/to/site/output/dir`` can be a relative or an absolute path.
@@ -70,8 +70,8 @@ Podman example::
         build-site \
         --target-dir /out \
         --current-rev <main-revision> \
-        [--path-prefix </slash-prepended-path-prefix>]
-        [--rev <other-revision-or-spec>]
+        [--path-prefix </slash-prepended-path-prefix> \]
+        [--rev <other-revision-or-spec> \]
         [--debug]
 
 This binds current directory as ``/data`` in the container,
@@ -411,8 +411,8 @@ the adapter directory specified in config JSON::
         build-site \
         --target-dir /out \
         --current-rev <main-revision> \
-        [--path-prefix </slash-prepended-path-prefix>]
-        [--rev <other-revision-or-spec>]
+        [--path-prefix </slash-prepended-path-prefix> \]
+        [--rev <other-revision-or-spec> \]
         [--debug]
 
 Core development
@@ -462,8 +462,8 @@ Example without containerization::
     npx --node-options='--experimental-vm-modules' -y file:/path/to/anafero.tgz \
       --target-dir <path/to/site/output/dir> \
       --current-rev <main-revision> \
-      [--path-prefix </slash-prepended-path-prefix>]
-      [--rev <other-revision-or-spec>]
+      [--path-prefix </slash-prepended-path-prefix> \]
+      [--rev <other-revision-or-spec> \]
       [--debug]
 
 Example with containerization: TBC
