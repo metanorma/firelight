@@ -237,8 +237,8 @@ System requirements, when you don’t containerize
                under ``/var/folders/ln/<long string>/<short string>/anafero-*``.
                They can be safely deleted.
 
-Containerized IDE setup tips
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Containerized setup tips
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 An example Dockerfile with TypeScript language server
 is bundled (see ``tsls.Dockerfile``). You can set up your IDE
@@ -259,7 +259,10 @@ Where:
   ``project_path``, the absolute path to the repository,
   and runs a TypeScript language server in stdio mode.
 - ``$REPO_ABSPATH`` is the absolute path to your repository.
-- ``$DOCKER_IMAGE_NAME`` is an image name you want to use.
+  If you’re in the root of the repository and you use Fish, you’d assign
+  ``set $REPO_ABSPATH (pwd)``.
+- ``$DOCKER_IMAGE_NAME`` is an image name you want to use,
+  you can pick something that makes sense.
 
 .. note:: ``:rw`` technically shouldn’t be required for the volume,
           but sometimes Yarn will need to write ``install-state.tgz``,
@@ -267,8 +270,20 @@ Where:
 
               Internal Error: EROFS: read-only file system, open '<repo path>/.yarn/install-state.gz'
 
-          You can use ``:ro``, but then you may need run the command by hand
+          Ideally you should use ``:ro``,
+          but then you may need run the command by hand
           to get rid of the error.
+
+          If you want to run some Yarn command mounting directory in read-write mode
+          and with network access (this runs ``yarn install``)::
+
+              podman container run \
+                --cpus=1 --memory=4g \
+                --interactive --rm \
+                --entrypoint=sh \
+                --workdir="$REPO_ABSPATH" --volume="$REPO_ABSPATH:$REPO_ABSPATH:rw" \
+                --name "$DOCKER_IMAGE_NAME-container" \
+                "$DOCKER_IMAGE_NAME" -c "yarn install"
 
 
 Adapter development
