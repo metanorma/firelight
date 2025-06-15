@@ -1,7 +1,7 @@
 // @ts-check
 
 /** @type {import('@yarnpkg/types')} */
-const { defineConfig } = require(`@yarnpkg/types`);
+const { defineConfig } = require('@yarnpkg/types');
 
 /**
  * This rule will enforce that a workspace MUST depend on the same version of
@@ -11,11 +11,11 @@ const { defineConfig } = require(`@yarnpkg/types`);
  */
 function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
   for (const dependency of Yarn.dependencies()) {
-    if (dependency.type === `peerDependencies`)
+    if (dependency.type === 'peerDependencies')
       continue;
 
     for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
-      if (otherDependency.type === `peerDependencies`)
+      if (otherDependency.type === 'peerDependencies')
         continue;
 
       dependency.update(otherDependency.range);
