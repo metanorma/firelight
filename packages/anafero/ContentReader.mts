@@ -12,6 +12,7 @@ import {
 
 import {
   type ContentAdapterModule,
+  type ResourceMetadata,
 } from './ContentAdapter.mjs';
 
 import {
@@ -29,6 +30,7 @@ import { isURIString } from './URI.mjs';
 
 
 export interface ContentReader {
+  describe: (resourceURI: string) => Readonly<ResourceMetadata>;
   resolve: (resourceURI: string) => Readonly<RelationGraphAsList>;
   generatePaths: (fromSubpath?: string) => Generator<{
     /**
@@ -105,6 +107,8 @@ export const makeContentReader: ContentReaderFactory = async function (
    * (for file URIs).
    */
   const originalURIs: Record<string, string> = {};
+
+  // TODO: Cache canonical/original URI map?
 
   /** Maps each resource URI to respective content adapter. */
   const contentAdapters: Record<string, ContentAdapterModule> = {};
@@ -572,6 +576,14 @@ export const makeContentReader: ContentReaderFactory = async function (
     pathPrefix: string,
 
     onProgress: (msg: string) => void,
+
+    /**
+     * Resource metadata that gets inherited hierarchically, unless overridden.
+     * Primary language is one example.
+     * If a document has language fr, then sections will have it too
+     * unless a section specifies a different language, and so on.
+     */
+    meta?: { lang: string },
   ) {
     //console.debug("processHierarchy", resourceURI, canonicalURIs[resourceURI]);
 
@@ -622,7 +634,7 @@ export const makeContentReader: ContentReaderFactory = async function (
           : maybePathComponent;
         // NOTE: Allow recursion, since no sane hierarchy
         // is expected to be too large for that to become an issue.
-        processHierarchy(rel.target, newPath, onProgress);
+        processHierarchy(rel.target, newPath, onProgress, meta);
       } else if (isURIString(rel.target)) {
         processResourceContents(contentAdapter, rel.target, pathPrefix);
       }
@@ -702,6 +714,11 @@ export const makeContentReader: ContentReaderFactory = async function (
       } else {
         throw new Error("Unable to find URL for resource");
       }
+    },
+    describe: function describe (resourceURI) {
+      // Resource metadata can be partially inherited,
+      // e.g. primary language.
+      fv
     },
     resolve: function resolveGraph (resourceURI) {
       return getResourceGraph(resourceURI);

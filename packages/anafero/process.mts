@@ -402,6 +402,12 @@ export async function * generateVersion(
    * and use for resources that don’t specify their own.
    */
   let maybePrimaryLanguageID: string | undefined = undefined;
+
+  /**
+   * Implicitly includes at least maybePrimaryLanguageID.
+   */
+  const allLanguages: Set<string> = new Set();
+
   let maybeMainTitle: string | undefined = undefined;
 
   function getReverseResourceMap() {
@@ -460,8 +466,9 @@ export async function * generateVersion(
     }
     // If this is the first resource that provides a primary language ID,
     // use that as primary language ID for resources that lack one.
-    if (!maybePrimaryLanguageID) {
-      if (resourceMeta.primaryLanguageID) {
+    if (resourceMeta.primaryLanguageID) {
+      allLanguages.add(resourceMeta.primaryLanguageID);
+      if (!maybePrimaryLanguageID) {
         console.debug(
           "Setting primary language ID:",
           resourceMeta.primaryLanguageID,
@@ -470,7 +477,7 @@ export async function * generateVersion(
         );
         maybePrimaryLanguageID = resourceMeta.primaryLanguageID;
       }
-    } else if (!resourceMeta.primaryLanguageID) {
+    } else if (maybePrimaryLanguageID) {
       resourceMeta.primaryLanguageID = maybePrimaryLanguageID;
     }
     resourceDescriptions[resourceURI] = resourceMeta;
@@ -620,14 +627,36 @@ export async function * generateVersion(
 
   const lunrIndex = lunr(function () {
     console.debug(`Search index: primary language is “${maybePrimaryLanguageID}”`);
-    if (maybePrimaryLanguageID && maybePrimaryLanguageID !== 'en' && lunrLanguageSupport[maybePrimaryLanguageID as keyof typeof lunrLanguageSupport]) {
-      console.debug("Search index: enabling multi-language Lunr mode & mixed tokenizer");
-      lunrLanguageSupport[maybePrimaryLanguageID as keyof typeof lunrLanguageSupport](lunr);
+    const supportedLanguages = [...allLanguages].
+    filter(lang => !!lunrLanguageSupport[lang as keyof typeof lunrLanguageSupport]);
+    const supportedNonDefaultLanguages =
+      supportedLanguages.filter(lang => lang !== 'en');
+    if (maybePrimaryLanguageID) {
+      if (supportedLanguages.length > 1) {
+        for (const lang of supportedNonDefaultLanguages) {
+          lunrLanguageSupport[lang as keyof typeof lunrLanguageSupport](lunr);
+        }
+        for (const lang of supportedNonDefaultLanguages) {
+          this.use((lunr as any)[lang]);
+        }
+        console.debug("Search index: enabling multi-language Lunr mode & mixed tokenizer",
+          supportedLanguages.join(', '));
+        enableLunrMultiLanguage(lunr);
+        this.use((lunr as any).multiLanguage(...supportedLanguages));
+        (this as any).tokenizer = function(x: any) {
+          return lunr.tokenizer(x).
+          concat(...supportedNonDefaultLanguages.map(lang => (lunr as any)[lang].tokenizer(x)));
+        };
+      } else if (maybePrimaryLanguageID !== 'en') {
+        this.use((lunr as any)[maybePrimaryLanguageID]);
+      }
+    }
+
+    if (maybePrimaryLanguageID
+    && maybePrimaryLanguageID !== 'en'
+    && lunrLanguageSupport[maybePrimaryLanguageID as keyof typeof lunrLanguageSupport]) {
       enableLunrMultiLanguage(lunr);
       this.use((lunr as any).multiLanguage('en', maybePrimaryLanguageID));
-      (this as any).tokenizer = function(x: any) {
-        return lunr.tokenizer(x).concat((lunr as any)[maybePrimaryLanguageID].tokenizer(x));
-      };
     }
 
     // Reduce the effect of document length on term importance.
@@ -643,7 +672,10 @@ export async function * generateVersion(
     for (const [uri, content] of Object.entries(contentCache)) {
       done += 1;
       indexProgress({ state: `adding entry for ${uri}`, total, done });
-      const label = content?.content?.labelInPlainText;
+      const label = content?.content?.labelInPlainText?.
+      normalize('NFKD').
+      replace(/\p{Diacritic}/gu, '');
+
       if (label) {
         const entry: LunrIndexEntry = {
           name: uri,
@@ -652,6 +684,10 @@ export async function * generateVersion(
         this.add(entry);
       } else {
         console.warn("No label for", uri);
+      }
+
+      if (label?.includes('echelle')) {
+        console.debug("Entry", uri, label);
       }
     }
     for (const [uri, desc] of Object.entries(resourceDescriptions)) {
@@ -666,6 +702,13 @@ export async function * generateVersion(
       }
 
       const rels = reader.resolve(uri);
+      //  const body = getTextContent(rels, ROOT_SUBJECT).
+      //  join('').
+      //  trim().
+      //  normalize('NFKD').
+      //  replace(/\p{Diacritic}/gu, '').
+      //  trim();
+
       const relationsExcludingReferences = rels.filter(([s, p, o]) =>
         p === 'hasPart'
         &&
@@ -675,7 +718,17 @@ export async function * generateVersion(
         &&
         (!isURIString(o) || !reader.exists(o))
       );
-      const body = relationsExcludingReferences.map(([s, p, o]) => o).join('').trim();
+      const body = relationsExcludingReferences.
+      map(([, , o]) => o).
+      join('').
+      trim().
+      normalize('NFKD').
+      replace(/\p{Diacritic}/gu, '').
+      trim();
+
+      if (body.includes('echelle')) {
+        console.debug("Subresource", uri, body);
+      }
 
       if (body) {
         //console.debug("Indexing", uri, relationsExcludingReferences, body);

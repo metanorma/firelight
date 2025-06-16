@@ -60,7 +60,10 @@ export const Search: React.FC<{
 
   const [matches, error] = useMemo(() => {
     if (index && debouncedQuery.trim() !== '') {
-      const tokens = lunr.tokenizer(debouncedQuery.replace(/:/g, ' '));
+      const tokens = lunr.tokenizer(
+        debouncedQuery.replace(/:/g, ' ').
+        normalize("NFKD").
+        replace(/\p{Diacritic}/gu, ""));
       //const queryTokenized = lunr.tokenizer(debouncedQuery);
       console.debug("Search: tokens", tokens);
       //console.debug("Search: Lunr argument", queryTokenized.map(t => `${t}`).join(' '));
@@ -86,6 +89,7 @@ export const Search: React.FC<{
           ? (index.query(query => {
               query.term(tokens, {
                 presence: lunr.Query.presence.REQUIRED,
+                wildcard: lunr.Query.wildcard.LEADING | lunr.Query.wildcard.TRAILING,
               });
             }) ?? []).
             slice(0, MAX_SEARCH_RESULT_COUNT)
