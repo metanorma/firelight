@@ -716,9 +716,14 @@ export const makeContentReader: ContentReaderFactory = async function (
       }
     },
     describe: function describe (resourceURI) {
-      // Resource metadata can be partially inherited,
-      // e.g. primary language.
-      fv
+      // Resource metadata can be partially inherited
+      // from parent resources, e.g. primary language.
+      // This fills in inherited metadata
+      // if content adapter fails to provide it.
+      // NOTE: No way of enforcing non-inheritance of metadata?
+      const canonicalURI = canonicalURIs[resourceURI] ?? resourceURI;
+      const adapter = contentAdapters[cannonicalURI];
+      return adapter.describe(getResourceGraph(resourceURI));
     },
     resolve: function resolveGraph (resourceURI) {
       return getResourceGraph(resourceURI);
