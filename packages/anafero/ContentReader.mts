@@ -456,9 +456,30 @@ export const makeContentReader: ContentReaderFactory = async function (
     if (!cache.has(`metadata/${resourceURI}`)) {
       const graph = getResourceGraph(resourceURI);
       const contentAdapter = getAdapter(resourceURI);
-      const path = cache.get(`path-for/${resourceURI}`);
+
+      const meta = contentAdapter.describe(graph);
+      const path = cache.get<string>(`path-for/${resourceURI}`);
+      if (!meta.primaryLanguageID && !path.includes('#')) {
+        if (cache.has(`${path}/parents`)) {
+          const parentResourcePaths = cache.get<string[]>(`${path}/parents`);
+          for (const p of parentResourcePaths) {
+            const parentURI = cache.get<string>(p);
+            //const parentAdapter = getAdapter(parentURI);
+            const parentMeta = describeResource(parentURI);
+            if (parentMeta.primaryLanguageID) {
+              meta.primaryLanguageID = parentMeta.primaryLanguageID;
+              console.debug("describeResource: inheriting language for", path, "from", p);
+              break;
+            }
+            console.debug("describeResource: no language, and no parents with language, for", path);
+          }
+        } else {
+          console.debug("describeResource: no language, and no parents, for", path);
+        }
+      }
+
       cache.set({
-        [`metadata/${resourceURI}`]: contentAdapter.describe(graph),
+        [`metadata/${resourceURI}`]: meta,
       });
     }
     return cache.get<ResourceMetadata>(`metadata/${resourceURI}`);

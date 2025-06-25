@@ -546,7 +546,10 @@ export async function * generateVersion(
             contentCache[uri] = {
               adapterID: maybeAdapter[0],
               content: content
-                ? { primaryLanguageID: maybePrimaryLanguageID, ...content }
+                ? {
+                    primaryLanguageID: resourceMeta.primaryLanguageID ?? maybePrimaryLanguageID,
+                    ...content,
+                  }
                 : null,
             } as const;
             if (content) {
