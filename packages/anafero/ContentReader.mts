@@ -113,6 +113,16 @@ export const makeContentReader: ContentReaderFactory = async function (
   /** Maps each resource URI to respective content adapter. */
   const contentAdapters: Record<string, ContentAdapterModule> = {};
 
+  function getAdapter(canonicalURI: string): ContentAdapterModule {
+    const adapter = contentAdapters[canonicalURI];
+    if (adapter) {
+      return adapter;
+    } else {
+      console.error("Resource does not have associated content adapter on record", canonicalURI);
+      throw new Error("Resource does not have associated content adapter on record");
+    }
+  }
+
   /** Maps entry point URI to respective resource reader. */
   const resourceReaders: Record<string, ResourceReader> = {};
 
@@ -464,11 +474,7 @@ export const makeContentReader: ContentReaderFactory = async function (
       // Ensure there is an empty graph
       cache.add(`graphs/${resourceURI}`, []);
 
-      const contentAdapter = contentAdapters[resourceURI];
-      if (!contentAdapter) {
-        console.error("Resource does not have associated content adapter on record", resourceURI);
-        throw new Error("Resource does not have associated content adapter on record");
-      }
+      const contentAdapter = getAdapter(resourceURI);
 
       //const resourcePath = cache.get<string>(`path-for/${resourceURI}`);
       const queue: string[] = [resourceURI];
