@@ -555,6 +555,20 @@ Types & schema
 Gotchas
 ~~~~~~~
 
+- We use esbuild for faster building, and TSC for typechecking.
+
+  - You should run ``tsc`` (via respective ``compile`` commands),
+    not just build commands, when developing and testing.
+    Make sure you do not introduce new TSC errors.
+
+  - ESM imports require ``.mjs`` / ``.js`` extensions.
+    This is counter-intuitive, because the source resides
+    in ``.mts`` / ``.ts`` files; when you write imports just pretend
+    that the code was already transpiled.
+
+    We don’t want to use ``allowImportingTsExtensions`` because it
+    requires ``noEmit`` and because it’s unclear how esbuild plays with it.
+
 - If you work on styling and confusingly what you defined in your local CSS
   is overridden by library CSS, make sure that your local CSS is not imported
   before library CSS in the total import tree (this can accidentally happen
