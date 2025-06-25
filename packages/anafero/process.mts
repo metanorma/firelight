@@ -595,6 +595,9 @@ export async function * generateVersion(
     filter(lang => !!lunrLanguageSupport[lang as keyof typeof lunrLanguageSupport]);
     const supportedNonDefaultLanguages =
       supportedLanguages.filter(lang => lang !== 'en');
+    if (supportedLanguages.length > 1) {
+      enableLunrMultiLanguage(lunr);
+    }
     if (maybePrimaryLanguageID) {
       if (supportedLanguages.length > 1) {
         for (const lang of supportedNonDefaultLanguages) {
@@ -605,7 +608,6 @@ export async function * generateVersion(
         }
         console.debug("Search index: enabling multi-language Lunr mode & mixed tokenizer",
           supportedLanguages.join(', '));
-        enableLunrMultiLanguage(lunr);
         this.use((lunr as any).multiLanguage(...supportedLanguages));
         (this as any).tokenizer = function(x: any) {
           return lunr.tokenizer(x).
@@ -616,12 +618,12 @@ export async function * generateVersion(
       }
     }
 
-    if (maybePrimaryLanguageID
-    && maybePrimaryLanguageID !== 'en'
-    && lunrLanguageSupport[maybePrimaryLanguageID as keyof typeof lunrLanguageSupport]) {
-      enableLunrMultiLanguage(lunr);
-      this.use((lunr as any).multiLanguage('en', maybePrimaryLanguageID));
-    }
+    //if (maybePrimaryLanguageID
+    //&& maybePrimaryLanguageID !== 'en'
+    //&& lunrLanguageSupport[maybePrimaryLanguageID as keyof typeof lunrLanguageSupport]) {
+    //  enableLunrMultiLanguage(lunr);
+    //  this.use((lunr as any).multiLanguage('en', maybePrimaryLanguageID));
+    //}
 
     // Reduce the effect of document length on term importance.
     // this.b(0.3);
