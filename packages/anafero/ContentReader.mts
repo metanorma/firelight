@@ -149,15 +149,6 @@ export const makeContentReader: ContentReaderFactory = async function (
 
   await process();
 
-  ///**
-  // * Captures which entry point resides under which
-  // * (not always directly corresponds to URI).
-  // */
-  //type EntryPointHierarchy = Record<string, EntryPointHierarchy>;
-  //const entryPoints: EntryPointHierarchy = {};
-
-  //const entryPointPrefixes: Record<string, string> = {};
-
   async function processRelations(
     entryPointURI: string,
     onProgress: (prog: Progress) => void,
