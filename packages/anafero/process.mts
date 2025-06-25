@@ -668,7 +668,7 @@ export async function * generateVersion(
         const entry: LunrIndexEntry = {
           name: uri,
           body: label,
-        };
+        } as const;
         this.add(entry);
       } else {
         console.warn("No label for", uri);
@@ -723,7 +723,7 @@ export async function * generateVersion(
         const entry: LunrIndexEntry = {
           name: uri,
           body,
-        };
+        } as const;
         this.add(entry);
       } else {
         //console.debug("Indexing", uri, 'no text');
