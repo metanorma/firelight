@@ -728,8 +728,14 @@ export const makeContentReader: ContentReaderFactory = async function (
       // if content adapter fails to provide it.
       // NOTE: No way of enforcing non-inheritance of metadata?
       const canonicalURI = canonicalURIs[resourceURI] ?? resourceURI;
-      const adapter = contentAdapters[cannonicalURI];
-      return adapter.describe(getResourceGraph(resourceURI));
+      const adapter = getAdapter(canonicalURI);
+      let graph: Readonly<RelationGraphAsList>;
+      try {
+        graph = getResourceGraph(resourceURI);
+      } catch (e) {
+        throw new Error("Unable to describe: failed to read resource graph");
+      }
+      return adapter.describe(graph);
     },
     resolve: function resolveGraph (resourceURI) {
       return getResourceGraph(resourceURI);
