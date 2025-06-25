@@ -110,7 +110,7 @@ export const makeContentReader: ContentReaderFactory = async function (
 
   // TODO: Cache canonical/original URI map?
 
-  /** Maps each resource URI to respective content adapter. */
+  /** Maps each canonical resource URI to respective content adapter. */
   const contentAdapters: Record<string, ContentAdapterModule> = {};
 
   function getAdapter(canonicalURI: string): ContentAdapterModule {
@@ -459,8 +459,8 @@ export const makeContentReader: ContentReaderFactory = async function (
   }
 
   /**
-   * Gets resource graph, following relations
-   * unless related resource is in hierarchy.
+   * Gets resource graph for canonical resource URI,
+   * following relations unless related resource is in hierarchy.
    *
    * Prefers cached graph, if already requested before.
    *
@@ -651,6 +651,11 @@ export const makeContentReader: ContentReaderFactory = async function (
     }
   }
 
+  /**
+   * Returns cached canonical URI for resource at given path.
+   *
+   * This means it relies on `processPage()` having been run.
+   */
   function getCachedResourceURIForPath(path: string) {
     const resourceURI = cache.get<string>(path);
     if (!resourceURI) {
