@@ -607,6 +607,8 @@ export const makeContentReader: ContentReaderFactory = async function (
       : null;
 
     if (parentPath !== null) {
+      // Add this path as descendant for the parent
+
       cache.add(`${parentPath}/direct-descendants`, [pathPrefix]);
       const parentPathParts = parentPath.split('/');
       const parentPaths = parentPathParts.map((_, idx) =>
