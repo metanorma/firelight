@@ -17,9 +17,6 @@
     "exactOptionalPropertyTypes": true,
     "skipLibCheck": true,
 
-    "allowImportingTsExtensions": true, // XXX
-    "noEmit": true, // XXX
-
     "isolatedModules": true,
     "esModuleInterop": true,
 
