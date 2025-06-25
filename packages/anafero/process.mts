@@ -662,7 +662,7 @@ export async function * generateVersion(
       indexProgress({ state: `adding entry for ${uri}`, total, done });
       const label = content?.content?.labelInPlainText?.
       normalize('NFKD').
-      replace(/\p{Diacritic}/gu, '');
+      replace(/\p{Diacritic}/gu, "");
 
       if (label) {
         const entry: LunrIndexEntry = {
@@ -711,7 +711,7 @@ export async function * generateVersion(
       join('').
       trim().
       normalize('NFKD').
-      replace(/\p{Diacritic}/gu, '').
+      replace(/\p{Diacritic}/gu, "").
       trim();
 
       if (body.includes('echelle')) {

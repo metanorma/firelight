@@ -61,8 +61,8 @@ export const Search: React.FC<{
   const [matches, error] = useMemo(() => {
     if (index && debouncedQuery.trim() !== '') {
       const tokens = lunr.tokenizer(
-        debouncedQuery.replace(/:/g, ' ').
-        normalize("NFKD").
+        debouncedQuery.replace(/:/g, " ").
+        normalize('NFKD').
         replace(/\p{Diacritic}/gu, ""));
       //const queryTokenized = lunr.tokenizer(debouncedQuery);
       console.debug("Search: tokens", tokens);
