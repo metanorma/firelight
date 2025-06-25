@@ -325,7 +325,7 @@ export const makeContentReader: ContentReaderFactory = async function (
               // TODO: Implement storage adapter for for non-file: URIs
             }
           } else {
-            console.debug("URI relation is seen again", relation.target);
+            //console.debug("URI relation is seen again", relation.target);
           }
         }
       }
@@ -469,13 +469,13 @@ export const makeContentReader: ContentReaderFactory = async function (
             const parentMeta = describeResource(parentURI);
             if (parentMeta.primaryLanguageID) {
               meta.primaryLanguageID = parentMeta.primaryLanguageID;
-              console.debug("describeResource: inheriting language for", path, "from", p);
+              //console.debug("describeResource: inheriting language for", path, "from", p);
               break;
             }
-            console.debug("describeResource: no language, and no parents with language, for", path);
+            console.warn("describeResource: no language, and no parents with language, for", path);
           }
         } else {
-          console.debug("describeResource: no language, and no parents, for", path);
+          console.warn("describeResource: no language, and no parents, for", path);
         }
       }
 
