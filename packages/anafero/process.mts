@@ -394,18 +394,16 @@ export async function * generateVersion(
   /** Maps filenames to blobs. Assets are global per version. */
   const assetsToWrite: Record<string, Uint8Array> = {};
 
-  /**
-   * If we get a language ID from the root, we pass it on
-   * and use for resources that don’t specify their own.
-   */
-  let maybePrimaryLanguageID: string | undefined = undefined;
+  const rootMeta = reader.describeRoot();
+
+  const maybePrimaryLanguageID = rootMeta.primaryLanguageID ?? 'en';
+
+  const maybeMainTitle = rootMeta.labelInPlainText ?? "Document";
 
   /**
    * Implicitly includes at least maybePrimaryLanguageID.
    */
   const allLanguages: Set<string> = new Set();
-
-  let maybeMainTitle: string | undefined = undefined;
 
   function getReverseResourceMap() {
     return Object.fromEntries(Object.entries(resourceMap).
@@ -449,26 +447,6 @@ export async function * generateVersion(
     resourceGraph.push([resourceURI, 'isDefinedBy', `${path}/resource.json`]);
 
     const resourceMeta = meta;
-    // If we’re at the root, get the main title
-    if (path === '' && !maybeMainTitle) {
-      maybeMainTitle = resourceMeta.labelInPlainText ?? 'Workspace';
-    }
-    // If this is the first resource that provides a primary language ID,
-    // use that as primary language ID for resources that lack one.
-    if (resourceMeta.primaryLanguageID) {
-      allLanguages.add(resourceMeta.primaryLanguageID);
-      if (!maybePrimaryLanguageID) {
-        console.debug(
-          "Setting primary language ID:",
-          resourceMeta.primaryLanguageID,
-          "based on resource",
-          resourceURI,
-        );
-        maybePrimaryLanguageID = resourceMeta.primaryLanguageID;
-      }
-    } else if (maybePrimaryLanguageID) {
-      resourceMeta.primaryLanguageID = maybePrimaryLanguageID;
-    }
     resourceDescriptions[resourceURI] = resourceMeta;
 
     pathProgress({ state: 'processing referenced files' });
@@ -522,8 +500,8 @@ export async function * generateVersion(
       expandVersionedPath,
       getDOMStub,
       { head: extraHead, tail: inject.tail, htmlAttrs: inject.htmlAttrs },
-      maybeMainTitle ?? 'Workspace',
-      resourceMeta.primaryLanguageID ?? maybePrimaryLanguageID ?? 'en',
+      maybeMainTitle,
+      resourceMeta.primaryLanguageID ?? maybePrimaryLanguageID,
       function generateContent(relations, uri: string) {
         if (!contentCache[uri]) {
           let content: ResourceContent | null;
@@ -543,13 +521,14 @@ export async function * generateVersion(
               );
               throw e;
             }
+
+            const primaryLanguageID =
+              resourceMeta.primaryLanguageID ?? maybePrimaryLanguageID;
+
             contentCache[uri] = {
               adapterID: maybeAdapter[0],
               content: content
-                ? {
-                    primaryLanguageID: resourceMeta.primaryLanguageID ?? maybePrimaryLanguageID,
-                    ...content,
-                  }
+                ? { primaryLanguageID, ...content }
                 : null,
             } as const;
             if (content) {
@@ -564,10 +543,7 @@ export async function * generateVersion(
                   const pathWithFragment = `${path}#${encodeURIComponent(inPageResourceID)}`;
                   resourceMap[pathWithFragment] = inPageResourceID;
                   resourceGraph.push([inPageResourceID, 'isDefinedBy', `${path}/resource.json`]);
-                  resourceDescriptions[inPageResourceID] = {
-                    primaryLanguageID: maybePrimaryLanguageID,
-                    ...maybeAdapter[1].describe(relativeGraph(relations, inPageResourceID)),
-                  };
+                  resourceDescriptions[inPageResourceID] = reader.describe(inPageResourceID);
                 } else {
                   console.warn(
                     "Subresource on page does not exist in the graph",
@@ -678,16 +654,15 @@ export async function * generateVersion(
         console.debug("Entry", uri, label);
       }
     }
-    for (const [uri, desc] of Object.entries(resourceDescriptions)) {
+    for (const [uri, ] of Object.entries(resourceDescriptions)) {
       done += 1;
       indexProgress({ state: 'adding entries for subresources', total, done });
 
-      const lang = desc.primaryLanguageID;
-
-      if (lang && lang !== maybePrimaryLanguageID && lang !== 'en' && lunr.hasOwnProperty(lang)) {
-        console.warn("Resource language is different from primary language, this may not work");
-        this.use((lunr as any).multiLanguage('en', lang));
-      }
+      //const lang = desc.primaryLanguageID;
+      // if (lang && lang !== maybePrimaryLanguageID && lang !== 'en' && lunr.hasOwnProperty(lang)) {
+      //   console.warn("Resource language is different from primary language, this may not work");
+      //   this.use((lunr as any).multiLanguage('en', lang));
+      // }
 
       const rels = reader.resolve(uri);
       //  const body = getTextContent(rels, ROOT_SUBJECT).
@@ -907,11 +882,11 @@ export async function * generateStaticSiteAssets(
   }
 }
 
-function relativeGraph(
-  relations: RelationGraphAsList | Readonly<RelationGraphAsList>,
-  subj: string,
-): Readonly<RelationGraphAsList> {
-  return relations.
-    filter(([s, ]) => s !== ROOT_SUBJECT).
-    map(([s, p, o]) => [s === subj ? ROOT_SUBJECT : s, p, o]);
-}
+//function relativeGraph(
+//  relations: RelationGraphAsList | Readonly<RelationGraphAsList>,
+//  subj: string,
+//): Readonly<RelationGraphAsList> {
+//  return relations.
+//    filter(([s, ]) => s !== ROOT_SUBJECT).
+//    map(([s, p, o]) => [s === subj ? ROOT_SUBJECT : s, p, o]);
+//}

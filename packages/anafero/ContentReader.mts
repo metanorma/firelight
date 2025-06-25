@@ -31,6 +31,7 @@ import { isURIString } from './URI.mjs';
 
 export interface ContentReader {
   describe: (resourceURI: string) => Readonly<ResourceMetadata>;
+  describeRoot: () => Readonly<ResourceMetadata>;
   resolve: (resourceURI: string) => Readonly<RelationGraphAsList>;
   generatePaths: (fromSubpath?: string) => Generator<{
     /**
@@ -763,6 +764,9 @@ export const makeContentReader: ContentReaderFactory = async function (
     },
     describe: function describe (resourceURI) {
       return describeResource(resourceURI);
+    },
+    describeRoot: function describeRoot () {
+      return describeResource(cache.get(''));
     },
     resolve: function resolveGraph (resourceURI) {
       return getResourceGraph(resourceURI);
