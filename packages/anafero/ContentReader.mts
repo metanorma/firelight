@@ -126,15 +126,15 @@ export const makeContentReader: ContentReaderFactory = async function (
     await processRelations(entryPointURI, relationsProgress);
     relationsProgress(null);
 
-    const [hierarchyProgress] = reportProgress('prepare site structure');
-    processHierarchy(
+    const [pageProgress] = reportProgress('prepare page structure');
+    processPage(
       canonicalURIs[entryPointURI] ?? entryPointURI,
       '',
-      function reportHierarchyProgress(state) {
-        hierarchyProgress({ state });
+      function reportPageProgress(state) {
+        pageProgress({ state });
       },
     );
-    hierarchyProgress(null);
+    pageProgress(null);
   }
 
   await process();
@@ -454,7 +454,7 @@ export const makeContentReader: ContentReaderFactory = async function (
    *
    * Prefers cached graph, if already requested before.
    *
-   * Relies on result of processHierarchy().
+   * Relies on result of processPage().
    */
   function getResourceGraph(
     resourceURI: string,
@@ -526,10 +526,14 @@ export const makeContentReader: ContentReaderFactory = async function (
   }
 
   /**
-   * Adds to cache all related resources as paths with URL fragments
-   * under containing resource path.
+   * Caches on-page resource path with URL fragment
+   * within containing resource page path.
+   *
+   * Sets respective content adapter.
+   *
+   * Continutes recursively.
    */
-  function processResourceContents(
+  function processFragment(
     contentAdapter: ContentAdapterModule,
     resourceURI: string,
     containingResourcePath: string,
@@ -546,7 +550,7 @@ export const makeContentReader: ContentReaderFactory = async function (
     for (const rel of generateRelations(resourceURI)) {
       if (isURIString(rel.target) && !contentAdapter.crossReferences?.(rel)) {
         // TODO: Recursion is not good here since it can be deep
-        //console.debug("processResourceContents", containingResourcePath, resourceURI, rel);
+        //console.debug("processFragment", containingResourcePath, resourceURI, rel);
         const key = JSON.stringify({ rel, resourceURI, containingResourcePath });
         if (seen.has(key)) {
           console.warn(`Ignoring duplicate relation ${rel.predicate} to ${rel.target} from ${resourceURI} at ${containingResourcePath}`);
@@ -554,7 +558,7 @@ export const makeContentReader: ContentReaderFactory = async function (
           //throw new Error(`Duplicate ${rel.predicate} to ${rel.target} from ${resourceURI} at ${containingResourcePath}`);
         } else {
           seen.add(key);
-          processResourceContents(contentAdapter, rel.target, containingResourcePath, seen);
+          processFragment(contentAdapter, rel.target, containingResourcePath, seen);
         }
       }
     }
@@ -569,7 +573,7 @@ export const makeContentReader: ContentReaderFactory = async function (
    * For related resources that did not generate subpaths,
    * their paths (with URI fragment) will be added to cache.
    */
-  function processHierarchy(
+  function processPage(
     resourceURI: string,
 
     /** Empty string for root. */
@@ -585,7 +589,7 @@ export const makeContentReader: ContentReaderFactory = async function (
      */
     meta?: { lang: string },
   ) {
-    //console.debug("processHierarchy", resourceURI, canonicalURIs[resourceURI]);
+    //console.debug("processPage", resourceURI, canonicalURIs[resourceURI]);
 
     const canonicalURI = canonicalURIs[resourceURI] ?? resourceURI;
     const contentAdapter = findContentAdapter(canonicalURI);
@@ -634,9 +638,9 @@ export const makeContentReader: ContentReaderFactory = async function (
           : maybePathComponent;
         // NOTE: Allow recursion, since no sane hierarchy
         // is expected to be too large for that to become an issue.
-        processHierarchy(rel.target, newPath, onProgress, meta);
+        processPage(rel.target, newPath, onProgress, meta);
       } else if (isURIString(rel.target)) {
-        processResourceContents(contentAdapter, rel.target, pathPrefix);
+        processFragment(contentAdapter, rel.target, pathPrefix);
       }
     }
   }
