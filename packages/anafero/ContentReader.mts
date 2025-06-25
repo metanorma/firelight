@@ -42,8 +42,9 @@ export interface ContentReader {
      * with leading but no trailing slash. Empty string for root.
      */
     path: string;
-    parentChain: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
-    directDescendants: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
+    meta: ResourceMetadata,
+    parentChain: [path: string, uri: string, meta: ResourceMetadata][];
+    directDescendants: [path: string, uri: string, meta: ResourceMetadata][];
   }>;
   getUnresolvedRelations: () => Readonly<RelationGraphAsList>;
   findContainingPageResourceURI: (resourceURI: string) => string | undefined;
@@ -449,6 +450,20 @@ export const makeContentReader: ContentReaderFactory = async function (
     }
   }
 
+  function describeResource(
+    resourceURI: string,
+  ): ResourceMetadata {
+    if (!cache.has(`metadata/${resourceURI}`)) {
+      const graph = getResourceGraph(resourceURI);
+      const contentAdapter = getAdapter(resourceURI);
+      const path = cache.get(`path-for/${resourceURI}`);
+      cache.set({
+        [`metadata/${resourceURI}`]: contentAdapter.describe(graph),
+      });
+    }
+    return cache.get<ResourceMetadata>(`metadata/${resourceURI}`);
+  }
+
   /**
    * Gets resource graph for canonical resource URI,
    * following relations unless related resource is in hierarchy.
@@ -670,24 +685,26 @@ export const makeContentReader: ContentReaderFactory = async function (
      * and it is expected to be emitted under that path
      */
     resourceURI: string;
-    parentChain: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
-    directDescendants: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][];
+    meta: ResourceMetadata,
+    parentChain: [path: string, uri: string, graph: ResourceMetadata][];
+    directDescendants: [path: string, uri: string, graph: ResourceMetadata][];
   }> {
     for (const path of cache.iterate<string>('all-paths')) {
       const resourceURI = getCachedResourceURIForPath(path);
       yield {
         path,
         resourceURI,
+        meta: describeResource(resourceURI),
         directDescendants: cache.has(`${path}/direct-descendants`)
           ? cache.list<string>(`${path}/direct-descendants`).map(path => {
               const res = getCachedResourceURIForPath(path);
-              return [`/${path}`, res, getResourceGraph(res)];
+              return [`/${path}`, res, describeResource(res)];
             })
           : [],
         parentChain: path !== ''
           ? cache.list<string>(`${path}/parents`).map(path => {
               const res = getCachedResourceURIForPath(path);
-              return [`/${path}`, res, getResourceGraph(res)];
+              return [`/${path}`, res, describeResource(res)];
             })
           : [],
       }
@@ -724,20 +741,7 @@ export const makeContentReader: ContentReaderFactory = async function (
       }
     },
     describe: function describe (resourceURI) {
-      // Resource metadata can be partially inherited
-      // from parent resources, e.g. primary language.
-      // This fills in inherited metadata
-      // if content adapter fails to provide it.
-      // NOTE: No way of enforcing non-inheritance of metadata?
-      const canonicalURI = canonicalURIs[resourceURI] ?? resourceURI;
-      const adapter = getAdapter(canonicalURI);
-      let graph: Readonly<RelationGraphAsList>;
-      try {
-        graph = getResourceGraph(resourceURI);
-      } catch (e) {
-        throw new Error("Unable to describe: failed to read resource graph");
-      }
-      return adapter.describe(graph);
+      return describeResource(resourceURI);
     },
     resolve: function resolveGraph (resourceURI) {
       return getResourceGraph(resourceURI);

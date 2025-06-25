@@ -109,9 +109,9 @@ export function * generateResourceAssets(
   resourceURI: string,
   relations: Readonly<RelationGraphAsList>,
   /** Graphs for parents, starting with nearest parent up. */
-  parentChain: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][],
+  parentChain: [path: string, uri: string, graph: ResourceMetadata][],
   /** Graphs for descendants (probably in order). */
-  directDescendants: [path: string, uri: string, graph: Readonly<RelationGraphAsList>][],
+  directDescendants: [path: string, uri: string, graph: ResourceMetadata][],
   resourceProps: Omit<ResourceProps, 'nav' | 'graph' | 'content' | 'document'>,
 
   /**
@@ -128,9 +128,6 @@ export function * generateResourceAssets(
   workspaceTitle: string,
   primaryLanguageID: string,
 
-  /** Called to describe a related resource. */
-  describe: (graph: Readonly<RelationGraphAsList>, uri: string) =>
-    ResourceMetadata | null,
   /** Called to generate page content. */
   generateContent: (graph: Readonly<RelationGraphAsList>, uri: string) =>
     AdapterGeneratedResourceContent | null,
@@ -145,18 +142,18 @@ export function * generateResourceAssets(
   const generateNavLink = function generateNavLink(
     path: string,
     uri: string,
-    graph: Readonly<RelationGraphAsList>,
+    meta: ResourceMetadata,
   ): NavLink {
     return {
       path: expandVersionedPath(path),
-      plainTitle: (describe(graph, uri))?.labelInPlainText ?? uri,
+      plainTitle: meta?.labelInPlainText ?? uri,
     };
   };
   const resourceNav: { breadcrumbs: NavLink[], children: NavLink[] } = {
-    breadcrumbs: parentChain.map(([path, uri, graph]) =>
-      generateNavLink(path, uri, graph)),
-    children: directDescendants.map(([path, uri, graph]) =>
-      generateNavLink(path, uri, graph)),
+    breadcrumbs: parentChain.map(([path, uri, meta]) =>
+      generateNavLink(path, uri, meta)),
+    children: directDescendants.map(([path, uri, meta]) =>
+      generateNavLink(path, uri, meta)),
   };
 
   yield {
@@ -428,16 +425,8 @@ export async function * generateVersion(
   const [allPathProgress, pathSubtask] =
     reportProgress('build page content', { total: totalPaths, done });
   const hierarchicalResources = reader.generatePaths();
-  for (const { path, resourceURI, parentChain, directDescendants } of hierarchicalResources) {
+  for (const { path, resourceURI, meta, parentChain, directDescendants } of hierarchicalResources) {
     //console.debug("Got resource", resourceURI, path);
-
-    let contentAdapter: ContentAdapterModule;
-    try {
-      contentAdapter = findContentAdapter(resourceURI)?.[1];
-    } catch (e) {
-      console.error("Unable to find content adapter for resource", resourceURI, e);
-      continue;
-    }
 
     done += 1;
     allPathProgress({ total: totalPaths, done });
@@ -459,7 +448,7 @@ export async function * generateVersion(
     resourceMap[path] = resourceURI;
     resourceGraph.push([resourceURI, 'isDefinedBy', `${path}/resource.json`]);
 
-    const resourceMeta = contentAdapter.describe(relations);
+    const resourceMeta = meta;
     // If we’re at the root, get the main title
     if (path === '' && !maybeMainTitle) {
       maybeMainTitle = resourceMeta.labelInPlainText ?? 'Workspace';
@@ -535,10 +524,6 @@ export async function * generateVersion(
       { head: extraHead, tail: inject.tail, htmlAttrs: inject.htmlAttrs },
       maybeMainTitle ?? 'Workspace',
       resourceMeta.primaryLanguageID ?? maybePrimaryLanguageID ?? 'en',
-      function describe(relations, uri) {
-        const maybeAdapter = findContentAdapter(uri);
-        return maybeAdapter ? maybeAdapter[1].describe(relations) : null;
-      },
       function generateContent(relations, uri: string) {
         if (!contentCache[uri]) {
           let content: ResourceContent | null;
