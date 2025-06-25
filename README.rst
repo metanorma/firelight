@@ -202,7 +202,7 @@ Implements:
 Known issues
 ------------
 
-- Language support is limited. For now, tested with Japanese, English.
+- Language support is limited. For now, tested with Japanese, English, French.
   The elements of the GUI are only in English for now.
 
 - GHA only: LFS resolution for version other than current may be broken.
