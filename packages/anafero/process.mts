@@ -488,7 +488,8 @@ export async function * generateVersion(
       {
         useDependency: getDependency,
         selectedLayout: layouts[0]!,
-        getResourcePlainTitle: (uri) => resourceDescriptions[uri]?.labelInPlainText ?? uri,
+        getResourcePlainTitle: (uri) =>
+          resourceDescriptions[uri]?.labelInPlainText ?? uri,
         onIntegrityViolation: console.warn,
         reverseResource: (path) => getReverseResourceMap()[path]!,
         uri: resourceURI,
@@ -531,6 +532,7 @@ export async function * generateVersion(
                 ? { primaryLanguageID, ...content }
                 : null,
             } as const;
+
             if (content) {
               // Add sub-resources described by the page
               // to resource map/graph
