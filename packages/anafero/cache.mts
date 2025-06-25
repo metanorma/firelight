@@ -8,7 +8,7 @@
  * DuckDB-WASM could cover both, but currently is in-memory only.
  */
 export interface Cache {
-  /** Set key to given value. */
+  /** Set keys to given values. */
   set: (keyValueMap: Record<string, unknown>) => void;
 
   /** Append given values to key, preserving order. */
