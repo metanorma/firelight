@@ -89,7 +89,6 @@ export const Search: React.FC<{
           ? (index.query(query => {
               query.term(tokens, {
                 presence: lunr.Query.presence.REQUIRED,
-                wildcard: lunr.Query.wildcard.LEADING | lunr.Query.wildcard.TRAILING,
               });
             }) ?? []).
             slice(0, MAX_SEARCH_RESULT_COUNT)
