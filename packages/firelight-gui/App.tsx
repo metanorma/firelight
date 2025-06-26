@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { defaultTheme, ProgressBar, Flex, Provider } from '@adobe/react-spectrum';
 import { useInView, InView } from 'react-intersection-observer';
 import { useThrottledCallback, useDebouncedCallback } from 'use-debounce';
-import lunr, { type Index as LunrIndex } from 'lunr';
+import type { Index as LunrIndex } from 'lunr';
 import React, { useCallback, createContext, useState, useReducer, useMemo, useEffect, useLayoutEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { type LayoutModule, type ResourceNav, ResourceNavSchema } from 'anafero/index.mjs';
@@ -16,25 +16,9 @@ import { reducer, createInitialState, type InitializerInput, type BrowsingMode, 
 import { BrowserBar } from './BrowseBar.jsx';
 import { ResourceHelmet, Resource, type ResourceData } from './Resource.jsx';
 import { type LoadProgress, makeLoader } from './loader.mjs';
+import { loadLunrIndex } from './search.mjs';
 import interceptNav from './intercept-nav.mjs';
 import classNames from './style.module.css';
-
-
-// Initialize search
-import enableLunrStemmer from 'lunr-languages/lunr.stemmer.support';
-import enableTinyLunrSegmenter from 'lunr-languages/tinyseg';
-import enableLunrFr from 'lunr-languages/lunr.fr';
-import enableLunrJa from 'lunr-languages/lunr.ja';
-import enableLunrMultiLanguage from 'lunr-languages/lunr.multi';
-
-const lunrLanguageSupport = {
-  ja: enableLunrJa,
-  fr: enableLunrFr,
-} as const;
-
-enableLunrStemmer(lunr);
-enableTinyLunrSegmenter(lunr);
-// End initialize search
 
 
 export const BrowsingContext = createContext({
@@ -377,55 +361,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     const serializedIndex = versionDeps?.['/search-index.json'];
 
     if (serializedIndex && primaryLanguageDetected) {
-      const enableLanguageSupport = (
-        (primaryLanguageDetected && primaryLanguageDetected !== 'en')
-          ? lunrLanguageSupport[primaryLanguageDetected as keyof typeof lunrLanguageSupport]
-          : undefined
-      ) ?? undefined;
-
-      if (enableLanguageSupport) {
-        console.debug(`Lunr: enabling language “${primaryLanguage}”`);
-
-        enableLanguageSupport(lunr);
-      }
-
-      console.time("Lunr: load index");
-      const index = lunr.Index.load(serializedIndex);
-      console.timeEnd("Lunr: load index");
-
-      // This should run only once, since primaryLanguage wouldn’t change.
-      // NOTE: Load multi-language after loading index, because we need its pipeline
-      // and it doesn’t get serialized for some reason.
-      if (enableLanguageSupport) {
-        console.debug(`Lunr: enabling multi-language support for “${primaryLanguage}”`);
-
-        enableLunrMultiLanguage(lunr);
-        ((lunr as any).multiLanguage('en', primaryLanguage));
-
-        const lunrTokenizer = lunr.tokenizer;
-        (lunr as any).tokenizer = function(x: any) {
-          // Combine basic Lunr tokens with tokens obtained
-          // from language-specific tokenizer, deduplicating them
-          const baseLunrTokens = lunrTokenizer(x);
-          const langTokens: lunr.Token[] = (lunr as any)[primaryLanguage].tokenizer(x);
-          const tokens = [
-            ...baseLunrTokens,
-            ...langTokens.filter(t =>
-              !baseLunrTokens.find(bt => bt.toString() === t.toString())
-            ),
-          ];
-          return tokens;
-        };
-        const lunrStopWordFilter = lunr.stopWordFilter;
-        (lunr as any).stopWordFilter = function(token: any) {
-          return (
-            lunrStopWordFilter(token)
-            && (lunr as any)[primaryLanguage].stopWordFilter(token)
-          ) ? token : undefined;
-        };
-      }
-
-      return index;
+      return loadLunrIndex(serializedIndex);
     } else {
       return undefined;
     }
