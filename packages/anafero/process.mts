@@ -649,7 +649,7 @@ export async function * generateVersion(
           name: uri,
           body: label,
         } as const;
-        this.add(entry);
+        this.add(entry, { boost: 5 });
       } else {
         console.warn("No label for", uri);
       }
