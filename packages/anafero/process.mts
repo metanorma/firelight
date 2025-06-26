@@ -653,10 +653,6 @@ export async function * generateVersion(
       } else {
         console.warn("No label for", uri);
       }
-
-      if (label?.includes('echelle')) {
-        console.debug("Entry", uri, label);
-      }
     }
     for (const [uri, ] of Object.entries(resourceDescriptions)) {
       done += 1;
@@ -692,10 +688,6 @@ export async function * generateVersion(
       normalize('NFKD').
       replace(/\p{Diacritic}/gu, "").
       trim();
-
-      if (body.includes('echelle')) {
-        console.debug("Subresource", uri, body);
-      }
 
       if (body) {
         //console.debug("Indexing", uri, relationsExcludingReferences, body);
