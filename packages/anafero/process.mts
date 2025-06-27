@@ -635,6 +635,10 @@ export async function * generateVersion(
     this.ref('name');
     this.field('body');
 
+    // This can be done if needed…
+    //this.pipeline.remove(lunr.stemmer);
+    //this.searchPipeline.remove(lunr.stemmer);
+
     let done = 0;
     const total = Object.keys(contentCache).length + Object.keys(resourceDescriptions).length;
     for (const [uri, content] of Object.entries(contentCache)) {
