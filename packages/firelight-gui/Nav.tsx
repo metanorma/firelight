@@ -63,7 +63,8 @@ export const Search: React.FC<{
       const tokens = lunr.tokenizer(
         debouncedQuery.replace(/:/g, " ").
         normalize('NFKD').
-        replace(/\p{Diacritic}/gu, ""));
+        replace(/\p{Diacritic}/gu, '').
+        trim();
       //const queryTokenized = lunr.tokenizer(debouncedQuery);
       console.debug("Search: tokens", tokens);
       //console.debug("Search: Lunr argument", queryTokenized.map(t => `${t}`).join(' '));
