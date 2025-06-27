@@ -117,34 +117,81 @@ export const Search: React.FC<{
     }
   }, [index, debouncedQuery, showMore]);
 
+  /** Results keyed by resource ID (ref). */
   const results = useMemo(() => {
-    const allResults = (Object.entries(matches).
+    return (Object.entries(matches).
     flatMap(([matchType, results]) => {
       console.debug(matchType, results.length);
-      return results.map(res => ({ [res.ref]: res }));
+      return results.map(function processResult(res) {
+        return {
+          [res.ref]: res,
+        };
+      });
     }) ?? []).reduce((prev, curr) => ({ ...prev, ...curr }), {});
-
-    return Object.values(allResults).
-    map(res => ({ ...res, id: res.ref, name: res.ref }));
   }, [matches]);
+
+  const resultMetadata = useMemo(() => {
+    return (Object.entries(results).map(([ref, res]) => {
+      const title = getPlainTitle(ref);
+
+      /** Resource path. */
+      let path: string | undefined;
+      try {
+        path = locateResource(res.ref);
+      } catch (e) {
+        console.error("Failed to get path for resource", res.ref);
+        path = undefined;
+      }
+
+      /** URI of the resource represented by containing page. */
+      let pageResource: { uri: string, title: string } | undefined;
+      try {
+        const uri = getContainingPageURI(res.ref);
+        const title = getPlainTitle(uri);
+        pageResource = { uri, title };
+      } catch (e) {
+        console.error("Failed to get containing page resource URI for", res.ref);
+        pageResource = undefined;
+      }
+
+      return { [ref]: { path, title, pageResource } };
+
+    }) ?? []).reduce((prev, curr) => ({ ...prev, ...curr }), {});
+  }, [results, getPlainTitle, locateResource, getContainingPageURI]);
+
+  /** Results as an array for list view. */
+  const resultArray = useMemo(() => {
+    return Object.values(results).
+    map(res => ({ ...res, id: res.ref, name: res.ref }));
+  }, [results]);
+
+  const selectedKeys = useMemo(() => {
+    return new Set(selected ? [selected] : []);
+  }, [selected]);
+
+  const disabledKeys = useMemo(() => {
+    return new Set(resultArray.
+      filter(result => resultMetadata[result.ref]?.path === undefined).
+      map(r => r.ref));
+  }, [resultArray, resultMetadata]);
 
   useEffect(() => {
     setShowMore(false);
   }, [debouncedQuery]);
 
   const renderItem = useCallback((result: { ref: string, score: number }) => {
-    const title = getPlainTitle(result.ref);
+    const title = resultMetadata[result.ref]?.title ?? "Untitled";
     return <Item
         key={result.ref}
         textValue={title}>
       <Text UNSAFE_className={classNames.navListViewItemWithLink}>
-        <Link href={locateResource(result.ref)}>{title}</Link>
+        <Link href={resultMetadata[result.ref]?.path ?? 'javascript: void 0;'}>{title}</Link>
       </Text>
       <Text slot="description">
-        {getPlainTitle(getContainingPageURI(result.ref))}
+        {resultMetadata[result.ref]?.pageResource?.title ?? ""}
       </Text>
     </Item>;
-  }, [showMore, getPlainTitle, getContainingPageURI]);
+  }, [showMore, getPlainTitle, resultMetadata]);
 
   const showMoreButton =
     (matches.exact.length > 0 || matches.full.length > 0)
@@ -156,9 +203,10 @@ export const Search: React.FC<{
   return <>
     <ListView
         flex={1}
-        items={results}
+        items={resultArray}
         UNSAFE_className={classNames.navListView}
-        selectedKeys={new Set(selected ? [selected] : [])}
+        selectedKeys={selectedKeys}
+        disabledKeys={disabledKeys}
         onSelectionChange={(selectedKeys) => {
           const key = selectedKeys !== 'all'
             ? selectedKeys.keys().next().value
@@ -184,10 +232,10 @@ export const Search: React.FC<{
       errorMessage={error}
       UNSAFE_className={classNames.navStickyHeader}
       validationState={error ? 'invalid' : 'valid'}
-      description={results.length > 0
+      description={resultArray.length > 0
         ? <>
-            {results.length >= MAX_SEARCH_RESULT_COUNT ? 'At least ' : ''}
-            {results.length} resources matched. {showMoreButton}
+            {resultArray.length >= MAX_SEARCH_RESULT_COUNT ? 'At least ' : ''}
+            {resultArray.length} resources matched. {showMoreButton}
           </>
         : query.text.trim() === ''
           ? "Please enter a search query."
