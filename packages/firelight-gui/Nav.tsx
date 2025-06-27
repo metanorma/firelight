@@ -187,7 +187,7 @@ export const Search: React.FC<{
       <Text UNSAFE_className={classNames.navListViewItemWithLink}>
         <Link href={resultMetadata[result.ref]?.path ?? 'javascript: void 0;'}>{title}</Link>
       </Text>
-      <Text slot="description">
+      <Text slot='description'>
         {resultMetadata[result.ref]?.pageResource?.title ?? ""}
       </Text>
     </Item>;
@@ -196,7 +196,7 @@ export const Search: React.FC<{
   const showMoreButton =
     (matches.exact.length > 0 || matches.full.length > 0)
       ? <a onClick={() => setShowMore(!showMore)}>
-          ({showMore ? 'Show fewer' : 'Check for more matches'})
+          ({showMore ? "Show fewer" : "Check for more matches"})
         </a>
       : null;
 
@@ -215,16 +215,16 @@ export const Search: React.FC<{
             onSelect(`${key}`);
           }
         }}
-        selectionMode="single"
-        selectionStyle="highlight"
+        selectionMode='single'
+        selectionStyle='highlight'
         aria-label="Matching resources found"
         renderEmptyState={() => <></>}>
       {renderItem}
     </ListView>
     <SearchField
-      width="100%"
+      width='100%'
       autoFocus
-      alignSelf="stretch"
+      alignSelf='stretch'
       onChange={onEditQueryText ?? (() => {})}
       isReadOnly={!onEditQueryText}
       label="Search resources"
@@ -234,7 +234,7 @@ export const Search: React.FC<{
       validationState={error ? 'invalid' : 'valid'}
       description={resultArray.length > 0
         ? <>
-            {resultArray.length >= MAX_SEARCH_RESULT_COUNT ? 'At least ' : ''}
+            {resultArray.length >= MAX_SEARCH_RESULT_COUNT ? "At least " : ""}
             {resultArray.length} resources matched. {showMoreButton}
           </>
         : query.text.trim() === ''
