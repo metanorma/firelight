@@ -497,6 +497,16 @@ Code conventions
 
 - Do not export something that does not need exporting.
 
+- Single quotes are used for identifier-like strings
+  (e.g., some object key or style attribute).
+
+  Double quotes are used for human-visible text
+  (which may be phased away in favour of string IDs and translations
+  supplied by separate files).
+
+  The distinction is good to maintain, because those two cases
+  are very different. This applies to JSX as well.
+
 Dependencies
 ^^^^^^^^^^^^
 
