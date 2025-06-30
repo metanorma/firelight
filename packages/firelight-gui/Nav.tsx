@@ -187,7 +187,9 @@ export const Search: React.FC<{
         key={result.ref}
         textValue={title}>
       <Text UNSAFE_className={classNames.navListViewItemWithLink}>
-        <Link href={resultMetadata[result.ref]?.path ?? 'javascript: void 0;'}>{title}</Link>
+        <Link href={resultMetadata[result.ref]?.path ?? 'javascript: void 0;'}>
+          {title}
+        </Link>
       </Text>
       <Text slot='description'>
         {resultMetadata[result.ref]?.pageResource?.title ?? ""}
