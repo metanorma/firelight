@@ -23,6 +23,9 @@ export const ResourceMetadataSchema = S.mutable(S.Struct({
   labelInPlainText: S.String.pipe(S.nonEmptyString()),
   // TODO: proper schema for ISO language IDs
   primaryLanguageID: S.String.pipe(S.optional),
+
+  /** License/copyright for the resource in question. */
+  license: S.Any.pipe(S.optional),
 }));
 export type ResourceMetadata = S.Schema.Type<typeof ResourceMetadataSchema>;
 
