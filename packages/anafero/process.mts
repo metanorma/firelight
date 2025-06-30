@@ -129,15 +129,8 @@ export function * generateResourceAssets(
   primaryLanguageID: string,
 
   /** Called to generate page content. */
-  generateContent: (graph: Readonly<RelationGraphAsList>, uri: string) =>
-    AdapterGeneratedResourceContent | null,
+  generatedContent: AdapterGeneratedResourceContent,
 ): Generator<Record<string, Uint8Array>> {
-
-  const generatedContent = generateContent(relations, resourceURI);
-  if (!generatedContent) {
-    console.warn("Resource has no content", resourceURI);
-    return;
-  }
 
   const generateNavLink = function generateNavLink(
     path: string,
@@ -393,6 +386,7 @@ export async function * generateVersion(
   /** Basic resource descriptions keyed by resource URI. */
   const resourceDescriptions: Record<string, ResourceMetadata> = {};
 
+  // TODO: Unneeded? Check if there are any hits ever
   const contentCache: ResourceContentCache = {};
 
   /** Maps filenames to blobs. Assets are global per version. */
@@ -445,134 +439,152 @@ export async function * generateVersion(
     const [pathProgress, ] =
       pathSubtask(`${resourceURI.replaceAll('|', ':')}`, { state: 'resolving relations' });
 
+    const resourceMeta = meta;
+
     const relations = reader.resolve(resourceURI);
 
-    resourceMap[path] = resourceURI;
-    resourceGraph.push([resourceURI, 'isDefinedBy', `${path}/resource.json`]);
+    pathProgress({ state: 'generating resource page content' });
 
-    const resourceMeta = meta;
-    resourceDescriptions[resourceURI] = resourceMeta;
-
-    pathProgress({ state: 'processing referenced files' });
-
-    // Process assets on the page
-    for (const [, , o] of relations) {
-      if (o.startsWith('file:')) {
-        // Some resource on the page is referencing a file.
-        const filePath = o.split('file:')[1]!;
-        const filename = o.replaceAll('/', '_').replaceAll(':', '_');
-        // Unless it was seen before, add to assets and resource map.
-        // encodeURIComponent should preserve original filename extension.
-        if (!assetsToWrite[filename]) {
+    const content = (function generateContent(
+      /** Resource graph. */
+      graph,
+      /**
+       * Resource metadata.
+       * Technically, adapter-generated resource content will have metadata
+       * (since it extends the metadata structure), but metadata gathered
+       * through resource reader layer will have inherited parts
+       * (e.g., language). See TODO at `ContentAdapterModule` for supporting
+       * inheritance in adapter output.
+       */
+      metadata,
+      uri,
+      cache,
+    ) {
+      if (!cache[uri]) {
+        let content: ResourceContent | null;
+        //console.debug("Generating resource content from graph", resourceURI, maybePrimaryLanguageID);
+        const maybeAdapter = findContentAdapter(uri);
+        if (maybeAdapter) {
           try {
-            assetsToWrite[filename] = await fetchBlobAtThisVersion(filePath);
-            resourceGraph.push([
-              o,
-              'isDownloadableAt',
-              filename,
-            ]);
-            resourceMap[filename] = o;
-            resourceDescriptions[o] = {
-              labelInPlainText: filePath,
-            };
+            content = maybeAdapter[1].generateContent(graph) ?? null;
           } catch (e) {
-            console.error("Failed to fetch asset", filePath);
+            console.error("Failed to generate resource content",
+              path,
+              uri,
+              graph.slice(0, 40).join("\n"),
+            );
+            throw e;
           }
+
+          if (content) {
+            contentCache[uri] = {
+              adapterID: maybeAdapter[0],
+              content: { ...metadata, ...content },
+            } as const;
+
+            // Add sub-resources described by the page
+            // to resource map/graph
+            const describedResourceIDs =
+              gatherDescribedResourcesFromJsonifiedProseMirrorNode(content.contentDoc);
+            for (const inPageResourceID of describedResourceIDs) {
+              if (reader.exists(inPageResourceID)) {
+                // We have a sub-resource represented by the page.
+                // Add it to resource map, too (with hash fragment).
+                const pathWithFragment = `${path}#${encodeURIComponent(inPageResourceID)}`;
+                resourceMap[pathWithFragment] = inPageResourceID;
+                resourceGraph.push([inPageResourceID, 'isDefinedBy', `${path}/resource.json`]);
+                resourceDescriptions[inPageResourceID] = reader.describe(inPageResourceID);
+              } else {
+                console.warn(
+                  "Subresource on page does not exist in the graph",
+                  path,
+                  inPageResourceID,
+                );
+              }
+            }
+          }
+        } else {
+          console.warn("No adapter found to render", uri);
+          return null;
         }
+      } else {
+        console.debug("contentCache hit", uri);
       }
-    }
+      return cache[uri]!;
+    })(relations, meta, resourceURI, contentCache);
 
     pathProgress({ state: 'generating page content & assets' });
 
-    const resourceAssetGenerator = generateResourceAssets(
-      resourceURI,
-      relations,
-      parentChain,
-      directDescendants,
-      {
-        useDependency: getDependency,
-        selectedLayout: layouts[0]!,
-        getResourcePlainTitle: (uri) =>
-          resourceDescriptions[uri]?.labelInPlainText ?? uri,
-        onIntegrityViolation: console.warn,
-        reverseResource: (path) => getReverseResourceMap()[path]!,
-        uri: resourceURI,
+    if (content !== null) {
 
-        // TODO: Consider slash-prepending the outcome of findURL,
-        // if it’s reliably not slash-prepended
-        locateResource: (uri) => expandVersionedPath(reader.findURL(uri)),
-      },
-      expandVersionedPath,
-      getDOMStub,
-      { head: extraHead, tail: inject.tail, htmlAttrs: inject.htmlAttrs },
-      maybeMainTitle,
-      resourceMeta.primaryLanguageID ?? maybePrimaryLanguageID,
-      function generateContent(relations, uri: string) {
-        if (!contentCache[uri]) {
-          let content: ResourceContent | null;
-          //console.debug("Generating resource content from relations", resourceURI, maybePrimaryLanguageID);
-          const maybeAdapter = findContentAdapter(uri);
-          if (maybeAdapter) {
+      resourceMap[path] = resourceURI;
+      resourceGraph.push([resourceURI, 'isDefinedBy', `${path}/resource.json`]);
+
+      resourceDescriptions[resourceURI] = resourceMeta;
+
+      pathProgress({ state: 'processing resource assets' });
+
+      // Process assets referenced the page to output later
+      for (const [, , o] of relations) {
+        if (o.startsWith('file:')) {
+          // Some resource on the page is referencing a file.
+          const filePath = o.split('file:')[1]!;
+          const filename = o.replaceAll('/', '_').replaceAll(':', '_');
+          // Unless it was seen before, add to assets and resource map.
+          // encodeURIComponent should preserve original filename extension.
+          if (!assetsToWrite[filename]) {
             try {
-              content = maybeAdapter[1].generateContent(
-                relations,
-              ) ?? null;
+              assetsToWrite[filename] = await fetchBlobAtThisVersion(filePath);
+              resourceGraph.push([
+                o,
+                'isDownloadableAt',
+                filename,
+              ]);
+              resourceMap[filename] = o;
+              resourceDescriptions[o] = {
+                labelInPlainText: filePath,
+              };
             } catch (e) {
-              console.error("Failed to generate resource content",
-                path,
-                resourceMeta,
-                uri,
-                relations.slice(0, 40).join("\n"),
-              );
-              throw e;
+              console.error("Failed to fetch asset", filePath);
             }
-
-            const primaryLanguageID =
-              resourceMeta.primaryLanguageID ?? maybePrimaryLanguageID;
-
-            contentCache[uri] = {
-              adapterID: maybeAdapter[0],
-              content: content
-                ? { primaryLanguageID, ...content }
-                : null,
-            } as const;
-
-            if (content) {
-              // Add sub-resources described by the page
-              // to resource map/graph
-              const describedResourceIDs =
-                gatherDescribedResourcesFromJsonifiedProseMirrorNode(content.contentDoc);
-              for (const inPageResourceID of describedResourceIDs) {
-                if (reader.exists(inPageResourceID)) {
-                  // We have a sub-resource represented by the page.
-                  // Add it to resource map, too (with hash fragment).
-                  const pathWithFragment = `${path}#${encodeURIComponent(inPageResourceID)}`;
-                  resourceMap[pathWithFragment] = inPageResourceID;
-                  resourceGraph.push([inPageResourceID, 'isDefinedBy', `${path}/resource.json`]);
-                  resourceDescriptions[inPageResourceID] = reader.describe(inPageResourceID);
-                } else {
-                  console.warn(
-                    "Subresource on page does not exist in the graph",
-                    path,
-                    inPageResourceID);
-                }
-              }
-            }
-          } else {
-            console.warn("No adapter found to render", uri);
-            return null;
           }
         }
-        return contentCache[uri]!;
-      },
-    );
+      }
 
-    for (const blobChunk of resourceAssetGenerator) {
-      yield Object.entries(blobChunk).map(([subpath, blob]) => {
-        const assetBlobPath = `/${path}${subpath}`;
-        //console.debug("Outputting resource blob at path", path, subpath, assetBlobPath);
-        return { [assetBlobPath]: blob };
-      }).reduce((prev, curr) => ({ ...prev, ...curr }));
+      // Output resource assets (HTML, etc.) now
+      const resourceAssetGenerator = generateResourceAssets(
+        resourceURI,
+        relations,
+        parentChain,
+        directDescendants,
+        {
+          useDependency: getDependency,
+          selectedLayout: layouts[0]!,
+          getResourcePlainTitle: (uri) =>
+            resourceDescriptions[uri]?.labelInPlainText ?? uri,
+          onIntegrityViolation: console.warn,
+          reverseResource: (path) => getReverseResourceMap()[path]!,
+          uri: resourceURI,
+
+          // TODO: Consider slash-prepending the outcome of findURL,
+          // if it’s reliably not slash-prepended
+          locateResource: (uri) => expandVersionedPath(reader.findURL(uri)),
+        },
+        expandVersionedPath,
+        getDOMStub,
+        { head: extraHead, tail: inject.tail, htmlAttrs: inject.htmlAttrs },
+        maybeMainTitle,
+        resourceMeta.primaryLanguageID ?? maybePrimaryLanguageID,
+        content,
+      );
+
+      for (const blobChunk of resourceAssetGenerator) {
+        yield Object.entries(blobChunk).map(([subpath, blob]) => {
+          const assetBlobPath = `/${path}${subpath}`;
+          //console.debug("Outputting resource blob at path", path, subpath, assetBlobPath);
+          return { [assetBlobPath]: blob };
+        }).reduce((prev, curr) => ({ ...prev, ...curr }));
+      }
     }
 
     pathProgress(null);
