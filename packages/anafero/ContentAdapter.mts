@@ -140,6 +140,9 @@ const DEFAULT_LOCALE = {
 } as const;
 
 
+// TODO: Instantiate content adapters, allowing state/metadata inheritance
+// similar to StoreAdapter instantiating ResourceReader.
+// Currently, ContentReader wrapper works around the inheritance issue.
 /**
  * Content adapter is responsible for transforming resource relations
  * into an hierarchy of formatted website pages.
