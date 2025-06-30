@@ -41,7 +41,7 @@
 
       &::before {
         content: "⏵";
-        color: var(--spectrum-alias-text-color-disabled);
+        color: var(--spectrum-alias-text-color);
       }
 
       > a {
