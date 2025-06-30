@@ -386,7 +386,7 @@ export async function * generateVersion(
   /** Basic resource descriptions keyed by resource URI. */
   const resourceDescriptions: Record<string, ResourceMetadata> = {};
 
-  // TODO: Unneeded? Check if there are any hits ever
+  /** Collects all resource page content & used for search index later. */
   const contentCache: ResourceContentCache = {};
 
   /** Maps filenames to blobs. Assets are global per version. */
