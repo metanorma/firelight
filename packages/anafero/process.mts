@@ -162,6 +162,10 @@ export function * generateResourceAssets(
     '/resource-nav.json': encoder.encode(JSON.stringify(resourceNav, null, 4)),
   };
 
+  // This should carefully match the way resource is rendered client-side
+  // to avoid discrepancies and shifts during hydration
+  // (other than specific complex node widgets that require JS,
+  // it should not change once JS runs).
   const resourceHTML = renderToString(
     React.createElement(Provider, {
       theme: defaultTheme,
