@@ -799,6 +799,9 @@ export async function * generateStaticSiteAssets(
 
 
   // Things to inject in HTML
+  // TODO: This could be normalized
+  // (e.g., attributes could be in the form of attr. name / value pairs,
+  // scripts could be just source URLs, links could be rel / href pairs.
 
   const htmlAttrs = `
     ${opts.pathPrefix ? `data-path-prefix="${opts.pathPrefix}"` : ''}
