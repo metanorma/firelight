@@ -398,10 +398,8 @@ export async function * generateVersion(
 
   const maybeMainTitle = rootMeta.labelInPlainText ?? "Document";
 
-  /**
-   * Implicitly includes at least maybePrimaryLanguageID.
-   */
-  const allLanguages: Set<string> = new Set();
+  // TODO: Implicitly including English is not good?
+  const allLanguages: Set<string> = new Set(['en']);
 
   function getReverseResourceMap() {
     return Object.fromEntries(Object.entries(resourceMap).
@@ -611,34 +609,72 @@ export async function * generateVersion(
   // Required to avoid breakage due to something about global.console:
   (lunr as any).utils.warn = console.warn;
 
+  const supportedLanguages: string[] = [...allLanguages].
+  filter(lang => lang === 'en' || !!lunrLanguageSupport[lang as keyof typeof lunrLanguageSupport]);
+  console.debug(`Search index: primary language is “${maybePrimaryLanguageID}”, enabling ${supportedLanguages.join(', ')}`);
+  const nonDefaultLanguages =
+    supportedLanguages.filter(lang => lang !== 'en');
+
+  if (supportedLanguages.length > 1) {
+    for (const lang of nonDefaultLanguages) {
+      lunrLanguageSupport[lang as keyof typeof lunrLanguageSupport](lunr);
+    }
+    enableLunrMultiLanguage(lunr);
+  }
+
   const lunrIndex = lunr(function () {
-    console.debug(`Search index: primary language is “${maybePrimaryLanguageID}”`);
-    const supportedLanguages = [...allLanguages].
-    filter(lang => !!lunrLanguageSupport[lang as keyof typeof lunrLanguageSupport]);
-    const supportedNonDefaultLanguages =
-      supportedLanguages.filter(lang => lang !== 'en');
     if (supportedLanguages.length > 1) {
-      enableLunrMultiLanguage(lunr);
-    }
-    if (maybePrimaryLanguageID) {
-      if (supportedLanguages.length > 1) {
-        for (const lang of supportedNonDefaultLanguages) {
-          lunrLanguageSupport[lang as keyof typeof lunrLanguageSupport](lunr);
+      this.use((lunr as any).multiLanguage(...['en', ...nonDefaultLanguages]));
+      console.debug("Search index: enabling multi-language Lunr mode & mixed tokenizer",
+        supportedLanguages.join(', '));
+      //(this as any).tokenizer = function(x: any) {
+      //  return lunr.tokenizer(x).
+      //  concat(...nonDefaultLanguages.map(lang => (lunr as any)[lang].tokenizer(x)));
+      //};
+      const lunrTokenizer = lunr.tokenizer;
+      (this as any).tokenizer = function(x: any) {
+        // Combine default English Lunr tokens with tokens obtained
+        // from first language-specific tokenizer, deduplicating them
+        const baseLunrTokens = lunrTokenizer(x);
+        const tokens = [...baseLunrTokens];
+        for (const lang of nonDefaultLanguages) {
+          const tokenizer = (lunr as any)[lang].tokenizer;
+          if (tokenizer) {
+            const langTokens: lunr.Token[] = tokenizer(x);
+            // Add language-specific tokens, unless they already exist
+            // after English tokenizer
+            tokens.push(...langTokens.filter(t =>
+              !baseLunrTokens.find(bt => bt.toString() === t.toString())
+            ));
+          } else {
+            //console.warn(`Language ${lang} does not ship a tokenizer?`);
+          }
         }
-        for (const lang of supportedNonDefaultLanguages) {
-          this.use((lunr as any)[lang]);
-        }
-        console.debug("Search index: enabling multi-language Lunr mode & mixed tokenizer",
-          supportedLanguages.join(', '));
-        this.use((lunr as any).multiLanguage(...supportedLanguages));
-        (this as any).tokenizer = function(x: any) {
-          return lunr.tokenizer(x).
-          concat(...supportedNonDefaultLanguages.map(lang => (lunr as any)[lang].tokenizer(x)));
-        };
-      } else if (maybePrimaryLanguageID !== 'en') {
-        this.use((lunr as any)[maybePrimaryLanguageID]);
-      }
+        return tokens;
+      };
+      const lunrStopWordFilter = (lunr as any).stopWordFilter;
+      (this as any).stopWordFilter = function(token: any) {
+        return (
+          lunrStopWordFilter(token)
+          // If a token is a stop word in ANY of supported languages,
+          // then it is considered a stop word. This means the more languages
+          // we support, the less precise search would be, for now.
+          && !nonDefaultLanguages.map(lang =>
+            !!(this as any)[lang].stopWordFilter(token)
+          ).includes(false)
+        ) ? token : undefined;
+      };
     }
+
+    //if (maybePrimaryLanguageID) {
+    //  if (supportedLanguages.length > 1) {
+    //    for (const lang of nonDefaultLanguages) {
+    //      this.use((lunr as any)[lang]);
+    //    }
+    //  } else if (maybePrimaryLanguageID !== 'en') {
+    //    this.use((lunr as any)[maybePrimaryLanguageID]);
+    //  }
+    //}
 
     //if (maybePrimaryLanguageID
     //&& maybePrimaryLanguageID !== 'en'
