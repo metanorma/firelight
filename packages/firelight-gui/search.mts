@@ -76,7 +76,7 @@ export function loadLunrIndex(serializedIndex: any) {
         // then it is considered a stop word. This means the more languages
         // we support, the less precise search would be, for now.
         && !nonDefaultLanguages.map(lang =>
-          (lunr as any)[lang].stopWordFilter(token)
+          !!(lunr as any)[lang].stopWordFilter(token)
         ).includes(false)
       ) ? token : undefined;
     };

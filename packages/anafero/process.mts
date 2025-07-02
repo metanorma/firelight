@@ -482,6 +482,10 @@ export async function * generateVersion(
               content: { ...metadata, ...content },
             } as const;
 
+            if (metadata.primaryLanguageID) {
+              allLanguages.add(metadata.primaryLanguageID);
+            }
+
             // Add sub-resources described by the page
             // to resource map/graph
             const describedResourceIDs =
