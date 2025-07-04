@@ -660,7 +660,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
             tableContents),
         ];
         if (caption) {
-          contents.splice(0, 0, pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!, state)));
+          contents.splice(0, 0, pm.node('figCaption', { resourceID: caption }, generateContent(caption, pm.nodes.figCaption!, state)));
         }
 
         // TODO: Direct paragraph descendants not allowed by the spec?
