@@ -60,7 +60,11 @@ export const Search: React.FC<{
 
   const [matches, error] = useMemo(() => {
     if (index && debouncedQuery.trim() !== '') {
-      const normalizedQuery = debouncedQuery.replace(/:/g, " ").
+      const normalizedQuery = debouncedQuery.
+        replace(/:/g, " ").
+        replace(/\*/g, " ").
+        // TODO: Actually wildcards can happen in some positions,
+        // but when the query is mostly a wildcard it can be too low.
         normalize('NFKD').
         replace(/\p{Diacritic}/gu, '').
         trim();
