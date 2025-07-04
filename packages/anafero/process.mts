@@ -697,6 +697,8 @@ export async function * generateVersion(
 
     let done = 0;
     const total = Object.keys(contentCache).length + Object.keys(resourceDescriptions).length;
+
+    // Add pages
     for (const [uri, content] of Object.entries(contentCache)) {
       done += 1;
       indexProgress({ state: `adding entry for ${uri}`, total, done });
@@ -715,6 +717,7 @@ export async function * generateVersion(
         console.warn("No label for", uri);
       }
     }
+    // Add subresources
     for (const [uri, meta] of Object.entries(resourceDescriptions)) {
       done += 1;
       indexProgress({ state: 'adding entries for subresources', total, done });
@@ -742,6 +745,7 @@ export async function * generateVersion(
         &&
         (!isURIString(o) || !reader.exists(o))
       );
+
       const body = relationsExcludingReferences.
       map(([, , o]) => o).
       join('').
