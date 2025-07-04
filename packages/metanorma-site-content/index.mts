@@ -92,14 +92,17 @@ const mod: ContentAdapterModule = {
 
     const labelInPlainText = getBibdataMainTitle(relations, primaryLanguageID)
       ?? getSectionPlainTitle(relations)
-      // First few characters of any direct relation that is not a URI?
+      // First few characters of the first few relations that are not a URI,
+      // joined by a whitespace
       ?? relations.
-           find(([s, p, o]) =>
+           filter(([s, p, o]) =>
              s === ROOT_SUBJECT
              && p === 'hasPart'
              && o.trim() !== ''
              // TODO: Stop testing URI by urn: prefix
-             && !o.startsWith('urn:'))?.[2].
+             && !o.startsWith('urn:') && !o.startsWith('data:')
+           ).slice(0, 4).
+           map(([s, p, o]) => o).join(' ').
            slice(0, 42)
       // Type or generic “resource”
       ?? `${relations.find(([s, p, o]) => s === 'type')?.[2] ?? 'unnamed'}`;
