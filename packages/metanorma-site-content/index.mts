@@ -926,7 +926,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
                   : n)
             } else {
               //console.error("Only inline content in a block-content node: wrapping in a paragraph", subject, subjectNodeTypeRepr);
-              return [pm.node('paragraph', null, allSubparts)];
+              return [pm.node('paragraph', { resourceID: subject }, allSubparts)];
             }
           } else {
             return allSubparts;
