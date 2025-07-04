@@ -68,7 +68,9 @@ const decoder = new TextDecoder();
 
 interface LunrIndexEntry {
   name: string;
+  title: string;
   body: string;
+  lang: string;
 }
 
 
@@ -689,6 +691,7 @@ export async function * generateVersion(
     // this.k1(1.4);
 
     this.ref('name');
+    this.field('title', { boost: 2 });
     this.field('body');
 
     // This can be done if needed…
@@ -698,35 +701,15 @@ export async function * generateVersion(
     let done = 0;
     const total = Object.keys(contentCache).length + Object.keys(resourceDescriptions).length;
 
-    // Add pages
-    for (const [uri, content] of Object.entries(contentCache)) {
-      done += 1;
-      indexProgress({ state: `adding entry for ${uri}`, total, done });
-      const label = content?.content?.labelInPlainText?.
-      normalize('NFKD').
-      replace(/\p{Diacritic}/gu, '').
-      trim();
 
-      if (label) {
-        const entry: LunrIndexEntry = {
-          name: uri,
-          body: label,
-        } as const;
-        this.add(entry, { boost: 5 });
-      } else {
-        console.warn("No label for", uri);
-      }
-    }
+    const searchableResources:
+    { pages: LunrIndexEntry[], resources: LunrIndexEntry[] } =
+    { pages: [], resources: [] };
+
     // Add subresources
     for (const [uri, meta] of Object.entries(resourceDescriptions)) {
       done += 1;
       indexProgress({ state: 'adding entries for subresources', total, done });
-
-      //const lang = desc.primaryLanguageID;
-      // if (lang && lang !== maybePrimaryLanguageID && lang !== 'en' && lunr.hasOwnProperty(lang)) {
-      //   console.warn("Resource language is different from primary language, this may not work");
-      //   this.use((lunr as any).multiLanguage('en', lang));
-      // }
 
       const rels = reader.resolve(uri);
       //  const body = getTextContent(rels, ROOT_SUBJECT).
@@ -754,25 +737,34 @@ export async function * generateVersion(
       replace(/\p{Diacritic}/gu, '').
       trim();
 
-      if (body) {
+      const title = meta.labelInPlainText.
+      normalize('NFKD').
+      replace(/\p{Diacritic}/gu, '').
+      trim();
+
+      if (body || title) {
         //console.debug("Indexing", uri, relationsExcludingReferences, body);
-        const entry: LunrIndexEntry = {
+        const entry = {
           name: uri,
           body,
+          title,
+          lang: meta.primaryLanguageID ?? '',
         } as const;
-        this.add(entry);
+        if (contentCache[uri]) {
+          searchableResources.pages.push(entry);
+        } else {
+          searchableResources.resources.push(entry);
+        }
       } else {
         //console.debug("Indexing", uri, 'no text');
       }
+    }
 
-      // If this is not a page resource, add & boost label
-      if (!contentCache[uri]) {
-        const entry: LunrIndexEntry = {
-          name: uri,
-          body: meta.labelInPlainText,
-        } as const;
-        this.add(entry, { boost: 5 });
-      }
+    for (const entry of searchableResources.pages) {
+      this.add(entry, { boost: 2 });
+    }
+    for (const entry of searchableResources.resources) {
+      this.add(entry);
     }
   });
   indexProgress(null);

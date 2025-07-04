@@ -44,6 +44,10 @@ export const Bookmarks: React.FC<{
 
 const MAX_SEARCH_RESULT_COUNT = 100;
 
+function resultRefToResourceURI(ref: string): string {
+  return ref;
+}
+
 export const Search: React.FC<{
   index: LunrIndex;
   query: SearchQuery;
@@ -79,9 +83,11 @@ export const Search: React.FC<{
         try {
           exact =
             (index.query(query => {
-              query.term(tokens, {
-                presence: lunr.Query.presence.REQUIRED,
-              });
+              for (const t of tokens) {
+                query.term(t, {
+                  presence: lunr.Query.presence.REQUIRED,
+                });
+              }
             }) ?? []).
             slice(0, MAX_SEARCH_RESULT_COUNT);
         } catch (e) {
@@ -135,30 +141,32 @@ export const Search: React.FC<{
   }, [matches]);
 
   const resultMetadata = useMemo(() => {
-    return (Object.entries(results).map(([ref, res]) => {
-      const title = getPlainTitle(ref);
+    return (Object.keys(results).map(ref => {
+      const resourceURI = resultRefToResourceURI(ref);
+
+      const title = getPlainTitle(resourceURI);
 
       /** Resource path. */
       let path: string | undefined;
       try {
-        path = locateResource(res.ref);
+        path = locateResource(resourceURI);
       } catch (e) {
-        console.error("Failed to get path for resource", res.ref);
+        console.error("Failed to get resource path for result", ref);
         path = undefined;
       }
 
       /** URI of the resource represented by containing page. */
       let pageResource: { uri: string, title: string } | undefined;
       try {
-        const uri = getContainingPageURI(res.ref);
-        const title = getPlainTitle(uri);
-        pageResource = { uri, title };
+        const pageURI = getContainingPageURI(resourceURI);
+        const title = getPlainTitle(pageURI);
+        pageResource = { uri: pageURI, title };
       } catch (e) {
-        console.error("Failed to get containing page resource URI for", res.ref);
+        console.error("Failed to get containing page resource URI for", ref);
         pageResource = undefined;
       }
 
-      return { [ref]: { path, title, pageResource } };
+      return { [ref]: { uri: resourceURI, path, title, pageResource } };
 
     }) ?? []).reduce((prev, curr) => ({ ...prev, ...curr }), {});
   }, [results, getPlainTitle, locateResource, getContainingPageURI]);
@@ -183,18 +191,19 @@ export const Search: React.FC<{
     setShowMore(false);
   }, [debouncedQuery]);
 
-  const renderItem = useCallback((result: { ref: string, score: number }) => {
-    const title = resultMetadata[result.ref]?.title ?? "Untitled";
+  const renderItem = useCallback((result: { ref: string, score: number, matchData: any }) => {
+    const meta = resultMetadata[result.ref];
+    const title = meta?.title ?? "Untitled";
     return <Item
         key={result.ref}
         textValue={title}>
       <Text UNSAFE_className={classNames.navListViewItemWithLink}>
-        <Link href={resultMetadata[result.ref]?.path ?? 'javascript: void 0;'}>
+        <Link href={meta?.path ?? 'javascript: void 0;'}>
           {title}
         </Link>
       </Text>
       <Text slot='description'>
-        {resultMetadata[result.ref]?.pageResource?.title ?? ""}
+        {meta?.pageResource?.title ?? ""}
       </Text>
     </Item>;
   }, [showMore, getPlainTitle, resultMetadata]);

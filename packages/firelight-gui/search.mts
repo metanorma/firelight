@@ -33,19 +33,22 @@ export function loadLunrIndex(serializedIndex: any) {
 
   console.debug("Lunr: initializing");
 
-  const nonDefaultLanguages =
-    Object.keys(LANGUAGE_SUPPORT) as (keyof typeof LANGUAGE_SUPPORT)[];
+  const supportedLanguages =
+    ['en', ...(Object.keys(LANGUAGE_SUPPORT) as (keyof typeof LANGUAGE_SUPPORT)[])];
 
-  if (nonDefaultLanguages.length > 1) {
+  if (supportedLanguages.length > 1) {
+    console.debug(`Lunr: enabling extra languages ${supportedLanguages.join(', ')}`);
 
-    console.debug(`Lunr: enabling extra languages ${nonDefaultLanguages.join(', ')}`);
-
-    for (const lang of nonDefaultLanguages) {
-      LANGUAGE_SUPPORT[lang](lunr);
+    for (const lang of supportedLanguages) {
+      if (LANGUAGE_SUPPORT[lang as keyof typeof LANGUAGE_SUPPORT]) {
+        LANGUAGE_SUPPORT[lang as keyof typeof LANGUAGE_SUPPORT](lunr);
+      }
     }
 
     enableLunrMultiLanguage(lunr);
-    ((lunr as any).multiLanguage(...['en', ...nonDefaultLanguages]));
+    ((lunr as any).multiLanguage(...supportedLanguages));
+
+    const nonDefaultLanguages = supportedLanguages.filter(l => l !== 'en');
 
     const lunrTokenizer = lunr.tokenizer;
     (lunr as any).tokenizer = function(x: any) {
