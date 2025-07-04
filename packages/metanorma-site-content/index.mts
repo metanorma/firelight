@@ -91,10 +91,10 @@ const mod: ContentAdapterModule = {
     const primaryLanguageID = getCurrentLanguage(relations);
 
     const labelInPlainText = getBibdataMainTitle(relations, primaryLanguageID)
-      ?? getSectionPlainTitle(relations)
+      || getSectionPlainTitle(relations)
       // First few characters of the first few relations that are not a URI,
       // joined by a whitespace
-      ?? relations.
+      || relations.
            filter(([s, p, o]) =>
              s === ROOT_SUBJECT
              && p === 'hasPart'
@@ -105,7 +105,7 @@ const mod: ContentAdapterModule = {
            map(([s, p, o]) => o).join('').
            slice(0, 42)
       // Type or generic “resource”
-      ?? `${relations.find(([s, p, o]) => s === ROOT_SUBJECT && p === 'type')?.[2] ?? 'unnamed'}`;
+      || `${relations.find(([s, p, o]) => s === ROOT_SUBJECT && p === 'type')?.[2] ?? 'unnamed'}`;
 
     return (primaryLanguageID
       ? { labelInPlainText, primaryLanguageID }
