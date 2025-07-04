@@ -101,9 +101,12 @@ const mod: ContentAdapterModule = {
              && o.trim() !== ''
              // TODO: Stop testing URI by urn: prefix
              && !o.startsWith('urn:') && !o.startsWith('data:')
-           ).slice(0, 10).
-           map(([s, p, o]) => o).join('').
-           slice(0, 42)
+           ).
+           slice(0, 10).
+           map(([s, p, o]) => o).
+           join('').
+           slice(0, 42).
+           trim()
       // Type or generic “resource”
       || relations.find(([s, p, o]) => s === ROOT_SUBJECT && p === 'type')?.[2]
       || 'unnamed';
