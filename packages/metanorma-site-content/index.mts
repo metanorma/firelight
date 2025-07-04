@@ -385,7 +385,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         ];
         if (caption) {
           figureContents.push(
-            pm.node('figCaption', null, generateContent(caption, pm.nodes.figCaption!, state)),
+            pm.node('figCaption', { resourceID: caption }, generateContent(caption, pm.nodes.figCaption!, state)),
           );
         }
         return pm.node('figure', { resourceID: subj }, figureContents);
@@ -401,7 +401,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         if (captionID) {
           content.push(pm.node(
             'figCaption',
-            null,
+            { resourceID: captionID },
             generateContent(captionID, pm.nodes.figCaption!, state),
           ));
         }
@@ -774,7 +774,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
         const caption = findValue(section, subj, 'hasFmtName');
         if (caption) {
           figureContents.push(
-            pm.node('figCaption', null, generateContent(
+            pm.node('figCaption', { resourceID: caption }, generateContent(
               caption,
               pm.nodes.figCaption!,
               onAnnotation,

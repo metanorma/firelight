@@ -305,8 +305,16 @@ const clauseSchemaBase = new Schema({
     },
     figCaption: {
       content: '(text | flow)*',
-      toDOM() {
-        return ['figcaption', { class: classNames.figCaption }, 0];
+      attrs: {
+        resourceID: {
+          default: undefined,
+        },
+      },
+      toDOM(node) {
+        const attrs = node.attrs.resourceID
+          ? { about: node.attrs.resourceID }
+          : {};
+        return ['figcaption', { ...attrs, class: classNames.figCaption }, 0];
       },
     },
     image: {
