@@ -715,7 +715,7 @@ export async function * generateVersion(
         console.warn("No label for", uri);
       }
     }
-    for (const [uri, ] of Object.entries(resourceDescriptions)) {
+    for (const [uri, meta] of Object.entries(resourceDescriptions)) {
       done += 1;
       indexProgress({ state: 'adding entries for subresources', total, done });
 
@@ -759,6 +759,15 @@ export async function * generateVersion(
         this.add(entry);
       } else {
         //console.debug("Indexing", uri, 'no text');
+      }
+
+      // If this is not a page resource, add & boost label
+      if (!contentCache[uri]) {
+        const entry: LunrIndexEntry = {
+          name: uri,
+          body: meta.labelInPlainText,
+        } as const;
+        this.add(entry, { boost: 5 });
       }
     }
   });
