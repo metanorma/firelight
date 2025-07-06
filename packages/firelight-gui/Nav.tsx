@@ -7,6 +7,7 @@ import Delete from '@spectrum-icons/workflow/Delete';
 //import BookmarkIcon from '@spectrum-icons/workflow/BookmarkSmallOutline';
 //import BookmarkIconActive from '@spectrum-icons/workflow/BookmarkSmall';
 import { type SearchQuery } from './model.mjs';
+import { preprocessStringForIndexing } from 'anafero/index.mjs';
 import classNames from './style.module.css';
 
 
@@ -64,14 +65,12 @@ export const Search: React.FC<{
 
   const [matches, error] = useMemo(() => {
     if (index && debouncedQuery.trim() !== '') {
-      const normalizedQuery = debouncedQuery.
-        replace(/:/g, " ").
-        replace(/\*/g, " ").
-        // TODO: Actually wildcards can happen in some positions,
-        // but when the query is mostly a wildcard it can be too low.
-        normalize('NFKD').
-        replace(/\p{Diacritic}/gu, '').
-        trim();
+      const normalizedQuery = preprocessStringForIndexing(
+        debouncedQuery.
+          replace(/:/g, " ").
+          // TODO: Actually wildcards can happen in some positions,
+          // but when the query is mostly a wildcard it can be too low.
+          replace(/\*/g, " "));
       const tokens = lunr.tokenizer(normalizedQuery);
       //const queryTokenized = lunr.tokenizer(debouncedQuery);
       console.debug("Search: tokens", tokens);
