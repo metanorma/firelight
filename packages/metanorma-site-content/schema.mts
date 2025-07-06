@@ -59,8 +59,10 @@ const clauseSchemaBase = new Schema({
         return ['article', 0];
       },
     },
+    // title_flow:
+    // code | linebreak | external_link | resource_link | strong | em | anchor | sup | math
     title: {
-      content: '(text | flow)*',
+      content: '(text | title_flow)*',
       toDOM() {
         return ['h1', 0];
       },
@@ -242,7 +244,7 @@ const clauseSchemaBase = new Schema({
       },
       inclusive: false,
       inline: true,
-      group: 'flow',
+      group: 'flow title_flow',
       content: '(flow | text)*',
       toDOM(node) {
         return ['a', {
@@ -337,7 +339,7 @@ const clauseSchemaBase = new Schema({
     },
 
     anchor: {
-      group: 'flow',
+      group: 'flow title_flow',
       inline: true,
       isLeaf: true,
       attrs: {
@@ -393,7 +395,7 @@ const clauseSchemaBase = new Schema({
         },
       },
       inline: true,
-      group: 'flow',
+      group: 'flow title_flow',
       toDOM(node) {
         const el = document.createElement('span');
         el.innerHTML = node.attrs.mathML;
@@ -404,7 +406,7 @@ const clauseSchemaBase = new Schema({
     ...tn,
 
     linebreak: {
-      group: 'flow',
+      group: 'flow title_flow',
       inline: true,
       content: '',
       toDOM() {
@@ -412,7 +414,7 @@ const clauseSchemaBase = new Schema({
       },
     },
     span: {
-      group: 'flow',
+      group: 'flow title_flow',
       content: '(text | flow)*',
       inline: true,
       toDOM() {
@@ -420,7 +422,7 @@ const clauseSchemaBase = new Schema({
       },
     },
     strong: {
-      group: 'flow',
+      group: 'flow title_flow',
       content: '(text | flow)*',
       inline: true,
       toDOM() {
@@ -428,7 +430,7 @@ const clauseSchemaBase = new Schema({
       },
     },
     em: {
-      group: 'flow',
+      group: 'flow title_flow',
       content: '(text | flow)*',
       inline: true,
       toDOM() {
@@ -436,7 +438,7 @@ const clauseSchemaBase = new Schema({
       },
     },
     sup: {
-      group: 'flow',
+      group: 'flow title_flow',
       content: '(text | flow)*',
       inline: true,
       toDOM() {
@@ -444,7 +446,7 @@ const clauseSchemaBase = new Schema({
       },
     },
     underline: {
-      group: 'flow',
+      group: 'flow title_flow',
       content: '(text | flow)*',
       inline: true,
       toDOM() {
@@ -458,7 +460,7 @@ const clauseSchemaBase = new Schema({
       },
     },
     code: {
-      group: 'flow',
+      group: 'flow title_flow',
       content: '(text | flow)*',
       inline: true,
       toDOM() {
@@ -475,7 +477,7 @@ const clauseSchemaBase = new Schema({
       },
       inclusive: false,
       inline: true,
-      group: 'flow',
+      group: 'flow title_flow',
       content: '(text | flow)*',
       toDOM(node) {
         return ['a', {
