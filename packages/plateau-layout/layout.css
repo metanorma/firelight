@@ -3,8 +3,13 @@
 
 /* Part navigation */
 .descendantNavigation {
+  padding: 0 2em 1em 2em;
+  background-color: var(--spectrum-accent-color-200);
+
   container-type: inline-size;
   line-height: 1.42;
+
+  text-wrap-style: balance;
 
   ul {
     margin: 0;
@@ -20,7 +25,7 @@
 
       &::before {
         content: "⏵";
-        color: var(--spectrum-alias-text-color);
+        color: var(--spectrum-accent-color-1200);
       }
 
       > a {
@@ -28,6 +33,9 @@
         font-size: 18px;
         overflow: hidden;
         text-overflow: ellipsis;
+        &:link, &:visited {
+          color: var(--spectrum-accent-color-1200);
+        }
         &:link {
           text-decoration: none;
         }
@@ -69,14 +77,19 @@
 
     word-break: auto-phrase;
 
-    /*
-    [about]:hover {
-      outline-style: auto;
-      outline-width: thin;
-      outline-style: solid;
-      outline-color: var(--spectrum-accent-collr-1000);
+    > :first-child {
+      padding-block-start: 0.83em;
+      padding-block-end: 0.83em;
+      margin-block-start: 0;
+      margin-block-end: 0;
+      padding-left: 2rem !important;
+      padding-right: 2rem !important;
+      background-color: var(--spectrum-alias-pasteboard-background-color);
     }
-    */
+    > :not(:first-child) {
+      margin-left: 2rem !important;
+      margin-right: 2rem !important;
+    }
 
     html:not([lang="ja"]) & h1 + p:not(:only-of-type):first-letter {
       font-size: 3em;
@@ -85,6 +98,32 @@
       margin-right: .25rem;
       padding: .1em 0;
     }
+
+    > h1 {
+      font-weight: normal;
+      font-size: 2em;
+      text-wrap-style: balance;
+      line-height: 1.2;
+
+      strong {
+        font-weight: normal;
+      }
+    }
+    > h1 + * {
+      margin-block-start: 2em !important;
+    }
+    > :not(h1):last-child {
+      margin-block-end: 2em !important;
+    }
+
+    /*
+    [about]:hover {
+      outline-style: auto;
+      outline-width: thin;
+      outline-style: solid;
+      outline-color: var(--spectrum-accent-collr-1000);
+    }
+    */
 
     sup {
       line-height: 1;
@@ -100,6 +139,7 @@
 
     p {
       margin: 0;
+      text-wrap-style: pretty;
     }
     ul, ol {
       margin: 0;
@@ -183,6 +223,7 @@
 
     figcaption {
       font-weight: 400;
+      text-wrap-style: balance;
     }
 
     img {

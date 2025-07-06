@@ -45,17 +45,19 @@ const Layout: LayoutFC = React.forwardRef<
 
       {children}
 
-      <nav className={classNames.descendantNavigation}>
-        <ul>
-          {nav.children.map(link =>
-            <li key={link.path}>
-              <a href={link.path}>
-                {link.plainTitle}
-              </a>
-            </li>
-          )}
-        </ul>
-      </nav>
+      {nav.children.length > 0
+        ? <nav className={classNames.descendantNavigation}>
+            <ul>
+              {nav.children.map(link =>
+                <li key={link.path}>
+                  <a href={link.path}>
+                    {link.plainTitle}
+                  </a>
+                </li>
+              )}
+            </ul>
+          </nav>
+        : null}
 
     </div>
   );
