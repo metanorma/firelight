@@ -602,7 +602,7 @@ export const coverBibdataSchema = new Schema({
       },
     },
     docMeta: {
-      content: 'primaryDocID edition pubDate author resource_link*',
+      content: 'primaryDocID edition pubDate? author? resource_link*',
       toDOM() {
         return ['div', { class: classNames.docMeta }, 0];
       },

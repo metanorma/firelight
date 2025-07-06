@@ -183,10 +183,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
       ]).toJSON(),
       contentDoc: pm.node('doc', null, [
         pm.node('docMeta', null, [
-          pm.node('primaryDocID', null, [pm.text('unknown docid')]),
+          pm.node('primaryDocID', null, [pm.text('(collection)')]),
           pm.node('edition', null, [pm.text('unknown edition')]),
-          pm.node('pubDate', null, [pm.text('unknown pubdate')]),
-          pm.node('author', null, [pm.text('unknown author')]),
         ]),
         pm.node('mainTitle', null, [pm.text(title)]),
       ]).toJSON(),
@@ -1095,7 +1093,7 @@ const generateCoverPage:
   const dates = resolveChain(bibdata, ['hasDate', 'hasPart']);
   const pubDate = dates.find(([dateURI, ]) =>
     findValue(bibdata, dateURI, 'hasType') === 'published',
-  )?.[1] || 'unknown publication date';
+  )?.[1] || null;
 
   const contributors = resolveChain(bibdata, ['hasContributor']);
   const authorAndPublisherOrgURIs = contributors.
@@ -1108,9 +1106,26 @@ const generateCoverPage:
   const authorsAndPublishers = Array.from(new Set(authorAndPublisherOrgURIs.map(uri =>
     resolveChain(bibdata, ['hasName', 'hasPart'], uri)[0]?.[1]
   ).filter(name => name !== undefined)));
-  const author = authorsAndPublishers[0] || 'unknown contributors';
+  const author = authorsAndPublishers[0] || null;
 
   const pm = coverBibdataSchema;
+
+  const metaContent = [
+    pm.node('primaryDocID', null, [pm.text(primaryDocid)]),
+    pm.node('edition', null, [pm.text(edition)]),
+  ];
+
+  if (pubDate) {
+    metaContent.push(
+      pm.node('pubDate', null, [pm.text(pubDate)])
+    );
+  }
+  if (author) {
+    metaContent.push(
+      pm.node('author', null, [pm.text(author)])
+    );
+  }
+
   return {
     contentSchemaID: 'cover',
     primaryLanguageID: currentLanguage,
@@ -1120,10 +1135,7 @@ const generateCoverPage:
     ]).toJSON(),
     contentDoc: pm.node('doc', null, [
       pm.node('docMeta', null, [
-        pm.node('primaryDocID', null, [pm.text(primaryDocid)]),
-        pm.node('edition', null, [pm.text(edition)]),
-        pm.node('pubDate', null, [pm.text(pubDate)]),
-        pm.node('author', null, [pm.text(author)]),
+        ...metaContent,
         ...dlLinks.filter(href => href.trim() !== '').map(href =>
           pm.node(
             'resource_link',
