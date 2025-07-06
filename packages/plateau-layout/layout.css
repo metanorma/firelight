@@ -1,26 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
 
-.breadcrumbs {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  > * {
-    display: inline-block;
-    margin: 0;
-    padding: 0;
-    white-space: nowrap;
-  }
-  > :first-child {
-    font-weight: bold;
-  }
-  > :not(:last-child) {
-    &:after {
-      margin-right: 1em;
-      content: "/";
-    }
-  }
-}
-
 
 /* Part navigation */
 .descendantNavigation {
