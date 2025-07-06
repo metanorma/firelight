@@ -93,6 +93,7 @@ export interface ResourceProps extends ResourceData {
   /** Ref of the container div. */
   ref?: (element: HTMLDivElement) => void;
   className?: string | undefined;
+  hideBreadcrumbs?: boolean;
 }
 
 
@@ -103,6 +104,7 @@ export const Resource = React.forwardRef(function ({
   className,
   requestedResourceURI,
   searchQueryText,
+  hideBreadcrumbs,
   useDependency, locateResource, document,
   getResourcePlainTitle: resolvePlainTitle,
   selectedLayout: layout,
@@ -277,7 +279,9 @@ export const Resource = React.forwardRef(function ({
         className={`${classNames.resource} ${className ?? ''}`}
         aria-selected={ariaSelected}>
 
-      <ResourceBreadcrumbs parents={resourceNav.breadcrumbs} />
+      {!hideBreadcrumbs
+        ? <ResourceBreadcrumbs parents={resourceNav.breadcrumbs} />
+        : null}
 
       {content.content
         ? <ResourceHelmet {...content.content} />
