@@ -144,13 +144,16 @@ const Tasks: React.FC<{ tasks: Tasks }> = function ({ tasks }) {
 const TaskTree: React.FC<{ task: string } & Task> =
 function ({ task, progress, error, subtasks }) {
   const hasProgressEstimate = progress && progress.total !== undefined && progress.done !== undefined;
+  const progressLabel = hasProgressEstimate
+    ? `${task}: ${progress.done} of ${progress.total}`
+    : task;
   return (
     <Box flexDirection="column">
       <Box height={hasProgressEstimate ? 2 : 1} flexDirection="column">
         {progress
           ? <>
               <Box height={1} gap={2} flexGrow={0}>
-                <Spinner label={task} />
+                <Spinner label={progressLabel} />
                 <Box flexGrow={0}>
                   <Text>{progress.state ?? 'working…'}</Text>
                 </Box>
