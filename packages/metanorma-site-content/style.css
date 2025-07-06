@@ -13,12 +13,14 @@
   display: flex;
   font-size: 16px;
   gap: 1em;
+  text-wrap-style: balance;
 }
 
 .mainTitle {
   text-align: left;
   font-weight: normal;
   font-size: 32px;
+  text-wrap-style: balance;
   line-height: 1.4;
   margin-bottom: 30px;
   word-break: auto-phrase;
