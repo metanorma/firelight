@@ -45,7 +45,6 @@ import {
   fillInLocale,
 } from './ContentAdapter.mjs';
 import {
-  ROOT_SUBJECT,
   type RelationGraphAsList,
 } from './relations.mjs';
 import { type LayoutModule, type NavLink } from './Layout.mjs';
@@ -58,8 +57,10 @@ import {
 
 import { makeContentReader } from './ContentReader.mjs';
 import { type Cache } from './cache.mjs';
-
-import { isURIString } from './URI.mjs';
+import {
+  preprocessStringForIndexing,
+  extractRelationsForIndexing,
+} from './search.mjs';
 
 
 const encoder = new TextEncoder();
@@ -96,12 +97,6 @@ interface StringsToInjectIntoHTML {
   tail?: string | undefined;
 }
 
-/**
- * Since we currently generate content on two occasions—
- * when generating resource’s page itself, and when generating
- * nav links to it—we cache generated content per path.
- */
-type ResourceContentCache = Record<string, AdapterGeneratedResourceContent>;
 
 /**
  * Emits assets for a particular resource (HTML, JSON, any supporting files)
@@ -382,14 +377,17 @@ export async function * generateVersion(
   /** Main resource graph (only pointers to individual resource graphs). */
   const resourceGraph: RelationGraphAsList = [];
 
+  /** Resources to be added to search index. */
+  const searchableResources:
+  { pages: Record<string, LunrIndexEntry>, resources: Record<string, LunrIndexEntry> } =
+  { pages: {}, resources: {} };
+
+
   // TODO: Combine resourceGraph and resourceDescriptions.
   // They serve a similar purpose.
 
   /** Basic resource descriptions keyed by resource URI. */
   const resourceDescriptions: Record<string, ResourceMetadata> = {};
-
-  /** Collects all resource page content & used for search index later. */
-  const contentCache: ResourceContentCache = {};
 
   /** Maps filenames to blobs. Assets are global per version. */
   const assetsToWrite: Record<string, Uint8Array> = {};
@@ -445,9 +443,10 @@ export async function * generateVersion(
 
     pathProgress({ state: 'generating resource page content' });
 
+    // TODO: Incorporate this with ContentReader nicely
     const content = (function generateContent(
-      /** Resource graph. */
-      graph,
+      uri,
+
       /**
        * Resource metadata.
        * Technically, adapter-generated resource content will have metadata
@@ -457,78 +456,125 @@ export async function * generateVersion(
        * inheritance in adapter output.
        */
       metadata,
-      uri,
-      cache,
-    ) {
-      if (!cache[uri]) {
-        let content: ResourceContent | null;
-        //console.debug("Generating resource content from graph", resourceURI, maybePrimaryLanguageID);
-        const maybeAdapter = findContentAdapter(uri);
-        if (maybeAdapter) {
-          try {
-            content = maybeAdapter[1].generateContent(graph) ?? null;
-          } catch (e) {
-            console.error("Failed to generate resource content",
-              path,
-              uri,
-              graph.slice(0, 40).join("\n"),
-            );
-            throw e;
-          }
 
-          if (content) {
-            contentCache[uri] = {
-              adapterID: maybeAdapter[0],
-              content: { ...metadata, ...content },
-            } as const;
+      /** Full resource graph. */
+      graph,
+    ): AdapterGeneratedResourceContent | null {
+      let result: AdapterGeneratedResourceContent | null;
 
-            if (metadata.primaryLanguageID) {
-              allLanguages.add(metadata.primaryLanguageID);
-            }
+      let content: ResourceContent | null;
+      //console.debug("Generating resource content from graph", resourceURI, maybePrimaryLanguageID);
+      const maybeAdapter = findContentAdapter(uri);
+      if (maybeAdapter) {
+        try {
+          content = maybeAdapter[1].generateContent(graph) ?? null;
+        } catch (e) {
+          console.error("Failed to generate resource content",
+            path,
+            uri,
+            graph.slice(0, 40).join("\n"),
+          );
+          throw e;
+        }
 
-            // Add sub-resources described by the page
-            // to resource map/graph
-            const describedResourceIDs =
-              gatherDescribedResourcesFromJsonifiedProseMirrorNode(content.contentDoc);
-            for (const inPageResourceID of describedResourceIDs) {
-              if (reader.exists(inPageResourceID)) {
-                // We have a sub-resource represented by the page.
-                // Add it to resource map, too (with hash fragment).
-                const pathWithFragment = `${path}#${encodeURIComponent(inPageResourceID)}`;
-                resourceMap[pathWithFragment] = inPageResourceID;
-                resourceGraph.push([inPageResourceID, 'isDefinedBy', `${path}/resource.json`]);
-                resourceDescriptions[inPageResourceID] = reader.describe(inPageResourceID);
-              } else {
-                console.warn(
-                  "Subresource on page does not exist in the graph",
-                  path,
-                  inPageResourceID,
-                );
-              }
-            }
-          }
+        if (content) {
+          result = {
+            adapterID: maybeAdapter[0],
+            content: { ...metadata, ...content },
+          } as const;
+
         } else {
-          console.warn("No adapter found to render", uri);
-          return null;
+          console.warn("No content was generated", uri);
+          result = null;
         }
       } else {
-        console.debug("contentCache hit", uri);
+        console.warn("No adapter found to render", uri);
+        result = null;
       }
-      return cache[uri]!;
-    })(relations, meta, resourceURI, contentCache);
+      return result;
+    })(
+      resourceURI,
+      meta,
+      relations,
+    );
 
     pathProgress({ state: 'generating page content & assets' });
 
-    if (content !== null) {
+    if (content?.content) {
+
+      // Note the language
+
+      if (meta.primaryLanguageID) {
+        allLanguages.add(meta.primaryLanguageID);
+      }
+
+
+      // Process paged resource
 
       resourceMap[path] = resourceURI;
       resourceGraph.push([resourceURI, 'isDefinedBy', `${path}/resource.json`]);
-
       resourceDescriptions[resourceURI] = resourceMeta;
+      searchableResources.pages[resourceURI] = {
+        name: resourceURI,
+        title: preprocessStringForIndexing(meta.labelInPlainText),
+        lang: meta.primaryLanguageID || '',
+        body:
+          preprocessStringForIndexing(
+            extractRelationsForIndexing(resourceURI, relations, reader.exists).
+            join('').
+            trim()
+          ),
+      };
+
+      pathProgress({ state: 'processing on-page subresources' });
+
+
+      // Process resources on the page
+      // NOTE: We process generated content, not resource graph,
+      // because we can’t yet guarantee that all resources in the graph
+      // are rendered in content
+
+      const describedResourceIDs =
+        gatherDescribedResourcesFromJsonifiedProseMirrorNode(
+          content.content.contentDoc
+        );
+      for (const inPageResourceID of describedResourceIDs) {
+        if (reader.exists(inPageResourceID)) {
+          // We have a sub-resource represented by the page.
+          // Add it to resource map, too (with hash fragment).
+          const pathWithFragment = `${path}#${encodeURIComponent(inPageResourceID)}`;
+          const meta = reader.describe(inPageResourceID);
+          const graph = reader.resolve(inPageResourceID);
+          resourceMap[pathWithFragment] = inPageResourceID;
+          resourceGraph.push([inPageResourceID, 'isDefinedBy', `${path}/resource.json`]);
+          resourceDescriptions[inPageResourceID] = meta;
+          if (inPageResourceID !== resourceURI) {
+            searchableResources.resources[inPageResourceID] = {
+              name: inPageResourceID,
+              title: preprocessStringForIndexing(meta.labelInPlainText),
+              lang: meta.primaryLanguageID || '',
+              body:
+                preprocessStringForIndexing(
+                  extractRelationsForIndexing(inPageResourceID, graph, reader.exists).
+                  join('').
+                  trim()
+                ),
+            };
+          }
+        } else {
+          console.warn(
+            "Subresource on page does not exist in the graph",
+            path,
+            inPageResourceID,
+          );
+        }
+      }
 
       pathProgress({ state: 'processing resource assets' });
 
+
       // Process assets referenced the page to output later
+
       for (const [, , o] of relations) {
         if (o.startsWith('file:')) {
           // Some resource on the page is referencing a file.
@@ -556,6 +602,7 @@ export async function * generateVersion(
       }
 
       // Output resource assets (HTML, etc.) now
+
       const resourceAssetGenerator = generateResourceAssets(
         resourceURI,
         relations,
@@ -668,22 +715,9 @@ export async function * generateVersion(
       };
     }
 
-    //if (maybePrimaryLanguageID) {
-    //  if (supportedLanguages.length > 1) {
-    //    for (const lang of nonDefaultLanguages) {
-    //      this.use((lunr as any)[lang]);
-    //    }
-    //  } else if (maybePrimaryLanguageID !== 'en') {
-    //    this.use((lunr as any)[maybePrimaryLanguageID]);
-    //  }
-    //}
-
-    //if (maybePrimaryLanguageID
-    //&& maybePrimaryLanguageID !== 'en'
-    //&& lunrLanguageSupport[maybePrimaryLanguageID as keyof typeof lunrLanguageSupport]) {
-    //  enableLunrMultiLanguage(lunr);
-    //  this.use((lunr as any).multiLanguage('en', maybePrimaryLanguageID));
-    //}
+    // This can be done if needed…
+    //this.pipeline.remove(lunr.stemmer);
+    //this.searchPipeline.remove(lunr.stemmer);
 
     // Reduce the effect of document length on term importance.
     // this.b(0.3);
@@ -693,77 +727,23 @@ export async function * generateVersion(
     this.ref('name');
     this.field('title', { boost: 2 });
     this.field('body');
-
-    // This can be done if needed…
-    //this.pipeline.remove(lunr.stemmer);
-    //this.searchPipeline.remove(lunr.stemmer);
+    this.field('lang');
 
     let done = 0;
-    const total = Object.keys(contentCache).length + Object.keys(resourceDescriptions).length;
+    const total =
+      Object.keys(searchableResources.pages).length
+      +
+      Object.keys(searchableResources.resources).length;
 
 
-    const searchableResources:
-    { pages: LunrIndexEntry[], resources: LunrIndexEntry[] } =
-    { pages: [], resources: [] };
-
-    // Add subresources
-    for (const [uri, meta] of Object.entries(resourceDescriptions)) {
+    for (const entry of Object.values(searchableResources.pages)) {
       done += 1;
-      indexProgress({ state: 'adding entries for subresources', total, done });
-
-      const rels = reader.resolve(uri);
-      //  const body = getTextContent(rels, ROOT_SUBJECT).
-      //  join('').
-      //  trim().
-      //  normalize('NFKD').
-      //  replace(/\p{Diacritic}/gu, '').
-      //  trim();
-
-      const relationsExcludingReferences = rels.filter(([s, p, o]) =>
-        p === 'hasPart'
-        &&
-        (s === ROOT_SUBJECT || s === uri)
-        &&
-        !o.startsWith('data:')
-        &&
-        (!isURIString(o) || !reader.exists(o))
-      );
-
-      const body = relationsExcludingReferences.
-      map(([, , o]) => o).
-      join('').
-      trim().
-      normalize('NFKD').
-      replace(/\p{Diacritic}/gu, '').
-      trim();
-
-      const title = meta.labelInPlainText.
-      normalize('NFKD').
-      replace(/\p{Diacritic}/gu, '').
-      trim();
-
-      if (body || title) {
-        //console.debug("Indexing", uri, relationsExcludingReferences, body);
-        const entry = {
-          name: uri,
-          body,
-          title,
-          lang: meta.primaryLanguageID ?? '',
-        } as const;
-        if (contentCache[uri]) {
-          searchableResources.pages.push(entry);
-        } else {
-          searchableResources.resources.push(entry);
-        }
-      } else {
-        //console.debug("Indexing", uri, 'no text');
-      }
-    }
-
-    for (const entry of searchableResources.pages) {
+      indexProgress({ state: 'adding entries for pages', total, done });
       this.add(entry, { boost: 2 });
     }
-    for (const entry of searchableResources.resources) {
+    for (const entry of Object.values(searchableResources.resources)) {
+      done += 1;
+      indexProgress({ state: 'adding entries for subresources', total, done });
       this.add(entry);
     }
   });
