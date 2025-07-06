@@ -10,7 +10,6 @@
 
 .docMeta {
   color: var(--spectrum-alias-text-color);
-  text-align: right;
   display: flex;
   font-size: 16px;
   gap: 1em;
