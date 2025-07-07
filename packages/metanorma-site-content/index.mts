@@ -176,7 +176,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
     }
     return {
       contentSchemaID: 'cover',
-      primaryLanguageID: 'en',
+      primaryLanguageID: 'en', // TODO: No language in collection bibdata?
       labelInPlainText: title,
       title: titleSchema.node('doc', null, [
         titleSchema.text(title),
