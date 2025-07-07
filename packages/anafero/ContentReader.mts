@@ -505,6 +505,12 @@ export const makeContentReader: ContentReaderFactory = async function (
 
       const contentAdapter = getAdapter(resourceURI);
 
+      // Keeping a set of seen resource -> predicate -> target
+      // relations should probably not be needed, but seems to help
+      // with CalConnect, where identifiers are not globally unique
+      // (collection is not a proper MN collection)
+      const seen: Set<string> = new Set();
+
       //const resourcePath = cache.get<string>(`path-for/${resourceURI}`);
       const queue: string[] = [resourceURI];
       while (queue.length > 0) {
@@ -539,7 +545,7 @@ export const makeContentReader: ContentReaderFactory = async function (
           // Add valid new targets to the queue
           // to be processed as part of this resource graph:
 
-          const newTargets = relations.
+          const rels = relations.
           // Do not queue target if related resource is not a URI
           filter(({ target }) => isURIString(target)).
           // Do not queue target if related resource is already in path hierarchy
@@ -550,8 +556,18 @@ export const makeContentReader: ContentReaderFactory = async function (
             && !contentAdapter.crossReferences?.(rel)
           ).
           // Do not queue target if it was already queued
-          filter(rel => !queue.includes(rel.target)).
-          map(({ target }) => target);
+          filter(rel => !queue.includes(rel.target));
+          
+          const newTargets: string[] = [];
+          for (const rel of rels) {
+            const seenKey = JSON.stringify({ currentResource, rel });
+            if (!seen.has(seenKey)) {
+              seen.add(seenKey);
+              newTargets.push(rel.target);
+            } else {
+              console.warn("Duplicate rel", currentResource, rel);
+            }
+          }
 
           queue.push(...newTargets);
         }
