@@ -45,6 +45,23 @@ function getBibdataDocid(doc: Readonly<RelationGraphAsList>): string | undefined
   )?.[1] ?? docids[0]?.[1];
 }
 
+function getEdition(
+  bibdata: Readonly<RelationGraphAsList>,
+  currentLanguage?: string,
+): string | undefined {
+  const editions = resolveChain(bibdata, ['hasEdition', 'hasPart']);
+  /** Edition text, preferably in current language */
+  const edition = (
+    currentLanguage
+      ? editions.find(([editionID, ]) =>
+          findValue(bibdata, editionID, 'hasLanguage') === currentLanguage
+        )?.[1]
+      : undefined
+  ) ?? editions[0]?.[1];
+
+  return edition;
+}
+
 function getBibdataMainTitle(doc: Readonly<RelationGraphAsList>, lang?: string): string | undefined {
   const docids = resolveChain(doc, ['hasBibdata', 'hasTitle', 'hasPart']);
   return docids.find(([uri, ]) =>
@@ -1098,12 +1115,8 @@ const generateCoverPage:
   if (!hopefullyASuitableTitle?.[0] || !hopefullyASuitableTitle?.[1]) {
     throw new Error("Cannot generate cover page: missing main title in current language");
   }
-
-  const editions = resolveChain(bibdata, ['hasEdition', 'hasPart']);
-  /** Edition text, preferably in current language */
-  const edition = editions.find(([editionID, ]) =>
-    findValue(bibdata, editionID, 'hasLanguage') === currentLanguage
-  )?.[1] ?? editions[0]?.[1];
+  
+  const edition = getEdition(bibdata, currentLanguage);
 
   if (!edition) {
     throw new Error("Cannot generate cover page: missing edition");
