@@ -165,15 +165,19 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
   collection: function generateCollection (graph) {
     const pm = coverBibdataSchema;
+
     // Quick and dirty title
     const title = resolveChain(
       graph,
       ['hasBibdata', 'hasTitle', 'hasPart'],
       ROOT_SUBJECT,
-    )[0]?.[1];
+    )[0]?.[1] || "Untitled";
+
     if (!title) {
-      throw new Error("Collection has no title");
+      console.warn("Collection has no title", graph);
+      //throw new Error("Collection has no title");
     }
+
     return {
       contentSchemaID: 'cover',
       primaryLanguageID: 'en', // TODO: No language in collection bibdata?
