@@ -183,6 +183,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
   collection: function generateCollection (graph) {
     const pm = coverBibdataSchema;
 
+    const currentLanguage = getCurrentLanguage(graph);
+
     // Quick and dirty title
     const title = resolveChain(
       graph,
@@ -190,9 +192,39 @@ const generatorsByType: Record<string, ContentGenerator> = {
       ROOT_SUBJECT,
     )[0]?.[1] || "A Metanorma collection";
 
+    const bibdataID = graph.find(([s, p,]) => s === ROOT_SUBJECT && p === 'hasBibdata')?.[2];
+    const bibdata = bibdataID ? relativeGraph(graph, bibdataID) : [];
+
+    const docid = getBibdataDocid(graph);
+
     if (!title) {
       console.warn("Collection has no title", graph);
       //throw new Error("Collection has no title");
+    }
+
+    const meta: ProseMirrorNode[] = [];
+
+    if (docid) {
+      meta.push(
+        pm.node('identifier', null, [pm.text(docid)]),
+      );
+    }
+    const edition = bibdataID
+      ? getEdition(bibdata, currentLanguage)
+      : undefined;
+    if (edition) {
+      meta.push(
+        pm.node('edition', null, [pm.text(edition)]),
+      );
+    }
+    const dates = resolveChain(bibdata, ['hasDate', 'hasPart']);
+    const pubDate = dates.find(([dateURI, ]) =>
+      findValue(bibdata, dateURI, 'hasType') === 'published',
+    )?.[1] || null;
+    if (pubDate) {
+      meta.push(
+        pm.node('pubDate', null, [pm.text(pubDate)]),
+      );
     }
 
     return {
@@ -204,10 +236,13 @@ const generatorsByType: Record<string, ContentGenerator> = {
       ]).toJSON(),
       contentDoc: pm.node('doc', null, [
         pm.node('mainTitle', null, [pm.text(title)]),
-        pm.node('meta', null, [
-          pm.node('identifier', null, [pm.text("unidentified collection")]),
-          pm.node('edition', null, [pm.text("unknown edition")]),
-        ]),
+        pm.node(
+          'meta',
+          null,
+          meta.length > 0
+            ? meta
+            : [pm.node('identifier', null, pm.text("unidentified collection"))]
+        ),
       ]).toJSON(),
     };
   },
