@@ -279,7 +279,7 @@ export const Resource = React.forwardRef(function ({
         className={`${classNames.resource} ${className ?? ''}`}
         aria-selected={ariaSelected}>
 
-      {!hideBreadcrumbs
+      {!hideBreadcrumbs && resourceNav.breadcrumbs.length > 0
         ? <ResourceBreadcrumbs parents={resourceNav.breadcrumbs} />
         : null}
 
