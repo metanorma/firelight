@@ -565,7 +565,10 @@ export const makeContentReader: ContentReaderFactory = async function (
               seen.add(seenKey);
               newTargets.push(rel.target);
             } else {
-              console.warn("Duplicate rel", currentResource, rel);
+              console.warn(
+                "Omitting from graph a duplicate relation from",
+                currentResource,
+                rel);
             }
           }
 
