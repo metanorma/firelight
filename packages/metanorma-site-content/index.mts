@@ -171,7 +171,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       graph,
       ['hasBibdata', 'hasTitle', 'hasPart'],
       ROOT_SUBJECT,
-    )[0]?.[1] || "Untitled";
+    )[0]?.[1] || "A Metanorma collection";
 
     if (!title) {
       console.warn("Collection has no title", graph);
