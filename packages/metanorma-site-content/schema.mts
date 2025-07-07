@@ -1,9 +1,72 @@
-import { Schema } from 'prosemirror-model';
+import { Schema, type SchemaSpec } from 'prosemirror-model';
 
 import { tableNodes } from 'prosemirror-tables';
 import { addListNodes } from 'prosemirror-schema-list';
 
 import * as classNames from './style.css';
+
+
+// Shared
+
+const metaNodes: SchemaSpec['nodes'] = {
+  meta: {
+    content: 'identifier+ edition? pubDate? contributor? meta_link*',
+    toDOM() {
+      return ['div', { class: classNames.metaBlock }, 0];
+    },
+  },
+  additionalTitle: {
+    content: 'text*',
+    toDOM() {
+      return ['p', { class: classNames.extraTitle }, 0];
+    },
+  },
+  identifier: {
+    content: 'text*',
+    toDOM() {
+      return ['div', 0];
+    },
+  },
+  contributor: {
+    content: 'text*',
+    toDOM() {
+      return ['div', 0];
+    },
+  },
+  edition: {
+    content: 'text*',
+    toDOM() {
+      return ['div', 0];
+    },
+  },
+  pubDate: {
+    content: 'text*',
+    toDOM() {
+      return ['div', 0];
+    },
+  },
+  meta_link: {
+    attrs: {
+      href: {},
+      download: {
+        default: false,
+      },
+    },
+    content: 'text*',
+    toDOM(node) {
+      return ['a', {
+        href: node.attrs.href,
+        ...(node.attrs.download
+          ? { download: node.attrs.download }
+          : {}),
+      }, 0];
+    },
+  },
+} as const;
+
+const baseNodes: SchemaSpec['nodes'] = {
+  ...metaNodes,
+} as const;
 
 
 // Table nodes
@@ -53,7 +116,7 @@ const clauseSchemaBase = new Schema({
       inline: true,
     },
     doc: {
-      content: 'title block* footnotes?',
+      content: 'mainTitle additionalTitle* meta? block* footnotes?',
       parseDOM: [{ tag: 'article' }],
       toDOM() {
         return ['article', 0];
@@ -61,10 +124,10 @@ const clauseSchemaBase = new Schema({
     },
     // title_flow:
     // code | linebreak | external_link | resource_link | strong | em | anchor | sup | math
-    title: {
+    mainTitle: {
       content: '(text | title_flow)*',
       toDOM() {
-        return ['h1', 0];
+        return ['h1', { class: classNames.clauseTitle }, 0];
       },
     },
     paragraph: {
@@ -403,8 +466,6 @@ const clauseSchemaBase = new Schema({
       },
     },
 
-    ...tn,
-
     linebreak: {
       group: 'flow title_flow',
       inline: true,
@@ -501,6 +562,11 @@ const clauseSchemaBase = new Schema({
         }, 0];
       },
     },
+
+    ...tn,
+
+    ...baseNodes,
+
   },
 });
 
@@ -583,7 +649,7 @@ export const coverBibdataSchema = new Schema({
   nodes: {
     text: {},
     doc: {
-      content: 'docMeta mainTitle someOtherTitle*',
+      content: 'mainTitle additionalTitle* meta?',
       parseDOM: [{ tag: 'article' }],
       toDOM() {
         return ['article', 0];
@@ -592,62 +658,10 @@ export const coverBibdataSchema = new Schema({
     mainTitle: {
       content: 'text*',
       toDOM() {
-        return ['h1', { class: classNames.mainTitle }, 0];
+        return ['h1', { class: classNames.documentTitle }, 0];
       },
     },
-    someOtherTitle: {
-      content: 'text*',
-      toDOM() {
-        return ['p', { class: classNames.extraTitle }, 0];
-      },
-    },
-    docMeta: {
-      content: 'primaryDocID edition pubDate? author? resource_link*',
-      toDOM() {
-        return ['div', { class: classNames.docMeta }, 0];
-      },
-    },
-    resource_link: {
-      attrs: {
-        href: {},
-        download: {
-          default: false,
-        },
-      },
-      content: 'text*',
-      toDOM(node) {
-        return ['a', {
-          href: node.attrs.href,
-          ...(node.attrs.download
-            ? { download: node.attrs.download }
-            : {}),
-        }, 0];
-      },
-    },
-    primaryDocID: {
-      content: 'text*',
-      toDOM() {
-        return ['div', 0];
-      },
-    },
-    author: {
-      content: 'text*',
-      toDOM() {
-        return ['div', 0];
-      },
-    },
-    edition: {
-      content: 'text*',
-      toDOM() {
-        return ['div', 0];
-      },
-    },
-    pubDate: {
-      content: 'text*',
-      toDOM() {
-        return ['div', 0];
-      },
-    },
+    ...baseNodes,
   },
   marks: {},
 });

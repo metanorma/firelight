@@ -124,8 +124,8 @@ const ResourceLinkView: NodeViews[string] = React.forwardRef(function ResourceLi
 
 
 const nodeViews: NodeViews = {
-  docMeta: React.forwardRef(function DocMetaNodeView ({ children, nodeProps }, ref) {
-    return <div className={classNames.docMeta} ref={ref}>
+  meta: React.forwardRef(function DocMetaNodeView ({ children, nodeProps }, ref) {
+    return <div className={classNames.metaBlock} ref={ref}>
       {children}
     </div>
   }),
@@ -138,6 +138,7 @@ const nodeViews: NodeViews = {
   bullet_list: makeResourceNodeView('ul'),
   ordered_list: makeResourceNodeView('ol'),
   resource_link: ResourceLinkView,
+  meta_link: ResourceLinkView,
 };
 
 

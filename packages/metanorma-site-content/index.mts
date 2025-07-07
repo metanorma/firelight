@@ -182,11 +182,11 @@ const generatorsByType: Record<string, ContentGenerator> = {
         titleSchema.text(title),
       ]).toJSON(),
       contentDoc: pm.node('doc', null, [
-        pm.node('docMeta', null, [
-          pm.node('primaryDocID', null, [pm.text('(collection)')]),
-          pm.node('edition', null, [pm.text('unknown edition')]),
-        ]),
         pm.node('mainTitle', null, [pm.text(title)]),
+        pm.node('meta', null, [
+          pm.node('identifier', null, [pm.text("unidentified collection")]),
+          pm.node('edition', null, [pm.text("unknown edition")]),
+        ]),
       ]).toJSON(),
     };
   },
@@ -996,7 +996,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       findPartsOfType(section, ROOT_SUBJECT, 'fmt-title')[0]
       ?? findPartsOfType(section, ROOT_SUBJECT, 'title')[0];
     const titleContent = title
-      ? generateContent(title, pm.nodes.title!, processorState)
+      ? generateContent(title, pm.nodes.mainTitle!, processorState)
       : undefined;
 
     // // FIXME: Too hacky and global-y
@@ -1042,7 +1042,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
     //}
 
     const contentDoc = pm.node(pm.topNodeType, null, [
-      pm.node('title', null, titleContent ?? [pm.text(labelInPlainText)]),
+      pm.node('mainTitle', null, titleContent ?? [pm.text(labelInPlainText)]),
       ...docContents,
     ]).toJSON();
 
@@ -1128,7 +1128,7 @@ const generateCoverPage:
   const pm = coverBibdataSchema;
 
   const metaContent = [
-    pm.node('primaryDocID', null, [pm.text(primaryDocid)]),
+    pm.node('identifier', null, [pm.text(primaryDocid)]),
     pm.node('edition', null, [pm.text(edition)]),
   ];
 
@@ -1139,7 +1139,7 @@ const generateCoverPage:
   }
   if (author) {
     metaContent.push(
-      pm.node('author', null, [pm.text(author)])
+      pm.node('contributor', null, [pm.text(author)])
     );
   }
 
@@ -1151,11 +1151,20 @@ const generateCoverPage:
       titleSchema.text(hopefullyASuitableTitle[1]),
     ]).toJSON(),
     contentDoc: pm.node('doc', null, [
-      pm.node('docMeta', null, [
+      pm.node('mainTitle', null, [pm.text(hopefullyASuitableTitle[1])]),
+
+      // The rest of document titles, excluding the main one
+      // Probably unnecessary?
+      // ...titlesInOtherLanguages.
+      //   map(([, titleText]) =>
+      //     pm.node('someOtherTitle', null, [pm.text(titleText)]),
+      //   ),
+
+      pm.node('meta', null, [
         ...metaContent,
         ...dlLinks.filter(href => href.trim() !== '').map(href =>
           pm.node(
-            'resource_link',
+            'meta_link',
             {
               href,
               download:
@@ -1165,12 +1174,6 @@ const generateCoverPage:
           )
         ),
       ]),
-      pm.node('mainTitle', null, [pm.text(hopefullyASuitableTitle[1])]),
-      // The rest of the main titles, excluding the main one
-      ...titlesInOtherLanguages.
-        map(([, titleText]) =>
-          pm.node('someOtherTitle', null, [pm.text(titleText)]),
-        ),
     ]).toJSON(),
   };
 };
