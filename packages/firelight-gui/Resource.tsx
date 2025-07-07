@@ -385,9 +385,10 @@ function processAttributes(
       el.setAttribute('id', inferredID);
     } else if (['href', 'src'].includes(attr.name)) {
       const isHTTPHref = attr.name === 'href' && attr.value.startsWith('http');
+      const isMailtoHref = attr.name === 'href' && attr.value.startsWith('mailto:');
       const isDataSrc = attr.name === 'src' && attr.value.startsWith('data:');
 
-      if (!isHTTPHref && !isDataSrc) {
+      if (!isHTTPHref && !isDataSrc && !isMailtoHref) {
         let resolvedResourcePath: string | null;
         try {
           resolvedResourcePath = locateResource(attr.value);
