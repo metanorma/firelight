@@ -3,10 +3,10 @@
 
 /* Part navigation */
 .descendantNavigation {
-  padding: 0 2em 1em 2em;
+  padding: 1.5em 2em 1em 2em;
 
   container-type: inline-size;
-  line-height: 1.42;
+  line-height: 1.6;
 
   text-wrap-style: balance;
 
@@ -19,7 +19,6 @@
   ul {
     margin: 0;
     padding: 0;
-    margin-top: 1em;
     list-style: none;
     columns: 2;
 
@@ -30,6 +29,7 @@
 
       &::before {
         content: "⏵";
+        line-height: 1.8; /* Slightly more centered vertically. */
         color: var(--spectrum-accent-color-1200);
       }
 
