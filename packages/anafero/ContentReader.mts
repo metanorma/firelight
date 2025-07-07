@@ -44,6 +44,7 @@ export interface ContentReader {
      */
     path: string;
     meta: ResourceMetadata,
+    graph: Readonly<RelationGraphAsList>;
     parentChain: [path: string, uri: string, meta: ResourceMetadata][];
     directDescendants: [path: string, uri: string, meta: ResourceMetadata][];
   }>;
@@ -708,15 +709,18 @@ export const makeContentReader: ContentReaderFactory = async function (
      */
     resourceURI: string;
     meta: ResourceMetadata,
+    graph: Readonly<RelationGraphAsList>;
     parentChain: [path: string, uri: string, graph: ResourceMetadata][];
     directDescendants: [path: string, uri: string, graph: ResourceMetadata][];
   }> {
     for (const path of cache.iterate<string>('all-paths')) {
       const resourceURI = getCachedResourceURIForPath(path);
+      const graph = getResourceGraph(resourceURI);
       yield {
         path,
         resourceURI,
         meta: describeResource(resourceURI),
+        graph,
         directDescendants: cache.has(`${path}/direct-descendants`)
           ? cache.list<string>(`${path}/direct-descendants`).map(path => {
               const res = getCachedResourceURIForPath(path);

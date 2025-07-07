@@ -419,7 +419,7 @@ export async function * generateVersion(
   const [allPathProgress, pathSubtask] =
     reportProgress('build page content', { total: totalPaths, done });
   const hierarchicalResources = reader.generatePaths();
-  for (const { path, resourceURI, meta, parentChain, directDescendants } of hierarchicalResources) {
+  for (const { path, resourceURI, meta, graph, parentChain, directDescendants } of hierarchicalResources) {
     //console.debug("Got resource", resourceURI, path);
 
     done += 1;
@@ -439,7 +439,7 @@ export async function * generateVersion(
 
     const resourceMeta = meta;
 
-    const relations = reader.resolve(resourceURI);
+    const relations = graph;
 
     pathProgress({ state: 'generating resource page content' });
 
