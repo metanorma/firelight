@@ -28,8 +28,10 @@
       gap: .75em;
 
       &::before {
+        html:not([lang="ja"]):not([lang="ko"]):not([lang="zh"]) & {
+          line-height: 1.8; /* Slightly more visually centered vertically. */
+        }
         content: "⏵";
-        line-height: 1.8; /* Slightly more centered vertically. */
         color: var(--spectrum-accent-color-1200);
       }
 
@@ -100,7 +102,7 @@
       margin-right: 2rem !important;
     }
 
-    html:not([lang="ja"]) & h1 + p:not(:only-of-type):first-letter {
+    html:not([lang="ja"]):not([lang="ko"]):not([lang="zh"]) & h1 + p:not(:only-of-type):first-letter {
       font-size: 3em;
       float: left;
       line-height: 2rem;
