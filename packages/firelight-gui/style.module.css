@@ -161,7 +161,13 @@
     color: var(--spectrum-accent-color-1300);
 
     > li {
-      display: inline-block;
+      /* inline-block may work, then can drop 4 rules below */
+      display: inline;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      white-space-collapse: collapse;
+      text-wrap-style: balance;
+
       > a {
         &:link, &:visited {
           color: var(--spectrum-accent-color-1300);
