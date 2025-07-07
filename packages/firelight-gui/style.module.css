@@ -188,7 +188,7 @@
   background-image: linear-gradient(
     100deg,
     var(--spectrum-alias-background-color-default) 20%,
-    var(--spectrum-alias-pasteboard-background-color) 120%);
+    var(--spectrum-alias-pasteboard-background-color) 180%);
   border: none;
   border-radius: 0;
 
