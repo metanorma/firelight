@@ -498,7 +498,7 @@ export async function * generateVersion(
       relations,
     );
 
-    pathProgress({ state: 'generating page content & assets' });
+    pathProgress({ state: 'updating artifacts' });
 
     if (content?.content) {
 
@@ -510,6 +510,8 @@ export async function * generateVersion(
 
 
       // Process paged resource
+
+      pathProgress({ state: 'indexing page resource' });
 
       resourceMap[path] = resourceURI;
       resourceGraph.push([resourceURI, 'isDefinedBy', `${path}/resource.json`]);
@@ -526,13 +528,14 @@ export async function * generateVersion(
           ),
       };
 
-      pathProgress({ state: 'processing on-page subresources' });
-
 
       // Process resources on the page
+      //
       // NOTE: We process generated content, not resource graph,
       // because we can’t yet guarantee that all resources in the graph
       // are rendered in content
+
+      pathProgress({ state: 'indexing on-page subresources' });
 
       const describedResourceIDs =
         gatherDescribedResourcesFromJsonifiedProseMirrorNode(
@@ -570,10 +573,10 @@ export async function * generateVersion(
         }
       }
 
-      pathProgress({ state: 'processing resource assets' });
-
 
       // Process assets referenced the page to output later
+
+      pathProgress({ state: 'indexing referenced assets' });
 
       for (const [, , o] of relations) {
         if (o.startsWith('file:')) {
@@ -602,6 +605,8 @@ export async function * generateVersion(
       }
 
       // Output resource assets (HTML, etc.) now
+
+      pathProgress({ state: 'outputting assets' });
 
       const resourceAssetGenerator = generateResourceAssets(
         resourceURI,
