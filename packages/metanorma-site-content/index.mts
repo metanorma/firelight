@@ -980,7 +980,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
     const pm = clauseSchema;
 
     const labelInPlainText =
-      getSectionPlainTitle(section) || 'untitled clause';
+      getSectionPlainTitle(section) || "untitled clause";
     //if (!labelInPlainText) {
     //  throw new Error("Cannot generate clause: missing title");
     //}
