@@ -43,7 +43,7 @@ export interface ContentReader {
      * with leading but no trailing slash. Empty string for root.
      */
     path: string;
-    meta: ResourceMetadata,
+    meta: ResourceMetadata;
     graph: Readonly<RelationGraphAsList>;
     parentChain: [path: string, uri: string, meta: ResourceMetadata][];
     directDescendants: [path: string, uri: string, meta: ResourceMetadata][];
@@ -708,7 +708,7 @@ export const makeContentReader: ContentReaderFactory = async function (
      * and it is expected to be emitted under that path
      */
     resourceURI: string;
-    meta: ResourceMetadata,
+    meta: ResourceMetadata;
     graph: Readonly<RelationGraphAsList>;
     parentChain: [path: string, uri: string, graph: ResourceMetadata][];
     directDescendants: [path: string, uri: string, graph: ResourceMetadata][];
