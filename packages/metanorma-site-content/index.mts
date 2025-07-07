@@ -368,7 +368,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
           console.warn("Cannot create a link without target/href");
           return undefined;
         }
-        if (target.startsWith('http')) {
+        if (target.startsWith('http') || target.startsWith('mailto:')) {
           return pm.node('external_link', { href: target }, generateContent(subj, pm.nodes.external_link!, state));
         } else {
           console.warn("Unexpected link target!", target);
