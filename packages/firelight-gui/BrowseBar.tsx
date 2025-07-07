@@ -62,7 +62,10 @@ export const BrowserBar: React.FC<BrowserBarProps> = function ({
 
   return (
     <Provider theme={defaultTheme} {...providerProps}>
-      <div className={classNames.browserBar}>
+      <div className={`
+        ${classNames.browserBar}
+        ${activeBrowsingMode ? classNames.browserBarExpanded : ''}
+      `}>
         <header className={classNames.browserBarTitle}>
           <h1>
             <a href={rootURL} className={classNames.browserBarTitleLink}>
