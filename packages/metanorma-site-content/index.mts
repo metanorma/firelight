@@ -851,7 +851,24 @@ const generatorsByType: Record<string, ContentGenerator> = {
             return [undefined];
           }
 
-          if (partValue.trim() !== '') {
+          if (
+            (
+              // If this is an inline content node, accept any part
+              // (even if it contains just e.g. spaces or newlines)
+              // unless it is literally an empty string
+              partValue !== '' && (
+                subjectNodeType === 'inline' || (
+                  typeof subjectNodeType !== 'string'
+                  &&
+                  subjectNodeType.inlineContent
+                )
+              )
+            )
+            ||
+            // If this is not an inline content node, accept any part
+            // unless it is an empty string when trimmed
+            partValue.trim() !== ''
+          ) {
             return [pm.text(partValue)];
             //if (subjectNodeType.inlineContent) {
             //  return pm.text(`${partValue} `);
