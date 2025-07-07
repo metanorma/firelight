@@ -109,7 +109,7 @@ const mod: ContentAdapterModule = {
            trim()
       // Type or generic “resource”
       || relations.find(([s, p, o]) => s === ROOT_SUBJECT && p === 'type')?.[2]
-      || 'unnamed';
+      || "unnamed";
 
     return (primaryLanguageID
       ? { labelInPlainText, primaryLanguageID }
