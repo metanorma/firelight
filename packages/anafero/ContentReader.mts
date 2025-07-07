@@ -29,6 +29,11 @@ import normalizePath from './util/normalizePath.mjs';
 import { isURIString } from './URI.mjs';
 
 
+function isExternalReference(uri: string): boolean {
+  return uri.startsWith('http') || uri.startsWith('mailto:') || uri.startsWith('ftp:');
+}
+
+
 export interface ContentReader {
   describe: (resourceURI: string) => Readonly<ResourceMetadata>;
   describeRoot: () => Readonly<ResourceMetadata>;
@@ -217,14 +222,21 @@ export const makeContentReader: ContentReaderFactory = async function (
         // Technically, a relative HTTP URL is not an URI
         // since it lacks the scheme.
 
-        // This mangles a URI that can be only unique within
-        // this entry point to a URI that is globally unique
-        // across the whole site
-        // by adding entry point URI.
-        //expanded = `${uri}---${entryPointURI}`;
-        // XXX: https://github.com/metanorma/firelight/issues/80
+        //expanded = uri;
 
-        expanded = uri;
+        // If pseudo-collection (like CC admin docs) is unnecessary,
+        // above line can be uncommented and below commented out.
+
+        if (isExternalReference(uri)) {
+          expanded = uri;
+        } else {
+          // This mangles a URI that can be only unique within
+          // this entry point to a URI that is globally unique
+          // across the whole site
+          // by adding entry point URI.
+          expanded = `${uri}@${entryPointURI}`;
+          // XXX: https://github.com/metanorma/firelight/issues/80
+        }
       }
       //console.debug("Expanded", uri, "->", expanded);
       return expanded;
