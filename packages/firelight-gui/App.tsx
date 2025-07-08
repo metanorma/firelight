@@ -686,6 +686,7 @@ export const VersionWorkspace: React.FC<{
     }
 
     // TODO: Do something with returned interceptor cleanup function?
+    // TODO: Definitely remove interceptor if app failed with uncaught error.
     interceptNav(resourcesRef, {
       // shadowDom: true,
     }, function handleIntercept (evt: MouseEvent | KeyboardEvent, el: Element) {
