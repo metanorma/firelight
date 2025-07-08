@@ -47,8 +47,6 @@
   background: var(--spectrum-accent-color-300);
   outline-color: var(--spectrum-alias-focus-color);
 
-  background: var(--spectrum-accent-color-300);
-
   &::before {
     /* Some arrows as other possible markers:
      * content: "→";  — rightwards, bad if marker is above (e.g. figures)
