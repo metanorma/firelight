@@ -652,6 +652,10 @@ export const makeContentReader: ContentReaderFactory = async function (
      * Primary language is one example.
      * If a document has language fr, then sections will have it too
      * unless a section specifies a different language, and so on.
+     *
+     * TODO: Inheritance is not a good idea? Maybe store adapters
+     * should handle it on that level.
+     * But it works for now to ensure correct lang attribute
      */
     meta?: { lang: string },
   ) {
