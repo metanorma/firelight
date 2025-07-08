@@ -143,8 +143,12 @@ const DEFAULT_LOCALE = {
 } as const;
 
 
-// TODO: Instantiate content adapters, allowing state/metadata inheritance
-// similar to StoreAdapter instantiating ResourceReader.
+// It would be nice to instantiate content adapters,
+// allowing state/metadata inheritance
+// similar to StoreAdapter instantiating ResourceReader,
+// but it doesn’t seem to work on client-side where it needs to
+// generate content/metadata for a resource from scratch.
+// 
 // Currently, ContentReader wrapper works around the inheritance issue.
 /**
  * Content adapter is responsible for transforming resource relations
