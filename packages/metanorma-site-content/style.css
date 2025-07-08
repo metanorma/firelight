@@ -50,7 +50,11 @@
   background: var(--spectrum-accent-color-300);
 
   &::before {
-    content: "→";
+    /* Some arrows as other possible markers:
+     * content: "→";  — rightwards, bad if marker is above (e.g. figures)
+     * content: "➘";  — down-right, kinda OK
+     */
+    content: "📍";
     font-weight: bold;
     width: 1em;
     margin-left: -1em;
