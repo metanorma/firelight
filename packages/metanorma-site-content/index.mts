@@ -109,6 +109,7 @@ const mod: ContentAdapterModule = {
 
     const labelInPlainText = getBibdataMainTitle(relations, primaryLanguageID)?.trim()
       || getSectionPlainTitle(relations)?.trim()
+      || getTextContent(relations, ROOT_SUBJECT).slice(0, 18).join('')
       // First few characters of the first few relations that are not a URI,
       // joined by a whitespace
       || relations.
