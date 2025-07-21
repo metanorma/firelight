@@ -96,6 +96,7 @@ span.underlined {
 
   > header:first-child {
     font-weight: bold;
+    font-variant: all-petite-caps;
   }
   :not(:first-child) {
   }
