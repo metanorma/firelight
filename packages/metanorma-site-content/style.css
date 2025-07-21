@@ -5,6 +5,8 @@
 
   .exampleFigure & {
     text-align: left;
+    font-variant: all-petite-caps;
+    font-weight: bold;
   }
 }
 
