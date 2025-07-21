@@ -570,7 +570,9 @@ const generatorsByType: Record<string, ContentGenerator> = {
           flatMap(([part, partType]) => makeNodeOrNot(part!, partType!, state)).
           filter(n => n !== undefined);
 
-        const xrefLabels = findPartsOfType(section, subj, 'fmt-xref-label');
+        // Only take the first xref label
+        // (which will be admonition type, i.e. “note”)
+        const xrefLabels = findPartsOfType(section, subj, 'fmt-xref-label').slice(0, 1);
         xrefLabels.reverse();
         for (const xrefLabel of xrefLabels) {
           contents.splice(0, 0, pm.node(
