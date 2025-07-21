@@ -1055,7 +1055,7 @@ export const VersionWorkspace: React.FC<{
                   {isLoading
                     ? <ProgressBar
                         labelPosition="side"
-                        label="Loading next resource…"
+                        label="Loading resource…"
                         isIndeterminate
                       />
                     : null}
