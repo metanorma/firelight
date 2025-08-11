@@ -71,7 +71,7 @@ async function buildBootstrapScript(opts: ReportingOptions) {
       './bootstrap.tsx',
       //join(PACKAGE_ROOT, 'site', 'index.tsx'),
     ],
-    absWorkingDir: join(PACKAGE_ROOT, '..', 'firelight-gui'),
+    absWorkingDir: join(PACKAGE_ROOT, '..', 'anafero-gui'),
     entryNames: '[dir]/[name]',
     assetNames: '[dir]/[name]',
     format: 'iife',

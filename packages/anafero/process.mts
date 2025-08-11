@@ -48,8 +48,8 @@ import {
   type RelationGraphAsList,
 } from './relations.mjs';
 import { type LayoutModule, type NavLink } from './Layout.mjs';
-import { BrowserBar } from 'firelight-gui/BrowseBar.jsx';
-import { Resource, type ResourceProps } from 'firelight-gui/Resource.jsx';
+import { BrowserBar } from 'anafero-gui/BrowseBar.jsx';
+import { Resource, type ResourceProps } from 'anafero-gui/Resource.jsx';
 import {
   type TaskProgressCallback,
   type TaskNoticeCallback,
