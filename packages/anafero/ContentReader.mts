@@ -374,7 +374,7 @@ export const makeContentReader: ContentReaderFactory = async function (
         maybeContributingRelations,
       );
       return result
-        ? result.replaceAll(':', '_').replaceAll('/', '_')
+        ? result.replaceAll(':', '_').replaceAll('/', '_').replaceAll('.', '_')
         : result;
     }
 
