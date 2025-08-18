@@ -64,7 +64,8 @@ export const Search: React.FC<{
   const [showMore, setShowMore] = useState(false);
 
   const [matches, error] = useMemo(() => {
-    if (index && debouncedQuery.trim() !== '') {
+    const debouncedQueryTrimmed = debouncedQuery.trim();
+    if (index && debouncedQueryTrimmed !== '') {
       const normalizedQuery = preprocessStringForIndexing(
         debouncedQuery.
           replace(/:/g, " ").
@@ -105,10 +106,25 @@ export const Search: React.FC<{
             slice(0, MAX_SEARCH_RESULT_COUNT)
           : [];
 
+        // Wildcards reduce search quality for some reason,
+        // so we omit them unless user supplies them.
+        const wildcardLeading =
+          debouncedQueryTrimmed.startsWith('*') ?? undefined;
+        const wildcardTrailing =
+          debouncedQueryTrimmed.endsWith('*') ?? undefined;
+        const wildcard = wildcardLeading && wildcardTrailing
+          ? lunr.Query.wildcard.LEADING | lunr.Query.wildcard.TRAILING
+          : wildcardLeading
+            ? lunr.Query.wildcard.LEADING
+            : wildcardTrailing
+              ? lunr.Query.wildcard.TRAILING
+              : lunr.Query.wildcard.NONE;
+
         const partial = (exact.length < 1 && full.length < 1) || showMore
           ? (index.query(query => {
               query.term(tokens, {
                 presence: lunr.Query.presence.OPTIONAL,
+                wildcard,
               });
             }) ?? []).
             slice(0, MAX_SEARCH_RESULT_COUNT)
