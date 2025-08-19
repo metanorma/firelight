@@ -281,6 +281,9 @@
         padding: 0 10px;
         dl {
           grid-template-columns: fit-content(10px) 100%;
+          dt {
+            white-space: nowrap;
+          }
           dd {
             margin: 0;
           }
