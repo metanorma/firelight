@@ -282,6 +282,7 @@
         dl {
           grid-template-columns: fit-content(10px) 100%;
           dt {
+            /* https://github.com/metanorma/mn-samples-plateau/issues/430 */
             white-space: nowrap;
           }
           dd {
