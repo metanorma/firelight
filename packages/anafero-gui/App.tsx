@@ -656,6 +656,8 @@ export const VersionWorkspace: React.FC<{
       }
     }
     window.addEventListener('popstate', handlePopState);
+    // TODO: This should run if the app crashes,
+    // because it disrupts navigation otherwise (#87)
     return function cleanUp() {
       window.removeEventListener('popstate', handlePopState);
     }
