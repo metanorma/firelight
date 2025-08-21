@@ -721,7 +721,7 @@ export const VersionWorkspace: React.FC<{
         );
         return true;
       }
-    })
+    });
   }, [reverseResource, getVersionRelativePath, getContainingPageResourceURI]);
 
   // Queue hash fragment to navigate to subresources more precisely
