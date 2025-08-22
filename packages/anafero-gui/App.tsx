@@ -660,7 +660,7 @@ export const VersionWorkspace: React.FC<{
     // because it disrupts navigation otherwise (#87)
     return function cleanUp() {
       window.removeEventListener('popstate', handlePopState);
-    }
+    };
   }, [dispatch, locateResource, getContainingPageResourceURI]);
 
   // Push to history and set queuedFragment if needed
