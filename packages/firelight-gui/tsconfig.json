@@ -1,9 +1,0 @@
-{
-  "include": ["*.tsx", "*.mts", "*.d.ts"],
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "target": "es2020",
-    "module": "node16",
-    "lib": ["es2023", "dom", "esnext", "esnext.array"]
-  }
-}

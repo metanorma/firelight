@@ -27,10 +27,6 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:packages/anafero-gui"\
     },\
     {\
-      "name": "firelight-gui",\
-      "reference": "workspace:packages/firelight-gui"\
-    },\
-    {\
       "name": "metanorma-site-content",\
       "reference": "workspace:packages/metanorma-site-content"\
     },\
@@ -53,7 +49,6 @@ const RAW_RUNTIME_STATE =
     ["@riboseinc/anafero-cli", ["workspace:packages/anafero-cli"]],\
     ["anafero", ["workspace:packages/anafero"]],\
     ["anafero-gui", ["workspace:packages/anafero-gui"]],\
-    ["firelight-gui", ["workspace:packages/firelight-gui"]],\
     ["firelight-monorepo", ["workspace:."]],\
     ["metanorma-site-content", ["workspace:packages/metanorma-site-content"]],\
     ["metanorma-xml-store", ["workspace:packages/metanorma-xml-store"]],\
@@ -1480,10 +1475,6 @@ const RAW_RUNTIME_STATE =
     [\
       "find-my-way-ts",\
       "npm:0.1.5"\
-    ],\
-    [\
-      "firelight-gui",\
-      "workspace:packages/firelight-gui"\
     ],\
     [\
       "foreground-child",\
@@ -10701,41 +10692,6 @@ const RAW_RUNTIME_STATE =
           ["find-my-way-ts", "npm:0.1.5"]\
         ],\
         "linkType": "HARD"\
-      }]\
-    ]],\
-    ["firelight-gui", [\
-      ["workspace:packages/firelight-gui", {\
-        "packageLocation": "./packages/firelight-gui/",\
-        "packageDependencies": [\
-          ["firelight-gui", "workspace:packages/firelight-gui"],\
-          ["@adobe/react-spectrum", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:3.42.0"],\
-          ["@effect/schema", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.74.0"],\
-          ["@nytimes/react-prosemirror", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.7.0-next.10"],\
-          ["@react-spectrum/provider", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:3.10.5"],\
-          ["@spectrum-icons/workflow", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:4.2.21"],\
-          ["@types/lunr", "npm:2.3.7"],\
-          ["@types/react", "npm:18.3.11"],\
-          ["@types/react-dom", "npm:18.3.0"],\
-          ["@types/react-helmet", "npm:6.1.11"],\
-          ["anafero", "workspace:packages/anafero"],\
-          ["framer-motion", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:11.11.9"],\
-          ["import-mapper", "npm:0.0.4"],\
-          ["lunr", "npm:2.3.9"],\
-          ["lunr-languages", "npm:1.14.0"],\
-          ["prosemirror-model", "npm:1.22.3"],\
-          ["prosemirror-schema-list", "npm:1.4.1"],\
-          ["prosemirror-state", "npm:1.4.3"],\
-          ["prosemirror-tables", "npm:1.5.0"],\
-          ["react", "npm:18.3.1"],\
-          ["react-aria-components", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:1.9.0"],\
-          ["react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:18.3.1"],\
-          ["react-helmet", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:6.1.0"],\
-          ["react-intersection-observer", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:9.13.1"],\
-          ["typescript", "patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=8c6c40"],\
-          ["use-debounce", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:10.0.4"],\
-          ["xpath", "npm:0.0.34"]\
-        ],\
-        "linkType": "SOFT"\
       }]\
     ]],\
     ["firelight-monorepo", [\
