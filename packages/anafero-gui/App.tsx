@@ -681,26 +681,31 @@ export const VersionWorkspace: React.FC<{
   const [resourceContainerElement, setResourceContainerElement] =
     useState<null | HTMLDivElement>(null);
 
-  // Intercept internal link clicks
-  const setUpInterceptor = useCallback((resourcesRef: HTMLDivElement) => {
-    if (resourcesRef) {
-      setResourceContainerElement(resourcesRef);
+  // This effect intercepts internal link clicks within resource container,
+  // tries to figure out which resource the link goes to and activate it.
+  // If not possible, then do normal page load.
+  useEffect(() => {
+    if (!resourceContainerElement || !getVersionRelativePath) {
+      return;
     }
 
     // TODO: Do something with returned interceptor cleanup function?
     // TODO: Definitely remove interceptor if app failed with uncaught error.
-    interceptNav(resourcesRef, {
+    const cleanUpInterceptor = interceptNav(resourceContainerElement, {
       // shadowDom: true,
     }, function handleIntercept (evt: MouseEvent | KeyboardEvent, el: Element) {
 
       const href = el.getAttribute('href');
-      if (!href || !getVersionRelativePath) {
+      if (!href) {
         return;
       }
+
+      // TODO: Not required but we could check whether link is internal first?
+
       const url = new URL(href, document.baseURI);
       const maybePrefixedURL = decodeURIComponent(url.pathname) + url.hash;
 
-      // NOTE: Technically, in current implementation, if url.hash is present
+      // Technically, in current implementation, if url.hash is present
       // then the hash fragment IS the actual resource URI of the subresource
       // on page. However, perhaps we don’t want to rely on that being true?
       // const resourceURI = url.hash
@@ -724,7 +729,20 @@ export const VersionWorkspace: React.FC<{
         return true;
       }
     });
-  }, [reverseResource, getVersionRelativePath, getContainingPageResourceURI]);
+    return cleanUpInterceptor;
+  }, [
+    resourceContainerElement,
+    reverseResource,
+    getVersionRelativePath,
+    getContainingPageResourceURI,
+  ]);
+
+  const refResourceContainerElement =
+  useCallback((resourcesRef: HTMLDivElement) => {
+    if (resourcesRef) {
+      setResourceContainerElement(resourcesRef);
+    }
+  }, [setResourceContainerElement]);
 
   // Queue hash fragment to navigate to subresources more precisely
   // after page load is finished. If no subresource was requested,
@@ -975,7 +993,7 @@ export const VersionWorkspace: React.FC<{
           type: 'deactivated_browsing_mode',
         }), [])}
       />
-      <main id="resources" ref={setUpInterceptor}>
+      <main id="resources" ref={refResourceContainerElement}>
         <Provider theme={defaultTheme} locale={locale}>
           {state.visibleResourceURIs.map((uri, idx) => {
             const isActive = uri === activePageResourceURI;
