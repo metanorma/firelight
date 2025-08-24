@@ -745,15 +745,19 @@ export const VersionWorkspace: React.FC<{
   }, [setResourceContainerElement]);
 
   // Queue hash fragment to navigate to subresources more precisely
-  // after page load is finished. If no subresource was requested,
-  // then set to string NONE to distinguish from empty state.
+  // after page load is finished.
+  //
+  // - Empty string means there is no subresource to navigate to.
+  // - NONE means the requested resource is the root resource
+  //   of the page (i.e., scroll up to the headline).
+  // - Any other string is treated as an URI-encoded resource URI.
   const [queuedFragment, setQueuedFragment] = useState('');
 
-  // Navigate to a resource specifically by jumping via some link
-  // (in navigation or content), not say by scrolling.
-  // Handles the case where the link goes to a subresource.
+  /** Navigate to a resource by its resource URI. */
   const jumpTo = useCallback((uri: string) => {
     //const path = locateResource(uri);
+
+    // This block should be clarified
     if (getContainingPageResourceURI(uri) === uri) {
       setQueuedFragment('NONE');
     }
@@ -763,9 +767,10 @@ export const VersionWorkspace: React.FC<{
     dispatch({ type: 'activated_resource', uri, pageURI: getContainingPageResourceURI(uri) });
   }, [setQueuedFragment, getContainingPageResourceURI, dispatch]);
 
-  // Navigate to a resource specifically by jumping via some link
-  // (in navigation or content), not say by scrolling.
-  // Handles the case where the link goes to a subresource.
+  /**
+   * Navigate to a resource by path.
+   * Used when navigation occurs via Spectrum’s router.
+   */
   const navigate = useCallback(function navigate(path: string) {
     const resourceURI = reverseResource(path);
     if (!resourceURI) {
@@ -773,11 +778,12 @@ export const VersionWorkspace: React.FC<{
       throw new Error("Unable to reverse resource URI for path");
     }
 
-    console.debug("Navigating & activating resource", resourceURI);
+    console.debug("Navigating & activating resource via router", resourceURI);
 
     dispatch({ type: 'activated_resource', uri: resourceURI, pageURI: getContainingPageResourceURI(resourceURI) });
   }, [reverseResource, jumpTo, getContainingPageResourceURI]);
 
+  /** Map of pages to appear in resource hierarchy view. */
   const pageMap: Record<string, string> = useMemo(
     function computePageMap () {
       const pageMap = { ...resourceMap };
