@@ -175,8 +175,10 @@ export const Resource = React.forwardRef(function ({
     };
   }, [graph, adapter, locateResource]);
 
-  // Editor state only has effect for client-rendered content.
-  // If this fails, pre-rendered HTML is used.
+  /**
+   * PM editor state; only has effect for client-rendered content.
+   * If fails to be defined, pre-rendered HTML is used.
+   */
   const initialState = useMemo(() =>
     content.content?.contentDoc && schema
       ? EditorState.create({
