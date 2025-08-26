@@ -558,7 +558,7 @@ export const VersionWorkspace: React.FC<{
         new Promise((resolve, reject) => {
           fetchResourceData(id, (data) => {
             resolve({ [id]: data });
-          })
+          });
         })
       )
       const data: Record<string, ResourceData> =
