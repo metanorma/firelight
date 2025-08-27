@@ -288,7 +288,7 @@ const mod: StoreAdapterModule = {
               semx: 'bypass',
               eref: 'ignore',
               origin: 'ignore',
-              source: 'bypass',
+              source: 'ignore',
               quote: processAsGenericContainer,
               title: function processTitle(el, getURI) {
                 if (el.parentElement
