@@ -13,32 +13,20 @@ patchLunr();
 
 getExtensionImports().
 then(setUpExtensionImportMap).
-then(initApp);
+then(hydrateApp);
 
 
-function initApp () {
+function hydrateApp() {
 
   const appRoot = document.getElementById('app');
-
   if (!appRoot) {
     console.error("Can’t initialize the app: missing root");
     return;
   }
 
-  const useStrictMode = document.documentElement.dataset.useReactStrict === 'true';
-
   const originalHTML = appRoot.innerHTML;
 
-  // Fixing body height helps avoid a flash when user opens
-  // a subresource (URL with a hash fragment) from outside.
-  // Browser hits SSR with the requisite ID, and when tree is replaced
-  // by React for an instant apparently body height collapses.
-  // There may be a better way to avoid this.
-  // The preferable way to avoid this is likely be clean hydration,
-  // but it appears to be unachievable(?).
-  document.body.style.height = `${appRoot.clientHeight}px`;
-
-  // If there’s an error, this will fall back to SSR’d DOM.
+  // If there’s an error, the boundary will fall back to SSR’d DOM.
   const app =
     <ErrorBoundaryWithCustomFallback fallback={<div
       dangerouslySetInnerHTML={{ __html: originalHTML }}
@@ -47,6 +35,11 @@ function initApp () {
       <AppLoader />
     </ErrorBoundaryWithCustomFallback>;
 
+  holdBodyHeightUntilHydrationIsComplete(appRoot.clientHeight);
+
+  const useStrictMode =
+    document.documentElement.dataset.useReactStrict === 'true';
+
   hydrateRoot(
     appRoot!,
     useStrictMode
@@ -54,25 +47,52 @@ function initApp () {
       : app,
   );
 
-  const observer = new MutationObserver(function cleanUpLoad() {
-    const hasInitialized = !!document.documentElement.getAttribute('data-react-helmet');
+};
+
+
+/**
+ * Call this before React’s `hydrateRoot()`.
+ * Force sets body height until hydration is complete.
+ *
+ * Fixing body height helps avoid a flash when user opens
+ * a subresource (URL with a hash fragment) from outside.
+ * Browser hits SSR with the requisite ID, and when tree is replaced
+ * by React for an instant apparently body height collapses.
+ * There may be a better way to avoid this.
+ * The preferable way to avoid this is likely be clean hydration,
+ * but it appears to be unachievable(?).
+ * (The tree only has to be replaced when there are hydration
+ * discrepancies.)
+ */
+function holdBodyHeightUntilHydrationIsComplete(heightInPx: number) {
+  document.body.style.height = `${heightInPx}px`;
+
+  function unsetHeightAndDisconnectObserverIfHydrated() {
+    /**
+     * Whether React’s DOM tree is up.
+     * Makes an assumption that after data-react-helmet attribute shows up
+     * it’s ready.
+     */
+    const hasInitialized =
+      !!document.documentElement.getAttribute('data-react-helmet');
+
     if (hasInitialized) {
       //console.debug("Cleaning up");
-
-      // Safe to assume that after data-react-helmet attribute shows up,
-      // React’s DOM tree is up?
       setTimeout(() => document.body.style.removeProperty('height'), 500);
       observer.disconnect();
     }
-  });
+  }
+
+  const observer =
+    new MutationObserver(unsetHeightAndDisconnectObserverIfHydrated);
+
   observer.observe(document.documentElement, {
     attributes: true,
     childList: false,
     characterData: false,
     subtree: false,
   });
-
-};
+}
 
 
 // TODO: Support making different imports available based on host version.
