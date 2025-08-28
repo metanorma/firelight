@@ -474,14 +474,7 @@ const generatorsByType: Record<string, ContentGenerator> = {
       'fmt-source': (subj, state) => {
         const content = generateContent(subj, pm.nodes.paragraph!, state);
         // Render fmt-source as an admonition :shrug:
-        return pm.node(
-          'admonition',
-          { resourceID: subj, tags: ["source"] },
-          [
-            pm.node('xrefLabel', null, [pm.text("source")]),
-            pm.node('paragraph', null, content),
-          ],
-        );
+        return pm.node('paragraph', { resourceID: subj }, content);
       },
 
       'fmt-xref': (subj: string, state) => {
