@@ -84,7 +84,7 @@ function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | 
 
   const parts = resolveChain(section, ['hasPart', 'type'], ROOT_SUBJECT);
 
-  // Use plain `<title>`, it’s pre-processed to prefer
+  // Use plain `<title>`, it’s pre-processed by store adapter to prefer
   // fmt-title > semx[element=title], or full fmt-title, or title
   // in that order.
   const plainTitleIDs = parts.
