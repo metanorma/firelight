@@ -18,7 +18,15 @@ import { sha256 } from './sha.mjs';
 
 import { coverBibdataSchema, clauseSchema } from './schema.mjs';
 
-import { resolveChain, findValue, findAll, findPartsOfType, relativeGraph, hasSubject, getTextContent } from './graph-query-util.mjs';
+import {
+  resolveChain,
+  findValue,
+  findAll,
+  findPartsOfType,
+  relativeGraph,
+  hasSubject,
+  getTextContent,
+} from './graph-query-util.mjs';
 
 import getDocumentTitle from './getDocumentTitle.mjs';
 
