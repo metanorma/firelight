@@ -75,23 +75,49 @@ function processClauseLike(el: Element) {
   if (el.getAttribute('hidden')) {
     return [[], false];
   } else {
-    return [
-      [[
-        ROOT_SUBJECT,
-        'hasClauseIdentifier',
-        (
-          el.getAttribute('anchor') ||
-          mangleXMLIdentifier(el.getAttribute('id') ?? '')
-        ) || `unidentified-${el.tagName}-${crypto.randomUUID()}`,
-      ], [
-        ROOT_SUBJECT,
-        'type',
-        'section',
-      ]],
-      {
-        getChildPredicate: () => 'hasPart',
-      },
-    ];
+    const hasTitle =
+      Array.from(el.childNodes).
+      find(node =>
+        node.nodeType === 1 &&
+        node.tagName.toLowerCase() === 'title' &&
+        node.textContent.trim() !== ''
+      ) !== undefined;
+
+    if (!hasTitle) {
+      // If clause is untitled, do not create a page for it,
+      // and instead insert its contents to the parent clause.
+      // 'bypass' basically does that.
+      //
+      // TODO: Clauses bypassed as untitled may break references.
+      // They will not appear in resource map and site hierarchy.
+      // To avoid that, some options may be:
+      // 1. Do not just bypass it, but instead adjust content subgraph
+      //    to use parent clause ID as root subject.
+      // 2. Change the handling of `bypass` such that any bypassed element
+      //    resource ID would be linked to its parent URI (or first child URI)
+      //    instead.
+      //    (E.g., by inserting a bookmark, by using some special property,
+      //    or by using `sameAs` relation.)
+      return 'bypass';
+    } else {
+      return [
+        [[
+          ROOT_SUBJECT,
+          'hasClauseIdentifier',
+          (
+            el.getAttribute('anchor')
+            || mangleXMLIdentifier(el.getAttribute('id') ?? '')
+          ) || `unidentified-${el.tagName}-${crypto.randomUUID()}`,
+        ], [
+          ROOT_SUBJECT,
+          'type',
+          'section',
+        ]],
+        {
+          getChildPredicate: () => 'hasPart',
+        },
+      ];
+    }
   }
 }
 
