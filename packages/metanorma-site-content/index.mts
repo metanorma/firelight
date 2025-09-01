@@ -1052,8 +1052,17 @@ const generatorsByType: Record<string, ContentGenerator> = {
 
     const pm = clauseSchema;
 
+    // NOTE: This could be considered obsolete, because MN store adapter
+    // now bypasses untitled clauses (inserting their content into
+    // parent clauses).
+    const moreSpecificSectionType = findAll(section, ROOT_SUBJECT, 'type').
+    filter(t => t !== 'section' && t !== 'clause')[0];
     const labelInPlainText =
-      getSectionPlainTitle(section) || "untitled clause";
+      getSectionPlainTitle(section) || (
+        moreSpecificSectionType
+          ? `untitled “${moreSpecificSectionType}” clause`
+          : "untitled clause"
+      );
     //if (!labelInPlainText) {
     //  throw new Error("Cannot generate clause: missing title");
     //}
