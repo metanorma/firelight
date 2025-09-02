@@ -14,6 +14,8 @@ import {
 
 
 const clauseLikeElements = [
+  'foreword',
+  'introduction',
   'clause',
   'abstract',
   'references',
