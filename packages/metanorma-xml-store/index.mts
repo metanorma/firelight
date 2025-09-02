@@ -79,8 +79,8 @@ function processClauseLike(el: Element) {
       Array.from(el.childNodes).
       find(node =>
         node.nodeType === 1 &&
-        node.tagName.toLowerCase() === 'title' &&
-        node.textContent.trim() !== ''
+        (node as Element).tagName.toLowerCase() === 'title' &&
+        node.textContent?.trim() !== ''
       ) !== undefined;
 
     if (!hasTitle) {
