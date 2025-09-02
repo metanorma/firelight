@@ -13,7 +13,7 @@ import {
 } from './util.mjs';
 
 
-const sectionLikeElements = [
+const clauseLikeElements = [
   'clause',
   'abstract',
   'references',
@@ -318,7 +318,7 @@ const mod: StoreAdapterModule = {
               quote: processAsGenericContainer,
               title: function processTitle(el, getURI) {
                 if (el.parentElement
-                    && sectionLikeElements.includes(el.parentElement.tagName as any)) {
+                    && clauseLikeElements.includes(el.parentElement.tagName as any)) {
                   const sectionURI = getURI(el.parentElement);
                   const id = el.getAttribute('id');
                   //if (!id) {
