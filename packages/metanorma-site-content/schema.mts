@@ -645,6 +645,9 @@ export const clauseSchema = new Schema(clauseSchemaSpec);
 // });
 
 
+// TODO: Separate cover bibdata be obsolete, should be deprecated?
+// Now cover bibdata can include any blocks in its content,
+// like a regular clause.
 export const coverBibdataSchema = new Schema({
   nodes: {
     text: {},
