@@ -293,6 +293,19 @@ Where:
                 "$DOCKER_IMAGE_NAME" -c "yarn install"
 
 
+.. note:: On macOS, if Podman complains with an error mentioning statfs
+          and “statfs no such file or directory”, you may need to reset
+          and re-init podman machine, mounting a directory containing your
+          project(s) at init time::
+
+              podman machine reset
+              podman machine init -v /path/to/project:/path/to/project
+
+          (Both ``/path/to/project``s would be identical
+          and should reference a parent directory of wherever your project
+          is located in your macOS filesystem.)
+
+
 Adapter development
 ~~~~~~~~~~~~~~~~~~~
 
