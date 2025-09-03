@@ -102,12 +102,14 @@
       margin-right: 2rem !important;
     }
 
-    html:not([lang="ja"], [lang="ko"], [lang="zh"]) & h1 + p:not(:only-of-type):first-letter {
-      font-size: 3em;
-      float: left;
-      line-height: 2rem;
-      margin-right: .25rem;
-      padding: .1em 0;
+    html:not([lang="ja"], [lang="ko"], [lang="zh"]) & h1 + p:not(:only-of-type) {
+      &:first-letter {
+        font-size: 3em;
+        float: left;
+        line-height: 2rem;
+        margin-right: .25rem;
+        padding: .1em 0;
+      }
     }
 
     > h1 {
