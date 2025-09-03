@@ -78,9 +78,9 @@ function processClauseLike(el: Element) {
     return [[], false];
   } else {
     const hasTitle =
-      Array.from(el.childNodes).
-      find(node =>
-        node.nodeType === 1 &&
+      Array.from(el.childNodes).find(node =>
+        node.nodeType === 1
+        &&
         (
           (node as Element).tagName.toLowerCase() === 'title' ||
           (node as Element).tagName.toLowerCase() === 'fmt-title'
