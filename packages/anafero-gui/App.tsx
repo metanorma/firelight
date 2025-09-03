@@ -1185,7 +1185,10 @@ async function getAdjacentResource(
   if (!parentPath) {
     throw new Error("getAdjacentResource: missing parentPath");
   }
-  const parentNavPath = [parentPath, 'resource-nav.json'].join('/');
+  const parentNavPath = [
+    parentPath === '/' ? '' : parentPath,
+    'resource-nav.json',
+  ].join('/');
   const parentNav = S.decodeUnknownSync(ResourceNavSchema)
     (await (await fetch(parentNavPath, { signal })).json()) as ResourceNav;
   const currentPathTail = currentPath.slice(currentPath.lastIndexOf('/') + 1);
