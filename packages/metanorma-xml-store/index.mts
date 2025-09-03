@@ -72,48 +72,95 @@ function mangleXMLIdentifier(id: string): string {
   return unescape(subbed);
 }
 
+/**
+ * A “proper” title for the purposes of lifting is considered
+ * to be a title that is not just a clause number.
+ */
+function clauseHasProperTitle(el: Element) {
+  const hasProperTitle = Array.from(el.childNodes).find(node =>
+    node.nodeType === 1
+    &&
+    (
+      (node as Element).tagName.toLowerCase() === 'title'
+      ||
+      (
+        (node as Element).tagName.toLowerCase() === 'fmt-title'
+        &&
+        fmtTitleIsAProperTitle(node as Element)
+      )
+    )
+    &&
+    node.textContent?.trim() !== ''
+  ) !== undefined;
+
+  return hasProperTitle;
+}
+
+function fmtTitleIsAProperTitle(fmtTitleEl: Element) {
+  return (
+    // to qualify as title, fmt-title:
+    // contains only text nodes
+    Array.from(fmtTitleEl.childNodes).find(
+      n => n.nodeType !== 3
+    ) === undefined
+    ||
+    // or has a semx[element=title]
+    Array.from(fmtTitleEl.childNodes).find(n =>
+      n.nodeType === 1
+      &&
+      (n as Element).tagName.toLowerCase() === 'semx'
+      &&
+      (n as Element).getAttribute('element') === 'title'
+    ) !== undefined
+    // Otherwise, fmt-title may just contain clause numbering
+    // in which case it does not qualify as proper for lifting purposes.
+  );
+}
+
+/**
+ * Liftable clauses have no proper titles (other than possible clause number).
+ *
+ * Note: a clause without a proper title can only contain liftable subclauses.
+ */
+function clauseIsLiftable(el: Element, id: string) {
+  if (!clauseHasProperTitle(el)) {
+    const directDescendantClauseLikeElements: Element[] =
+    Array.from(el.childNodes).filter(el =>
+      el.nodeType === 1
+      &&
+      clauseLikeElements.includes((el as Element).tagName.toLowerCase() as any)
+    ) as Element[];
+
+    if (directDescendantClauseLikeElements.length < 1) {
+      return true;
+    } else {
+      // A liftable clause having any non-liftable descendants
+      // doesn’t compute.
+      if (directDescendantClauseLikeElements.find(el => !clauseIsLiftable(el, id))) {
+        throw new Error(
+          `Untitled clauses must not contain further descendant titled clauses, but this one apparently does: ${id}`
+        );
+      } else {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 const processClauseLike: CustomElementProcessor =
 function processClauseLike(el: Element) {
   if (el.getAttribute('hidden')) {
     return [[], false];
   } else {
-    const hasTitle =
-      Array.from(el.childNodes).find(node =>
-        node.nodeType === 1
-        &&
-        (
-          (node as Element).tagName.toLowerCase() === 'title'
-          ||
-          (
-            (node as Element).tagName.toLowerCase() === 'fmt-title'
-            &&
-            (
-              // to qualify as title, fmt-title:
-              // contains only text nodes
-              Array.from((node as Element).childNodes).
-              find(n => n.nodeType !== 3) === undefined
-              ||
-              // or has a semx[element=title]
-              Array.from((node as Element).childNodes).
-              find(n =>
-                n.nodeType === 1
-                &&
-                (n as Element).tagName.toLowerCase() === 'semx'
-                &&
-                (n as Element).getAttribute('element') === 'title'
-              )
-              // Otherwise, fmt-title may just contain clause numbering
-              // in which case it would get lifted.
-            )
-          )
-        )
-        &&
-        node.textContent?.trim() !== ''
-      ) !== undefined;
+    const clauseIdentifier = (
+      el.getAttribute('anchor')
+      || mangleXMLIdentifier(el.getAttribute('id') ?? '')
+    ) || `unidentified-${el.tagName}-${crypto.randomUUID()}`;
 
-    if (!hasTitle) {
-      // If clause is untitled, do not create a page for it,
-      // and instead insert its contents to the parent clause.
+    if (clauseIsLiftable(el, clauseIdentifier)) {
+      // For suitable liftable clauses, do not create hierarchy pages,
+      // and instead insert the contents to the parent clause.
       // 'bypass' basically does that.
       //
       // TODO: Clauses bypassed as untitled may break references.
@@ -132,10 +179,7 @@ function processClauseLike(el: Element) {
         [[
           ROOT_SUBJECT,
           'hasClauseIdentifier',
-          (
-            el.getAttribute('anchor')
-            || mangleXMLIdentifier(el.getAttribute('id') ?? '')
-          ) || `unidentified-${el.tagName}-${crypto.randomUUID()}`,
+          clauseIdentifier,
         ], [
           ROOT_SUBJECT,
           'type',
