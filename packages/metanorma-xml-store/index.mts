@@ -82,9 +82,32 @@ function processClauseLike(el: Element) {
         node.nodeType === 1
         &&
         (
-          (node as Element).tagName.toLowerCase() === 'title' ||
-          (node as Element).tagName.toLowerCase() === 'fmt-title'
-        ) &&
+          (node as Element).tagName.toLowerCase() === 'title'
+          ||
+          (
+            (node as Element).tagName.toLowerCase() === 'fmt-title'
+            &&
+            (
+              // to qualify as title, fmt-title:
+              // contains only text nodes
+              Array.from((node as Element).childNodes).
+              find(n => n.nodeType !== 3) === undefined
+              ||
+              // or has a semx[element=title]
+              Array.from((node as Element).childNodes).
+              find(n =>
+                n.nodeType === 1
+                &&
+                (n as Element).tagName.toLowerCase() === 'semx'
+                &&
+                (n as Element).getAttribute('element') === 'title'
+              )
+              // Otherwise, fmt-title may just contain clause numbering
+              // in which case it would get lifted.
+            )
+          )
+        )
+        &&
         node.textContent?.trim() !== ''
       ) !== undefined;
 
