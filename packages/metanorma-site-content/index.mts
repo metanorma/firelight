@@ -93,7 +93,7 @@ function getBibdataMainTitle(doc: Readonly<RelationGraphAsList>, lang?: string):
 
 function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | undefined {
 
-  const clauseNumber = resolveChain(section, ['hasClauseNumber'], ROOT_SUBJECT)[0]?.[1];
+  //const clauseNumber = resolveChain(section, ['hasClauseNumber'], ROOT_SUBJECT)[0]?.[1];
 
   const parts = resolveChain(section, ['hasPart', 'type'], ROOT_SUBJECT);
 
@@ -110,9 +110,7 @@ function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | 
     ? getTextContent(section, plainTitleID).join('')
     : '';
 
-  return (titleText || clauseNumber)
-    ? `${clauseNumber ?? ''}${clauseNumber ? '  ' : ''}${titleText}`
-    : undefined;
+  return titleText ?? undefined;
 }
 
 

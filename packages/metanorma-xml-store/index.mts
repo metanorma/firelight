@@ -406,6 +406,7 @@ const mod: StoreAdapterModule = {
                   const graph: RelationGraphAsList = [];
                   if (clauseNumber.trim() !== '') {
                     graph.push([sectionURI, 'hasClauseNumber', clauseNumber]);
+                    graph.push([ROOT_SUBJECT, 'hasPart', `${clauseNumber}  `]);
                   }
 
                   const parts = Array.from(
