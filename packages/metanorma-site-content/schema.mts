@@ -145,6 +145,22 @@ const clauseSchemaBase = new Schema({
         return ['p', attrs, 0];
       },
     },
+    // E.g., for lifted clause contents.
+    subheader: {
+      attrs: {
+        resourceID: {
+          default: '',
+        },
+      },
+      content: '(text | flow)*',
+      group: 'block',
+      toDOM(node) {
+        const attrs = node.attrs.resourceID
+          ? { about: node.attrs.resourceID }
+          : {};
+        return ['h2', attrs, 0];
+      },
+    },
     footnotes: {
       content: 'footnote+',
       toDOM() {
