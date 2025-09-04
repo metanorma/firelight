@@ -388,6 +388,31 @@ const mod: StoreAdapterModule = {
               origin: 'ignore',
               source: 'ignore',
               quote: processAsGenericContainer,
+              'fmt-title': function processFmtTitle(el, getURI) {
+                // We ignore this <fmt-title>, because the actual <title>
+                // can be used
+                const shouldIgnore = (
+                  el.querySelector('semx[element="title"]')
+                );
+                if (shouldIgnore) {
+                  return 'ignore';
+                } else {
+                  const result = processAsGenericContainer(el, getURI) as [RelationGraphAsList, Rules];
+                  const rels = [
+                    [ROOT_SUBJECT, 'type', 'title'],
+                  ] as RelationGraphAsList;
+                  if (!Array.from(el.childNodes).find(n => n.nodeType !== 3)) {
+                    rels.push(...(result[0].filter(
+                      ([s, p, o]) => !(p === 'type' && o === 'fmt-title')
+                    ) as RelationGraphAsList));
+                  } else {
+                    rels.push(...(
+                      result[0] as RelationGraphAsList
+                    ));
+                  }
+                  return [rels, result[1]];
+                }
+              },
               title: function processTitle(el, getURI) {
                 if (el.parentElement
                     && clauseLikeElements.includes(el.parentElement.tagName as any)) {
