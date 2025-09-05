@@ -702,7 +702,11 @@ function makeSectionContentGenerator(
       ];
       if (caption) {
         figureContents.push(
-          pm.node('figCaption', { resourceID: caption }, generateContent(caption, pm.nodes.figCaption!, state)),
+          pm.node(
+            'figCaption',
+            { resourceID: caption },
+            generateContent(caption, pm.nodes.figCaption!, state),
+          ),
         );
       }
       return pm.node('figure', { resourceID: subj }, figureContents);
@@ -744,7 +748,8 @@ function makeSectionContentGenerator(
       return pm.node(
         'resource_link',
         { href: target },
-        generateContent(subj, pm.nodes.resource_link!, state));
+        generateContent(subj, pm.nodes.resource_link!, state),
+      );
     },
 
     // If we encounter it within clause contents, it’s a “lifted” clause.
@@ -773,23 +778,40 @@ function makeSectionContentGenerator(
         return undefined;
       }
 
-      const definitionContent = generateContent(definition, pm.nodes.definition!, state);
+      const definitionContent =
+        generateContent(definition, pm.nodes.definition!, state);
+
       const notes = findPartsOfType(section, subj, 'termnote');
-      definitionContent.push(...notes.flatMap(subj => this['note']!(subj, state)).filter(n => n !== undefined));
+      definitionContent.push(
+        ...notes.
+        flatMap(subj => this['note']!(subj, state)).
+        filter(n => n !== undefined)
+      );
 
       const content = [
-        pm.node('term', { preferred: true },
+        pm.node(
+          'term',
+          { preferred: true },
           preferredContents.
-            flatMap(subj => generateContent(subj, pm.nodes.term!, state))),
+            flatMap(subj => generateContent(subj, pm.nodes.term!, state))
+        ),
         pm.node('definition', null, definitionContent),
       ];
       if (xrefLabel) {
-        content.splice(0, 0, pm.node('termXrefLabel', null, generateContent(xrefLabel, pm.nodes.termXrefLabel!, state)));
+        content.splice(0, 0, pm.node(
+          'termXrefLabel',
+          null,
+          generateContent(xrefLabel, pm.nodes.termXrefLabel!, state)),
+        );
       }
 
       const sources = findPartsOfType(section, subj, 'fmt-termsource');
       content.push(...sources.map(subj =>
-        pm.node('termSource', null, generateContent(subj, pm.nodes.termSource!, state))
+        pm.node(
+          'termSource',
+          null,
+          generateContent(subj, pm.nodes.termSource!, state),
+        )
       ));
 
       return pm.node(
@@ -818,11 +840,8 @@ function makeSectionContentGenerator(
         contents.splice(0, 0, pm.node(
           'figCaption',
           null,
-          captionParts.flatMap(part => generateContent(
-            part,
-            pm.nodes.figCaption!,
-            state,
-          )),
+          captionParts.
+            flatMap(part => generateContent(part, pm.nodes.figCaption!, state)),
         ));
       }
       // We will wrap the example in a figure.
@@ -877,7 +896,9 @@ function makeSectionContentGenerator(
       const scope = state.annotations.currentFootnoteScope;
       // Append a closing parenthesis to turn Metanorma-given “a” into “a)”
       const formattedCue = `${cue})`;
-      const scopedCue = scope ? `${scope}: ${formattedCue}` : formattedCue;
+      const scopedCue = scope
+        ? `${scope}: ${formattedCue}`
+        : formattedCue;
       const madeUpDOMID = `${encodeURIComponent(scopedCue)}-${hash.digest().hex()}`;
 
       if (!state.annotations.footnotes[madeUpDOMID]) {
@@ -899,7 +920,11 @@ function makeSectionContentGenerator(
           // This is wrong, but works around current MN XML footnote behavior
           // It will cause warnings during generation, because any href
           // is supposed to be either an external link or point to a resource
-          pm.node('resource_link', { href: `#${madeUpDOMID}` }, [pm.text(formattedCue)]),
+          pm.node(
+            'resource_link',
+            { href: `#${madeUpDOMID}` },
+            [pm.text(formattedCue)],
+          ),
         ],
       );
     },
@@ -988,11 +1013,18 @@ function makeSectionContentGenerator(
 
       //console.debug(tableContents);
       const contents = [
-        pm.node('table', colWidths ? { colWidths } : null,
-          tableContents),
+        pm.node(
+          'table',
+          colWidths ? { colWidths } : null,
+          tableContents,
+        ),
       ];
       if (caption) {
-        contents.splice(0, 0, pm.node('figCaption', { resourceID: caption }, generateContent(caption, pm.nodes.figCaption!, state)));
+        contents.splice(0, 0, pm.node(
+          'figCaption',
+          { resourceID: caption },
+          generateContent(caption, pm.nodes.figCaption!, state),
+        ));
       }
 
       // TODO: Direct paragraph descendants not allowed by the spec?
@@ -1000,17 +1032,29 @@ function makeSectionContentGenerator(
       if (paragraphs.length > 0) {
         // NOTE: If there are nodes not allowed by table node spec intermingled
         // then it will fail to create the table.
-        contents.push(...paragraphs.flatMap(subj => this['paragraph']!(subj, state)).filter(n => n !== undefined));
+        contents.push(
+          ...paragraphs.
+          flatMap(subj => this['paragraph']!(subj, state)).
+          filter(n => n !== undefined)
+        );
       }
       // TODO: Direct source descendants not allowed by the spec?
       const sources = findAll(section, subj, 'hasSource');
       if (sources.length > 0) {
-        contents.push(...sources.flatMap(subj => this['paragraph']!(subj, state)).filter(n => n !== undefined));
+        contents.push(
+          ...sources.
+          flatMap(subj => this['paragraph']!(subj, state)).
+          filter(n => n !== undefined)
+        );
       }
 
       const notes = findAll(section, subj, 'hasNote');
       if (notes.length > 0) {
-        contents.push(...notes.flatMap(subj => this['note']!(subj, state)).filter(n => n !== undefined));
+        contents.push(
+          ...notes.
+          flatMap(subj => this['note']!(subj, state)).
+          filter(n => n !== undefined)
+        );
       }
 
       // We will wrap the table in a figure, because PM’s default tables
@@ -1022,25 +1066,31 @@ function makeSectionContentGenerator(
       const contents: ProseMirrorNode[] = [];
       const tagSubj = findValue(section, subj, 'hasBiblioTag');
       if (tagSubj) {
-        contents.push(pm.node('span', null, generateContent(tagSubj, pm.nodes.span!, onAnnotation)));
+        contents.push(pm.node(
+          'span',
+          null,
+          generateContent(tagSubj, pm.nodes.span!, onAnnotation),
+        ));
       }
       const formattedref = findValue(section, subj, 'hasFormattedref');
       if (formattedref) {
         contents.push(...generateContent(formattedref, pm.nodes.span!, onAnnotation));
       }
       const uris = findAll(section, subj, 'hasUri');
-      contents.push(...uris.map(uri =>
-        [findValue(section, uri, 'hasPart'), findValue(section, uri, 'hasType')]
-      ).
-      filter(([href, ]) => href !== '' && href !== undefined).
-      flatMap(([href, type]) => [
-        pm.text(' '),
-        pm.node(
-          'external_link',
-          { href },
-          pm.text(`[${type ?? 'link'}]`),
-        ),
-      ]));
+      contents.push(
+        ...uris.map(uri =>
+          [findValue(section, uri, 'hasPart'), findValue(section, uri, 'hasType')]
+        ).
+        filter(([href, ]) => href !== '' && href !== undefined).
+        flatMap(([href, type]) => [
+          pm.text(' '),
+          pm.node(
+            'external_link',
+            { href },
+            pm.text(`[${type ?? 'link'}]`),
+          ),
+        ])
+      );
       return pm.node('bibitem', { resourceID: subj }, contents);
     },
     'listItem': (subj: string, onAnnotation) => {
@@ -1110,11 +1160,15 @@ function makeSectionContentGenerator(
       const caption = findValue(section, subj, 'hasFmtName');
       if (caption) {
         figureContents.push(
-          pm.node('figCaption', { resourceID: caption }, generateContent(
-            caption,
-            pm.nodes.figCaption!,
-            onAnnotation,
-          )),
+          pm.node(
+            'figCaption',
+            { resourceID: caption },
+            generateContent(
+              caption,
+              pm.nodes.figCaption!,
+              onAnnotation,
+            ),
+          ),
         );
       }
       return pm.node('figure', { resourceID: subj }, figureContents);
