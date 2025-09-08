@@ -752,6 +752,14 @@ function makeSectionContentGenerator(
       );
     },
 
+    'subclause-separator': (subj) => {
+      return pm.node(
+        'subheader',
+        { resourceID: subj },
+        pm.text('***'),
+      );
+    },
+
     // If we encounter it within clause contents, it’s a “lifted” clause.
     'fmt-title': (subj, state) => {
       return pm.node(
