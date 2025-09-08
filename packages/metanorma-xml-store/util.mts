@@ -176,6 +176,7 @@ export function processResources(
 
   const chunk: Map<RelationTriple<any, any>, true> = new Map();
 
+  // If current is null then there’s no resources to process left.
   while (current !== null) {
     if (sinceLastReport > REPORT_EVERY_N) {
       opts.onProgress(currentChain[currentChain.length - 1]!);
@@ -202,17 +203,40 @@ export function processResources(
         processed.add(current);
       }
 
+      // If rule for processing this tag is not a simple string,
+      // then run the rule function to obtain the actual rule
       const ruleResult = (rule !== 'ignore' && rule !== 'bypass')
         ? rule?.(current, getURI_) ?? [[], true]
         : rule;
 
       if (ruleResult !== 'ignore' && ruleResult !== 'bypass') {
-        const [localGraph, doDefaultProcess] = ruleResult;
+        const [localGraph, doDefaultProcessing] = ruleResult;
 
-        if (doDefaultProcess !== false) {
-          const rules_ = doDefaultProcess !== true
-            ? { ...rules, ...doDefaultProcess }
+        if (doDefaultProcessing !== false) {
+
+          const newRule = doDefaultProcessing !== true
+            ? doDefaultProcessing
+            : null;
+
+          // If `doDefaultProcessing` is not a boolean,
+          // then it is the new rules to merge with current rules
+          // and pass down to nested tags.
+          // Otherwise,
+          const rules_ = newRule
+            ? {
+                ...rules,
+                ...newRule,
+                // Merge `processTag` rules separately,
+                // new rules would overwrite specific tags
+                // without having to duplicate everything. (Good idea? Hmm)
+                processTag: {
+                  ...(rules.processTag ?? {}),
+                  ...(newRule.processTag ?? {}),
+                },
+              }
             : rules;
+
+          // Process current resource with obtained rules
           localGraph.push(
             ...processResource(current, getURI_, rules_)
           );
