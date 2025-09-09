@@ -30,6 +30,13 @@
   }
 }
 
+.flatSubclause {
+  margin-top: 1em;
+  &:before {
+    content: ' ';
+  }
+}
+
 .clauseTitle {
   text-align: left;
   font-weight: normal;

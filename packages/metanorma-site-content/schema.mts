@@ -130,6 +130,16 @@ const clauseSchemaBase = new Schema({
         return ['h1', { class: classNames.clauseTitle }, 0];
       },
     },
+
+    // Case with flat/lifted subclauses
+    section: {
+      content: 'block+ footnotes?',
+      group: 'block',
+      toDOM() {
+        return ['section', { class: classNames.flatSubclause }, 0];
+      },
+    },
+
     paragraph: {
       attrs: {
         resourceID: {

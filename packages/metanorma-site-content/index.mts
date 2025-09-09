@@ -760,6 +760,14 @@ function makeSectionContentGenerator(
       );
     },
 
+    'section': (subj, state) => {
+      return pm.node(
+        'section',
+        { resourceID: subj },
+        generateContent(subj, pm.nodes.section!, state),
+      );
+    },
+
     // If we encounter it within clause contents, it’s a “lifted” clause.
     'fmt-title': (subj, state) => {
       return pm.node(
