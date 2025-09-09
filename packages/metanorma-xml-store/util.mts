@@ -122,14 +122,21 @@ export interface Rules {
    *
    * If necessary, it can traverse DOM to parents and output relations
    * *for them*, but think of performance.
-   *
-   * Ignore means do not output anything for the element and its subtree.
-   * Bypass means skip the element but process the tree as if the element
-   * didn’t exist.
    */
-  processTag?: Record<string, 'ignore' | 'bypass' | CustomElementProcessor>;
+  processTag?: Record<string, IGNORE_MARKER | BYPASS_MARKER | CustomElementProcessor>;
 
 }
+/**
+ * Instructs processor to not output anything
+ * for the element and its subtree.
+ */
+type IGNORE_MARKER = 'ignore';
+
+/**
+ * Instructs to skip the element but process the tree
+ * as if the wrapping element didn’t exist.
+ */
+type BYPASS_MARKER = 'bypass';
 
 export type CustomElementProcessor = (
   el: Element,
@@ -138,7 +145,7 @@ export type CustomElementProcessor = (
    * in case processor wants to output relations for it.
    */
   getURI: (el: Element) => string,
-) => 'ignore' | 'bypass' | readonly [
+) => IGNORE_MARKER | BYPASS_MARKER | readonly [
   graph: RelationGraphAsList,
   /** Return:
    * - false if the element is not to be processed in any other way
