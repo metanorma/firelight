@@ -158,38 +158,28 @@ function processClauseLike(el: Element) {
       || mangleXMLIdentifier(el.getAttribute('id') ?? '')
     ) || `unidentified-${el.tagName}-${crypto.randomUUID()}`;
 
-    if (clauseIsLiftable(el, clauseIdentifier)) {
-      // For suitable liftable clauses, do not create hierarchy pages,
-      // and instead insert the contents to the parent clause.
-      // 'bypass' basically does that.
-      //
-      // TODO: Clauses bypassed as untitled may break references.
-      // They will not appear in resource map and site hierarchy.
-      // To avoid that, some options may be:
-      // 1. Do not just bypass it, but instead adjust content subgraph
-      //    to use parent clause ID as root subject.
-      // 2. Change the handling of `bypass` such that any bypassed element
-      //    resource ID would be linked to its parent URI (or first child URI)
-      //    instead.
-      //    (E.g., by inserting a bookmark, by using some special property,
-      //    or by using `sameAs` relation.)
-      return 'bypass';
-    } else {
-      return [
-        [[
-          ROOT_SUBJECT,
-          'hasClauseIdentifier',
-          clauseIdentifier,
-        ], [
-          ROOT_SUBJECT,
-          'type',
-          'section',
-        ]],
-        {
-          getChildPredicate: () => 'hasPart',
-        },
-      ];
-    }
+    // For suitable liftable clauses, specify hasFlatSubclauseIdentifier
+    // rather than hasClauseIdentifier.
+    // “Flat” subclauses are not suitable for, e.g., hierarchy levels,
+    // instead their contents get inserted in the parent clause.
+    const predicate = clauseIsLiftable(el, clauseIdentifier)
+      ? 'hasFlatSubclauseIdentifier'
+      : 'hasClauseIdentifier';
+
+    return [
+      [[
+        ROOT_SUBJECT,
+        predicate,
+        clauseIdentifier,
+      ], [
+        ROOT_SUBJECT,
+        'type',
+        'section',
+      ]],
+      {
+        getChildPredicate: () => 'hasPart',
+      },
+    ];
   }
 }
 
