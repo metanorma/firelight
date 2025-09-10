@@ -168,7 +168,7 @@ const clauseSchemaBase = new Schema({
         const attrs = node.attrs.resourceID
           ? { about: node.attrs.resourceID }
           : {};
-        return ['h2', attrs, 0];
+        return ['h3', attrs, 0];
       },
     },
     footnotes: {
