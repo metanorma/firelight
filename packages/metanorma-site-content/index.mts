@@ -301,7 +301,8 @@ const generatorsByType: Record<string, ContentGenerator> = {
     };
 
     const title =
-      findPartsOfType(section, ROOT_SUBJECT, 'title')[0];
+      findPartsOfType(section, ROOT_SUBJECT, 'fmt-title')[0]
+      ?? findPartsOfType(section, ROOT_SUBJECT, 'title')[0];
     const titleContent = title
       ? generateContent(title, pm.nodes.mainTitle!, processorState)
       : undefined;
@@ -767,16 +768,6 @@ function makeSectionContentGenerator(
         generateContent(subj, pm.nodes.section!, state),
       );
     },
-
-    // If we encounter it within clause contents, it’s a “lifted” clause.
-    'fmt-title': (subj, state) => {
-      return pm.node(
-        'subheader',
-        { resourceID: subj },
-        generateContent(subj, pm.nodes.paragraph!, state),
-      );
-    },
-
     // 'xref': function (subj: string, onAnnotation) {
     //   return this['fmt-xref']!(subj, onAnnotation);
     // },
