@@ -558,7 +558,11 @@ export async function * generateVersion(
               lang: meta.primaryLanguageID || '',
               body:
                 preprocessStringForIndexing(
-                  extractRelationsForIndexing(inPageResourceID, graph, reader.exists).
+                  extractRelationsForIndexing(
+                    inPageResourceID,
+                    graph,
+                    reader.exists,
+                  ).
                   join('').
                   trim()
                 ),
