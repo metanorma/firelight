@@ -762,12 +762,26 @@ function makeSectionContentGenerator(
     },
 
     'section': (subj, state) => {
+      // TODO: Normalize title processing
+
+      // We don’t have an entry for fmt-title, because we process it
+      // separately, but we want to process it when in subsection:
+      const title = findPartsOfType(section, subj, 'fmt-title')[0];
+      const content = generateContent(subj, pm.nodes.section!, state);
+      if (title) {
+        content.splice(0, 0, pm.node(
+          'subheader',
+          { resourceID: title },
+          generateContent(title, pm.nodes.subheader!, state),
+        ));
+      }
       return pm.node(
         'section',
         { resourceID: subj },
-        generateContent(subj, pm.nodes.section!, state),
+        content,
       );
     },
+
     // 'xref': function (subj: string, onAnnotation) {
     //   return this['fmt-xref']!(subj, onAnnotation);
     // },
