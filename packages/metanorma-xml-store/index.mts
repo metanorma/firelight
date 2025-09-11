@@ -122,7 +122,7 @@ function fmtTitleIsAProperTitle(fmtTitleEl: Element) {
  *
  * Note: a clause without a proper title can only contain liftable subclauses.
  */
-function clauseIsLiftable(el: Element, id: string) {
+function clauseIsFlat(el: Element, id: string) {
   if (!clauseHasProperTitle(el)) {
     const directDescendantClauseLikeElements: Element[] =
     Array.from(el.childNodes).filter(el =>
@@ -136,7 +136,7 @@ function clauseIsLiftable(el: Element, id: string) {
     } else {
       // A liftable clause having any non-liftable descendants
       // doesn’t compute.
-      if (directDescendantClauseLikeElements.find(el => !clauseIsLiftable(el, id))) {
+      if (directDescendantClauseLikeElements.find(el => !clauseIsFlat(el, id))) {
         throw new Error(
           `Untitled clauses must not contain further descendant titled clauses, but this one apparently does: ${id}`
         );
@@ -162,9 +162,10 @@ function processClauseLike(el: Element) {
     // rather than hasClauseIdentifier.
     // “Flat” subclauses are not suitable for, e.g., hierarchy levels,
     // instead their contents get inserted in the parent clause.
-    const predicate = clauseIsLiftable(el, clauseIdentifier)
-      ? 'hasFlatSubclauseIdentifier'
-      : 'hasClauseIdentifier';
+    const createHierarchy = !clauseIsFlat(el, clauseIdentifier);
+    const predicate = createHierarchy
+      ? 'hasClauseIdentifier'
+      : 'hasFlatSubclauseIdentifier';
 
     return [
       [[
