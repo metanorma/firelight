@@ -131,12 +131,27 @@ const clauseSchemaBase = new Schema({
       },
     },
 
-    // Case with flat/lifted subclauses
+    // Case with flat subclauses
     section: {
       content: 'block+ footnotes?',
       group: 'block',
       toDOM() {
         return ['section', { class: classNames.flatSubclause }, 0];
+      },
+    },
+    subheader: {
+      attrs: {
+        resourceID: {
+          default: '',
+        },
+      },
+      content: '(text | flow)*',
+      group: 'block',
+      toDOM(node) {
+        const attrs = node.attrs.resourceID
+          ? { about: node.attrs.resourceID }
+          : {};
+        return ['h3', attrs, 0];
       },
     },
 
@@ -153,22 +168,6 @@ const clauseSchemaBase = new Schema({
           ? { about: node.attrs.resourceID }
           : {};
         return ['p', attrs, 0];
-      },
-    },
-    // E.g., for lifted clause contents.
-    subheader: {
-      attrs: {
-        resourceID: {
-          default: '',
-        },
-      },
-      content: '(text | flow)*',
-      group: 'block',
-      toDOM(node) {
-        const attrs = node.attrs.resourceID
-          ? { about: node.attrs.resourceID }
-          : {};
-        return ['h3', attrs, 0];
       },
     },
     footnotes: {
