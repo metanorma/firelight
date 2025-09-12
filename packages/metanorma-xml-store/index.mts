@@ -47,7 +47,6 @@ const tagNameAliases: Record<string, string> = {
  */
 const TAGS_WITH_DIRECT_CHILDREN_NOT_AS_GENERIC_PARTS: string[] = [
   'bibdata',
-  'bibitem',
   'figure',
   'image',
   'table',
