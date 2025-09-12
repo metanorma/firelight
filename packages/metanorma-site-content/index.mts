@@ -1095,7 +1095,9 @@ function makeSectionContentGenerator(
       }
       const formattedref = findValue(section, subj, 'hasFormattedref');
       if (formattedref) {
-        contents.push(...generateContent(formattedref, pm.nodes.span!, onAnnotation));
+        contents.push(
+          ...generateContent(formattedref, pm.nodes.span!, onAnnotation)
+        );
       }
       const uris = findAll(section, subj, 'hasUri');
       contents.push(
