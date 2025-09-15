@@ -9,6 +9,7 @@ import { isURIString } from './URI.mjs';
 export function preprocessStringForIndexing(text: string): string {
   return text.
     normalize('NFKD').
+    // Simplifies searching in French etc.
     replace(/\p{Diacritic}/gu, '').
     trim();
 }
