@@ -45,6 +45,7 @@ import {
   fillInLocale,
 } from './ContentAdapter.mjs';
 import {
+  type RelationTriple,
   type RelationGraphAsList,
 } from './relations.mjs';
 import { type LayoutModule, type NavLink } from './Layout.mjs';
@@ -513,6 +514,24 @@ export async function * generateVersion(
 
       pathProgress({ state: 'indexing page resource' });
 
+      const describedResourceIDs =
+        gatherDescribedResourcesFromJsonifiedProseMirrorNode(
+          content.content.contentDoc
+        );
+
+      // TODO: Delegate to content adapter
+      function isIndexable(rel: RelationTriple<any, any>): boolean {
+        return rel[1] === 'hasPart';
+      }
+
+      /**
+       * Returns true if subject is defined on the page
+       * and therefore should not be indexed as part of its parent.
+       */
+      function isIndexed (uri: string) {
+        return reader.exists(uri) && describedResourceIDs.has(uri);
+      }
+
       resourceMap[path] = resourceURI;
       resourceGraph.push([resourceURI, 'isDefinedBy', `${path}/resource.json`]);
       resourceDescriptions[resourceURI] = resourceMeta;
@@ -522,8 +541,13 @@ export async function * generateVersion(
         lang: meta.primaryLanguageID || '',
         body:
           preprocessStringForIndexing(
-            extractRelationsForIndexing(resourceURI, relations, reader.exists).
-            join('').
+            extractRelationsForIndexing(
+              resourceURI,
+              relations,
+              isIndexable,
+              isIndexed,
+            ).
+            join('\n').
             trim()
           ),
       };
@@ -537,10 +561,6 @@ export async function * generateVersion(
 
       pathProgress({ state: 'indexing on-page subresources' });
 
-      const describedResourceIDs =
-        gatherDescribedResourcesFromJsonifiedProseMirrorNode(
-          content.content.contentDoc
-        );
       for (const inPageResourceID of describedResourceIDs) {
         if (reader.exists(inPageResourceID)) {
           // We have a sub-resource represented by the page.
@@ -552,20 +572,21 @@ export async function * generateVersion(
           resourceGraph.push([inPageResourceID, 'isDefinedBy', `${path}/resource.json`]);
           resourceDescriptions[inPageResourceID] = meta;
           if (inPageResourceID !== resourceURI) {
+            const body = preprocessStringForIndexing(
+              extractRelationsForIndexing(
+                inPageResourceID,
+                graph,
+                isIndexable,
+                isIndexed,
+              ).
+              join('\n').
+              trim()
+            );
             searchableResources.resources[inPageResourceID] = {
               name: inPageResourceID,
               title: preprocessStringForIndexing(meta.labelInPlainText),
               lang: meta.primaryLanguageID || '',
-              body:
-                preprocessStringForIndexing(
-                  extractRelationsForIndexing(
-                    inPageResourceID,
-                    graph,
-                    reader.exists,
-                  ).
-                  join('').
-                  trim()
-                ),
+              body,
             };
           }
         } else {
