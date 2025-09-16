@@ -433,6 +433,8 @@ const mod: StoreAdapterModule = {
               'legal-statement': 'bypass',
               'feedback-statement': 'bypass',
 
+              asciimath: 'ignore',
+
               'metanorma-extension': 'ignore',
               'localized-strings': 'ignore',
               'presentation-metadata': 'ignore',
