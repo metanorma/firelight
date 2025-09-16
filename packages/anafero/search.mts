@@ -15,7 +15,9 @@ export function preprocessStringForIndexing(text: string): string {
     normalize('NFKD').
     // Simplifies searching in French etc.
     replace(/\p{Diacritic}/gu, '').
-    // Zero-width spaces and stuff
+    // Replace punctuation
+    replace(/[\p{P}$+<=>^`|~]/gu, ' ').
+    // Zero-width spaces and stuff (may be unnecessary with above)
     replace(/[\u200B-\u200D\uFEFF]/g, '').
     trim();
 }

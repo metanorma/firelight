@@ -68,7 +68,6 @@ export const Search: React.FC<{
     if (index && debouncedQueryTrimmed !== '') {
       const normalizedQuery = preprocessStringForIndexing(
         debouncedQuery.
-          replace(/:/g, " ").
           // TODO: Actually wildcards can happen in some positions,
           // but when the query is mostly a wildcard it can be too low.
           replace(/\*/g, " "));
