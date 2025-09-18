@@ -27,6 +27,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:packages/anafero-gui"\
     },\
     {\
+      "name": "metanorma-ieee-layout",\
+      "reference": "workspace:packages/metanorma-ieee-layout"\
+    },\
+    {\
       "name": "metanorma-site-content",\
       "reference": "workspace:packages/metanorma-site-content"\
     },\
@@ -50,6 +54,7 @@ const RAW_RUNTIME_STATE =
     ["anafero", ["workspace:packages/anafero"]],\
     ["anafero-gui", ["workspace:packages/anafero-gui"]],\
     ["firelight-monorepo", ["workspace:."]],\
+    ["metanorma-ieee-layout", ["workspace:packages/metanorma-ieee-layout"]],\
     ["metanorma-site-content", ["workspace:packages/metanorma-site-content"]],\
     ["metanorma-xml-store", ["workspace:packages/metanorma-xml-store"]],\
     ["plateau-layout", ["workspace:packages/plateau-layout"]],\
@@ -1659,6 +1664,10 @@ const RAW_RUNTIME_STATE =
     [\
       "make-fetch-happen",\
       "npm:13.0.1"\
+    ],\
+    [\
+      "metanorma-ieee-layout",\
+      "workspace:packages/metanorma-ieee-layout"\
     ],\
     [\
       "metanorma-site-content",\
@@ -11358,6 +11367,22 @@ const RAW_RUNTIME_STATE =
           ["ssri", "npm:10.0.6"]\
         ],\
         "linkType": "HARD"\
+      }]\
+    ]],\
+    ["metanorma-ieee-layout", [\
+      ["workspace:packages/metanorma-ieee-layout", {\
+        "packageLocation": "./packages/metanorma-ieee-layout/",\
+        "packageDependencies": [\
+          ["metanorma-ieee-layout", "workspace:packages/metanorma-ieee-layout"],\
+          ["@effect/schema", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.74.0"],\
+          ["@types/react", "npm:18.3.11"],\
+          ["@types/react-helmet", "npm:6.1.11"],\
+          ["anafero", "workspace:packages/anafero"],\
+          ["react", "npm:18.3.1"],\
+          ["react-helmet", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:6.1.0"],\
+          ["typescript", "patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=8c6c40"]\
+        ],\
+        "linkType": "SOFT"\
       }]\
     ]],\
     ["metanorma-site-content", [\
