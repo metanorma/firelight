@@ -149,6 +149,7 @@
     }
   }
 
+  /* TODO: Should probably be moved to Metanorma-specific adapter */
   .resourceBreadcrumbsNav {
     margin: 0;
     padding: 0.5em 2em 0 2em;
