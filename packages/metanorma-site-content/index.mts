@@ -310,15 +310,21 @@ const generatorsByType: Record<string, ContentGenerator> = {
     const clauseContents = getClauseContents(section, processorState);
 
     const contentDoc = pm.node(pm.topNodeType, null, [
-      pm.node('mainTitle', null, titleContent ?? [pm.text(labelInPlainText)]),
+      pm.node(
+        'mainTitle',
+        null,
+        titleContent ?? [pm.text(labelInPlainText)],
+      ),
       ...clauseContents,
     ]).toJSON();
 
     return {
       labelInPlainText,
-      title: titleSchema.node('doc', null, [
-        titleSchema.text(labelInPlainText),
-      ]).toJSON(),
+      title: titleSchema.node(
+        'doc',
+        null,
+        [titleSchema.text(labelInPlainText)],
+      ).toJSON(),
       contentSchemaID: 'clause',
       contentDoc,
     };
