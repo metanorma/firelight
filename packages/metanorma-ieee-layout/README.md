@@ -1,3 +1,0 @@
-# IEEE layout
-
-WIP.

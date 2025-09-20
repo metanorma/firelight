@@ -1,5 +1,5 @@
 {
-  "name": "metanorma-ieee-layout",
+  "name": "metanorma-layout",
   "packageManager": "yarn@4.5.0",
   "type": "module",
   "scripts": {

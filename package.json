@@ -24,7 +24,7 @@
     "packages/relaton-collection-xml-store",
     "packages/metanorma-xml-store",
     "packages/metanorma-site-content",
-    "packages/metanorma-ieee-layout"
+    "packages/metanorma-layout"
   ],
   "devDependencies": {
     "@effect/cli": "^0.44.4",

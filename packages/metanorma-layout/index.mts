@@ -3,7 +3,7 @@ import Component from './Layout.jsx';
 
 
 const mod: LayoutModule = {
-  name: "IEEE basic layout",
+  name: "Metanorma layout",
   version: "0.0.1",
   layouts: [{
     name: "default",

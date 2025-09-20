@@ -27,8 +27,8 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:packages/anafero-gui"\
     },\
     {\
-      "name": "metanorma-ieee-layout",\
-      "reference": "workspace:packages/metanorma-ieee-layout"\
+      "name": "metanorma-layout",\
+      "reference": "workspace:packages/metanorma-layout"\
     },\
     {\
       "name": "metanorma-site-content",\
@@ -54,7 +54,7 @@ const RAW_RUNTIME_STATE =
     ["anafero", ["workspace:packages/anafero"]],\
     ["anafero-gui", ["workspace:packages/anafero-gui"]],\
     ["firelight-monorepo", ["workspace:."]],\
-    ["metanorma-ieee-layout", ["workspace:packages/metanorma-ieee-layout"]],\
+    ["metanorma-layout", ["workspace:packages/metanorma-layout"]],\
     ["metanorma-site-content", ["workspace:packages/metanorma-site-content"]],\
     ["metanorma-xml-store", ["workspace:packages/metanorma-xml-store"]],\
     ["plateau-layout", ["workspace:packages/plateau-layout"]],\
@@ -1666,8 +1666,8 @@ const RAW_RUNTIME_STATE =
       "npm:13.0.1"\
     ],\
     [\
-      "metanorma-ieee-layout",\
-      "workspace:packages/metanorma-ieee-layout"\
+      "metanorma-layout",\
+      "workspace:packages/metanorma-layout"\
     ],\
     [\
       "metanorma-site-content",\
@@ -11369,11 +11369,11 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["metanorma-ieee-layout", [\
-      ["workspace:packages/metanorma-ieee-layout", {\
-        "packageLocation": "./packages/metanorma-ieee-layout/",\
+    ["metanorma-layout", [\
+      ["workspace:packages/metanorma-layout", {\
+        "packageLocation": "./packages/metanorma-layout/",\
         "packageDependencies": [\
-          ["metanorma-ieee-layout", "workspace:packages/metanorma-ieee-layout"],\
+          ["metanorma-layout", "workspace:packages/metanorma-layout"],\
           ["@effect/schema", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.74.0"],\
           ["@types/react", "npm:18.3.11"],\
           ["@types/react-helmet", "npm:6.1.11"],\
