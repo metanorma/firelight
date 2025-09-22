@@ -45,6 +45,8 @@ export interface LayoutProps {
  * A layout receives resource title, nav, etc. and can render
  * some surrounding elements. It also receives children representing
  * resource contents, managed by the parent.
+ *
+ * The `children` prop is the contents of the resource rendered.
  */
 export type LayoutFC =
   React.ForwardRefExoticComponent<React.PropsWithChildren<LayoutProps>
