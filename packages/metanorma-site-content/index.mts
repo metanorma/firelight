@@ -159,7 +159,7 @@ const mod: ContentAdapterModule = {
   crossReferences: (rel) => {
     return rel.predicate === 'hasTarget';
   },
-  // This is not used currently?
+  // This is not used currently
   contributesToContent: (relation, targetRelations) => {
     return relation.predicate === 'hasPart' || relation.predicate === 'hasText';
   },
