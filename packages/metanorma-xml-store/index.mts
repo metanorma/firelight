@@ -234,12 +234,12 @@ const mod: StoreAdapterModule = {
     const isValidDocumentEntryPoint =
       dom.documentElement.tagName === 'metanorma'
       && dom.documentElement.getAttribute('type') === 'presentation'
-      && dom.querySelector('metanorma > bibdata > docidentifier[primary="true"]')?.textContent
+      && dom.querySelector('metanorma > bibdata > docidentifier[primary="true"]')?.textContent;
 
     const isValidCollectionEntryPoint =
       dom.documentElement.tagName === 'metanorma-collection'
       //&& dom.documentElement.getAttribute('type') === 'presentation'
-      && dom.querySelector('metanorma-collection > bibdata > docidentifier')?.textContent
+      && dom.querySelector('metanorma-collection > bibdata > docidentifier')?.textContent;
 
     if (!(isValidDocumentEntryPoint || isValidCollectionEntryPoint)) {
       throw new Error("Invalid Metanorma document or collection presentation XML");
