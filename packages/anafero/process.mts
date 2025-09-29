@@ -76,6 +76,11 @@ interface LunrIndexEntry {
 }
 
 
+/**
+ * A collection of functions that handle environment-specific aspects.
+ * E.g., in CLI `fetchBlob()` might read from disk, while in a worker
+ * it might read from an IndexedDB.
+ */
 interface GeneratorHelpers {
   fetchBlob: (path: string, opts?: { atVersion?: string }) => Promise<Uint8Array>;
   fetchDependency: DependencyResolver;
