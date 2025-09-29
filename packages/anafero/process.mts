@@ -731,8 +731,8 @@ export async function * generateVersion(
       //};
 
       const lunrTokenizer = lunr.tokenizer;
-      (this as any).tokenizer = function(x: any) {
 
+      (this as any).tokenizer = function anaferoTokenizer(x: any) {
         // Combine default English Lunr tokens with tokens obtained
         // from first language-specific tokenizer, deduplicating them
         const baseLunrTokens = lunrTokenizer(x);
@@ -754,8 +754,8 @@ export async function * generateVersion(
       };
 
       const lunrStopWordFilter = (lunr as any).stopWordFilter;
-      (this as any).stopWordFilter = function(token: any) {
 
+      (this as any).stopWordFilter = function anaferoStopWordFilter(token: any) {
         return (
           lunrStopWordFilter(token)
           // If a token is a stop word in ANY of supported languages,
