@@ -861,7 +861,7 @@ export async function * generateStaticSiteAssets(
   const baseVersioning = {
     versions,
     currentVersionID,
-  };
+  } as const;
 
   yield {
     '/versions.json': encoder.encode(JSON.stringify(baseVersioning, null, 4)),
