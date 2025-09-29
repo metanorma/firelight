@@ -821,7 +821,7 @@ export async function * generateStaticSiteAssets(
   },
 ): AsyncGenerator<Record<string, Uint8Array>> {
 
-  // Sort version IDs by timestamp, newer versions first.
+  /** Version IDs sorted by timestamp, newer versions first. */
   const versionIDsSorted = Array.from(Object.entries(versions)).
   toSorted(([, ver1], [, ver2]) =>
     ver2.timestamp.getTime() - ver1.timestamp.getTime()
