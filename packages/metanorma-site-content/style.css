@@ -1,0 +1,174 @@
+.figCaption {
+  display: block;
+  text-align: center;
+  /*font-size: 80%;*/
+
+  .exampleFigure & {
+    text-align: left;
+    font-variant: all-petite-caps;
+    font-weight: bold;
+  }
+}
+
+.metaBlock {
+  color: var(--spectrum-alias-text-color);
+  display: flex;
+  font-size: 16px;
+  gap: 1em;
+  text-wrap-style: balance;
+}
+
+.documentTitle {
+  text-align: left;
+  font-weight: bold;
+  text-wrap-style: balance;
+  word-break: auto-phrase;
+  padding-right: 25%;
+
+  strong {
+    font-weight: bold;
+  }
+}
+
+.flatSubclause {
+  margin-top: 1em;
+  &:before {
+    content: ' ';
+  }
+}
+
+.clauseTitle {
+  text-align: left;
+  font-weight: normal;
+  text-wrap-style: balance;
+  word-break: auto-phrase;
+
+  strong {
+    font-weight: normal;
+  }
+}
+
+.activeSubresource {
+  /* Note: keep consistent with focused footnote,
+   * for as long as focused footnotes do not utilize the same mechanism. */
+  outline-style: auto;
+  outline-offset: 2px;
+  background: var(--spectrum-accent-color-300);
+  outline-color: var(--spectrum-alias-focus-color);
+
+  &::before {
+    /* Some arrows as other possible markers:
+     * content: "→";  — rightwards, bad if marker is above (e.g. figures)
+     * content: "➘";  — down-right, kinda OK
+     */
+    content: "📍";
+    font-weight: bold;
+    width: 1em;
+    margin-left: -1em;
+    color: var(--spectrum-alias-focus-ring-color);
+  }
+}
+
+p.extraTitle {
+  text-align: left;
+  /* Since extra title is optional, bottom margin should be the same as main title.
+   * !important because article p from layout can override this. */
+  margin-bottom: 30px !important;
+  word-break: auto-phrase;
+  width: 75%;
+}
+
+article.bibitem {
+  margin: 0 0 .5em 0;
+}
+
+.termXrefLabel {
+  margin-right: 1em;
+}
+
+.xrefLabel {
+  margin: 0 .75em 0 0;
+  transform: translateX(-.5em);
+  /*font-size: 80%;*/
+  padding: .25em .5em;
+  display: inline-block;
+}
+
+span.underlined {
+  text-decoration: underline;
+}
+
+.admonition {
+  padding: 0 .5em .5em .5em;
+  margin: .5em 0;
+  border: 1px solid var(--spectrum-alias-border-color);
+
+  > header:first-child {
+    font-weight: bold;
+    font-variant: all-petite-caps;
+  }
+  :not(:first-child) {
+  }
+}
+
+.footnoteCue {
+  vertical-align: super;
+  line-height: 1;
+  font-size: 80%;
+}
+
+.footnotes {
+  font-size: 85%;
+
+  &::before {
+    content: " ";
+    display: block;
+    height: 1px;
+    width: 6em;
+    background-color: var(--spectrum-alias-text-color);
+    margin-top: 1.5em;
+    margin-bottom: .5em;
+  }
+
+  .footnote {
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 1em;
+
+    &:focus-within {
+      outline-style: auto;
+      outline-offset: 2px;
+      background: var(--spectrum-accent-color-300);
+      outline-color: var(--spectrum-alias-focus-color);
+    }
+
+    .footnoteCue {
+      flex-grow: 0;
+      flex-shrink: 0;
+      display: block;
+      min-width: 2em;
+      font-size: unset;
+      vertical-align: unset;
+      line-height: unset;
+
+      &:link, &:visited, &:hover {
+        text-decoration: none;
+        color: unset;
+      }
+      &:focus {
+        &::before {
+          content: "→";
+          font-weight: bold;
+          width: 1em;
+          margin-left: -1em;
+          display: inline-block;
+          color: var(--spectrum-alias-focus-ring-color);
+        }
+        background: var(--spectrum-accent-color-300);
+      }
+    }
+    .footnoteBody {
+      flex: 1;
+    }
+  }
+}
