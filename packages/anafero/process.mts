@@ -538,7 +538,11 @@ export async function * generateVersion(
       }
 
       resourceMap[path] = resourceURI;
-      resourceGraph.push([resourceURI, 'isDefinedBy', `${path}/resource.json`]);
+      resourceGraph.push([
+        resourceURI,
+        'isDefinedBy',
+        `${path}/resource.json`,
+      ]);
       resourceDescriptions[resourceURI] = resourceMeta;
       searchableResources.pages[resourceURI] = {
         name: resourceURI,
@@ -574,7 +578,11 @@ export async function * generateVersion(
           const meta = reader.describe(inPageResourceID);
           const graph = reader.resolve(inPageResourceID);
           resourceMap[pathWithFragment] = inPageResourceID;
-          resourceGraph.push([inPageResourceID, 'isDefinedBy', `${path}/resource.json`]);
+          resourceGraph.push([
+            inPageResourceID,
+            'isDefinedBy',
+            `${path}/resource.json`,
+          ]);
           resourceDescriptions[inPageResourceID] = meta;
           if (inPageResourceID !== resourceURI) {
             const body = preprocessStringForIndexing(
@@ -695,7 +703,9 @@ export async function * generateVersion(
 
   const supportedLanguages: string[] = [...allLanguages].
   filter(lang => lang === 'en' || !!lunrLanguageSupport[lang as keyof typeof lunrLanguageSupport]);
+
   console.debug(`Search index: primary language is “${maybePrimaryLanguageID}”, enabling ${supportedLanguages.join(', ')}`);
+
   const nonDefaultLanguages =
     supportedLanguages.filter(lang => lang !== 'en');
 
@@ -709,14 +719,20 @@ export async function * generateVersion(
   const lunrIndex = lunr(function () {
     if (supportedLanguages.length > 1) {
       this.use((lunr as any).multiLanguage(...['en', ...nonDefaultLanguages]));
-      console.debug("Search index: enabling multi-language Lunr mode & mixed tokenizer",
-        supportedLanguages.join(', '));
+
+      console.debug(
+        "Search index: enabling multi-language Lunr mode & mixed tokenizer",
+        supportedLanguages.join(', '),
+      );
+
       //(this as any).tokenizer = function(x: any) {
       //  return lunr.tokenizer(x).
       //  concat(...nonDefaultLanguages.map(lang => (lunr as any)[lang].tokenizer(x)));
       //};
+
       const lunrTokenizer = lunr.tokenizer;
       (this as any).tokenizer = function(x: any) {
+
         // Combine default English Lunr tokens with tokens obtained
         // from first language-specific tokenizer, deduplicating them
         const baseLunrTokens = lunrTokenizer(x);
@@ -736,8 +752,10 @@ export async function * generateVersion(
         }
         return tokens;
       };
+
       const lunrStopWordFilter = (lunr as any).stopWordFilter;
       (this as any).stopWordFilter = function(token: any) {
+
         return (
           lunrStopWordFilter(token)
           // If a token is a stop word in ANY of supported languages,
@@ -782,8 +800,12 @@ export async function * generateVersion(
       this.add(entry);
     }
   });
+
   indexProgress(null);
-  yield { '/search-index.json': encoder.encode(JSON.stringify(lunrIndex, null, 4)) };
+
+  yield {
+    '/search-index.json': encoder.encode(JSON.stringify(lunrIndex, null, 4)),
+  };
 }
 
 
@@ -831,7 +853,8 @@ export async function * generateStaticSiteAssets(
   // until ancient versions that may not have config of their own, which will
   // use currentConfig left over from the oldest version that has one.
   // TODO: Rename build config to something more suitable
-  let currentConfig: BuildConfig = configOverride ?? await readConfig(currentVersionID);
+  let currentConfig: BuildConfig =
+    configOverride ?? await readConfig(currentVersionID);
 
   configProgress(null);
 
