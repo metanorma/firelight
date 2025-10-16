@@ -800,8 +800,8 @@ function makeSectionContentGenerator(
         : undefined;
       const definition = findPartsOfType(section, subj, 'fmt-definition')[0];
 
-      if (!xrefLabel || !preferredContents || !definition) {
-        console.warn("Cannot represent a term without xref label, preferred & definition");
+      if (!preferredContents || !definition) {
+        console.warn("Cannot represent a term without preferred designation & definition");
         return undefined;
       }
 
