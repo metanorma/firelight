@@ -26,6 +26,7 @@
       word-break: auto-phrase;
       display: inline-flex;
       gap: .75em;
+      width: 100%;
 
       &::before {
         html:not([lang="ja"], [lang="ko"], [lang="zh"]) & {
