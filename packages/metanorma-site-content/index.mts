@@ -794,14 +794,19 @@ function makeSectionContentGenerator(
 
     'term': function (subj, state) {
       const xrefLabel = findPartsOfType(section, subj, 'fmt-xref-label')[0];
-      const preferred = findPartsOfType(section, subj, 'fmt-preferred')[0];
-      const preferredContents = preferred
-        ? findPartsOfType(section, preferred, 'paragraph')
-        : undefined;
       const definition = findPartsOfType(section, subj, 'fmt-definition')[0];
 
-      if (!preferredContents || !definition) {
-        console.warn("Cannot represent a term without preferred designation & definition");
+      if (!definition) {
+        console.warn("Cannot represent a term without a definition");
+        return undefined;
+      }
+
+      const preferredContents =
+        findPartsOfType(section, subj, 'semx').
+        filter(semx => findValue(section, semx, 'hasElement') === 'preferred'[0]);
+
+      if (!preferredContents) {
+        console.warn("Cannot represent a term without a preferred designation");
         return undefined;
       }
 
@@ -815,15 +820,23 @@ function makeSectionContentGenerator(
         filter(n => n !== undefined)
       );
 
-      const content = [
-        pm.node(
-          'term',
-          { preferred: true },
-          preferredContents.
-            flatMap(subj => generateContent(subj, pm.nodes.term!, state))
-        ),
+      const content: ProseMirrorNode[] = [];
+
+      if (preferredContents) {
+        content.push(
+          pm.node(
+            'term',
+            { preferred: true },
+            preferredContents.
+              flatMap(subj => generateContent(subj, pm.nodes.term!, state))
+          ),
+        );
+      }
+
+      content.push(
         pm.node('definition', null, definitionContent),
-      ];
+      );
+
       if (xrefLabel) {
         content.splice(0, 0, pm.node(
           'termXrefLabel',

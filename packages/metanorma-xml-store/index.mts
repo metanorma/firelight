@@ -351,6 +351,7 @@ const mod: StoreAdapterModule = {
               // These two are covered by the table located inside the fmt-provision
               requirement: 'bypass',
               'fmt-provision': 'bypass',
+              'fmt-preferred': 'bypass',
 
               stem: function processStem(el) {
                 return [
