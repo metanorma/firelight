@@ -837,6 +837,8 @@ function makeSectionContentGenerator(
         pm.node('definition', null, definitionContent),
       );
 
+      // TODO: Seems like fmt-name should be used instead
+      // https://github.com/metanorma/SWF-Corpus_and_IEEEP2874/issues/57#issuecomment-3383648148
       if (xrefLabel) {
         content.splice(0, 0, pm.node(
           'termXrefLabel',
