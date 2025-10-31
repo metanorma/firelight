@@ -794,21 +794,29 @@ function makeSectionContentGenerator(
 
     'term': function (subj, state) {
       const xrefLabel = findPartsOfType(section, subj, 'fmt-xref-label')[0];
+
+      // In case of some documents, this contains
+      // both designations AND definitions:
       const definition = findPartsOfType(section, subj, 'fmt-definition')[0];
 
+      // In case of other documents, fmt-definition does not contain
+      // designations, but fmt-preferred should:
+      const preferred = findPartsOfType(section, subj, 'fmt-preferred')[0];
+
+      // (If a document has neither fmt-preferred nor a designation inside
+      // fmt-definition, we can’t really know since we bypass any semx
+      // containers and don’t have access to them at this stage.)
+
       if (!definition) {
-        console.warn("Cannot represent a term without a definition");
+        console.warn(
+          "Cannot represent a term without a definition",
+          subj);
         return undefined;
       }
 
-      const preferredContents =
-        findPartsOfType(section, subj, 'semx').
-        filter(semx => findValue(section, semx, 'hasElement') === 'preferred'[0]);
-
-      if (!preferredContents) {
-        console.warn("Cannot represent a term without a preferred designation");
-        return undefined;
-      }
+      const preferredContents = preferred
+        ? findPartsOfType(section, preferred, 'paragraph')[0]
+        : undefined;
 
       const definitionContent =
         generateContent(definition, pm.nodes.definition!, state);
@@ -827,8 +835,7 @@ function makeSectionContentGenerator(
           pm.node(
             'term',
             { preferred: true },
-            preferredContents.
-              flatMap(subj => generateContent(subj, pm.nodes.term!, state))
+            generateContent(preferredContents, pm.nodes.term!, state)
           ),
         );
       }
