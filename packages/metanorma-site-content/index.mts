@@ -793,7 +793,7 @@ function makeSectionContentGenerator(
     // },
 
     'term': function (subj, state) {
-      const xrefLabel = findPartsOfType(section, subj, 'fmt-xref-label')[0];
+      const fmtName = findPartsOfType(section, subj, 'fmt-name')[0];
 
       // In case of some documents, this contains
       // both designations AND definitions:
@@ -844,13 +844,11 @@ function makeSectionContentGenerator(
         pm.node('definition', null, definitionContent),
       );
 
-      // TODO: Seems like fmt-name should be used instead
-      // https://github.com/metanorma/SWF-Corpus_and_IEEEP2874/issues/57#issuecomment-3383648148
-      if (xrefLabel) {
+      if (fmtName) {
         content.splice(0, 0, pm.node(
-          'termXrefLabel',
+          'termLabel',
           null,
-          generateContent(xrefLabel, pm.nodes.termXrefLabel!, state)),
+          generateContent(fmtName, pm.nodes.termLabel!, state)),
         );
       }
 

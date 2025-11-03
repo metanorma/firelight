@@ -269,7 +269,7 @@ const clauseSchemaBase = new Schema({
     // Terms clause doesn’t fit into DL/DT/DD schema,
     // because terms are not wrapped in a single root element.
     termWithDefinition: {
-      content: 'termXrefLabel? term* definition+ termSource*',
+      content: 'termLabel? term* definition+ termSource*',
       group: 'block',
       attrs: {
         resourceID: {
@@ -284,11 +284,11 @@ const clauseSchemaBase = new Schema({
       },
     },
 
-    // TODO: Simply use the ordinary xrefLabel?
-    termXrefLabel: {
+    // NOTE: ex. xref-label
+    termLabel: {
       content: '(text | flow)*',
       toDOM() {
-        return ['span', { class: classNames.termXrefLabel }, 0];
+        return ['span', { class: classNames.termLabel }, 0];
       },
     },
 
