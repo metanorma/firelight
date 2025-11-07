@@ -175,6 +175,7 @@ export function processResources(
   }
 
   let current: Element | null = doc.documentElement;
+  let previousSiblingURI: string | null = null;
   const currentChain: string[] = [repr(current)];
 
   const processed = new Set<Element>();
@@ -198,6 +199,7 @@ export function processResources(
     const firstChild: Element | null = current.firstElementChild;
     if (firstChild && !processed.has(firstChild) && rule !== 'ignore') {
       current = firstChild;
+      previousSiblingURI = null;
       currentChain.push(repr(firstChild));
     } else {
       // There are no child elements, or they were all processed.
@@ -209,6 +211,8 @@ export function processResources(
       } else {
         processed.add(current);
       }
+
+      const currentURI = getURI_(current);
 
       // If rule for processing this tag is not a simple string,
       // then run the rule function to obtain the actual rule
@@ -244,14 +248,17 @@ export function processResources(
             : rules;
 
           // Process current resource with obtained rules
+          if (previousSiblingURI && previousSiblingURI !== currentURI) {
+            localGraph.push([previousSiblingURI, 'hasNext', currentURI]);
+          }
           localGraph.push(
             ...processResource(current, getURI_, rules_)
           );
         }
-        const uri = getURI_(current);
+
         // Replace blank root subject with actual element URI in the graph
         const graph: RelationGraphAsList = localGraph.map(([s, p, o]) => [
-          s === ROOT_SUBJECT ? uri : s,
+          s === ROOT_SUBJECT ? currentURI : s,
           p,
           o,
         ]);
@@ -265,9 +272,11 @@ export function processResources(
       }
 
       if (current.nextElementSibling) {
+        previousSiblingURI = currentURI;
         currentChain.pop();
         currentChain.push(repr(current.nextElementSibling));
       } else if (current.parentElement) {
+        previousSiblingURI = null;
         currentChain.pop();
       }
 
