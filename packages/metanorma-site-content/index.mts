@@ -455,7 +455,7 @@ const generateCoverPage:
       // Probably unnecessary?
       ...titlesInOtherLanguages.
         map(([, titleText]) =>
-          pm.node('someOtherTitle', null, [pm.text(titleText)]),
+          pm.node('additionalTitle', null, [pm.text(titleText)]),
         ),
 
       pm.node('meta', null, [
