@@ -380,6 +380,7 @@ const generateCoverPage:
   const bibdata = relativeGraph(doc, bibdataID);
   const {
     hopefullyASuitableTitle,
+    titlesInOtherLanguages,
   } = getDocumentTitle(currentLanguage, bibdata);
 
   if (!hopefullyASuitableTitle?.[0] || !hopefullyASuitableTitle?.[1]) {
@@ -452,10 +453,10 @@ const generateCoverPage:
 
       // The rest of document titles, excluding the main one
       // Probably unnecessary?
-      // ...titlesInOtherLanguages.
-      //   map(([, titleText]) =>
-      //     pm.node('someOtherTitle', null, [pm.text(titleText)]),
-      //   ),
+      ...titlesInOtherLanguages.
+        map(([, titleText]) =>
+          pm.node('someOtherTitle', null, [pm.text(titleText)]),
+        ),
 
       pm.node('meta', null, [
         ...metaContent,
