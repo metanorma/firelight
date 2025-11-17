@@ -249,11 +249,14 @@ Containerized setup tips
 
 An example Dockerfile with TypeScript language server
 is bundled (see ``tsls.Dockerfile``). You can set up your IDE
-to build and run the container using a command like this::
+to build the container like this::
 
     podman build --build-arg "project_path=$REPO_ABSPATH" \
-      -f $DOCKERFILE_NAME -t "$DOCKER_IMAGE_NAME" . \
-    && podman container run \
+      -f $DOCKERFILE_NAME -t "$DOCKER_IMAGE_NAME" .
+
+And run the container like this::
+
+    podman container run \
       --cpus=1 --memory=4g \
       --interactive --rm --network=none \
       --workdir="$REPO_ABSPATH" --volume="$REPO_ABSPATH:$REPO_ABSPATH:rw" \
