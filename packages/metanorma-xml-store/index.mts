@@ -437,7 +437,7 @@ const mod: StoreAdapterModule = {
 
               'metanorma-extension': 'ignore',
               'localized-strings': 'ignore',
-              'presentation-metadata': 'ignore',
+              //'presentation-metadata': 'ignore',
             },
           }, opts);
         },
