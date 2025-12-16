@@ -207,7 +207,7 @@ const clauseSchemaBase = new Schema({
     footnote_cue: {
       inclusive: false,
       inline: true,
-      group: 'flow',
+      group: 'flow title_flow',
       content: 'resource_link',
       attrs: {
         resourceID: {
