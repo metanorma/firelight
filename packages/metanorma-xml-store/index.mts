@@ -117,11 +117,11 @@ function fmtTitleIsAProperTitle(fmtTitleEl: Element) {
 }
 
 /**
+ * Clauses that do not create hierarchy are “lifted” into parent clause.
  * Liftable clauses have no proper titles (other than possible clause number).
- *
- * Note: a clause without a proper title can only contain liftable subclauses.
+ * A clause without a proper title can only contain liftable subclauses.
  */
-function clauseIsFlat(el: Element, id: string) {
+function clauseCreatesHierarchy(el: Element, id: string) {
   if (!clauseHasProperTitle(el)) {
     const directDescendantClauseLikeElements: Element[] =
     Array.from(el.childNodes).filter(el =>
@@ -131,20 +131,20 @@ function clauseIsFlat(el: Element, id: string) {
     ) as Element[];
 
     if (directDescendantClauseLikeElements.length < 1) {
-      return true;
+      return false;
     } else {
       // A liftable clause having any non-liftable descendants
       // doesn’t compute.
-      if (directDescendantClauseLikeElements.find(el => !clauseIsFlat(el, id))) {
+      if (directDescendantClauseLikeElements.find(el => clauseCreatesHierarchy(el, id))) {
         throw new Error(
-          `Untitled clauses must not contain further descendant titled clauses, but this one apparently does: ${id}`
+          `A clause that does not create hierarchy must not have hierarchy-creating subclauses, but this one has: ${id}`
         );
       } else {
-        return true;
+        return false;
       }
     }
   }
-  return false;
+  return true;
 }
 
 const processClauseLike: CustomElementProcessor =
@@ -161,7 +161,7 @@ function processClauseLike(el: Element) {
     // rather than hasClauseIdentifier.
     // “Flat” subclauses are not suitable for, e.g., hierarchy levels,
     // instead their contents get inserted in the parent clause.
-    const createHierarchy = !clauseIsFlat(el, clauseIdentifier);
+    const createHierarchy = clauseCreatesHierarchy(el, clauseIdentifier);
     const predicate = createHierarchy
       ? 'hasClauseIdentifier'
       : 'hasFlatSubclauseIdentifier';
