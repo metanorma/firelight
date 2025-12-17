@@ -118,8 +118,21 @@ const clauseSchemaBase = new Schema({
     doc: {
       content: 'mainTitle additionalTitle* meta? block* footnotes?',
       parseDOM: [{ tag: 'article' }],
-      toDOM() {
-        return ['article', 0];
+      attrs: {
+        accentColour: {
+          default: '',
+        },
+      },
+      toDOM(node) {
+        const htmlAttrs = node.attrs.accentColour?.trim() !== ''
+          ? {
+              style: `
+                border-top-color: ${node.attrs.accentColour};
+                border-top-width: 4px;
+              `,
+            }
+          : {};
+        return ['article', htmlAttrs, 0];
       },
     },
     // title_flow:
