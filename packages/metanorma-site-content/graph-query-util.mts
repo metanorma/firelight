@@ -57,7 +57,15 @@ export function findPartsOfType(
     filter(part => findValue(graph, part, 'type') === type);
 }
 
-export function relativeGraph(relations: Readonly<RelationGraphAsList>, subj: string): Readonly<RelationGraphAsList> {
+/**
+ * Note: generated relative graph still contains relations from the original graph.
+ */
+export function relativeGraph(
+  /** Original graph. */
+  relations: Readonly<RelationGraphAsList>,
+  /** New root subject. */
+  subj: string,
+): Readonly<RelationGraphAsList> {
   return relations.
     filter(([s, ]) => s !== ROOT_SUBJECT).
     map(([s, p, o]) => [s === subj ? ROOT_SUBJECT : s, p, o]);
