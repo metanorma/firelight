@@ -435,8 +435,8 @@ const mod: StoreAdapterModule = {
 
               asciimath: 'ignore',
 
-              'metanorma-extension': 'ignore',
-              'localized-strings': 'ignore',
+              //'metanorma-extension': 'ignore',
+              'semantic-metadata': 'ignore',
               //'presentation-metadata': 'ignore',
             },
           }, opts);
