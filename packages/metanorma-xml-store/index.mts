@@ -134,11 +134,12 @@ function clauseCreatesHierarchy(el: Element, id: string) {
       return false;
     } else {
       // A liftable clause having any non-liftable descendants
-      // doesn’t compute.
+      // gets a separate page anyway.
       if (directDescendantClauseLikeElements.find(el => clauseCreatesHierarchy(el, id))) {
-        throw new Error(
-          `A clause that does not create hierarchy must not have hierarchy-creating subclauses, but this one has: ${id}`
-        );
+        return true;
+        //throw new Error(
+        //  `A clause that does not create hierarchy must not have hierarchy-creating subclauses, but this one has: ${id}`
+        //);
       } else {
         return false;
       }
