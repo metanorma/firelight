@@ -10,6 +10,7 @@ import {
   titleSchema,
   ROOT_SUBJECT,
   isURIString,
+  dedupeGraph,
 } from 'anafero/index.mjs';
 
 import nodeViews from './nodeViews.jsx';
@@ -358,6 +359,85 @@ const generatorsByType: Record<string, ContentGenerator> = {
 //   }
 // }
 
+function getPresentationMetadata(doc: Readonly<RelationGraphAsList>): {
+  accentColour?: string | undefined,
+  linkBlock?: {
+    title?: string | undefined,
+    links: [{ url: string, title: string }] & { url: string, title: string }[],
+  } | undefined,
+} {
+
+  // There can be multiple presentation-metadata containers
+  // (https://github.com/metanorma/mn-samples-plateau/issues/484)
+  const presentationMetadataIDs = doc.
+  filter(([s, p, o]) =>
+    o === 'presentation-metadata' && p === 'type'
+    &&
+    // Pick only presentation-metadata tags containing
+    // firelight-* tag as direct descendant.
+    doc.find(([s2, p, o]) =>
+      // this presentation-metadata has part:
+      s2 === s && p === 'hasPart' && doc.find(([s3, p, o2]) =>
+        // and the type of that part is firelight-*:
+        o === s3 && p === 'type' && o2.startsWith('firelight-')
+      )
+    )
+  );
+
+  const graph = dedupeGraph(
+    presentationMetadataIDs.
+    map(([s]) => relativeGraph(doc, s)).
+    reduce((prev, curr) => [...prev, ...curr], [])
+  );
+
+  const accentColourID = graph.
+  find(([, p, o]) => o === 'firelight-accent-colour' && p === 'type')?.[0];
+  const accentColour = accentColourID
+    ? (findValue(graph, accentColourID, 'hasPart') ?? undefined)
+    : undefined;
+
+  const linkBlockTitleID = graph.
+  find(([, p, o]) => o === 'firelight-link-block-title' && p === 'type')?.[0];
+  const linkBlockTitle = linkBlockTitleID
+    ? (findAll(graph, linkBlockTitleID, 'hasPart').join('') ?? undefined)
+    : undefined;
+
+  const linkKeyPrefix = 'firelight-link-';
+  const links = graph.
+  filter(([, p, o]) =>
+    o.startsWith(linkKeyPrefix)
+    && o.endsWith('-url')
+    && p === 'type'
+  ).
+  map(([, , o]) => {
+    const linkIdx = parseInt(
+      o.replace(linkKeyPrefix, '').replace('-url', ''),
+      10,
+    );
+    const subjects = [
+      graph.find(([, p, o]) => p === 'type' && o === `firelight-link-${linkIdx}-title`)?.[0],
+      graph.find(([, p, o]) => p === 'type' && o === `firelight-link-${linkIdx}-url`)?.[0],
+    ] as [string, string];
+    return subjects;
+  }).
+  filter(([title, url]) => title && url).
+  map(([title, url]) => ({
+    title: findAll(graph, title, 'hasPart').join(''),
+    url: findAll(graph, url, 'hasPart').join(''),
+  })) as [{ url: string, title: string }] & { url: string, title: string }[];
+
+  const linkBlock = links.length > 0
+    ? { links, title: linkBlockTitle }
+    : undefined;
+
+  //console.debug("Got meta", JSON.stringify({ accentColour, linkBlock }));
+
+  return {
+    accentColour,
+    linkBlock,
+  };
+}
+
 const generateCoverPage:
 (dlLinks: string[]) => ContentGenerator =
 (dlLinks) => function (doc) {
@@ -365,6 +445,7 @@ const generateCoverPage:
   if (!bibdataID) {
     throw new Error("Can’t generate content: document is missing bibdata");
   }
+
   const docid = getBibdataDocid(doc);
   if (!docid) {
     throw new Error("Can’t generate content: bibdata is missing docid");
@@ -441,6 +522,25 @@ const generateCoverPage:
     },
   };
 
+  const { accentColour, linkBlock } = getPresentationMetadata(doc);
+
+  const content = generateContent(ROOT_SUBJECT, pm.nodes.doc!, processorState);
+
+  if (linkBlock) {
+    if (linkBlock.title) {
+      content.push(pm.node('subheader', null, pm.text(linkBlock.title)));
+    }
+    content.push(
+      pm.node('bullet_list', null, linkBlock.links.map(link =>
+        pm.node('list_item', null, [
+          pm.node('paragraph', null, [
+            pm.node('external_link', { href: link.url }, pm.text(link.title)),
+          ]),
+        ]),
+      )),
+    );
+  }
+
   return {
     contentSchemaID: 'cover',
     primaryLanguageID: currentLanguage,
@@ -448,7 +548,7 @@ const generateCoverPage:
     title: titleSchema.node('doc', null, [
       titleSchema.text(hopefullyASuitableTitle[1]),
     ]).toJSON(),
-    contentDoc: pm.node('doc', null, [
+    contentDoc: pm.node('doc', { accentColour }, [
       pm.node('mainTitle', null, [pm.text(hopefullyASuitableTitle[1])]),
 
       // The rest of document titles, excluding the main one
@@ -473,7 +573,7 @@ const generateCoverPage:
         ),
       ]),
 
-      ...generateContent(ROOT_SUBJECT, pm.nodes.doc!, processorState),
+      ...content,
     ]).toJSON(),
   };
 };
