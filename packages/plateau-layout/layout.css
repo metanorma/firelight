@@ -85,9 +85,6 @@
 
     word-break: auto-phrase;
 
-    border-top-style: solid;
-    border-top-width: 0;
-
     > :first-child {
       padding-block-start: 0.83em;
       padding-block-end: 0.83em;
@@ -100,6 +97,9 @@
         179deg,
         var(--spectrum-alias-highlight-hover) 20px,
         transparent 5rem);
+
+      border-top-style: solid;
+      border-top-width: 0;
     }
     > :not(:first-child) {
       margin-left: 2rem !important;

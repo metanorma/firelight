@@ -118,6 +118,14 @@ const clauseSchemaBase = new Schema({
     doc: {
       content: 'mainTitle additionalTitle* meta? block* footnotes?',
       parseDOM: [{ tag: 'article' }],
+      toDOM() {
+        return ['article', 0];
+      },
+    },
+    // title_flow:
+    // code | linebreak | external_link | resource_link | strong | em | anchor | sup | math
+    mainTitle: {
+      content: '(text | title_flow)*',
       attrs: {
         accentColour: {
           default: '',
@@ -128,19 +136,11 @@ const clauseSchemaBase = new Schema({
           ? {
               style: `
                 border-top-color: ${node.attrs.accentColour};
-                border-top-width: 4px;
+                border-top-width: 20px;
               `,
             }
           : {};
-        return ['article', htmlAttrs, 0];
-      },
-    },
-    // title_flow:
-    // code | linebreak | external_link | resource_link | strong | em | anchor | sup | math
-    mainTitle: {
-      content: '(text | title_flow)*',
-      toDOM() {
-        return ['h1', { class: classNames.clauseTitle }, 0];
+        return ['h1', { class: classNames.clauseTitle, ...htmlAttrs }, 0];
       },
     },
 

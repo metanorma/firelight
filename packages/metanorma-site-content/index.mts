@@ -548,8 +548,8 @@ const generateCoverPage:
     title: titleSchema.node('doc', null, [
       titleSchema.text(hopefullyASuitableTitle[1]),
     ]).toJSON(),
-    contentDoc: pm.node('doc', { accentColour }, [
-      pm.node('mainTitle', null, [pm.text(hopefullyASuitableTitle[1])]),
+    contentDoc: pm.node('doc', null, [
+      pm.node('mainTitle', { accentColour }, [pm.text(hopefullyASuitableTitle[1])]),
 
       // The rest of document titles, excluding the main one
       // Probably unnecessary?
