@@ -229,6 +229,12 @@ const buildSite = Command.
                     encoding: 'utf-8',
                     signal: ac.signal,
                   });
+
+                  stream.on('error', function handleCacheDumpStreamError(e) {
+                    console.error("Error writing cache dump", e);
+                    reject(e);
+                  });
+
                   stream.on('close', function handleCloseCacheDumpStream() {
                     console.warn("Cache dump stream close event");
                     resolve(void 0);
@@ -243,11 +249,6 @@ const buildSite = Command.
                     cache.dump(stream, ac.signal).then(resolve, reject);
                   });
 
-                  stream.on('error', function handleCacheDumpStreamError(e) {
-                    console.error("Error writing cache dump", e);
-                    reject(e);
-                  });
-
                 } catch (e) {
                   console.error("Could not start cache dump stream", e);
                   reject(e);
@@ -255,6 +256,7 @@ const buildSite = Command.
                 }
               });
             }
+
             process.on('SIGINT', maybeDumpCache);
 
             render(<Processor rootTaskName="build site" onStart={generate} />);
