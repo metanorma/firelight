@@ -202,12 +202,23 @@ const buildSite = Command.
                 return;
               }
 
+              const ac = new AbortController();
+              const filename = 'cacheDump.txt';
+
+              function abortDumpCache() {
+                console.warn("Aborting cache dump");
+                process.removeListener('SIGTERM', abortDumpCache);
+                process.removeListener('SIGINT', abortDumpCache);
+                ac.abort();
+                reject("Aborted");
+              }
+
+              process.on('SIGTERM', abortDumpCache);
+              process.on('SIGINT', abortDumpCache);
+
               return new Promise((resolve, reject) => {
                 process.removeListener('SIGINT', maybeDumpCache);
                 dumping = true;
-
-                const ac = new AbortController();
-                const filename = 'cacheDump.txt';
 
                 try {
                   const stream = fs.createWriteStream(filename, {
@@ -226,17 +237,6 @@ const buildSite = Command.
                       console.warn("Exiting");
                     });
                   });
-
-                  function abortDumpCache() {
-                    console.warn("Aborting cache dump");
-                    process.removeListener('SIGTERM', abortDumpCache);
-                    process.removeListener('SIGINT', abortDumpCache);
-                    ac.abort();
-                    reject("Aborted");
-                  }
-
-                  process.on('SIGTERM', abortDumpCache);
-                  process.on('SIGINT', abortDumpCache);
 
                   stream.on('ready', function handleOpenCacheDumpStream() {
                     console.warn("Dumping cache due to debug flag");
