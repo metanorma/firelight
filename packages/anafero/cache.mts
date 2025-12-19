@@ -1,5 +1,3 @@
-import doInterruptibly from './util/interruptibleWork.mjs';
-
 /**
  *
  * This is geared towards relations, so each key stores an array
@@ -78,101 +76,101 @@ export function makeDummyInMemoryCache(): Cache {
       }
     },
     dump: async (stream, signal) => {
-
-      return new Promise((resolve, reject) => {
-        let aborted = false;
-
-        signal.addEventListener('abort', function handleAbortInCacheDump() {
-          aborted = true;
-        });
-
-        let keyPaths: (string | number)[][] = [];
-        const seen: Set<any> = new Set();
-
-        // Build a list of key paths, recursively
-        // then iterate through the list, 
-
-        async function buildKeypaths(
-          obj: Record<string, unknown> | Array<unknown>,
-          currentPath: (string | number)[],
-        ) {
-          if (aborted) {
-            throw new Error("Aborted");
-          }
-
-          for (const key of Object.keys(Object(obj))) {
-            const val = (obj as any)[key];
-            if (typeof val === 'string' || Object.keys(Object(val)).length === 0) {
-              keyPaths.push([...currentPath, key]);
-            } else {
-              const complexVal = val as Record<string, unknown> | Array<unknown>;
-              if (!seen.has(complexVal)) {
-                seen.add(complexVal);
-                await buildKeypaths(complexVal, [...currentPath, key]);
-              }
-            }
-          }
+      async function * buildKeypaths(
+        obj: Record<string, unknown> | Array<unknown>,
+        currentPath: (string | number)[],
+        seen: Set<any>,
+        paths: (string | number)[][],
+        signal: AbortController['signal'],
+      ): AsyncGenerator<(string | number)[]> {
+        if (signal.aborted) {
+          throw new Error("Aborted");
         }
 
-        async function writeKeyValue(idx: number): Promise<[string, boolean]> {
-          const keyPath = keyPaths[idx];
-          if (keyPath) {
-            const keyString = keyPath.join('.');
-            keyPath.reverse();
-            let valueCursor: any = cache;
-            while (true) {
-              let part = keyPath.pop();
-              if (part) {
-                valueCursor = valueCursor[part];
-              } else {
-                break;
-              }
-            }
-            return new Promise((resolve, ) => {
-              const s = `\n${JSON.stringify(keyString)}: ${valueCursor}`;
-              stream.write(
-                s,
-                function () {
-                  resolve([s, false]);
-                },
-              );
-            });
+        for (const key of Object.keys(Object(obj))) {
+          const val = (obj as any)[key];
+          if (typeof val === 'string' || Object.keys(Object(val)).length === 0) {
+            yield [...currentPath, key];
           } else {
-            // If there is no keypath at given index,
-            // assume we finished
-            return ['', true];
+            const complexVal = val as Record<string, unknown> | Array<unknown>;
+            if (!seen.has(complexVal)) {
+              seen.add(complexVal);
+              yield * buildKeypaths(
+                complexVal,
+                [...currentPath, key],
+                seen,
+                paths,
+                signal,
+              );
+            }
           }
         }
+      }
 
-        function handleError(e: any) {
-          return new Promise((_, reject) => {
-            console.error("Failed to dump cache", e);
-            stream.end(
-              `\n-- error writing cache: ${e} --`,
-              function () { reject(e) },
-            );
-          });
+      async function write(
+        data: string,
+        end?: true,
+      ): Promise<void> {
+        return new Promise((resolve, ) => {
+          if (end) {
+            stream.end(data, function () { resolve(); });
+          } else {
+            stream.write(data, function () { resolve(); });
+          }
+        });
+      }
+
+      function serializeKeypath(
+        idx: number,
+        keyPaths: (string | number)[][],
+      ): string | null {
+        const keyPath = keyPaths[idx];
+        if (keyPath) {
+          const keyString = keyPath.join('.');
+          keyPath.reverse();
+          let valueCursor: any = cache;
+          while (true) {
+            let part = keyPath.pop();
+            if (part) {
+              valueCursor = valueCursor[part];
+            } else {
+              break;
+            }
+          }
+          return `\n${JSON.stringify(keyString)}: ${valueCursor}`;
+        } else {
+          // If there is no keypath at given index,
+          // assume we finished
+          return null;
         }
+      }
 
-        buildKeypaths(cache, []).
-        then(() => new Promise((resolve, ) => {
-          stream.write("\n-- start --", function () { resolve(void 0) });
-        }), handleError).
-        then(() => {
-          return doInterruptibly(
-            writeKeyValue,
-            () => [null, true],
-            1000,
-            signal,
-          );
-        }, handleError).
-        then(() => {
-          stream.write("\n-- dump complete --", function () {
-            stream.end("\n-- end --", function () { resolve(void 0) });
-          });
+      const pathGen = buildKeypaths(cache, [], new Set(), [], signal);
+      const paths = [];
+      for await (const p of pathGen) {
+        paths.push(p);
+      }
 
-        }, reject);
-      });
+      await write(`\n-- starting dumping ${paths.length} paths --`);
+
+      let idx = 0;
+      const chunkSize = 1000;
+      let chunk = '';
+      while (true) {
+        if (idx > 0 && idx % chunkSize === 0) {
+          await write(chunk);
+          chunk = '';
+        }
+        const nextItem = serializeKeypath(idx, paths);
+        if (nextItem) {
+          chunk = chunk + nextItem;
+        } else {
+          break;
+        }
+        idx += 1;
+      }
+
+      return;
     },
   } as const;
 }
