@@ -250,7 +250,7 @@ const buildSite = Command.
                   });
 
                 } catch (e) {
-                  console.error("Cache dump could not be written!", e);
+                  console.error("Could not start cache dump stream", e);
                   reject(e);
                 } finally {
                 }
