@@ -156,21 +156,70 @@ const buildSite = Command.
             if (prefix && (!prefix.startsWith('/') || prefix.endsWith('/'))) {
               throw new Error("Path prefix must have a leading slash and no trailing slash");
             }
-            function maybeDumpCache() {
-              if (debug) {
+
+            let dumping = false;
+
+            async function maybeDumpCache() {
+              if (dumping || !debug) {
+                return;
+              }
+
+              return new Promise((resolve, reject) => {
+                process.removeListener('SIGINT', maybeDumpCache);
+                dumping = true;
+
+                const ac = new AbortController();
+                const filename = 'cacheDump.txt';
+
                 try {
-                  console.warn("Dumping cache to cacheDump.json");
-                  fs.writeFileSync(
-                    'cacheDump.json',
-                    JSON.stringify(cache.dump(), null, 2),
-                    { encoding: 'utf-8' },
-                  );
+                  const stream = fs.createWriteStream(filename, {
+                    flags: 'w',
+                    autoClose: true,
+                    emitClose: true,
+                    flush: true,
+                    encoding: 'utf-8',
+                    signal: ac.signal,
+                  });
+                  stream.on('close', function handleCloseCacheDumpStream() {
+                    console.warn("Cache dump stream close event");
+                    resolve(void 0);
+
+                    stream.close(function () {
+                      console.warn("Exiting");
+                      process.exit(1);
+                    });
+                  });
+
+                  function abortDumpCache() {
+                    console.warn("Aborting cache dump");
+                    process.removeListener('SIGTERM', abortDumpCache);
+                    process.removeListener('SIGINT', abortDumpCache);
+                    ac.abort();
+                    reject("Aborted");
+                  }
+
+                  process.on('SIGTERM', abortDumpCache);
+                  process.on('SIGINT', abortDumpCache);
+
+                  stream.on('ready', function handleOpenCacheDumpStream() {
+                    console.warn("Dumping cache due to debug flag");
+                    cache.dump(stream, ac.signal).then(resolve, reject);
+                  });
+
+                  stream.on('error', function handleCacheDumpStreamError(e) {
+                    console.error("Error writing cache dump", e);
+                    reject(e);
+                  });
+
                 } catch (e) {
                   console.error("Cache dump could not be written!", e);
+                  reject(e);
+                } finally {
                 }
-              }
+              });
             }
             process.on('SIGINT', maybeDumpCache);
+
             render(<Processor rootTaskName="build site" onStart={async function ({ onProgress }) {
               try {
                 const generator = generateSite(
@@ -198,12 +247,14 @@ const buildSite = Command.
                 }
                 writeProgress(null);
                 onProgress('build site', null);
+                await maybeDumpCache();
                 resolve(void 0);
               } catch (e) {
+                await maybeDumpCache();
                 reject(e);
               } finally {
-                maybeDumpCache();
-                process.removeListener('SIGINT', maybeDumpCache);
+                // Can’t have maybeDumpCache() here, because we want
+                // to call it before resolving/rejecting the promise.
               }
             }} />);
           }),
