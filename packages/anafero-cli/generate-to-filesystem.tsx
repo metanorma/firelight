@@ -224,7 +224,6 @@ const buildSite = Command.
 
                     stream.close(function () {
                       console.warn("Exiting");
-                      process.exit(1);
                     });
                   });
 
