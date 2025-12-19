@@ -159,6 +159,44 @@ const buildSite = Command.
 
             let dumping = false;
 
+            async function generate({ onProgress }: { onProgress: TaskProgressCallback }) {
+              try {
+                const generator = generateSite(
+                  {
+                    revision: unpackOption(revision)!,
+                    omitRevisionsNewerThanCurrent: unpackOption(omitRevisionsNewerThanCurrent)!,
+                    currentRevision: unpackOption(currentRevision)!,
+                  },
+                  (task, progress) => onProgress(`build site|${task}`, progress),
+                  cache,
+                  {
+                    pathPrefix: prefix,
+                    debug: {
+                      //dumpCache: debug || false,
+                      reactDevTools: debug || false,
+                      reactStrictMode: debug || false,
+                    },
+                  },
+                );
+                const [writeProgress, writingSubtask] = onProgress('build site|write files');
+                for await (const blobchunk of generator) {
+                  const [subtask] = writingSubtask(Object.keys(blobchunk).join(',').replaceAll('|', ':'), { state: 'writing' });
+                  await writeBlobs(targetDirectoryPath, blobchunk);
+                  subtask(null);
+                }
+                writeProgress(null);
+                onProgress('build site', null);
+                await maybeDumpCache();
+                resolve(void 0);
+              } catch (e) {
+                await maybeDumpCache();
+                reject(e);
+              } finally {
+                // Can’t have maybeDumpCache() here, because we want
+                // to call it before resolving/rejecting the promise.
+              }
+            }
+
             async function maybeDumpCache() {
               if (dumping || !debug) {
                 return;
@@ -220,43 +258,7 @@ const buildSite = Command.
             }
             process.on('SIGINT', maybeDumpCache);
 
-            render(<Processor rootTaskName="build site" onStart={async function ({ onProgress }) {
-              try {
-                const generator = generateSite(
-                  {
-                    revision: unpackOption(revision)!,
-                    omitRevisionsNewerThanCurrent: unpackOption(omitRevisionsNewerThanCurrent)!,
-                    currentRevision: unpackOption(currentRevision)!,
-                  },
-                  (task, progress) => onProgress(`build site|${task}`, progress),
-                  cache,
-                  {
-                    pathPrefix: prefix,
-                    debug: {
-                      //dumpCache: debug || false,
-                      reactDevTools: debug || false,
-                      reactStrictMode: debug || false,
-                    },
-                  },
-                );
-                const [writeProgress, writingSubtask] = onProgress('build site|write files');
-                for await (const blobchunk of generator) {
-                  const [subtask] = writingSubtask(Object.keys(blobchunk).join(',').replaceAll('|', ':'), { state: 'writing' });
-                  await writeBlobs(targetDirectoryPath, blobchunk);
-                  subtask(null);
-                }
-                writeProgress(null);
-                onProgress('build site', null);
-                await maybeDumpCache();
-                resolve(void 0);
-              } catch (e) {
-                await maybeDumpCache();
-                reject(e);
-              } finally {
-                // Can’t have maybeDumpCache() here, because we want
-                // to call it before resolving/rejecting the promise.
-              }
-            }} />);
+            render(<Processor rootTaskName="build site" onStart={generate} />);
           }),
           catch: (e) => {
             console.error(e);
