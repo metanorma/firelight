@@ -87,7 +87,8 @@ function getEdition(
 function getBibdataMainTitle(doc: Readonly<RelationGraphAsList>, lang?: string): string | undefined {
   const docids = resolveChain(doc, ['hasBibdata', 'hasTitle', 'hasPart']);
   return docids.find(([uri, ]) =>
-    findValue(doc, uri, 'hasType') === 'title-main' &&
+    findValue(doc, uri, 'type') === 'title' &&
+    findValue(doc, uri, 'hasType') === 'main' &&
     (!lang || findValue(doc, uri, 'hasLanguage') === lang)
   )?.[1] ?? docids[0]?.[1];
 }
