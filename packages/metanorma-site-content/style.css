@@ -69,12 +69,17 @@
   }
 }
 
-p.extraTitle {
+h2.extraTitle {
   text-align: left;
   /* Since extra title is optional, bottom margin should be the same as main title.
    * !important because article p from layout can override this. */
   margin-bottom: 30px !important;
+  font-weight: normal;
+  font-style: italic;
   word-break: auto-phrase;
+  margin: 0;
+  padding: 0;
+  margin-block-start: 0 !important;
   width: 75%;
 }
 

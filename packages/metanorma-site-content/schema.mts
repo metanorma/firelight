@@ -18,7 +18,7 @@ const metaNodes: SchemaSpec['nodes'] = {
   additionalTitle: {
     content: 'text*',
     toDOM() {
-      return ['p', { class: classNames.extraTitle }, 0];
+      return ['h2', { class: classNames.extraTitle }, 0];
     },
   },
   identifier: {
