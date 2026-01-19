@@ -7,6 +7,34 @@ import {
 } from './graph-query-util.mjs';
 
 
+export function getTitleOverride(
+  currentLanguage: string,
+  resource: Readonly<RelationGraphAsList>,
+): null | {
+  hopefullyASuitableTitle: [titleID: string, title: string],
+  titlesInOtherLanguages: [titleID: string, title: string][],
+} {
+  const [customTitleID, customTitleText] = resolveChain(
+    resource,
+    ['hasMetanormaExtension', 'hasPresentationMetadata', 'hasFirelightTitle', 'hasPart'],
+  )[0] ?? [null, null];
+  // IMPORTANT: customTitleID is technically incorrect
+  // because it identifies title’s part, not the title itself.
+  // However, we don’t use customTitleID as such.
+  // Perhaps it should be removed from the output.
+
+  if (customTitleID && customTitleText) {
+    return {
+      hopefullyASuitableTitle: [customTitleID, customTitleText],
+      titlesInOtherLanguages: [],
+    };
+  } else {
+    console.debug("Not found title override", customTitleID, customTitleText);
+    return null;
+  }
+}
+
+
 /**
  * Picks the most suitable title in current language,
  * along with titles in other languages.
@@ -111,10 +139,13 @@ function getMostFittingTitleID(
     {} as Record<string, number>,
   );
   const titleWithMostMatches = Object.keys(titleMatches).
-  reduce((title1, title2) =>
-    titleMatches[title1]! > titleMatches[title2]!
-      ? title1
-      : title2
+  reduce(
+    ((title1, title2) =>
+      titleMatches[title1]! > titleMatches[title2]!
+        ? title1
+        : title2
+    ),
+    '',
   );
   return titleWithMostMatches ?? titleIDs[0];
 }

@@ -30,6 +30,7 @@ import {
 } from './graph-query-util.mjs';
 
 import getDocumentTitle from './getDocumentTitle.mjs';
+import { getTitleOverride } from './getDocumentTitle.mjs';
 
 import type {
   Footnote,
@@ -463,7 +464,7 @@ const generateCoverPage:
   const {
     hopefullyASuitableTitle,
     titlesInOtherLanguages,
-  } = getDocumentTitle(currentLanguage, bibdata);
+  } = getTitleOverride(currentLanguage, doc) ?? getDocumentTitle(currentLanguage, bibdata);
 
   if (!hopefullyASuitableTitle?.[0] || !hopefullyASuitableTitle?.[1]) {
     throw new Error("Cannot generate cover page: missing main title in current language");
