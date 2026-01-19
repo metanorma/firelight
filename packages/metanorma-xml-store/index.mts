@@ -56,6 +56,17 @@ const TAGS_WITH_DIRECT_CHILDREN_NOT_AS_GENERIC_PARTS: string[] = [
   'tfoot',
   'tr',
   'bibitem',
+  'metanorma-extension',
+  'presentation-metadata',
+] as const;
+
+/*
+ * Top-level <metanorma> tag descendant that constitute document metadata,
+ * as opposed to document parts (clauses/sections).
+ */
+const METANORMA_DOCUMENT_METADATA_TAGS: string[] = [
+  'bibdata',
+  'metanorma-extension',
 ] as const;
 
 const TAGS_WITH_ALL_CHILDREN_NOT_AS_GENERIC_PARTS: string[] = [
@@ -294,7 +305,7 @@ const mod: StoreAdapterModule = {
                   [[ROOT_SUBJECT, 'type', 'document']],
                   {
                     getChildPredicate: (_, childEl) =>
-                      childEl.tagName === 'bibdata'
+                      METANORMA_DOCUMENT_METADATA_TAGS.includes(childEl.tagName as any)
                         ? tagNameToHasPredicate(childEl.tagName)
                         : 'hasPart',
                   },
