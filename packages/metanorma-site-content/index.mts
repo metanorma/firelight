@@ -30,7 +30,6 @@ import {
 } from './graph-query-util.mjs';
 
 import getDocumentTitle from './getDocumentTitle.mjs';
-import { getTitleOverride } from './getDocumentTitle.mjs';
 
 import type {
   Footnote,
@@ -86,10 +85,17 @@ function getEdition(
 }
 
 function getBibdataMainTitle(doc: Readonly<RelationGraphAsList>, lang?: string): string | undefined {
+  const docid = getBibdataDocid(doc);
+  const title = getDocumentTitle(null, doc, lang)?.hopefullyASuitableTitle[1];
+  if (docid && title) {
+    return `${docid} • ${title}`;
+  } else {
+    return undefined;
+  }
   const docids = resolveChain(doc, ['hasBibdata', 'hasTitle', 'hasPart']);
   return docids.find(([uri, ]) =>
     findValue(doc, uri, 'type') === 'title' &&
-    findValue(doc, uri, 'hasType') === 'main' &&
+    findValue(doc, uri, 'hasType') === 'title-main' &&
     (!lang || findValue(doc, uri, 'hasLanguage') === lang)
   )?.[1] ?? docids[0]?.[1];
 }
@@ -107,13 +113,19 @@ function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | 
     filter(([, type]) => type === 'title').
     map(([pID]) => pID);
 
-  const plainTitleID = plainTitleIDs[0];
+  return getDocumentTitle(
+    plainTitleIDs.length > 0 ? plainTitleIDs : null,
+    section,
+    undefined,
+  )?.hopefullyASuitableTitle[1] ?? undefined;
 
-  const titleText = plainTitleID
-    ? getTextContent(section, plainTitleID).join('')
-    : '';
+  //const plainTitleID = plainTitleIDs[0];
 
-  return titleText ?? undefined;
+  //const titleText = plainTitleID
+  //  ? getTextContent(section, plainTitleID).join('')
+  //  : '';
+
+  //return titleText ?? undefined;
 }
 
 
@@ -464,7 +476,18 @@ const generateCoverPage:
   const {
     hopefullyASuitableTitle,
     titlesInOtherLanguages,
-  } = getTitleOverride(currentLanguage, doc) ?? getDocumentTitle(currentLanguage, bibdata);
+  } = getDocumentTitle(null, bibdata, currentLanguage) ?? {
+    hopefullyASuitableTitle: ['', 'title not available', ''],
+    titlesInOtherLanguages: [],
+  };
+
+  const {
+    hopefullyASuitableTitle: introTitle,
+    titlesInOtherLanguages: introsInOtherLanguages,
+  } = getDocumentTitle(null, bibdata, currentLanguage, ['title-intro']) ?? {
+    hopefullyASuitableTitle: ['', '', ''],
+    titlesInOtherLanguages: [],
+  };
 
   if (!hopefullyASuitableTitle?.[0] || !hopefullyASuitableTitle?.[1]) {
     throw new Error("Cannot generate cover page: missing main title in current language");
@@ -543,6 +566,15 @@ const generateCoverPage:
     );
   }
 
+  const mainTitle = (introTitle && introTitle[1] !== '')
+    ? `${introTitle[1]}: ${hopefullyASuitableTitle[1]}`
+    : hopefullyASuitableTitle[1];
+
+  const extraTitles = titlesInOtherLanguages.map(([, title, lang]) => {
+    const intro = introsInOtherLanguages.find(([,, introLang]) => introLang === lang);
+    return (intro && intro[1] !== '') ? `${intro[1]}: ${title}` : title;
+  });
+
   return {
     contentSchemaID: 'cover',
     primaryLanguageID: currentLanguage,
@@ -551,12 +583,12 @@ const generateCoverPage:
       titleSchema.text(hopefullyASuitableTitle[1]),
     ]).toJSON(),
     contentDoc: pm.node('doc', null, [
-      pm.node('mainTitle', { accentColour }, [pm.text(hopefullyASuitableTitle[1])]),
+      pm.node('mainTitle', { accentColour }, [pm.text(mainTitle)]),
 
       // The rest of document titles, excluding the main one
       // Probably unnecessary?
-      ...titlesInOtherLanguages.
-        map(([, titleText]) =>
+      ...extraTitles.
+        map((titleText) =>
           pm.node('additionalTitle', null, [pm.text(titleText)]),
         ),
 

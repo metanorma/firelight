@@ -7,47 +7,25 @@ import {
 } from './graph-query-util.mjs';
 
 
-export function getTitleOverride(
-  currentLanguage: string,
-  resource: Readonly<RelationGraphAsList>,
-): null | {
-  hopefullyASuitableTitle: [titleID: string, title: string],
-  titlesInOtherLanguages: [titleID: string, title: string][],
-} {
-  const [customTitleID, customTitleText] = resolveChain(
-    resource,
-    ['hasMetanormaExtension', 'hasPresentationMetadata', 'hasFirelightTitle', 'hasPart'],
-  )[0] ?? [null, null];
-  // IMPORTANT: customTitleID is technically incorrect
-  // because it identifies title’s part, not the title itself.
-  // However, we don’t use customTitleID as such.
-  // Perhaps it should be removed from the output.
-
-  if (customTitleID && customTitleText) {
-    return {
-      hopefullyASuitableTitle: [customTitleID, customTitleText],
-      titlesInOtherLanguages: [],
-    };
-  } else {
-    console.debug("Not found title override", customTitleID, customTitleText);
-    return null;
-  }
-}
-
-
 /**
  * Picks the most suitable title in current language,
  * along with titles in other languages.
  */
 export default function getDocumentTitle(
-  currentLanguage: string,
+  /**
+   * Title IDs to choose from.
+   * If not defined, will obtain from bibdata graph’s `hasTitle`.
+   */
+  titles_: string[] | null,
   bibdata: Readonly<RelationGraphAsList>,
-): {
-  hopefullyASuitableTitle: [titleID: string, title: string],
-  titlesInOtherLanguages: [titleID: string, title: string][],
+  forLanguage: string | undefined,
+  requiredType?: string[],
+): undefined | {
+  hopefullyASuitableTitle: [titleID: string, title: string, lang: string],
+  titlesInOtherLanguages: [titleID: string, title: string, lang: string][],
 } {
   // Find non-empty titles
-  const titles = resolveChain(bibdata, ['hasTitle']).
+  const titles = titles_ ?? resolveChain(bibdata, ['hasTitle']).
   map(([, titleID]) => titleID).
   filter(titleID =>
     // NOTE: This is inefficiently later called again
@@ -55,19 +33,28 @@ export default function getDocumentTitle(
     getTextContent(bibdata, titleID).join('').trim() !== ''
   );
 
-  // Find titles in current language
-  const titlesInCurrentLanguage = titles.filter(titleID =>
-    findValue(bibdata, titleID, 'hasLanguage') === currentLanguage
-  );
-
   const maybeCandidateInCurrentLanguage = getMostFittingTitleID(
-    'main', 'text/plain', titlesInCurrentLanguage, bibdata,
+    requiredType ?? ['title-part', 'title-main'],
+    ['text/plain'],
+    forLanguage ? [forLanguage] : [],
+    titles,
+    bibdata,
   );
 
-  const finalCandidate = maybeCandidateInCurrentLanguage
-  ?? getMostFittingTitleID(
-    'main', 'text/plain', titles, bibdata,
-  );
+  const chosenType = maybeCandidateInCurrentLanguage
+    ? findValue(bibdata, maybeCandidateInCurrentLanguage, 'hasType')
+    : undefined;
+  if (chosenType && requiredType && !requiredType.includes(chosenType)) {
+    return undefined;
+  }
+
+  //const finalCandidate = maybeCandidateInCurrentLanguage
+  //?? getMostFittingTitleID(
+  //  ['title-part', 'title-main'],
+  //  ['text/plain'],
+  //  titles,
+  //  bibdata,
+  //);
 
   const titlesInOtherLanguages = maybeCandidateInCurrentLanguage
     ? Object.entries(
@@ -77,8 +64,8 @@ export default function getDocumentTitle(
           findValue(bibdata, titleID, 'hasLanguage'),
         ] as [titleID: string, lang: string | undefined]).
         filter(([titleID, lang]) =>
-          lang !== currentLanguage &&
-          titleID !== finalCandidate
+          lang !== forLanguage &&
+          titleID !== maybeCandidateInCurrentLanguage
         ).
         reduce((prev, curr) => ({
           ...prev,
@@ -87,23 +74,29 @@ export default function getDocumentTitle(
         }), {} as Record<string, string[]>)).
       map(([, titleIDs]) => {
         const candidate = getMostFittingTitleID(
-          'main', 'text/plain', titleIDs, bibdata,
+          ['title-part', 'title-main'], ['text/plain'], [], titleIDs, bibdata,
         );
-        return [
-          candidate,
-          getTextContent(bibdata, candidate).join(''),
-        ] as [string, string];
-      })
+        if (candidate) {
+          return [
+            candidate,
+            getTextContent(bibdata, candidate).join(''),
+            findValue(bibdata, candidate, 'hasLanguage') ?? '',
+          ] as [string, string, string];
+        } else {
+          return null;
+        }
+      }).
+      filter(v => v !== null)
     : [];
 
-  if (!finalCandidate) {
-    console.error("Couldn’t find a title", JSON.stringify({ titlesInCurrentLanguage, titles }));
-    throw new Error("Couldn’t find a title");
+  if (!maybeCandidateInCurrentLanguage) {
+    return undefined;
   } else {
     return {
       hopefullyASuitableTitle: [
-        finalCandidate,
-        getTextContent(bibdata, finalCandidate).join(''),
+        maybeCandidateInCurrentLanguage,
+        getTextContent(bibdata, maybeCandidateInCurrentLanguage).join(''),
+        findValue(bibdata, maybeCandidateInCurrentLanguage, 'hasLanguage') ?? '',
       ],
       titlesInOtherLanguages,
     };
@@ -113,39 +106,41 @@ export default function getDocumentTitle(
 /**
  * Among a list of titles, finds the one that ticks the most boxes:
  *
- * - preferred type (MN specific, e.g., 'title-main')
+ * - preferred type (e.g., 'title-main')
  * - preferred format (e.g., 'text/plain')
- *
- * Or, returns the first title available.
+ * - preferred language (e.g., 'ja')
  */
 function getMostFittingTitleID(
-  preferredType: string,
-  preferredFormat: string,
+  preferredTypes: string[],
+  supportedFormats: string[],
+  preferredLanguages: string[],
   titleIDs: string[],
-  bibdata: Readonly<RelationGraphAsList>,
-): string {
-  // I’m sure there’s a better way…
-  const sets = [
-    titleIDs.filter(titleID =>
-      findValue(bibdata, titleID, 'hasType') === preferredType
-    ),
-    titleIDs.filter(titleID =>
-      findValue(bibdata, titleID, 'hasFormat') === preferredFormat
-    ),
-  ];
-  const titleMatches = sets.flat().
-  reduce(
-    (prev, curr) => ({ ...prev, [curr]: (prev[curr] ?? 0) + 1 }),
-    {} as Record<string, number>,
-  );
-  const titleWithMostMatches = Object.keys(titleMatches).
-  reduce(
-    ((title1, title2) =>
-      titleMatches[title1]! > titleMatches[title2]!
-        ? title1
-        : title2
-    ),
-    '',
-  );
-  return titleWithMostMatches ?? titleIDs[0];
+  graph: Readonly<RelationGraphAsList>,
+): string | undefined {
+
+  if (titleIDs.length < 1) {
+    return undefined;
+  }
+
+  const titlesMatchingFormat = supportedFormats.
+  map(f => titleIDs.filter(id => findValue(graph, id, 'hasFormat') === f)).
+  reduce((prev, curr) => [...prev, ...curr], []);
+
+  const supportedTitleIDs = titlesMatchingFormat.length > 0
+    ? titlesMatchingFormat
+    : titleIDs;
+
+  const titlesMatchingType = preferredTypes.
+  map(t => supportedTitleIDs.filter(id => findValue(graph, id, 'hasType') === t)).
+  reduce((prev, curr) => [...prev, ...curr], []);
+
+  const supportedTitleIDs2 = titlesMatchingType.length > 0
+    ? titlesMatchingType
+    : supportedTitleIDs;
+
+  const fittingLanguage = preferredLanguages.
+  map(l => supportedTitleIDs2.filter(id => findValue(graph, id, 'hasLanguage') === l)).
+  reduce((prev, curr) => [...prev, ...curr], []);
+
+  return fittingLanguage[0] ?? supportedTitleIDs2[0];
 }
