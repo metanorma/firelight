@@ -74,8 +74,18 @@ export default function getDocumentTitle(
         }), {} as Record<string, string[]>)).
       map(([, titleIDs]) => {
         const candidate = getMostFittingTitleID(
-          ['title-part', 'title-main'], ['text/plain'], [], titleIDs, bibdata,
+          requiredType ?? ['title-part', 'title-main'],
+          ['text/plain'],
+          [],
+          titleIDs,
+          bibdata,
         );
+        const chosenType = candidate
+          ? findValue(bibdata, candidate, 'hasType')
+          : undefined;
+        if (chosenType && requiredType && !requiredType.includes(chosenType)) {
+          return null;
+        }
         if (candidate) {
           return [
             candidate,
