@@ -567,12 +567,12 @@ const generateCoverPage:
   }
 
   const mainTitle = (introTitle && introTitle[1] !== '')
-    ? `${introTitle[1]}: ${hopefullyASuitableTitle[1]}`
+    ? `${introTitle[1]} — ${hopefullyASuitableTitle[1]}`
     : hopefullyASuitableTitle[1];
 
   const extraTitles = titlesInOtherLanguages.map(([, title, lang]) => {
     const intro = introsInOtherLanguages.find(([,, introLang]) => introLang === lang);
-    return (intro && intro[1] !== '') ? `${intro[1]}: ${title}` : title;
+    return (intro && intro[1] !== '') ? `${intro[1]} — ${title}` : title;
   });
 
   return {
