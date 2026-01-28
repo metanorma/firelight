@@ -54,6 +54,12 @@ export const BuildConfigSchema = S.Struct({
   entryPoint: S.String.pipe(S.nonEmptyString()),
 
   /**
+   * Workspace title.
+   * If not provided, “document ID • document title” is used.
+   */
+  workspaceTitle: S.String.pipe(S.nonEmptyString()).pipe(S.optional),
+
+  /**
    * Which reader modules to use.
    *
    * URI. Supported protocols: file:, in future git:.

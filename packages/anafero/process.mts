@@ -402,7 +402,7 @@ export async function * generateVersion(
 
   const maybePrimaryLanguageID = rootMeta.primaryLanguageID ?? 'en';
 
-  const maybeMainTitle = rootMeta.labelInPlainText ?? "Document";
+  const maybeMainTitle = cfg.workspaceTitle ?? rootMeta.labelInPlainText ?? "Document";
 
   // TODO: Implicitly including English is not good?
   const allLanguages: Set<string> = new Set(['en']);
