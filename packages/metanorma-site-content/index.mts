@@ -477,14 +477,21 @@ const generateCoverPage:
     hopefullyASuitableTitle,
     titlesInOtherLanguages,
   } = getDocumentTitle(null, bibdata, currentLanguage) ?? {
-    hopefullyASuitableTitle: ['', 'title not available', ''],
+    hopefullyASuitableTitle: ['', 'title not available', '', ''],
     titlesInOtherLanguages: [],
   };
+
+  const chosenTitleType = hopefullyASuitableTitle[3];
 
   const {
     hopefullyASuitableTitle: introTitle,
     titlesInOtherLanguages: introsInOtherLanguages,
-  } = getDocumentTitle(null, bibdata, currentLanguage, ['title-intro']) ?? {
+  } = getDocumentTitle(
+    null,
+    bibdata,
+    currentLanguage,
+    [chosenTitleType === 'title-part' ? 'title-main' : 'title-intro'],
+  ) ?? {
     hopefullyASuitableTitle: ['', '', ''],
     titlesInOtherLanguages: [],
   };

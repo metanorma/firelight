@@ -21,8 +21,8 @@ export default function getDocumentTitle(
   forLanguage: string | undefined,
   requiredType?: string[],
 ): undefined | {
-  hopefullyASuitableTitle: [titleID: string, title: string, lang: string],
-  titlesInOtherLanguages: [titleID: string, title: string, lang: string][],
+  hopefullyASuitableTitle: [titleID: string, title: string, lang: string, type: string],
+  titlesInOtherLanguages: [titleID: string, title: string, lang: string, type: string][],
 } {
   // Find non-empty titles
   const titles = titles_ ?? resolveChain(bibdata, ['hasTitle']).
@@ -91,7 +91,8 @@ export default function getDocumentTitle(
             candidate,
             getTextContent(bibdata, candidate).join(''),
             findValue(bibdata, candidate, 'hasLanguage') ?? '',
-          ] as [string, string, string];
+            chosenType,
+          ] as [string, string, string, string];
         } else {
           return null;
         }
@@ -107,6 +108,7 @@ export default function getDocumentTitle(
         maybeCandidateInCurrentLanguage,
         getTextContent(bibdata, maybeCandidateInCurrentLanguage).join(''),
         findValue(bibdata, maybeCandidateInCurrentLanguage, 'hasLanguage') ?? '',
+        chosenType ?? '',
       ],
       titlesInOtherLanguages,
     };
