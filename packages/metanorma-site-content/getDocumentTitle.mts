@@ -16,10 +16,10 @@ import {
 export default function getDocumentTitle(
   /**
    * Title IDs to choose from.
-   * If not defined, will obtain from bibdata graph’s `hasTitle`.
+   * If not defined, will obtain from graph’s `hasTitle`.
    */
   titles_: string[] | null,
-  bibdata: Readonly<RelationGraphAsList>,
+  graph: Readonly<RelationGraphAsList>,
   forLanguage: string | undefined,
   requiredType?: string[],
 ): undefined | {
@@ -27,12 +27,12 @@ export default function getDocumentTitle(
   titlesInOtherLanguages: [titleID: string, title: string, lang: string, type: string][],
 } {
   // Find non-empty titles
-  const titles = titles_ ?? resolveChain(bibdata, ['hasTitle']).
+  const titles = titles_ ?? resolveChain(graph, ['hasTitle']).
   map(([, titleID]) => titleID).
   filter(titleID =>
     // NOTE: This is inefficiently later called again
     // for the selected title
-    getTextContent(bibdata, titleID).join('').trim() !== ''
+    getTextContent(graph, titleID).join('').trim() !== ''
   );
 
   const maybeCandidateInCurrentLanguage = getMostFittingTitleID(
@@ -40,11 +40,11 @@ export default function getDocumentTitle(
     ['text/plain'],
     forLanguage ? [forLanguage] : [],
     titles,
-    bibdata,
+    graph,
   );
 
   const chosenType = maybeCandidateInCurrentLanguage
-    ? findValue(bibdata, maybeCandidateInCurrentLanguage, 'hasType')
+    ? findValue(graph, maybeCandidateInCurrentLanguage, 'hasType')
     : undefined;
   if (chosenType && requiredType && !requiredType.includes(chosenType)) {
     return undefined;
@@ -55,7 +55,7 @@ export default function getDocumentTitle(
   //  ['title-part', 'title-main'],
   //  ['text/plain'],
   //  titles,
-  //  bibdata,
+  //  graph,
   //);
 
   const titlesInOtherLanguages = maybeCandidateInCurrentLanguage
@@ -63,7 +63,7 @@ export default function getDocumentTitle(
         titles.
         map(titleID => [
           titleID,
-          findValue(bibdata, titleID, 'hasLanguage'),
+          findValue(graph, titleID, 'hasLanguage'),
         ] as [titleID: string, lang: string | undefined]).
         filter(([titleID, lang]) =>
           lang !== forLanguage &&
@@ -80,10 +80,10 @@ export default function getDocumentTitle(
           ['text/plain'],
           [],
           titleIDs,
-          bibdata,
+          graph,
         );
         const chosenType = candidate
-          ? findValue(bibdata, candidate, 'hasType')
+          ? findValue(graph, candidate, 'hasType')
           : undefined;
         if (chosenType && requiredType && !requiredType.includes(chosenType)) {
           return null;
@@ -91,8 +91,8 @@ export default function getDocumentTitle(
         if (candidate) {
           return [
             candidate,
-            getTextContent(bibdata, candidate).join(''),
-            findValue(bibdata, candidate, 'hasLanguage') ?? '',
+            getTextContent(graph, candidate).join(''),
+            findValue(graph, candidate, 'hasLanguage') ?? '',
             chosenType,
           ] as [string, string, string, string];
         } else {
@@ -108,8 +108,8 @@ export default function getDocumentTitle(
     return {
       hopefullyASuitableTitle: [
         maybeCandidateInCurrentLanguage,
-        getTextContent(bibdata, maybeCandidateInCurrentLanguage).join(''),
-        findValue(bibdata, maybeCandidateInCurrentLanguage, 'hasLanguage') ?? '',
+        getTextContent(graph, maybeCandidateInCurrentLanguage).join(''),
+        findValue(graph, maybeCandidateInCurrentLanguage, 'hasLanguage') ?? '',
         chosenType ?? '',
       ],
       titlesInOtherLanguages,
