@@ -1003,6 +1003,19 @@ function makeSectionContentGenerator(
         )
       ));
 
+      const nestedTerms = findPartsOfType(section, subj, 'term');
+      if (nestedTerms.length > 0) {
+        for (const nestedTerm of nestedTerms) {
+          const node = this.term?.(nestedTerm, state);
+          const nodes = (Array.isArray(node) ? node : [node]).
+          filter(n => n !== undefined);
+
+          if (node) {
+            content.push(...nodes);
+          }
+        }
+      }
+
       return pm.node(
         'termWithDefinition',
         { resourceID: subj },

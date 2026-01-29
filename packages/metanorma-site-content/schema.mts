@@ -282,7 +282,7 @@ const clauseSchemaBase = new Schema({
     // Terms clause doesn’t fit into DL/DT/DD schema,
     // because terms are not wrapped in a single root element.
     termWithDefinition: {
-      content: 'termLabel? term* definition+ termSource*',
+      content: 'termLabel? term* definition+ termSource* termWithDefinition*',
       group: 'block',
       attrs: {
         resourceID: {
