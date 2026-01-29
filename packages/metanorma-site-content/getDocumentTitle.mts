@@ -10,6 +10,8 @@ import {
 /**
  * Picks the most suitable title in current language,
  * along with titles in other languages.
+ *
+ * For now only returns plain text as title content.
  */
 export default function getDocumentTitle(
   /**
