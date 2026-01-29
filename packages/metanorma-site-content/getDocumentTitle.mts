@@ -16,9 +16,12 @@ import {
 export default function getDocumentTitle(
   /**
    * Title IDs to choose from.
-   * If not defined, will obtain from graph’s `hasTitle`.
+   * If not defined, will obtain from bibdata graph’s `hasTitle`.
+   * This requires that given graph is bibdata graph.
+   * If provided graph is, e.g., a clause, then title IDs to choose from
+   * must be provided.
    */
-  titles_: string[] | null,
+  fromTitles: string[] | null,
   graph: Readonly<RelationGraphAsList>,
   forLanguage: string | undefined,
   requiredType?: string[],
@@ -27,7 +30,7 @@ export default function getDocumentTitle(
   titlesInOtherLanguages: [titleID: string, title: string, lang: string, type: string][],
 } {
   // Find non-empty titles
-  const titles = titles_ ?? resolveChain(graph, ['hasTitle']).
+  const titles = fromTitles ?? resolveChain(graph, ['hasTitle']).
   map(([, titleID]) => titleID).
   filter(titleID =>
     // NOTE: This is inefficiently later called again
