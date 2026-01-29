@@ -7,6 +7,17 @@ import {
 } from './graph-query-util.mjs';
 
 
+interface ObtainedTitle {
+  /** Subject ID. */
+  subject: string;
+  /** Plain-text content of the title. */
+  content: string;
+  language?: string | undefined;
+  /** E.g., title-main, title-part, title-intro. */
+  type?: string | undefined;
+}
+
+
 /**
  * Picks the most suitable title in current language,
  * along with titles in other languages.
@@ -26,8 +37,8 @@ export default function getDocumentTitle(
   forLanguage: string | undefined,
   requiredType?: string[],
 ): undefined | {
-  hopefullyASuitableTitle: [titleID: string, title: string, lang: string, type: string],
-  titlesInOtherLanguages: [titleID: string, title: string, lang: string, type: string][],
+  mainTitle: ObtainedTitle,
+  titlesInOtherLanguages: ObtainedTitle[],
 } {
   // Find non-empty titles
   const titles = fromTitles ?? resolveChain(graph, ['hasTitle']).
@@ -92,12 +103,12 @@ export default function getDocumentTitle(
           return null;
         }
         if (candidate) {
-          return [
-            candidate,
-            getTextContent(graph, candidate).join(''),
-            findValue(graph, candidate, 'hasLanguage') ?? '',
-            chosenType,
-          ] as [string, string, string, string];
+          return {
+            subject: candidate,
+            content: getTextContent(graph, candidate).join(''),
+            language: findValue(graph, candidate, 'hasLanguage') ?? undefined,
+            type: chosenType ?? undefined,
+          };
         } else {
           return null;
         }
@@ -109,12 +120,12 @@ export default function getDocumentTitle(
     return undefined;
   } else {
     return {
-      hopefullyASuitableTitle: [
-        maybeCandidateInCurrentLanguage,
-        getTextContent(graph, maybeCandidateInCurrentLanguage).join(''),
-        findValue(graph, maybeCandidateInCurrentLanguage, 'hasLanguage') ?? '',
-        chosenType ?? '',
-      ],
+      mainTitle: {
+        subject: maybeCandidateInCurrentLanguage,
+        content: getTextContent(graph, maybeCandidateInCurrentLanguage).join(''),
+        language: findValue(graph, maybeCandidateInCurrentLanguage, 'hasLanguage') ?? undefined,
+        type: chosenType ?? undefined,
+      },
       titlesInOtherLanguages,
     };
   }
