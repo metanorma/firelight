@@ -205,12 +205,12 @@ Known issues
 - Language support is limited. For now, tested with Japanese, English, French.
   The elements of the GUI are only in English for now.
 
-- Certain page contents, like MathML, are supported in degraded mode.
+- MathML causes resources to be displayed in degraded mode.
 
-  (ProseMirror node views are not initialized, since React ProseMirror
+  ProseMirror node views don’t get initialized, as React ProseMirror
   library does not allow DOM nodes returned from ``toDOM()``,
   and for now PM schema does not handle converting MathML markup
-  to PM array node spec.)
+  to PM array node spec.
 
 - GHA only: LFS resolution for version other than current may be broken.
   It is required to specify ``with: { lfs: true }`` for the checkout step,
