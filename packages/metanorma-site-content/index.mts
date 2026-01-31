@@ -975,7 +975,7 @@ function makeSectionContentGenerator(
           pm.node(
             'term',
             { preferred: true },
-            generateContent(preferredContents, pm.nodes.term!, state)
+            generateContent(preferredContents, pm.nodes.term!, state),
           ),
         );
       }
