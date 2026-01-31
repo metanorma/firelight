@@ -3,9 +3,10 @@ import {
   ROOT_SUBJECT,
   resolveChain,
   getTextContent,
+  findValue,
 } from 'anafero/index.mjs';
 
-export { resolveChain, getTextContent };
+export { resolveChain, getTextContent, findValue };
 
 //function findAtRoot(relations: Readonly<RelationGraphAsList>, predicate: string): string | null {
 //  return findValue(relations, '_:root', predicate);
@@ -14,17 +15,6 @@ export { resolveChain, getTextContent };
 
 // TODO: Some of these may be moved into the core and provided as helpers
 
-/**
- * Returns the target of first found relation
- * of given subject via given predicate.
- */
-export function findValue(
-  relations: Readonly<RelationGraphAsList>,
-  subj: string,
-  pred: string,
-): string | null {
-  return relations.find(([s, p, ]) => s === subj && p === pred)?.[2] ?? null;
-}
 /**
  * Returns all targets of any relations found
  * from given subject via given predicate (or any of them, if is a list).

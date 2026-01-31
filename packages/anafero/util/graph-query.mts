@@ -1,6 +1,18 @@
 import type { RelationGraphAsList } from '../relations.mjs';
 import { isURIString } from '../URI.mjs';
 
+/**
+ * Returns the target of first found relation
+ * of given subject via given predicate.
+ */
+export function findValue(
+  relations: Readonly<RelationGraphAsList>,
+  subj: string,
+  pred: string,
+): string | null {
+  return relations.find(([s, p, ]) => s === subj && p === pred)?.[2] ?? null;
+}
+
 
 /**
  * Given a chain of predicates like `[hasLanguage, hasText]`,
