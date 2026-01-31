@@ -511,6 +511,14 @@ const clauseSchemaBase = new Schema({
         return ['sup', 0];
       },
     },
+    s: {
+      group: 'flow title_flow',
+      content: '(text | flow)*',
+      inline: true,
+      toDOM() {
+        return ['s', 0];
+      },
+    },
     underline: {
       group: 'flow title_flow',
       content: '(text | flow)*',

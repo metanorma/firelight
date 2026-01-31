@@ -689,6 +689,7 @@ function makeSectionContentGenerator(
     // TODO: Figure out what to do with underlines. <u> isn’t fit
     'underline': 'underline',
     'strong': 'strong',
+    'strike': 's',
     'em': 'em',
     'sup': 'sup',
     'bookmark': 'anchor',
