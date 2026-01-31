@@ -993,24 +993,24 @@ function makeSectionContentGenerator(
         tags.push(type);
       }
 
-      // Body of the admonition is everything except fmt-xref-label and fmt-name
+      // Body of the admonition is everything except fmt-name
       const contents: ProseMirrorNode[] = findAll(section, subj, 'hasPart').
         map(part => [part, findValue(section, part, 'type')]).
         filter(([, partType]) => {
-          return partType && ['fmt-xref-label', 'fmt-name'].indexOf(partType) < 0;
+          return partType && ['fmt-name'].indexOf(partType) < 0;
         }).
         flatMap(([part, partType]) => makeNodeOrNot(part!, partType!, state)).
         filter(n => n !== undefined);
 
       // Only take the first xref label
       // (which will be admonition type, i.e. “note”)
-      const xrefLabels = findPartsOfType(section, subj, 'fmt-xref-label').slice(0, 1);
-      xrefLabels.reverse();
-      for (const xrefLabel of xrefLabels) {
+      const blockLabels = findPartsOfType(section, subj, 'fmt-name').slice(0, 1);
+      blockLabels.reverse();
+      for (const label of blockLabels) {
         contents.splice(0, 0, pm.node(
-          'xrefLabel',
+          'blockLabel',
           null,
-          generateContent(xrefLabel, pm.nodes.xrefLabel!, state),
+          generateContent(label, pm.nodes.blockLabel!, state),
         ));
       }
 
@@ -1072,11 +1072,11 @@ function makeSectionContentGenerator(
       //const caption = name ? findValue(section, name, 'hasPart') : null;
 
       const xrefLabel = findValue(section, subj, 'hasFmtXrefLabel');
-      const xrefLabelContent = xrefLabel
-        ? generateContent(xrefLabel, pm.nodes.xrefLabel!, state)
+      const fnLabelContent = xrefLabel
+        ? generateContent(xrefLabel, pm.nodes.paragraph!, state)
         : null;
-      const newFootnoteScope = xrefLabelContent
-        ? xrefLabelContent.map(n => n.textContent).join('')
+      const newFootnoteScope = fnLabelContent
+        ? fnLabelContent.map(n => n.textContent).join('')
         : null;
 
       if (!newFootnoteScope) {

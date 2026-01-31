@@ -96,7 +96,7 @@ article.bibitem {
   margin: 0 0 .5em 0;
 }
 
-.xrefLabel {
+.blockLabel {
   margin: 0 .75em 0 0;
   transform: translateX(-.5em);
   /*font-size: 80%;*/

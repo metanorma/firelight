@@ -359,7 +359,7 @@ const clauseSchemaBase = new Schema({
       },
     },
     example: {
-      content: 'figCaption? xrefLabel* block*',
+      content: 'figCaption? blockLabel* block*',
       group: 'block',
       attrs: {
         resourceID: {
@@ -433,7 +433,7 @@ const clauseSchemaBase = new Schema({
           default: '',
         },
       },
-      content: 'xrefLabel+ block*',
+      content: 'blockLabel+ block*',
       group: 'block',
       toDOM(node) {
         return ['aside', {
@@ -448,10 +448,10 @@ const clauseSchemaBase = new Schema({
       },
     },
 
-    xrefLabel: {
+    blockLabel: {
       content: '(text | flow)*',
       toDOM() {
-        return ['header', { class: classNames.xrefLabel }, 0];
+        return ['header', { class: classNames.blockLabel }, 0];
       },
     },
 
