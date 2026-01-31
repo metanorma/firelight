@@ -1262,20 +1262,20 @@ function makeSectionContentGenerator(
       // TODO: implement fully custom tables for parity with MN?
       return pm.node('tableFigure', { resourceID: subj }, contents);
     },
-    'bibitem': (subj: string, onAnnotation) => {
+    'bibitem': (subj: string, state) => {
       const contents: ProseMirrorNode[] = [];
       const tagSubj = findValue(section, subj, 'hasBiblioTag');
       if (tagSubj) {
         contents.push(pm.node(
           'span',
           null,
-          generateContent(tagSubj, pm.nodes.span!, onAnnotation),
+          generateContent(tagSubj, pm.nodes.span!, state),
         ));
       }
       const formattedref = findValue(section, subj, 'hasFormattedref');
       if (formattedref) {
         contents.push(
-          ...generateContent(formattedref, pm.nodes.span!, onAnnotation)
+          ...generateContent(formattedref, pm.nodes.span!, state)
         );
       }
       const uris = findAll(section, subj, 'hasUri');
@@ -1295,13 +1295,13 @@ function makeSectionContentGenerator(
       );
       return pm.node('bibitem', { resourceID: subj }, contents);
     },
-    'listItem': (subj: string, onAnnotation) => {
+    'listItem': (subj: string, state) => {
       const firstPart = findValue(section, subj, 'hasPart');
       if (!firstPart) {
         return undefined;
       }
       //const firstPartTypes = findAll(section, firstPart, 'type');
-      const content = generateContent(subj, pm.nodes.list_item!, onAnnotation);
+      const content = generateContent(subj, pm.nodes.list_item!, state);
       //console.debug("processing list item", subj, JSON.stringify(pm.node('list_item', null, content).toJSON()), null, 2);
       if (content[0]?.type?.name !== 'paragraph') {
         console.warn("Inserting leading paragraph to ensure a valid list item");
@@ -1318,7 +1318,7 @@ function makeSectionContentGenerator(
       //console.debug("processing list item: after", subj, JSON.stringify(pm.node('list_item', null, content).toJSON()), null, 2);
       return pm.node('list_item', null, content);
     },
-    'figure': (subj: string, onAnnotation) => {
+    'figure': (subj: string, state) => {
       const image = findValue(section, subj, 'hasImage');
       const imgSrc = image
         ? findValue(section, image, 'hasSrc')
@@ -1353,7 +1353,7 @@ function makeSectionContentGenerator(
         const parts = generateContent(
           arbitraryLiteralBlock,
           pm.nodes.arbitrary_literal_block!,
-          onAnnotation,
+          state,
         );
         figureContents.push(
           pm.node('arbitrary_literal_block', null, parts),
@@ -1368,7 +1368,7 @@ function makeSectionContentGenerator(
             generateContent(
               caption,
               pm.nodes.figCaption!,
-              onAnnotation,
+              state,
             ),
           ),
         );
