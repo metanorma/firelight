@@ -364,6 +364,18 @@ const mod: StoreAdapterModule = {
               requirement: 'bypass',
               'fmt-provision': 'bypass',
 
+              // These are covered by fmt-* equivalents in <term>.
+              'preferred': 'ignore',
+              'admitted': 'ignore',
+              'deprecates': 'ignore',
+              'definition': 'ignore',
+              'fmt-definition': 'bypass',
+              'fmt-preferred': 'bypass',
+              'fmt-deprecates': 'bypass',
+              'fmt-admitted': 'bypass',
+              'fmt-fmt-related': 'bypass',
+              'fmt-concept': 'bypass',
+
               stem: function processStem(el) {
                 return [
                   [[ROOT_SUBJECT, 'hasMathML', el.querySelector('math')!.outerHTML]],

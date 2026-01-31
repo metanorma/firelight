@@ -932,92 +932,31 @@ function makeSectionContentGenerator(
     //   return this['fmt-xref']!(subj, onAnnotation);
     // },
 
+    'termnote': function (subj, state) {
+      return this['note']!(subj, state);
+    },
+
     'term': function (subj, state) {
-      const fmtName = findPartsOfType(section, subj, 'fmt-name')[0];
-
-      // In case of some documents, this contains
-      // both designations AND definitions:
-      const definition = findPartsOfType(section, subj, 'fmt-definition')[0];
-
-      // In case of other documents, fmt-definition does not contain
-      // designations, but fmt-preferred should:
-      const preferred = findPartsOfType(section, subj, 'fmt-preferred')[0];
-
-      // (If a document has neither fmt-preferred nor a designation inside
-      // fmt-definition, we can’t really know since we bypass any semx
-      // containers and don’t have access to them at this stage.)
-
-      if (!definition) {
-        console.warn(
-          "Cannot represent a term without a definition",
-          subj);
-        return undefined;
-      }
-
-      const preferredContents = preferred
-        ? findPartsOfType(section, preferred, 'paragraph')[0]
-        : undefined;
-
-      const definitionContent =
-        generateContent(definition, pm.nodes.definition!, state);
-
-      const notes = findPartsOfType(section, subj, 'termnote');
-      definitionContent.push(
-        ...notes.
-        flatMap(subj => this['note']!(subj, state)).
-        filter(n => n !== undefined)
+      const nameSubject = findPartsOfType(section, subj, 'fmt-name')[0];
+      const nameContent = nameSubject
+        ? [
+            pm.node('termLabel', null, generateContent(
+              nameSubject,
+              pm.nodes.termLabel!,
+              state,
+            )),
+          ]
+        : [];
+      const bodyContent = generateContent(
+        subj,
+        pm.nodes.concept!,
+        state,
+        ((_v, type) => !type || type !== 'fmt-xref-label'),
       );
-
-      const content: ProseMirrorNode[] = [];
-
-      if (preferredContents) {
-        content.push(
-          pm.node(
-            'term',
-            { preferred: true },
-            generateContent(preferredContents, pm.nodes.term!, state),
-          ),
-        );
-      }
-
-      content.push(
-        pm.node('definition', null, definitionContent),
-      );
-
-      if (fmtName) {
-        content.splice(0, 0, pm.node(
-          'termLabel',
-          null,
-          generateContent(fmtName, pm.nodes.termLabel!, state)),
-        );
-      }
-
-      const sources = findPartsOfType(section, subj, 'fmt-termsource');
-      content.push(...sources.map(subj =>
-        pm.node(
-          'termSource',
-          null,
-          generateContent(subj, pm.nodes.termSource!, state),
-        )
-      ));
-
-      const nestedTerms = findPartsOfType(section, subj, 'term');
-      if (nestedTerms.length > 0) {
-        for (const nestedTerm of nestedTerms) {
-          const node = this.term?.(nestedTerm, state);
-          const nodes = (Array.isArray(node) ? node : [node]).
-          filter(n => n !== undefined);
-
-          if (node) {
-            content.push(...nodes);
-          }
-        }
-      }
-
       return pm.node(
-        'termWithDefinition',
+        'concept',
         { resourceID: subj },
-        content,
+        [...nameContent, ...bodyContent],
       );
     },
     'example': (subj, state) => {

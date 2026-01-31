@@ -1,3 +1,12 @@
+article.concept {
+  margin-top: .5em;
+  margin-bottom: .5em;
+}
+
+.termLabel {
+  margin-right: 1em;
+}
+
 .figCaption {
   display: block;
   text-align: center;
@@ -85,10 +94,6 @@ h2.extraTitle {
 
 article.bibitem {
   margin: 0 0 .5em 0;
-}
-
-.termLabel {
-  margin-right: 1em;
 }
 
 .xrefLabel {

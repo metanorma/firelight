@@ -279,10 +279,8 @@ const clauseSchemaBase = new Schema({
       },
     },
 
-    // Terms clause doesn’t fit into DL/DT/DD schema,
-    // because terms are not wrapped in a single root element.
-    termWithDefinition: {
-      content: 'termLabel? term* definition+ termSource* termWithDefinition*',
+    concept: {
+      content: 'termLabel? block+',
       group: 'block',
       attrs: {
         resourceID: {
@@ -291,9 +289,9 @@ const clauseSchemaBase = new Schema({
       },
       toDOM(node) {
         const attrs = node.attrs.resourceID
-          ? { about: node.attrs.resourceID }
+          ? { about: node.attrs.resourceID, class: classNames.concept }
           : {};
-        return ['section', attrs, 0];
+        return ['article', attrs, 0];
       },
     },
 
@@ -302,37 +300,6 @@ const clauseSchemaBase = new Schema({
       content: '(text | flow)*',
       toDOM() {
         return ['span', { class: classNames.termLabel }, 0];
-      },
-    },
-
-    term: {
-      content: '(text | flow)*',
-      attrs: {
-        preferred: {
-          // Whether the term is preferred
-          default: undefined,
-        },
-      },
-      toDOM(node) {
-        return [
-          node.attrs.preferred
-            ? 'strong'
-            : 'span',
-          { 'aria-role': 'term' },
-          0,
-        ];
-      },
-    },
-    definition: {
-      content: 'block*',
-      toDOM() {
-        return ['div', { 'aria-role': 'definition' }, 0];
-      },
-    },
-    termSource: {
-      content: '(text | flow)*',
-      toDOM() {
-        return ['div', 0];
       },
     },
 
