@@ -24,7 +24,7 @@
 
     > li {
       word-break: auto-phrase;
-      display: inline-flex;
+      display: flex;
       gap: .75em;
       width: 100%;
 
