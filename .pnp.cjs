@@ -2121,7 +2121,7 @@ const RAW_RUNTIME_STATE =
     ],\
     [\
       "undici",\
-      "npm:6.19.8"\
+      "npm:6.21.1"\
     ],\
     [\
       "undici-types",\
@@ -2740,7 +2740,7 @@ const RAW_RUNTIME_STATE =
           ["@types/effect__platform", null],\
           ["effect", "npm:3.11.0"],\
           ["mime", "npm:3.0.0"],\
-          ["undici", "npm:6.19.8"],\
+          ["undici", "npm:6.21.1"],\
           ["ws", "virtual:3c60129b250dc704bdcfdbfe27a434fb12b5a727994a264f14fb0bdf92e0e94958019764f637115552b9e3f87657d64162558c70facd1f32e0808502a551314d#npm:8.18.0"]\
         ],\
         "packagePeers": [\
@@ -2761,7 +2761,7 @@ const RAW_RUNTIME_STATE =
           ["@types/effect__platform", null],\
           ["effect", "npm:3.11.0"],\
           ["mime", "npm:3.0.0"],\
-          ["undici", "npm:6.19.8"],\
+          ["undici", "npm:6.21.1"],\
           ["ws", "virtual:3c60129b250dc704bdcfdbfe27a434fb12b5a727994a264f14fb0bdf92e0e94958019764f637115552b9e3f87657d64162558c70facd1f32e0808502a551314d#npm:8.18.0"]\
         ],\
         "packagePeers": [\
@@ -12812,10 +12812,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["undici", [\
-      ["npm:6.19.8", {\
-        "packageLocation": "./.yarn/cache/undici-npm-6.19.8-a3341e0793-07fd8520bc.zip/node_modules/undici/",\
+      ["npm:6.21.1", {\
+        "packageLocation": "./.yarn/cache/undici-npm-6.21.1-0f7fc2c179-d604080e4f.zip/node_modules/undici/",\
         "packageDependencies": [\
-          ["undici", "npm:6.19.8"]\
+          ["undici", "npm:6.21.1"]\
         ],\
         "linkType": "HARD"\
       }]\
