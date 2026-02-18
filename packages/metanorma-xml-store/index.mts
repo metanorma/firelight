@@ -369,6 +369,7 @@ const mod: StoreAdapterModule = {
               'admitted': 'ignore',
               'deprecates': 'ignore',
               'definition': 'ignore',
+
               'fmt-definition': 'bypass',
               'fmt-preferred': 'bypass',
               'fmt-deprecates': 'bypass',
