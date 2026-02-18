@@ -373,7 +373,7 @@ const mod: StoreAdapterModule = {
               'fmt-preferred': 'bypass',
               'fmt-deprecates': 'bypass',
               'fmt-admitted': 'bypass',
-              'fmt-fmt-related': 'bypass',
+              'fmt-related': 'bypass',
               'fmt-concept': 'bypass',
 
               stem: function processStem(el) {
