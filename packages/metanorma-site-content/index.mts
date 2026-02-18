@@ -954,10 +954,28 @@ function makeSectionContentGenerator(
         state,
         ((_v, type) => !type || type !== 'fmt-xref-label'),
       );
+
+      const termSourceSubject =
+        findPartsOfType(section, subj, 'fmt-termsource')[0];
+
+      const sourceContent = termSourceSubject
+        ? [
+            pm.node(
+              'paragraph',
+              null,
+              generateContent(
+                termSourceSubject,
+                pm.nodes.paragraph!,
+                state,
+              ),
+            )
+          ]
+        : [];
+
       return pm.node(
         'concept',
         { resourceID: subj },
-        [...nameContent, ...bodyContent],
+        [...nameContent, ...bodyContent, ...sourceContent],
       );
     },
     'example': (subj, state) => {
