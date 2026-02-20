@@ -155,6 +155,7 @@
     p {
       margin: 0;
       text-wrap-style: pretty;
+      word-break: auto-phrase;
     }
     ul, ol {
       margin: 0;
