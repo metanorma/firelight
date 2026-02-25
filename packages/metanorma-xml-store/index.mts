@@ -363,6 +363,7 @@ const mod: StoreAdapterModule = {
               // These two are covered by the table located inside the fmt-provision
               requirement: 'bypass',
               'fmt-provision': 'bypass',
+              recommendation: 'bypass',
 
               // These are covered by fmt-* equivalents in <term>.
               'preferred': 'ignore',
