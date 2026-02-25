@@ -365,6 +365,8 @@ const mod: StoreAdapterModule = {
               'fmt-provision': 'bypass',
               recommendation: 'bypass',
 
+              key: 'bypass',
+
               // These are covered by fmt-* equivalents in <term>.
               'preferred': 'ignore',
               'admitted': 'ignore',
