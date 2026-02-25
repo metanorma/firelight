@@ -371,6 +371,9 @@ const mod: StoreAdapterModule = {
               'deprecates': 'ignore',
               'definition': 'ignore',
 
+              // Table footer key container
+              'key': 'bypass',
+
               'fmt-definition': 'bypass',
               'fmt-preferred': 'bypass',
               'fmt-deprecates': 'bypass',
