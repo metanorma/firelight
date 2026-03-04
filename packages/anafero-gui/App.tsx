@@ -753,6 +753,9 @@ export const VersionWorkspace: React.FC<{
   // - Any other string is treated as an URI-encoded resource URI.
   const [queuedFragment, setQueuedFragment] = useState('');
 
+  // TODO: navigate() and jumpTo() should not be duplicated
+  // This did cause bug(s) already
+
   /** Navigate to a resource by its resource URI. */
   const jumpTo = useCallback((uri: string) => {
     //const path = locateResource(uri);
@@ -776,6 +779,9 @@ export const VersionWorkspace: React.FC<{
     if (!resourceURI) {
       console.error("Unable to reverse resource URI for path", path);
       throw new Error("Unable to reverse resource URI for path");
+    }
+    if (getContainingPageResourceURI(resourceURI) === resourceURI) {
+      setQueuedFragment('NONE');
     }
 
     console.debug("Navigating & activating resource via router", resourceURI);
