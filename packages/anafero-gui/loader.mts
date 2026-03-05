@@ -1,10 +1,3 @@
-//const byteFormatter = Intl.NumberFormat(navigator.language, {
-//  notation: "compact",
-//  style: "unit",
-//  unit: "byte",
-//  unitDisplay: "narrow",
-//});
-
 export interface LoadProgress {
   /** Bytes done. */
   done: number;
@@ -125,6 +118,13 @@ export function makeLoader<Src extends string>(
     return abortAll;
   }
 }
+
+//const byteFormatter = Intl.NumberFormat(navigator.language, {
+//  notation: "compact",
+//  style: "unit",
+//  unit: "byte",
+//  unitDisplay: "narrow",
+//});
 
 //const app = document.getElementById('app')!;
 //app.innerHTML = '';
