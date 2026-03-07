@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { defaultTheme, ProgressBar, Flex, Provider } from '@adobe/react-spectrum';
 import { useInView, InView } from 'react-intersection-observer';
 import { useThrottledCallback, useDebouncedCallback } from 'use-debounce';
-import type { Index as LunrIndex } from 'lunr';
 import React, { useCallback, createContext, useState, useReducer, useMemo, useEffect, useLayoutEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { type LayoutModule, type ResourceNav, ResourceNavSchema } from 'anafero/index.mjs';
@@ -15,7 +14,6 @@ import { Hierarchy as Hierarchy2, computeImplicitlyExpanded } from './NavHierarc
 import { reducer, createInitialState, type InitializerInput, type BrowsingMode, type StoredAppState, StoredAppStateSchema } from './model.mjs';
 import { BrowserBar } from './BrowseBar.jsx';
 import { ResourceHelmet, Resource, type ResourceData } from './Resource.jsx';
-import { loadLunrIndex } from './search.mjs';
 import { useAssetLoader, useJSONFetcher } from './loader.mjs';
 import interceptNav from './intercept-nav.mjs';
 import classNames from './style.module.css';
@@ -39,7 +37,7 @@ type SharedDeps = Record<typeof SHARED_DEPS[number], any>;
 const VERSION_DEPS = [
   '/dependencies.json',
   '/dependency-index.json',
-  '/search-index.json',
+  //'/search-index.json', // deferring loading
   '/resource-map.json',
   //'/resource-graph.json',
   '/resource-descriptions.json',
@@ -328,17 +326,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
       : undefined
   ), [resourceDescriptions, resourceMap]); 
 
-  const primaryLanguage = primaryLanguageDetected ?? 'en';
-
-  const lunrIndex = useMemo(() => {
-    const serializedIndex = versionDeps?.['/search-index.json'];
-
-    if (serializedIndex && primaryLanguageDetected) {
-      return loadLunrIndex(serializedIndex);
-    } else {
-      return undefined;
-    }
-  }, [primaryLanguageDetected, versionDeps?.['/search-index.json']]);
+  const primaryLanguage = primaryLanguageDetected ?? undefined;
 
 
   // Persisting state crudely
@@ -397,7 +385,6 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     && reverseResource
     && fetchResourceData
     && versioning
-    && lunrIndex
     && initialResourceURI
     && initialResourceData
     && loadedDependencies
@@ -418,7 +405,6 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
         fetchResourceData={fetchResourceData}
         versioning={versioning}
         resourceDescriptions={resourceDescriptions}
-        searchIndex={lunrIndex}
         resourceMap={resourceMap}
         storedState={restoredState}
         onStoreState={handleStoreState}
@@ -451,7 +437,6 @@ const RESOURCE_DATA_PATHS: Record<keyof ResourceData, string> = {
 export const VersionWorkspace: React.FC<{
   workspaceTitle: string;
   primaryLanguage: string;
-  searchIndex: LunrIndex;
   getAbsolutePath: (path: string) => string;
   getVersionRelativePath: (path: string) => string;
   locateResource: (uri: string) => string;
@@ -476,7 +461,6 @@ export const VersionWorkspace: React.FC<{
   getAbsolutePath,
   getVersionRelativePath,
   dependencyIndex,
-  searchIndex,
   locateResource,
   reverseResource,
   resourceDescriptions,
@@ -1123,8 +1107,8 @@ export const VersionWorkspace: React.FC<{
                   />
                 : state.browsingMode === 'search'
                   ? <Search
+                      getAbsolutePath={getAbsolutePath}
                       query={state.searchQuery}
-                      index={searchIndex}
                       getPlainTitle={getResourceTitle}
                       locateResource={locateResource}
                       getContainingPageURI={getContainingPageResourceURI}

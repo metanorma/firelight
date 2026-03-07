@@ -3,11 +3,13 @@ import lunr, { type Index as LunrIndex } from 'lunr';
 import { useDebounce } from 'use-debounce';
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { SearchField, ActionGroup, ListView, Item, Link, Text } from '@adobe/react-spectrum';
+import { ProgressBar } from '@adobe/react-spectrum';
 import Delete from '@spectrum-icons/workflow/Delete';
 //import BookmarkIcon from '@spectrum-icons/workflow/BookmarkSmallOutline';
 //import BookmarkIconActive from '@spectrum-icons/workflow/BookmarkSmall';
 import { type SearchQuery } from './model.mjs';
 import { preprocessStringForIndexing } from 'anafero/index.mjs';
+import { useLunrIndex } from './search.mjs';
 import classNames from './style.module.css';
 
 
@@ -50,7 +52,7 @@ function resultRefToResourceURI(ref: string): string {
 }
 
 export const Search: React.FC<{
-  index: LunrIndex;
+  getAbsolutePath: (p: string) => string;
   query: SearchQuery;
   selected?: string;
   onSelect: (resID: string) => void;
@@ -58,7 +60,9 @@ export const Search: React.FC<{
   getPlainTitle: (resID: string) => string;
   locateResource: (resID: string) => string;
   getContainingPageURI: (url: string) => string;
-}> = function ({ index, selected, onSelect, query, getPlainTitle, locateResource, getContainingPageURI, onEditQueryText }) {
+}> = function ({ getAbsolutePath, selected, onSelect, query, getPlainTitle, locateResource, getContainingPageURI, onEditQueryText }) {
+  const { index, progress: loadProgress } = useLunrIndex(getAbsolutePath);
+
   const [debouncedQuery] = useDebounce(query.text, 200);
 
   const [showMore, setShowMore] = useState(false);
@@ -250,25 +254,46 @@ export const Search: React.FC<{
         renderEmptyState={() => <></>}>
       {renderItem}
     </ListView>
-    <SearchField
-      width='100%'
-      autoFocus
-      alignSelf='stretch'
-      onChange={onEditQueryText ?? (() => {})}
-      isReadOnly={!onEditQueryText}
-      label="Search resources"
-      value={query.text}
-      errorMessage={error}
-      UNSAFE_className={classNames.navStickyHeader}
-      validationState={error ? 'invalid' : 'valid'}
-      description={resultArray.length > 0
-        ? <>
-            {resultArray.length >= MAX_SEARCH_RESULT_COUNT ? "At least " : ""}
-            {resultArray.length} resources matched. {showMoreButton}
-          </>
-        : query.text.trim() === ''
-          ? "Please enter a search query."
-          : "No results to show."}
-    />
+    {index
+      ? <SearchField
+          width='100%'
+          autoFocus
+          alignSelf='stretch'
+          onChange={onEditQueryText ?? (() => {})}
+          isReadOnly={!onEditQueryText}
+          label="Search resources"
+          value={query.text}
+          errorMessage={error}
+          UNSAFE_className={classNames.navStickyHeader}
+          validationState={error ? 'invalid' : 'valid'}
+          description={resultArray.length > 0
+            ? <>
+                {resultArray.length >= MAX_SEARCH_RESULT_COUNT ? "At least " : ""}
+                {resultArray.length} resources matched. {showMoreButton}
+              </>
+            : query.text.trim() === ''
+              ? "Please enter a search query."
+              : "No results to show."}
+        />
+      : <ProgressBar
+          aria-label="Loading search index…"
+          label="Loading search index…"
+          UNSAFE_className={classNames.navStickyHeader}
+          UNSAFE_style={{ width: '100%' }}
+          minValue={0}
+          isIndeterminate={
+            // Set to indeterminate if:
+            // No total:
+            !loadProgress.total
+            ||
+            // Stuck in almost ending:
+            (loadProgress.total - 0.1) < loadProgress.done
+            ||
+            // Stuck in just beginning:
+            (loadProgress.total - loadProgress.done) < 0.1
+          }
+          maxValue={loadProgress.total}
+          value={loadProgress.done}
+        />}
   </>;
 }
