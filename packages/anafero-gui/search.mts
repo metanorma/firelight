@@ -1,3 +1,41 @@
+// React
+
+import { useMemo } from 'react';
+import { useAssetLoader, type LoadProgress } from './loader.mjs';
+
+
+const INDEX_PATH = '/search-index.json';
+
+
+export function useLunrIndex(
+  getAbsolutePath?: (p: string) => string,
+): { index: LunrIndex | undefined, progress: LoadProgress } {
+
+  const assetPaths = useMemo((() =>
+    getAbsolutePath
+      ? [getAbsolutePath(INDEX_PATH)]
+      : []
+  ), [getAbsolutePath]);
+
+  const serializedIndexLoader = useAssetLoader(assetPaths);
+
+  const serializedIndex = serializedIndexLoader.assetData?.[INDEX_PATH];
+
+  const index = useMemo(() => {
+    if (serializedIndex) {
+      return loadLunrIndex(serializedIndex);
+    } else {
+      return undefined;
+    }
+  }, [serializedIndex]);
+
+  return { index, progress: serializedIndexLoader.loadProgress };
+};
+
+
+
+// Lunr
+
 import lunr, { type Index as LunrIndex } from 'lunr';
 
 
