@@ -15,8 +15,8 @@ import { Hierarchy as Hierarchy2, computeImplicitlyExpanded } from './NavHierarc
 import { reducer, createInitialState, type InitializerInput, type BrowsingMode, type StoredAppState, StoredAppStateSchema } from './model.mjs';
 import { BrowserBar } from './BrowseBar.jsx';
 import { ResourceHelmet, Resource, type ResourceData } from './Resource.jsx';
-import { type LoadProgress, makeLoader } from './loader.mjs';
 import { loadLunrIndex } from './search.mjs';
+import { useAssetLoader, useJSONFetcher } from './loader.mjs';
 import interceptNav from './intercept-nav.mjs';
 import classNames from './style.module.css';
 
@@ -86,27 +86,20 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
         return prefixed;
       }), [pathPrefix]);
 
-  const [loadProgress, setLoadProgress] = useState<LoadProgress>({ done: 0, total: 0 });
-
-  const [versionDeps, setVersionDeps] =
-    useState<undefined | VersionDeps>(undefined);
-
-  const [sharedDeps, setSharedDeps] =
-    useState<undefined | SharedDeps>(undefined);
-
-  const [initialResourceData, setInitialResourceData] =
-    useState<undefined | ResourceData>(undefined);
-
-  const resourceMap: Record<string, string> = versionDeps?.['/resource-map.json'];
-
-  const reverseResourceMap: undefined | Record<string, string> = useMemo((() =>
-    !resourceMap ? undefined :
-    Object.fromEntries(Object.entries(resourceMap).
-    map(([k, v]) => [v, k]))
-  ), [resourceMap]);
-
-  const resourceDescriptions: Record<string, ResourceMetadata> =
-    versionDeps?.['/resource-descriptions.json'];
+  // Loading shared site-wide dependencies
+  const sharedDepPaths = useMemo((() =>
+    SHARED_DEPS.map(getDomainRelativePath)
+  ), [getDomainRelativePath]);
+  const sharedDepsLoader = useAssetLoader(sharedDepPaths);
+  const sharedDeps: SharedDeps = useMemo((() =>
+    Object.entries(sharedDepsLoader.assetData ?? {}).
+      filter(([src]) => sharedDepPaths.includes(src as any)).
+      map(([src, resp]) => ({ [getSiteRootRelativePath(src)]: resp })).
+      reduce((prev, curr) =>
+        ({ ...prev, ...curr }),
+        {},
+      ) as SharedDeps
+  ), [sharedDepPaths, sharedDepsLoader.assetData, getSiteRootRelativePath]);
 
   /**
    * Based on current URL, returns active version ID,
@@ -182,6 +175,62 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
       : undefined
   ), [versionPrefix, getSiteRootRelativePath]);
 
+  const versionDepPaths = useMemo((() =>
+    getAbsolutePath
+      ? VERSION_DEPS.map(dep => getAbsolutePath(dep)) as (keyof VersionDeps)[]
+      : []
+    ), [getAbsolutePath]);
+  const versionDepsLoader = useAssetLoader(versionDepPaths);
+  const versionDeps: VersionDeps | undefined = useMemo((() =>
+    getVersionRelativePath
+      ? Object.entries(versionDepsLoader.assetData ?? {}).
+          filter(([src]) =>
+            VERSION_DEPS.includes(getVersionRelativePath(src) as keyof VersionDeps)).
+          map(([src, resp]) => ({ [getVersionRelativePath(src)]: resp })).
+          reduce((prev, curr) =>
+            ({ ...prev, ...curr }),
+            {},
+          ) as VersionDeps
+      : undefined
+  ), [versionDepPaths, versionDepsLoader.assetData, getVersionRelativePath]);
+
+  const totalDepLoadProgress = useMemo(() => [
+    sharedDepsLoader.loadProgress,
+    versionDepsLoader.loadProgress,
+  ].reduce(
+    (prev, curr) => ({
+      done: prev.done + curr.done,
+      total: prev.total + curr.total,
+    }),
+    { done: 0, total: 0 },
+  ), [
+    sharedDepsLoader.loadProgress,
+    versionDepsLoader.loadProgress,
+  ]);
+  useEffect(() =>
+    console.debug('dep progress', totalDepLoadProgress), [totalDepLoadProgress]
+  );
+
+  // const [versionDeps, setVersionDeps] =
+  //   useState<undefined | VersionDeps>(undefined);
+
+  // const [sharedDeps, setSharedDeps] =
+  //   useState<undefined | SharedDeps>(undefined);
+
+  const [initialResourceData, setInitialResourceData] =
+    useState<undefined | ResourceData>(undefined);
+
+  const resourceMap: Record<string, string> = versionDeps?.['/resource-map.json'];
+
+  const reverseResourceMap: undefined | Record<string, string> = useMemo((() =>
+    !resourceMap ? undefined :
+    Object.fromEntries(Object.entries(resourceMap).
+    map(([k, v]) => [v, k]))
+  ), [resourceMap]);
+
+  const resourceDescriptions: Record<string, ResourceMetadata> =
+    versionDeps?.['/resource-descriptions.json'];
+
   //const normalizedResourcePathFromPathname =
   const initialResourceURI_: string | undefined = resourceMap && getVersionRelativePath
     ? resourceMap[stripLeadingSlash(
@@ -206,29 +255,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
     throw new Error("Unable to obtain initial resource URI based on URL");
   }
 
-  const fetchJSON = useCallback(function fetchJSON<T extends string>(
-    paths: T[],
-    onProgress: (done: number, total: number) => void,
-    onDone: (result: Record<T, any>) => void,
-  ): () => void {
-    return makeLoader<T>(
-      paths.
-        map(dep => ({ [dep]: { responseType: 'json' } as const })).
-        reduce((prev, curr) =>
-          ({ ...prev, ...curr }),
-          {},
-        ) as Record<T, { responseType: 'json' }>,
-      (done, total) => onProgress(
-        done.reduce((a, b) => a + b),
-        total.reduce((a, b) => a + b),
-      ),
-      (src, msg, resp) => console.error("Error fetching", src, msg, resp),
-      (src, resp) => {
-        //console.debug("Fetched", src);
-      },
-      onDone,
-    ).load();
-  }, []);
+  const fetchJSON = useJSONFetcher();
 
   const locateResource = useMemo((() =>
     (!reverseResourceMap || !getAbsolutePath)
@@ -294,60 +321,6 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
       return;
     }
   }, [fetchJSON, initialResourceURI, fetchResourceData, setInitialResourceData]);
-
-  const setLoadProgressThrottled = useThrottledCallback(setLoadProgress, 200);
-
-  useEffect(() => {
-    const depURLs = SHARED_DEPS.map(getDomainRelativePath);
-    return fetchJSON(
-      depURLs,
-      (done, total) => setLoadProgressThrottled({
-        done,
-        total,
-      }),
-      (results) => {
-        setLoadProgressThrottled({
-          done: 100,
-          total: 100,
-        })
-        setSharedDeps(Object.entries(results).
-          filter(([src]) => depURLs.includes(src as any)).
-          map(([src, resp]) => ({ [getSiteRootRelativePath(src)]: resp })).
-          reduce((prev, curr) =>
-            ({ ...prev, ...curr }),
-            {},
-          ) as SharedDeps);
-        },
-    );
-  }, [fetchJSON, getSiteRootRelativePath, getDomainRelativePath]);
-
-  useEffect(() => {
-    if (!getAbsolutePath || !getVersionRelativePath) { return; }
-    // Fetch version-wide data & make it available in the object under
-    // non-versioned paths
-    // (e.g., /<version>/resource-map.json will be available as /resource-map.json).
-    return fetchJSON<keyof VersionDeps>(
-      VERSION_DEPS.map(dep => getAbsolutePath(dep)) as (keyof VersionDeps)[],
-      (done, total) => setLoadProgressThrottled({
-        done,
-        total,
-      }),
-      (results) => {
-        setLoadProgressThrottled({
-          done: 100,
-          total: 100,
-        })
-        setVersionDeps(Object.entries(results).
-          filter(([src]) =>
-            VERSION_DEPS.includes(getVersionRelativePath(src) as keyof VersionDeps)).
-          map(([src, resp]) => ({ [getVersionRelativePath(src)]: resp })).
-          reduce((prev, curr) =>
-            ({ ...prev, ...curr }),
-            {},
-          ) as VersionDeps);
-        },
-    );
-  }, [fetchJSON, getAbsolutePath, getVersionRelativePath]);
 
   const primaryLanguageDetected = useMemo((
     () => resourceMap && resourceMap[''] && resourceDescriptions[resourceMap['']]
@@ -455,7 +428,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
         <BrowserBar
           rootURL={`${pathPrefix}/`}
           title={workspaceTitle}
-          loadProgress={loadProgress}
+          loadProgress={totalDepLoadProgress}
         />
         <main id="resources">
           <div
