@@ -1,3 +1,80 @@
+import { useState, useEffect, useCallback } from 'react';
+import { useThrottledCallback } from 'use-debounce';
+
+
+export function useJSONFetcher() {
+  return useCallback(function fetchJSON<T extends string>(
+    paths: T[],
+    onProgress: (done: number, total: number) => void,
+    onDone: (result: Record<T, any>) => void,
+  ): () => void {
+    return makeLoader<T>(
+      paths.
+        map(dep => ({ [dep]: { responseType: 'json' } as const })).
+        reduce((prev, curr) =>
+          ({ ...prev, ...curr }),
+          {},
+        ) as Record<T, { responseType: 'json' }>,
+      (done, total) => onProgress(
+        done.reduce((a, b) => a + b),
+        total.reduce((a, b) => a + b),
+      ),
+      (src, msg, resp) => console.error("Error fetching", src, msg, resp),
+      (src, resp) => {
+        //console.debug("Fetched", src);
+      },
+      onDone,
+    ).load();
+  }, []);
+};
+
+
+export function useAssetLoader<T extends string>(
+  paths: T[],
+): {
+  loadProgress: LoadProgress;
+  assetData: undefined | Record<T, any>;
+} {
+  type AssetData = Record<T, any>;
+
+  const fetchJSON = useJSONFetcher();
+
+  const [loadProgress, setLoadProgress] = useState<LoadProgress>({ done: 0, total: 0 });
+  const setLoadProgressThrottled = useThrottledCallback(setLoadProgress, 200);
+  const [assetData, setAssetData] = useState<undefined | AssetData>(undefined);
+
+  useEffect(() => {
+    const depURLs = paths;
+    return fetchJSON(
+      depURLs,
+      (done, total) => setLoadProgressThrottled({
+        done,
+        total,
+      }),
+      (results) => {
+        setLoadProgressThrottled({
+          done: 100,
+          total: 100,
+        })
+        setAssetData(Object.entries(results).
+          filter(([src]) => depURLs.includes(src as any)).
+          map(([src, resp]) => ({ [src]: resp })).
+          reduce((prev, curr) =>
+            ({ ...prev, ...curr }),
+            {},
+          ) as AssetData);
+        },
+    );
+  }, [fetchJSON, paths]);
+
+  return {
+    assetData,
+    loadProgress,
+  };
+};
+
+
+
 export interface LoadProgress {
   /** Bytes done. */
   done: number;
@@ -28,6 +105,7 @@ export function makeLoader<Src extends string>(
   function load() {
 
     function abortAll() {
+      console.debug("loader: cancelling");
       for (const xhr of getXHRs()) {
         xhr.abort();
       }
