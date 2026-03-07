@@ -281,17 +281,7 @@ export const Search: React.FC<{
           UNSAFE_className={classNames.navStickyHeader}
           UNSAFE_style={{ width: '100%' }}
           minValue={0}
-          isIndeterminate={
-            // Set to indeterminate if:
-            // No total:
-            !loadProgress.total
-            ||
-            // Stuck in almost ending:
-            (loadProgress.total - 0.1) < loadProgress.done
-            ||
-            // Stuck in just beginning:
-            (loadProgress.total - loadProgress.done) < 0.1
-          }
+          isIndeterminate={false}
           maxValue={loadProgress.total}
           value={loadProgress.done}
         />}
