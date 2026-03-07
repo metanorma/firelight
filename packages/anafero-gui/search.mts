@@ -1,35 +1,60 @@
 // React
 
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAssetLoader, type LoadProgress } from './loader.mjs';
 
 
 const INDEX_PATH = '/search-index.json';
+
+/** Global index cache, mapped to absolute index JSON path. */
+let indexCache: Record<string, LunrIndex | undefined> = {};
 
 
 export function useLunrIndex(
   getAbsolutePath?: (p: string) => string,
 ): { index: LunrIndex | undefined, progress: LoadProgress } {
 
-  const assetPaths = useMemo((() =>
+  const absIndexPath = useMemo((() =>
     getAbsolutePath
-      ? [getAbsolutePath(INDEX_PATH)]
-      : []
+      ? getAbsolutePath(INDEX_PATH)
+      : undefined
   ), [getAbsolutePath]);
+
+  const assetPaths = useMemo((() =>
+    (absIndexPath && !indexCache[absIndexPath])
+      ? [absIndexPath]
+      : []
+  ), [absIndexPath]);
 
   const serializedIndexLoader = useAssetLoader(assetPaths);
 
   const serializedIndex = serializedIndexLoader.assetData?.[INDEX_PATH];
 
+  useEffect(() => {
+    if (!indexLoaded && absIndexPath) {
+      if (!indexCache[absIndexPath] && serializedIndex) {
+        indexCache[absIndexPath] = loadLunrIndex(serializedIndex);
+      }
+      if (indexCache[absIndexPath]) {
+        setIndexLoaded(true);
+      }
+    }
+  }, [absIndexPath, serializedIndex]);
+
+  const [indexLoaded, setIndexLoaded] = useState(false);
+
   const index = useMemo(() => {
-    if (serializedIndex) {
-      return loadLunrIndex(serializedIndex);
+    if (/*indexLoaded && */absIndexPath) {
+      return indexCache[absIndexPath];
     } else {
       return undefined;
     }
-  }, [serializedIndex]);
+  }, [indexLoaded, absIndexPath]);
 
-  return { index, progress: serializedIndexLoader.loadProgress };
+  return {
+    index,
+    progress: serializedIndexLoader.loadProgress,
+  };
 };
 
 
