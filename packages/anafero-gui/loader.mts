@@ -94,9 +94,9 @@ export function makeLoader<Src extends string>(
           abortAll();
         }
 
-        return { [assetSrc]: xhr } as { [key in Src]: XMLHttpRequest };
+        return { [assetSrc]: xhr };
       }).
-      reduce((prev, curr) => ({ ...prev, ...curr }));
+      reduce((prev, curr) => ({ ...prev, ...curr }), {}) as { [key in Src]: XMLHttpRequest };
 
     function getXHRs(): XMLHttpRequest[] {
       return ([...Object.values(xhrs)] as XMLHttpRequest[]);
