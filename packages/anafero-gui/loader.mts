@@ -88,17 +88,15 @@ export function makeLoader<Src extends string>(
   onDoneAll: (results: { [src in Src]: any }) => void,
 ) {
 
-  const LOAD_STATUS = Object.keys(srcs).
-  map(src => ({ [src]: { done: 0, total: 0 } })).
-  reduce((prev, curr) =>
-    ({ ...prev, ...curr }), {} as Record<Src, LoadProgress>
-  );
-
-  return {
-    load,
-  };
+  return { load };
 
   function load() {
+
+    const LOAD_STATUS = Object.keys(srcs).
+    map(src => ({ [src]: { done: 0, total: 0 } })).
+    reduce((prev, curr) =>
+      ({ ...prev, ...curr }), {} as Record<Src, LoadProgress>
+    );
 
     function abortAll() {
       console.debug("loader: cancelling");
