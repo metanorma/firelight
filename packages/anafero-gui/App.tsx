@@ -14,7 +14,7 @@ import { Hierarchy as Hierarchy2, computeImplicitlyExpanded } from './NavHierarc
 import { reducer, createInitialState, type InitializerInput, type BrowsingMode, type StoredAppState, StoredAppStateSchema } from './model.mjs';
 import { BrowserBar } from './BrowseBar.jsx';
 import { ResourceHelmet, Resource, type ResourceData } from './Resource.jsx';
-import { useAssetLoader, useJSONFetcher } from './loader.mjs';
+import { useAssetLoader, fetchJSON } from './loader.mjs';
 import interceptNav from './intercept-nav.mjs';
 import classNames from './style.module.css';
 
@@ -252,8 +252,6 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
   if (resourceMap && getVersionRelativePath && !initialResourceURI) {
     throw new Error("Unable to obtain initial resource URI based on URL");
   }
-
-  const fetchJSON = useJSONFetcher();
 
   const locateResource = useMemo((() =>
     (!reverseResourceMap || !getAbsolutePath)

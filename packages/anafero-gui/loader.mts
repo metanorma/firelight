@@ -1,32 +1,30 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useThrottledCallback } from 'use-debounce';
 
 
-export function useJSONFetcher() {
-  return useCallback(function fetchJSON<T extends string>(
-    paths: T[],
-    onProgress: (done: number, total: number) => void,
-    onDone: (result: Record<T, any>) => void,
-  ): () => void {
-    return makeLoader<T>(
-      paths.
-        map(dep => ({ [dep]: { responseType: 'json' } as const })).
-        reduce((prev, curr) =>
-          ({ ...prev, ...curr }),
-          {},
-        ) as Record<T, { responseType: 'json' }>,
-      (done, total) => onProgress(
-        done.reduce((a, b) => a + b),
-        total.reduce((a, b) => a + b),
-      ),
-      (src, msg, resp) => console.error("Error fetching", src, msg, resp),
-      (src, resp) => {
-        //console.debug("Fetched", src);
-      },
-      onDone,
-    ).load();
-  }, []);
-};
+export function fetchJSON<T extends string>(
+  paths: T[],
+  onProgress: (done: number, total: number) => void,
+  onDone: (result: Record<T, any>) => void,
+): () => void {
+  return makeLoader<T>(
+    paths.
+      map(dep => ({ [dep]: { responseType: 'json' } as const })).
+      reduce((prev, curr) =>
+        ({ ...prev, ...curr }),
+        {},
+      ) as Record<T, { responseType: 'json' }>,
+    (done, total) => onProgress(
+      done.reduce((a, b) => a + b),
+      total.reduce((a, b) => a + b),
+    ),
+    (src, msg, resp) => console.error("Error fetching", src, msg, resp),
+    (src, resp) => {
+      console.debug("Fetched", src);
+    },
+    onDone,
+  ).load();
+}
 
 
 export function useAssetLoader<T extends string>(
@@ -36,8 +34,6 @@ export function useAssetLoader<T extends string>(
   assetData: undefined | Record<T, any>;
 } {
   type AssetData = Record<T, any>;
-
-  const fetchJSON = useJSONFetcher();
 
   const [loadProgress, setLoadProgress] = useState<LoadProgress>({ done: 0, total: 0 });
   const setLoadProgressThrottled = useThrottledCallback(setLoadProgress, 200);
