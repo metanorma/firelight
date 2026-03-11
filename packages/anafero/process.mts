@@ -4,7 +4,6 @@ import * as S from '@effect/schema/Schema';
 
 import { renderToString } from 'react-dom/server';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { Provider, defaultTheme } from '@adobe/react-spectrum';
 
 
@@ -182,22 +181,18 @@ export function * generateResourceAssets(
     rootURL: expandVersionedPath('/'),
   }));
 
-  const helmet = Helmet.renderStatic();
-
   const htmlPage = `
     <!doctype html>
-    <html ${helmet.htmlAttributes.toString()}
+    <html lang="${primaryLanguageID}"
         ${inject.htmlAttrs}
         data-initial-resource-id="${resourceURI}"
         data-workspace-title="${workspaceTitle}">
       <head>
         <meta charset="utf-8">
-        ${helmet.title.toString()}
-        ${helmet.meta.toString()}
-        ${helmet.link.toString()}
+        <title>${generatedContent.content?.labelInPlainText ?? "Untitled"}</title>
         ${inject.head}
       </head>
-      <body ${helmet.bodyAttributes.toString()}>
+      <body>
         <div id="app">${browseBarHTML}<main id="resources">${resourceHTML}</main></div>
         ${inject.tail}
       </body>

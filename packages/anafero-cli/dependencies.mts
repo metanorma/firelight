@@ -22,14 +22,12 @@ import * as anafero from 'anafero/index.mjs';
 import * as pmModel from 'prosemirror-model';
 import * as pmTables from 'prosemirror-tables';
 import * as pmSchemaList from 'prosemirror-schema-list';
-import * as helmet from 'react-helmet';
 import * as react from 'react';
 const preloaded = {
   'anafero/index.mjs': anafero,
   'prosemirror-model': pmModel,
   'prosemirror-tables': pmTables,
   'prosemirror-schema-list': pmSchemaList,
-  'react-helmet': helmet,
   'react': react,
 } as Readonly<Record<string, unknown>>;
 

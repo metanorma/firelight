@@ -4,7 +4,6 @@ import { defaultTheme, ProgressBar, Flex, Provider } from '@adobe/react-spectrum
 import { useInView, InView } from 'react-intersection-observer';
 import { useThrottledCallback, useDebouncedCallback } from 'use-debounce';
 import React, { useCallback, createContext, useState, useReducer, useMemo, useEffect, useLayoutEffect } from 'react';
-import { Helmet } from 'react-helmet';
 import { type LayoutModule, type ResourceNav, ResourceNavSchema } from 'anafero/index.mjs';
 import { type Versioning, VersioningSchema } from 'anafero/index.mjs';
 import { fillInLocale, type ResourceMetadata } from 'anafero/index.mjs';
@@ -13,7 +12,7 @@ import { Bookmarks, Search } from './Nav.jsx';
 import { Hierarchy as Hierarchy2, computeImplicitlyExpanded } from './NavHierarchy2.jsx';
 import { reducer, createInitialState, type InitializerInput, type BrowsingMode, type StoredAppState, StoredAppStateSchema } from './model.mjs';
 import { BrowserBar } from './BrowseBar.jsx';
-import { ResourceHelmet, Resource, type ResourceData } from './Resource.jsx';
+import { Resource, type ResourceData } from './Resource.jsx';
 import { useAssetLoader, fetchJSON } from './loader.mjs';
 import interceptNav from './intercept-nav.mjs';
 import classNames from './style.module.css';
@@ -942,9 +941,21 @@ export const VersionWorkspace: React.FC<{
     return dep?.content?.content ?? undefined;
   }, [resourceDeps, state.activeResourceURI]);
 
+  useEffect(() => {
+    if (activeResourceContent) {
+      const title = activeResourceContent.labelInPlainText;
+      const lang = activeResourceContent.primaryLanguageID ?? primaryLanguage;
+      document.title = title;
+      document.documentElement.setAttribute('lang', lang);
+    }
+  }, [activeResourceContent, primaryLanguage]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-react-is-hydrated', 'yes');
+  }, []);
+
   return (
     <>
-      <Helmet><html lang={primaryLanguage} /></Helmet>
       <BrowserBar
         title={workspaceTitle}
         loadProgress={isLoading ? true : undefined}
@@ -1053,7 +1064,7 @@ export const VersionWorkspace: React.FC<{
 
       {/* This is needed here when multiple resources are visible,
           to make sure the active resource is the one dictating HTML title.
-          key is used to force re-render and reset title when resources are loading. */}
+          key is used to force re-render and reset title when resources are loading.
       {activeResourceContent
         ? <ResourceHelmet
             key={`
@@ -1064,7 +1075,7 @@ export const VersionWorkspace: React.FC<{
             `}
             {...activeResourceContent}
           />
-        : null}
+        : null} */}
 
       <div
           ref={lastVisibleResourceMarkerIntersection.ref}

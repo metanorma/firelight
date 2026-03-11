@@ -1,6 +1,5 @@
 import { ImportMapper } from 'import-mapper';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { hydrateRoot } from 'react-dom/client';
 import { StrictMode } from 'react';
 import ErrorBoundaryWithCustomFallback from 'anafero/ErrorBoundaryWithCustomView.jsx';
@@ -69,12 +68,10 @@ function holdBodyHeightUntilHydrationIsComplete(heightInPx: number) {
 
   function unsetHeightAndDisconnectObserverIfHydrated() {
     /**
-     * Whether React’s DOM tree is up.
-     * Makes an assumption that after data-react-helmet attribute shows up
-     * it’s ready.
+     * Whether React’s DOM tree is up. This is set in App’s useEffect.
      */
     const hasInitialized =
-      !!document.documentElement.getAttribute('data-react-helmet');
+      !!document.documentElement.getAttribute('data-react-is-hydrated');
 
     if (hasInitialized) {
       //console.debug("Cleaning up");
@@ -111,7 +108,6 @@ async function getExtensionImports(): Promise<Record<string, unknown>> {
     '@effect/schema/Schema': await import('@effect/schema/Schema'),
     'prosemirror-tables': await import('prosemirror-tables'),
     'prosemirror-schema-list': await import('prosemirror-schema-list'),
-    'react-helmet': { Helmet },
     'anafero/index.mjs': await import('anafero/index.mjs'),
   };
 }

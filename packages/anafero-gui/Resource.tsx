@@ -1,6 +1,5 @@
 import React, { useMemo, useCallback, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Helmet } from 'react-helmet';
 import { DOMSerializer, Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 
@@ -16,7 +15,6 @@ import {
   type RelationTriple,
 } from 'anafero/relations.mjs';
 import {
-  type ResourceMetadata,
   type AdapterGeneratedResourceContent,
   type ContentAdapterModule,
   gatherDescribedResourcesFromJsonifiedProseMirrorNode,
@@ -48,16 +46,6 @@ export interface ResourceData {
   content: AdapterGeneratedResourceContent;
 
   nav: ResourceNav;
-}
-
-
-export const ResourceHelmet: React.FC<ResourceMetadata> = function (props) {
-  return <Helmet>
-    {props.primaryLanguageID
-      ? <html lang={props.primaryLanguageID} />
-      : null}
-    <title>{props.labelInPlainText}</title>
-  </Helmet>;
 }
 
 
@@ -285,10 +273,6 @@ export const Resource = React.forwardRef(function ({
 
       {!hideBreadcrumbs && resourceNav.breadcrumbs.length > 0
         ? <ResourceBreadcrumbs parents={resourceNav.breadcrumbs} />
-        : null}
-
-      {content.content
-        ? <ResourceHelmet {...content.content} />
         : null}
 
       <Layout
