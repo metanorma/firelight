@@ -496,8 +496,10 @@ export const VersionWorkspace: React.FC<{
 
   // Fetch dependencies for newly visible resources
 
-  const resourceIDsPendingDependencies = state.visibleResourceURIs.
-    filter(uri => resourceDeps[uri] === undefined);
+  const resourceIDsPendingDependencies = useMemo((() =>
+    state.visibleResourceURIs.filter(uri => resourceDeps[uri] === undefined)
+  ), [state.visibleResourceURIs.join(','), resourceDeps]);
+
   const [loadingResources, setLoadingResources] = useState<string[]>([]);
   useEffect(() => {
     let cancelled = false;
