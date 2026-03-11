@@ -30,7 +30,7 @@ export const Hierarchy: React.FC<{
 
   onExpand?: (uri: Set<string>) => void;
   selected: Set<string>;
-  onSelect: (uri: string) => void;
+  onSelect?: (uri: string) => void;
 }> = React.memo(function ({ pageMap, getResourceTitle, selected, onSelect, implicitlyExpanded, expanded, onExpand }) {
 
   const allPaths = useMemo(() => Object.keys(pageMap), [pageMap]);
@@ -141,14 +141,16 @@ export const Hierarchy: React.FC<{
       ref={listElRef}
       selectionMode="single"
       selectionStyle="highlight"
-      onSelectionChange={(selectedKeys: Selection) => {
-	const key = selectedKeys !== 'all'
-	  ? `${selectedKeys.keys().next().value}`
-	  : undefined;
-	if (key) {
-	  onSelect(key);
-	}
-      }}
+      onSelectionChange={onSelect
+	? ((selectedKeys: Selection) => {
+	    const key = selectedKeys !== 'all'
+	      ? `${selectedKeys.keys().next().value}`
+	      : undefined;
+	    if (key) {
+	      onSelect(key);
+	    }
+	  })
+	: () => void 0}
       //onExpandedChange={useMemo(() => (onExpand
       //  ? (keys => onExpand(new Set(Array.from(keys).filter(k => typeof k === 'string'))))
       //  : undefined), [onExpand])}

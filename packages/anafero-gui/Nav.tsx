@@ -55,7 +55,7 @@ export const Search: React.FC<{
   getAbsolutePath: (p: string) => string;
   query: SearchQuery;
   selected?: string;
-  onSelect: (resID: string) => void;
+  onSelect?: (resID: string) => void;
   onEditQueryText?: (newText: string) => void;
   getPlainTitle: (resID: string) => string;
   locateResource: (resID: string) => string;
@@ -240,14 +240,16 @@ export const Search: React.FC<{
         UNSAFE_className={classNames.navListView}
         selectedKeys={selectedKeys}
         disabledKeys={disabledKeys}
-        onSelectionChange={(selectedKeys) => {
-          const key = selectedKeys !== 'all'
-            ? selectedKeys.keys().next().value
-            : undefined;
-          if (key) {
-            onSelect(`${key}`);
-          }
-        }}
+        onSelectionChange={onSelect
+          ? ((selectedKeys) => {
+              const key = selectedKeys !== 'all'
+                ? selectedKeys.keys().next().value
+                : undefined;
+              if (key) {
+                onSelect(`${key}`);
+              }
+            })
+          : () => void 0}
         selectionMode='single'
         selectionStyle='highlight'
         aria-label="Matching resources found"
