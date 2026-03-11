@@ -23,6 +23,21 @@ function hydrateApp() {
     return;
   }
 
+  const parent = appRoot.parentElement!;
+
+  const tempRoot = document.createElement('div');
+  tempRoot.classList.add('appwrapper');
+  tempRoot.style.opacity = '0.1';
+  appRoot.insertAdjacentElement('afterend', tempRoot);
+
+  let loaded = false;
+  function handleDone() {
+    if (loaded) { return; }
+    loaded = true;
+    appRoot!.remove();
+    tempRoot.style.opacity = '1';
+  }
+
   const originalHTML = appRoot.innerHTML;
 
   // If there’s an error, the boundary will fall back to SSR’d DOM.
@@ -31,7 +46,7 @@ function hydrateApp() {
       dangerouslySetInnerHTML={{ __html: originalHTML }}
       suppressHydrationWarning={true}
     />}>
-      <AppLoader />
+      <AppLoader onDone={handleDone} />
     </ErrorBoundaryWithCustomFallback>;
 
   holdBodyHeightUntilHydrationIsComplete(appRoot.clientHeight);
@@ -40,7 +55,7 @@ function hydrateApp() {
     document.documentElement.dataset.useReactStrict === 'true';
 
   hydrateRoot(
-    appRoot!,
+    tempRoot,
     useStrictMode
       ? <StrictMode>{app}</StrictMode>
       : app,
