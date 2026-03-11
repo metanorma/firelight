@@ -329,7 +329,7 @@ Promise<Uint8Array> {
     PRE_BUILT_JS_BUNDLE_FILENAME);
   const bundleStat = await stat(bundlePath);
   if (bundleStat.isFile()) {
-    return await readFile(bundlePath);
+    return (await readFile(bundlePath)) as Uint8Array;
   } else {
     throw new Error("Pre-built entry point is not a file");
   }
@@ -349,7 +349,7 @@ Promise<Record<string, Uint8Array>> {
       assets.map(async (fn) => ({ [fn]: await readFile(join(distroot, fn)) }))
     )).
     reduce((prev, curr) => ({ ...prev, ...curr }), {})
-  );
+  ) as Record<string, Uint8Array>;
 }
 
 
@@ -424,7 +424,7 @@ export async function buildDependency(
   const result = await esbuild({
     //entryPoints: [join(buildDir, 'index.mts')],
     stdin: {
-      contents: await readFile(join(buildDir, 'index.mts')),
+      contents: (await readFile(join(buildDir, 'index.mts'))) as Uint8Array,
       loader: 'ts',
 
       // TODO: This means we use filesystem when resolving

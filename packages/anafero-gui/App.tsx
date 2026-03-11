@@ -1,5 +1,5 @@
 import * as S from '@effect/schema/Schema';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { defaultTheme, ProgressBar, Flex, Provider } from '@adobe/react-spectrum';
 import { useInView, InView } from 'react-intersection-observer';
 import { useThrottledCallback, useDebouncedCallback } from 'use-debounce';
@@ -474,7 +474,7 @@ export const VersionWorkspace: React.FC<{
 
   const initialPage = getContainingPageResourceURI(initialResource);
 
-  const [state, dispatch] = useReducer<typeof reducer, InitializerInput>(
+  const [state, dispatch] = useReducer(
     reducer,
     { initialResource, initialPage, stored: storedState } as InitializerInput,
     createInitialState);

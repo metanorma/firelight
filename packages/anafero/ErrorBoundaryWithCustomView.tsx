@@ -2,10 +2,10 @@ import React from 'react';
 
 
 class ErrorBoundaryWithCustomFallback extends React.Component<
-  React.PropsWithChildren<{ fallback: JSX.Element }>,
+  React.PropsWithChildren<{ fallback: React.JSX.Element }>,
   { error?: string | undefined; }
 > {
-  constructor(props: { fallback: JSX.Element }) {
+  constructor(props: { fallback: React.JSX.Element }) {
     super(props);
     this.state = { error: undefined };
   }
