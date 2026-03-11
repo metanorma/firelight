@@ -291,6 +291,10 @@ const RAW_RUNTIME_STATE =
       "npm:0.5.4"\
     ],\
     [\
+      "@handlewithcare/react-prosemirror",\
+      "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:2.8.1"\
+    ],\
+    [\
       "@hyrious/esbuild-plugin-commonjs",\
       "virtual:3e81aaca76e9442e305616a6b7ccda86cc22a752cf17ccfc041c0f71b7d5033d4fc77d242fd41a149bfbe3fa7d2b9f1e3221d75f63cf6252d757ad34ddae93aa#npm:0.2.4"\
     ],\
@@ -325,10 +329,6 @@ const RAW_RUNTIME_STATE =
     [\
       "@npmcli/fs",\
       "npm:3.1.1"\
-    ],\
-    [\
-      "@nytimes/react-prosemirror",\
-      "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.7.0-next.10"\
     ],\
     [\
       "@parcel/watcher",\
@@ -1872,35 +1872,35 @@ const RAW_RUNTIME_STATE =
     ],\
     [\
       "prosemirror-keymap",\
-      "npm:1.2.2"\
-    ],\
-    [\
-      "prosemirror-model",\
-      "npm:1.22.3"\
-    ],\
-    [\
-      "prosemirror-schema-basic",\
       "npm:1.2.3"\
     ],\
     [\
+      "prosemirror-model",\
+      "npm:1.25.4"\
+    ],\
+    [\
+      "prosemirror-schema-basic",\
+      "npm:1.2.4"\
+    ],\
+    [\
       "prosemirror-schema-list",\
-      "npm:1.4.1"\
+      "npm:1.5.1"\
     ],\
     [\
       "prosemirror-state",\
-      "npm:1.4.3"\
+      "npm:1.4.4"\
     ],\
     [\
       "prosemirror-tables",\
-      "npm:1.5.0"\
+      "npm:1.8.5"\
     ],\
     [\
       "prosemirror-transform",\
-      "npm:1.10.0"\
+      "npm:1.11.0"\
     ],\
     [\
       "prosemirror-view",\
-      "npm:1.34.3"\
+      "npm:1.41.6"\
     ],\
     [\
       "psl",\
@@ -1944,7 +1944,7 @@ const RAW_RUNTIME_STATE =
     ],\
     [\
       "react-reconciler",\
-      "virtual:8fcb69d73942deb25a44b4248866185d1b07847316655d19125f183b44d484e9500046f367619d32667606625129aa596d4c7eba05d2ef4b12516dd5a25143b3#npm:0.33.0"\
+      "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.33.0"\
     ],\
     [\
       "react-stately",\
@@ -2284,11 +2284,11 @@ const RAW_RUNTIME_STATE =
           ["esbuild", "npm:0.27.3"],\
           ["fast-check", "npm:3.22.0"],\
           ["firelight-monorepo", "workspace:."],\
-          ["prosemirror-model", "npm:1.22.3"],\
-          ["prosemirror-schema-basic", "npm:1.2.3"],\
-          ["prosemirror-state", "npm:1.4.3"],\
-          ["prosemirror-transform", "npm:1.10.0"],\
-          ["prosemirror-view", "npm:1.34.3"],\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-schema-basic", "npm:1.2.4"],\
+          ["prosemirror-state", "npm:1.4.4"],\
+          ["prosemirror-transform", "npm:1.11.0"],\
+          ["prosemirror-view", "npm:1.41.6"],\
           ["react", "npm:19.2.4"],\
           ["react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:19.2.4"],\
           ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"],\
@@ -3287,6 +3287,83 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@handlewithcare/react-prosemirror", [\
+      ["npm:2.8.1", {\
+        "packageLocation": "./.yarn/cache/@handlewithcare-react-prosemirror-npm-2.8.1-e49ed3f25d-3470e3dd15.zip/node_modules/@handlewithcare/react-prosemirror/",\
+        "packageDependencies": [\
+          ["@handlewithcare/react-prosemirror", "npm:2.8.1"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:2.8.1", {\
+        "packageLocation": "./.yarn/__virtual__/@handlewithcare-react-prosemirror-virtual-041e03a4b0/0/cache/@handlewithcare-react-prosemirror-npm-2.8.1-e49ed3f25d-3470e3dd15.zip/node_modules/@handlewithcare/react-prosemirror/",\
+        "packageDependencies": [\
+          ["@handlewithcare/react-prosemirror", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:2.8.1"],\
+          ["@types/prosemirror-model", null],\
+          ["@types/prosemirror-state", null],\
+          ["@types/prosemirror-view", null],\
+          ["@types/react", "npm:19.2.14"],\
+          ["@types/react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:19.2.3"],\
+          ["@types/react-reconciler", null],\
+          ["classnames", "npm:2.5.1"],\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-state", "npm:1.4.4"],\
+          ["prosemirror-view", "npm:1.41.6"],\
+          ["react", "npm:19.2.4"],\
+          ["react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:19.2.4"],\
+          ["react-reconciler", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.33.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/prosemirror-model",\
+          "@types/prosemirror-state",\
+          "@types/prosemirror-view",\
+          "@types/react-dom",\
+          "@types/react-reconciler",\
+          "@types/react",\
+          "prosemirror-model",\
+          "prosemirror-state",\
+          "prosemirror-view",\
+          "react-dom",\
+          "react-reconciler",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["virtual:c7bab0322e7612345b7c9bf337b27e089711962409bb5b8cb2c23fd878ddf004bdb7bb8a72e2b11a3e3a0857d109013606bcc07d8e15a87d88db5ada7a83bdc1#npm:2.8.1", {\
+        "packageLocation": "./.yarn/__virtual__/@handlewithcare-react-prosemirror-virtual-e996889046/0/cache/@handlewithcare-react-prosemirror-npm-2.8.1-e49ed3f25d-3470e3dd15.zip/node_modules/@handlewithcare/react-prosemirror/",\
+        "packageDependencies": [\
+          ["@handlewithcare/react-prosemirror", "virtual:c7bab0322e7612345b7c9bf337b27e089711962409bb5b8cb2c23fd878ddf004bdb7bb8a72e2b11a3e3a0857d109013606bcc07d8e15a87d88db5ada7a83bdc1#npm:2.8.1"],\
+          ["@types/prosemirror-model", null],\
+          ["@types/prosemirror-state", null],\
+          ["@types/prosemirror-view", null],\
+          ["@types/react", "npm:19.2.14"],\
+          ["@types/react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:19.2.3"],\
+          ["@types/react-reconciler", null],\
+          ["classnames", "npm:2.5.1"],\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-state", null],\
+          ["prosemirror-view", null],\
+          ["react", "npm:19.2.4"],\
+          ["react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:19.2.4"],\
+          ["react-reconciler", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.33.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/prosemirror-model",\
+          "@types/prosemirror-state",\
+          "@types/prosemirror-view",\
+          "@types/react-dom",\
+          "@types/react-reconciler",\
+          "@types/react",\
+          "prosemirror-model",\
+          "prosemirror-state",\
+          "prosemirror-view",\
+          "react-dom",\
+          "react-reconciler",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@hyrious/esbuild-plugin-commonjs", [\
       ["npm:0.2.4", {\
         "packageLocation": "./.yarn/cache/@hyrious-esbuild-plugin-commonjs-npm-0.2.4-118763924f-f8466056c2.zip/node_modules/@hyrious/esbuild-plugin-commonjs/",\
@@ -3424,45 +3501,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npmcli/fs", "npm:3.1.1"],\
           ["semver", "npm:7.6.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@nytimes/react-prosemirror", [\
-      ["npm:0.7.0-next.10", {\
-        "packageLocation": "./.yarn/cache/@nytimes-react-prosemirror-npm-0.7.0-next.10-e58854b316-4116cbad1f.zip/node_modules/@nytimes/react-prosemirror/",\
-        "packageDependencies": [\
-          ["@nytimes/react-prosemirror", "npm:0.7.0-next.10"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.7.0-next.10", {\
-        "packageLocation": "./.yarn/__virtual__/@nytimes-react-prosemirror-virtual-c32dbc15b9/0/cache/@nytimes-react-prosemirror-npm-0.7.0-next.10-e58854b316-4116cbad1f.zip/node_modules/@nytimes/react-prosemirror/",\
-        "packageDependencies": [\
-          ["@nytimes/react-prosemirror", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.7.0-next.10"],\
-          ["@types/prosemirror-model", null],\
-          ["@types/prosemirror-state", null],\
-          ["@types/prosemirror-view", null],\
-          ["@types/react", "npm:19.2.14"],\
-          ["@types/react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:19.2.3"],\
-          ["classnames", "npm:2.5.1"],\
-          ["prosemirror-model", "npm:1.22.3"],\
-          ["prosemirror-state", "npm:1.4.3"],\
-          ["prosemirror-view", null],\
-          ["react", "npm:19.2.4"],\
-          ["react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:19.2.4"]\
-        ],\
-        "packagePeers": [\
-          "@types/prosemirror-model",\
-          "@types/prosemirror-state",\
-          "@types/prosemirror-view",\
-          "@types/react-dom",\
-          "@types/react",\
-          "prosemirror-model",\
-          "prosemirror-state",\
-          "prosemirror-view",\
-          "react-dom",\
-          "react"\
         ],\
         "linkType": "HARD"\
       }]\
@@ -9377,9 +9415,9 @@ const RAW_RUNTIME_STATE =
           ["jsdom", "virtual:3e81aaca76e9442e305616a6b7ccda86cc22a752cf17ccfc041c0f71b7d5033d4fc77d242fd41a149bfbe3fa7d2b9f1e3221d75f63cf6252d757ad34ddae93aa#npm:20.0.3"],\
           ["linkedom", "npm:0.18.5"],\
           ["node-fetch", "npm:3.3.2"],\
-          ["prosemirror-model", "npm:1.22.3"],\
-          ["prosemirror-schema-list", "npm:1.4.1"],\
-          ["prosemirror-tables", "npm:1.5.0"],\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-schema-list", "npm:1.5.1"],\
+          ["prosemirror-tables", "npm:1.8.5"],\
           ["react", "npm:19.2.4"],\
           ["react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:19.2.4"],\
           ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"],\
@@ -9700,7 +9738,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@adobe/react-spectrum", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:3.46.2"],\
           ["@effect/schema", "virtual:c7bab0322e7612345b7c9bf337b27e089711962409bb5b8cb2c23fd878ddf004bdb7bb8a72e2b11a3e3a0857d109013606bcc07d8e15a87d88db5ada7a83bdc1#npm:0.74.0"],\
-          ["@nytimes/react-prosemirror", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.7.0-next.10"],\
+          ["@handlewithcare/react-prosemirror", "virtual:c7bab0322e7612345b7c9bf337b27e089711962409bb5b8cb2c23fd878ddf004bdb7bb8a72e2b11a3e3a0857d109013606bcc07d8e15a87d88db5ada7a83bdc1#npm:2.8.1"],\
           ["@react-spectrum/provider", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:3.10.14"],\
           ["@spectrum-icons/workflow", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:4.2.28"],\
           ["@types/lunr", "npm:2.3.7"],\
@@ -9709,21 +9747,13 @@ const RAW_RUNTIME_STATE =
           ["anafero", "workspace:packages/anafero"],\
           ["anafero-gui", "workspace:packages/anafero-gui"],\
           ["effect", "npm:3.11.0"],\
-          ["import-mapper", "npm:0.0.4"],\
           ["lunr", "npm:2.3.9"],\
           ["lunr-languages", "npm:1.14.0"],\
-          ["motion", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:12.35.2"],\
-          ["prosemirror-model", "npm:1.22.3"],\
-          ["prosemirror-schema-list", "npm:1.4.1"],\
-          ["prosemirror-state", "npm:1.4.3"],\
-          ["prosemirror-tables", "npm:1.5.0"],\
+          ["prosemirror-model", "npm:1.25.4"],\
           ["react", "npm:19.2.4"],\
-          ["react-aria-components", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:1.16.0"],\
           ["react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:19.2.4"],\
-          ["react-intersection-observer", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:10.0.3"],\
-          ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"],\
-          ["use-debounce", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:10.0.4"],\
-          ["xpath", "npm:0.0.34"]\
+          ["react-reconciler", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.33.0"],\
+          ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -9734,7 +9764,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@adobe/react-spectrum", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:3.46.2"],\
           ["@effect/schema", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.74.0"],\
-          ["@nytimes/react-prosemirror", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.7.0-next.10"],\
+          ["@handlewithcare/react-prosemirror", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:2.8.1"],\
           ["@react-spectrum/provider", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:3.10.14"],\
           ["@spectrum-icons/workflow", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:4.2.28"],\
           ["@types/lunr", "npm:2.3.7"],\
@@ -9746,14 +9776,16 @@ const RAW_RUNTIME_STATE =
           ["lunr", "npm:2.3.9"],\
           ["lunr-languages", "npm:1.14.0"],\
           ["motion", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:12.35.2"],\
-          ["prosemirror-model", "npm:1.22.3"],\
-          ["prosemirror-schema-list", "npm:1.4.1"],\
-          ["prosemirror-state", "npm:1.4.3"],\
-          ["prosemirror-tables", "npm:1.5.0"],\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-schema-list", "npm:1.5.1"],\
+          ["prosemirror-state", "npm:1.4.4"],\
+          ["prosemirror-tables", "npm:1.8.5"],\
+          ["prosemirror-view", "npm:1.41.6"],\
           ["react", "npm:19.2.4"],\
           ["react-aria-components", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:1.16.0"],\
           ["react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:19.2.4"],\
           ["react-intersection-observer", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:10.0.3"],\
+          ["react-reconciler", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.33.0"],\
           ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"],\
           ["use-debounce", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:10.0.4"],\
           ["xpath", "npm:0.0.34"]\
@@ -10578,11 +10610,11 @@ const RAW_RUNTIME_STATE =
           ["esbuild", "npm:0.27.3"],\
           ["fast-check", "npm:3.22.0"],\
           ["firelight-monorepo", "workspace:."],\
-          ["prosemirror-model", "npm:1.22.3"],\
-          ["prosemirror-schema-basic", "npm:1.2.3"],\
-          ["prosemirror-state", "npm:1.4.3"],\
-          ["prosemirror-transform", "npm:1.10.0"],\
-          ["prosemirror-view", "npm:1.34.3"],\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-schema-basic", "npm:1.2.4"],\
+          ["prosemirror-state", "npm:1.4.4"],\
+          ["prosemirror-transform", "npm:1.11.0"],\
+          ["prosemirror-view", "npm:1.41.6"],\
           ["react", "npm:19.2.4"],\
           ["react-dom", "virtual:391aec91aff0bbc5c1b0ea204ef5407fb142a023998469a5f0a3de978ceb95c39138d9879f0ca8de90d633a9fb3276e2f5a082e7224510752157caa87d9041ed#npm:19.2.4"],\
           ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"],\
@@ -10907,7 +10939,7 @@ const RAW_RUNTIME_STATE =
           ["patch-console", "npm:2.0.0"],\
           ["react", "npm:19.2.4"],\
           ["react-devtools-core", null],\
-          ["react-reconciler", "virtual:8fcb69d73942deb25a44b4248866185d1b07847316655d19125f183b44d484e9500046f367619d32667606625129aa596d4c7eba05d2ef4b12516dd5a25143b3#npm:0.33.0"],\
+          ["react-reconciler", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.33.0"],\
           ["scheduler", "npm:0.27.0"],\
           ["signal-exit", "npm:3.0.7"],\
           ["slice-ansi", "npm:8.0.0"],\
@@ -11247,9 +11279,9 @@ const RAW_RUNTIME_STATE =
           ["@types/react", "npm:19.2.14"],\
           ["anafero", "workspace:packages/anafero"],\
           ["metanorma-site-content", "workspace:packages/metanorma-site-content"],\
-          ["prosemirror-model", "npm:1.22.3"],\
-          ["prosemirror-schema-list", "npm:1.4.1"],\
-          ["prosemirror-tables", "npm:1.5.0"],\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-schema-list", "npm:1.5.1"],\
+          ["prosemirror-tables", "npm:1.8.5"],\
           ["react", "npm:19.2.4"],\
           ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"]\
         ],\
@@ -11778,10 +11810,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["prosemirror-keymap", [\
-      ["npm:1.2.2", {\
-        "packageLocation": "./.yarn/cache/prosemirror-keymap-npm-1.2.2-efb8276b00-7aa28c731e.zip/node_modules/prosemirror-keymap/",\
+      ["npm:1.2.3", {\
+        "packageLocation": "./.yarn/cache/prosemirror-keymap-npm-1.2.3-0e7e0c8195-0ec2f8bd9b.zip/node_modules/prosemirror-keymap/",\
         "packageDependencies": [\
-          ["prosemirror-keymap", "npm:1.2.2"],\
+          ["prosemirror-keymap", "npm:1.2.3"],\
           ["prosemirror-state", "npm:1.4.3"],\
           ["w3c-keyname", "npm:2.2.8"]\
         ],\
@@ -11789,31 +11821,31 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["prosemirror-model", [\
-      ["npm:1.22.3", {\
-        "packageLocation": "./.yarn/cache/prosemirror-model-npm-1.22.3-f92a11e7ca-c1405f9643.zip/node_modules/prosemirror-model/",\
+      ["npm:1.25.4", {\
+        "packageLocation": "./.yarn/cache/prosemirror-model-npm-1.25.4-e7ee2df3df-5ba99a2354.zip/node_modules/prosemirror-model/",\
         "packageDependencies": [\
           ["orderedmap", "npm:2.1.1"],\
-          ["prosemirror-model", "npm:1.22.3"]\
+          ["prosemirror-model", "npm:1.25.4"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["prosemirror-schema-basic", [\
-      ["npm:1.2.3", {\
-        "packageLocation": "./.yarn/cache/prosemirror-schema-basic-npm-1.2.3-a144a1b06d-99bac902cc.zip/node_modules/prosemirror-schema-basic/",\
+      ["npm:1.2.4", {\
+        "packageLocation": "./.yarn/cache/prosemirror-schema-basic-npm-1.2.4-8f943ded01-cd86f88a5e.zip/node_modules/prosemirror-schema-basic/",\
         "packageDependencies": [\
-          ["prosemirror-model", "npm:1.22.3"],\
-          ["prosemirror-schema-basic", "npm:1.2.3"]\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-schema-basic", "npm:1.2.4"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["prosemirror-schema-list", [\
-      ["npm:1.4.1", {\
-        "packageLocation": "./.yarn/cache/prosemirror-schema-list-npm-1.4.1-a3b29b7170-61c664bea2.zip/node_modules/prosemirror-schema-list/",\
+      ["npm:1.5.1", {\
+        "packageLocation": "./.yarn/cache/prosemirror-schema-list-npm-1.5.1-7b138c5fed-e6fd27446b.zip/node_modules/prosemirror-schema-list/",\
         "packageDependencies": [\
-          ["prosemirror-model", "npm:1.22.3"],\
-          ["prosemirror-schema-list", "npm:1.4.1"],\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-schema-list", "npm:1.5.1"],\
           ["prosemirror-state", "npm:1.4.3"],\
           ["prosemirror-transform", "npm:1.10.0"]\
         ],\
@@ -11824,8 +11856,18 @@ const RAW_RUNTIME_STATE =
       ["npm:1.4.3", {\
         "packageLocation": "./.yarn/cache/prosemirror-state-npm-1.4.3-d6540e44ad-e34dc9b1a6.zip/node_modules/prosemirror-state/",\
         "packageDependencies": [\
-          ["prosemirror-model", "npm:1.22.3"],\
+          ["prosemirror-model", "npm:1.25.4"],\
           ["prosemirror-state", "npm:1.4.3"],\
+          ["prosemirror-transform", "npm:1.10.0"],\
+          ["prosemirror-view", "npm:1.34.3"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:1.4.4", {\
+        "packageLocation": "./.yarn/cache/prosemirror-state-npm-1.4.4-8b7e3a396c-1428636a37.zip/node_modules/prosemirror-state/",\
+        "packageDependencies": [\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-state", "npm:1.4.4"],\
           ["prosemirror-transform", "npm:1.10.0"],\
           ["prosemirror-view", "npm:1.34.3"]\
         ],\
@@ -11833,15 +11875,15 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["prosemirror-tables", [\
-      ["npm:1.5.0", {\
-        "packageLocation": "./.yarn/cache/prosemirror-tables-npm-1.5.0-063a8603bc-b1d52d8f16.zip/node_modules/prosemirror-tables/",\
+      ["npm:1.8.5", {\
+        "packageLocation": "./.yarn/cache/prosemirror-tables-npm-1.8.5-4daca68903-d6e8cd9d33.zip/node_modules/prosemirror-tables/",\
         "packageDependencies": [\
-          ["prosemirror-keymap", "npm:1.2.2"],\
-          ["prosemirror-model", "npm:1.22.3"],\
-          ["prosemirror-state", "npm:1.4.3"],\
-          ["prosemirror-tables", "npm:1.5.0"],\
-          ["prosemirror-transform", "npm:1.10.0"],\
-          ["prosemirror-view", "npm:1.34.3"]\
+          ["prosemirror-keymap", "npm:1.2.3"],\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-state", "npm:1.4.4"],\
+          ["prosemirror-tables", "npm:1.8.5"],\
+          ["prosemirror-transform", "npm:1.11.0"],\
+          ["prosemirror-view", "npm:1.41.6"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11850,8 +11892,16 @@ const RAW_RUNTIME_STATE =
       ["npm:1.10.0", {\
         "packageLocation": "./.yarn/cache/prosemirror-transform-npm-1.10.0-c36ebced12-72c10b7689.zip/node_modules/prosemirror-transform/",\
         "packageDependencies": [\
-          ["prosemirror-model", "npm:1.22.3"],\
+          ["prosemirror-model", "npm:1.25.4"],\
           ["prosemirror-transform", "npm:1.10.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:1.11.0", {\
+        "packageLocation": "./.yarn/cache/prosemirror-transform-npm-1.11.0-fa260ad6f3-07f5b4ff6c.zip/node_modules/prosemirror-transform/",\
+        "packageDependencies": [\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-transform", "npm:1.11.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11860,10 +11910,20 @@ const RAW_RUNTIME_STATE =
       ["npm:1.34.3", {\
         "packageLocation": "./.yarn/cache/prosemirror-view-npm-1.34.3-c79b7cffaa-f08a9eeb69.zip/node_modules/prosemirror-view/",\
         "packageDependencies": [\
-          ["prosemirror-model", "npm:1.22.3"],\
+          ["prosemirror-model", "npm:1.25.4"],\
           ["prosemirror-state", "npm:1.4.3"],\
           ["prosemirror-transform", "npm:1.10.0"],\
           ["prosemirror-view", "npm:1.34.3"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:1.41.6", {\
+        "packageLocation": "./.yarn/cache/prosemirror-view-npm-1.41.6-a9d2feed27-a0dd304cab.zip/node_modules/prosemirror-view/",\
+        "packageDependencies": [\
+          ["prosemirror-model", "npm:1.25.4"],\
+          ["prosemirror-state", "npm:1.4.3"],\
+          ["prosemirror-transform", "npm:1.10.0"],\
+          ["prosemirror-view", "npm:1.41.6"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -12102,12 +12162,12 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:8fcb69d73942deb25a44b4248866185d1b07847316655d19125f183b44d484e9500046f367619d32667606625129aa596d4c7eba05d2ef4b12516dd5a25143b3#npm:0.33.0", {\
-        "packageLocation": "./.yarn/__virtual__/react-reconciler-virtual-d91d1c3c4c/0/cache/react-reconciler-npm-0.33.0-714523f9f0-3f7b27ea8d.zip/node_modules/react-reconciler/",\
+      ["virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.33.0", {\
+        "packageLocation": "./.yarn/__virtual__/react-reconciler-virtual-4f8e0761ef/0/cache/react-reconciler-npm-0.33.0-714523f9f0-3f7b27ea8d.zip/node_modules/react-reconciler/",\
         "packageDependencies": [\
           ["@types/react", "npm:19.2.14"],\
           ["react", "npm:19.2.4"],\
-          ["react-reconciler", "virtual:8fcb69d73942deb25a44b4248866185d1b07847316655d19125f183b44d484e9500046f367619d32667606625129aa596d4c7eba05d2ef4b12516dd5a25143b3#npm:0.33.0"],\
+          ["react-reconciler", "virtual:b9d3f40df15fb0becf5988543d72f3595ae99be6f22bab3edee1dac7287b6733a974cc704270d75f69bf320ee57d11dd9ef78f1afab3ffc3cb6039cf49b728f7#npm:0.33.0"],\
           ["scheduler", "npm:0.27.0"]\
         ],\
         "packagePeers": [\

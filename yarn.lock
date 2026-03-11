@@ -626,6 +626,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@handlewithcare/react-prosemirror@npm:2.8.1":
+  version: 2.8.1
+  resolution: "@handlewithcare/react-prosemirror@npm:2.8.1"
+  dependencies:
+    classnames: "npm:^2.3.2"
+  peerDependencies:
+    prosemirror-model: ^1.0.0
+    prosemirror-state: ^1.0.0
+    prosemirror-view: 1.41.4
+    react: ">=17 <20"
+    react-dom: ">=17 <20"
+    react-reconciler: ">=0.26.1 <=0.33.0"
+  checksum: 10c0/3470e3dd159ccacf2459543cfa32b7a46735c562ecf81538df69e41821321e6100871081aaa22d8298404d0e1091b6ebb18ac858f90bba365a585c8ec7fd3ee1
+  languageName: node
+  linkType: hard
+
 "@hyrious/esbuild-plugin-commonjs@npm:^0.2.4":
   version: 0.2.4
   resolution: "@hyrious/esbuild-plugin-commonjs@npm:0.2.4"
@@ -723,21 +739,6 @@ __metadata:
   dependencies:
     semver: "npm:^7.3.5"
   checksum: 10c0/c37a5b4842bfdece3d14dfdb054f73fe15ed2d3da61b34ff76629fb5b1731647c49166fd2a8bf8b56fcfa51200382385ea8909a3cbecdad612310c114d3f6c99
-  languageName: node
-  linkType: hard
-
-"@nytimes/react-prosemirror@npm:^0.7.0-next.10":
-  version: 0.7.0-next.10
-  resolution: "@nytimes/react-prosemirror@npm:0.7.0-next.10"
-  dependencies:
-    classnames: "npm:^2.3.2"
-  peerDependencies:
-    prosemirror-model: ^1.0.0
-    prosemirror-state: ^1.0.0
-    prosemirror-view: 1.34.2
-    react: ">=17"
-    react-dom: ">=17"
-  checksum: 10c0/4116cbad1f4f4690a3570c139be0443f2d37d74afe3b353b2448d488a2210aa8a60287fbebc5c83bc36ea26130cbd1a5bbe2c99da4ce54197a7b4363f532dc58
   languageName: node
   linkType: hard
 
@@ -4041,9 +4042,9 @@ __metadata:
     jsdom: "npm:^20.0.0"
     linkedom: "npm:^0.18.5"
     node-fetch: "npm:^3.3.2"
-    prosemirror-model: "npm:^1.22.3"
-    prosemirror-schema-list: "npm:^1.4.1"
-    prosemirror-tables: "npm:^1.5.0"
+    prosemirror-model: "npm:^1.25.4"
+    prosemirror-schema-list: "npm:^1.5.1"
+    prosemirror-tables: "npm:^1.8.5"
     react: "npm:^19.2.4"
     react-dom: "npm:^19.2.4"
     typescript: "npm:~5.9.3"
@@ -4283,7 +4284,7 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:3.46.2"
     "@effect/schema": "npm:^0.74.0"
-    "@nytimes/react-prosemirror": "npm:^0.7.0-next.10"
+    "@handlewithcare/react-prosemirror": "npm:2.8.1"
     "@react-spectrum/provider": "npm:3.10.14"
     "@spectrum-icons/workflow": "npm:4.2.28"
     "@types/lunr": "npm:^2"
@@ -4294,14 +4295,16 @@ __metadata:
     lunr: "npm:2.3.9"
     lunr-languages: "npm:1.14.0"
     motion: "npm:^12.34.3"
-    prosemirror-model: "npm:^1.22.3"
-    prosemirror-schema-list: "npm:^1.4.1"
-    prosemirror-state: "npm:^1.4.3"
-    prosemirror-tables: "npm:^1.5.0"
+    prosemirror-model: "npm:^1.25.4"
+    prosemirror-schema-list: "npm:^1.5.1"
+    prosemirror-state: "npm:^1.4.4"
+    prosemirror-tables: "npm:^1.8.5"
+    prosemirror-view: "npm:1.41.6"
     react: "npm:^19.2.4"
     react-aria-components: "npm:1.16.0"
     react-dom: "npm:^19.2.4"
     react-intersection-observer: "npm:~10.0.3"
+    react-reconciler: "npm:0.33.0"
     typescript: "npm:~5.9.3"
     use-debounce: "npm:10.0.4"
     xpath: "npm:^0.0.34"
@@ -4314,7 +4317,7 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:3.46.2"
     "@effect/schema": "npm:^0.74.0"
-    "@nytimes/react-prosemirror": "npm:^0.7.0-next.10"
+    "@handlewithcare/react-prosemirror": "npm:2.8.1"
     "@react-spectrum/provider": "npm:3.10.14"
     "@spectrum-icons/workflow": "npm:4.2.28"
     "@types/lunr": "npm:^2"
@@ -4322,21 +4325,13 @@ __metadata:
     "@types/react-dom": "npm:^19"
     anafero-gui: "workspace:~"
     effect: "npm:^3.10.15"
-    import-mapper: "npm:0.0.4"
     lunr: "npm:2.3.9"
     lunr-languages: "npm:1.14.0"
-    motion: "npm:^12.34.3"
-    prosemirror-model: "npm:^1.22.3"
-    prosemirror-schema-list: "npm:^1.4.1"
-    prosemirror-state: "npm:^1.4.3"
-    prosemirror-tables: "npm:^1.5.0"
+    prosemirror-model: "npm:^1.25.4"
     react: "npm:^19.2.4"
-    react-aria-components: "npm:1.16.0"
     react-dom: "npm:^19.2.4"
-    react-intersection-observer: "npm:~10.0.3"
+    react-reconciler: "npm:0.33.0"
     typescript: "npm:~5.9.3"
-    use-debounce: "npm:10.0.4"
-    xpath: "npm:^0.0.34"
   languageName: unknown
   linkType: soft
 
@@ -5108,11 +5103,11 @@ __metadata:
     effect: "npm:^3.10.15"
     esbuild: "npm:~0.27.3"
     fast-check: "npm:^3.22.0"
-    prosemirror-model: "npm:^1.22.3"
-    prosemirror-schema-basic: "npm:^1.2.3"
-    prosemirror-state: "npm:^1.4.3"
-    prosemirror-transform: "npm:^1.10.0"
-    prosemirror-view: "npm:^1.34.3"
+    prosemirror-model: "npm:^1.25.4"
+    prosemirror-schema-basic: "npm:^1.2.4"
+    prosemirror-state: "npm:^1.4.4"
+    prosemirror-transform: "npm:^1.11.0"
+    prosemirror-view: "npm:1.41.6"
     react: "npm:^19.2.4"
     react-dom: "npm:^19.2.4"
     typescript: "npm:~5.9.3"
@@ -5696,9 +5691,9 @@ __metadata:
   dependencies:
     "@types/react": "npm:^19"
     anafero: "workspace:~"
-    prosemirror-model: "npm:^1.22.3"
-    prosemirror-schema-list: "npm:^1.4.1"
-    prosemirror-tables: "npm:^1.5.0"
+    prosemirror-model: "npm:^1.25.4"
+    prosemirror-schema-list: "npm:^1.5.1"
+    prosemirror-tables: "npm:^1.8.5"
     react: "npm:^19.2.4"
     typescript: "npm:~5.9.3"
   languageName: unknown
@@ -6155,46 +6150,46 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-keymap@npm:^1.1.2":
-  version: 1.2.2
-  resolution: "prosemirror-keymap@npm:1.2.2"
+"prosemirror-keymap@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "prosemirror-keymap@npm:1.2.3"
   dependencies:
     prosemirror-state: "npm:^1.0.0"
     w3c-keyname: "npm:^2.2.0"
-  checksum: 10c0/7aa28c731e00962c90c91361a3c9f7000f960870a1300f7477da8afa8fd1b9cce0b3b7ca483aaa5832fd0bf88b5ff081defc184592997b08980b9ab67eeddcb7
+  checksum: 10c0/0ec2f8bd9b608d0e6a0cdab1d66f9a6b41edcff0239b32ccca1018a0733e52448e4758218a2d472fb8c33c1609426dc6bad4944b28c1c3d509a83201a23035e9
   languageName: node
   linkType: hard
 
-"prosemirror-model@npm:^1.0.0, prosemirror-model@npm:^1.19.0, prosemirror-model@npm:^1.20.0, prosemirror-model@npm:^1.21.0, prosemirror-model@npm:^1.22.3, prosemirror-model@npm:^1.8.1":
-  version: 1.22.3
-  resolution: "prosemirror-model@npm:1.22.3"
+"prosemirror-model@npm:1.25.4":
+  version: 1.25.4
+  resolution: "prosemirror-model@npm:1.25.4"
   dependencies:
     orderedmap: "npm:^2.0.0"
-  checksum: 10c0/c1405f9643a720fa65acb23f5f6c3980eb7df3ea6098828e3cfeab1b8d35e4952c96406dc25877f7ec02647970090ef96288776554b50be90ecac139a8ca268b
+  checksum: 10c0/5ba99a235497df3452c0e2dfb71ee05d898fb9cb539c2a92583524fc4f337d8abab5c6b49b3af242c86327ea27cce41c7169a1e0c7bb4f7ef1502b311bd00cfc
   languageName: node
   linkType: hard
 
-"prosemirror-schema-basic@npm:^1.2.3":
-  version: 1.2.3
-  resolution: "prosemirror-schema-basic@npm:1.2.3"
+"prosemirror-schema-basic@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "prosemirror-schema-basic@npm:1.2.4"
   dependencies:
-    prosemirror-model: "npm:^1.19.0"
-  checksum: 10c0/99bac902ccf046e2dd165a3c124c6458be8041f3e4322f64fd9d37e6ee164e0d4284cc17691734665a62431f35045798cf417b7d174aa1af6dc2a48dc51468ac
+    prosemirror-model: "npm:^1.25.0"
+  checksum: 10c0/cd86f88a5eb51ab5459aa91e6824e73ec15b0f1546fee89be7826663663ef11eefaacacda5a14c43b4c8d8477fd653642418b9c7d485bb92e323f9b8e7607a78
   languageName: node
   linkType: hard
 
-"prosemirror-schema-list@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "prosemirror-schema-list@npm:1.4.1"
+"prosemirror-schema-list@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "prosemirror-schema-list@npm:1.5.1"
   dependencies:
     prosemirror-model: "npm:^1.0.0"
     prosemirror-state: "npm:^1.0.0"
     prosemirror-transform: "npm:^1.7.3"
-  checksum: 10c0/61c664bea2343b13db47d4f5d86dafb453f0102f7b85fa8ad0432e9c7ef5d14134ceb275ff3419cf2be85d4a7fb9e6974945f2b4b652d0cf3a3aca586f5e0838
+  checksum: 10c0/e6fd27446bc90556a9797f6ca0cb54e7db53cc7c20fbf633b7d0f4709c45accfa2f3a0f6575fe47aa83cb75781a9b773198d236a44db9d8eef2802a1501e4301
   languageName: node
   linkType: hard
 
-"prosemirror-state@npm:^1.0.0, prosemirror-state@npm:^1.3.1, prosemirror-state@npm:^1.4.3":
+"prosemirror-state@npm:^1.0.0":
   version: 1.4.3
   resolution: "prosemirror-state@npm:1.4.3"
   dependencies:
@@ -6205,20 +6200,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-tables@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "prosemirror-tables@npm:1.5.0"
+"prosemirror-state@npm:^1.4.4":
+  version: 1.4.4
+  resolution: "prosemirror-state@npm:1.4.4"
   dependencies:
-    prosemirror-keymap: "npm:^1.1.2"
-    prosemirror-model: "npm:^1.8.1"
-    prosemirror-state: "npm:^1.3.1"
-    prosemirror-transform: "npm:^1.2.1"
-    prosemirror-view: "npm:^1.13.3"
-  checksum: 10c0/b1d52d8f164e61d2ec2e94e66445843e564d298f2782899837e5c4ea332a45576e4d8ab63dc98726e12c9431798ecd94cd55bd685506d148646234f9804f0b13
+    prosemirror-model: "npm:^1.0.0"
+    prosemirror-transform: "npm:^1.0.0"
+    prosemirror-view: "npm:^1.27.0"
+  checksum: 10c0/1428636a37c127afe0d11a4f4eb44d75a7f16717940405082bd16fa4c28cfeef9375d49f48e411e5f0fa26f3e5798af7f270edc9bc9b0e647df8bb79983bcd59
   languageName: node
   linkType: hard
 
-"prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.10.0, prosemirror-transform@npm:^1.2.1, prosemirror-transform@npm:^1.7.3":
+"prosemirror-tables@npm:^1.8.5":
+  version: 1.8.5
+  resolution: "prosemirror-tables@npm:1.8.5"
+  dependencies:
+    prosemirror-keymap: "npm:^1.2.3"
+    prosemirror-model: "npm:^1.25.4"
+    prosemirror-state: "npm:^1.4.4"
+    prosemirror-transform: "npm:^1.10.5"
+    prosemirror-view: "npm:^1.41.4"
+  checksum: 10c0/d6e8cd9d333987ce6492202d5f815b268bb9a722d81456628eff999444d44fa97e8a801a5a20a44e678892f37053f314885d5a03e1df834653e3ea455f0f9290
+  languageName: node
+  linkType: hard
+
+"prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.7.3":
   version: 1.10.0
   resolution: "prosemirror-transform@npm:1.10.0"
   dependencies:
@@ -6227,7 +6233,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-view@npm:^1.13.3, prosemirror-view@npm:^1.27.0, prosemirror-view@npm:^1.34.3":
+"prosemirror-transform@npm:^1.10.5, prosemirror-transform@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "prosemirror-transform@npm:1.11.0"
+  dependencies:
+    prosemirror-model: "npm:^1.21.0"
+  checksum: 10c0/07f5b4ff6c0e05f7f68fbb067d0f4a2030242c4d2312b0b979bb7553059d80c13b3e86e8f4ba71a5a7352fa8c4c4a1fd4ba3dfbf73efed94631b5a53915fbe89
+  languageName: node
+  linkType: hard
+
+"prosemirror-view@npm:1.41.6, prosemirror-view@npm:^1.41.4":
+  version: 1.41.6
+  resolution: "prosemirror-view@npm:1.41.6"
+  dependencies:
+    prosemirror-model: "npm:^1.20.0"
+    prosemirror-state: "npm:^1.0.0"
+    prosemirror-transform: "npm:^1.1.0"
+  checksum: 10c0/a0dd304cabf11deb5b396c3568cf0ea39dcddc71b1834924a9a08bca73ce148779a8d66859f90acdeb8d5e68b3aaf1c0adbbc343af80840683c27f43596bdade
+  languageName: node
+  linkType: hard
+
+"prosemirror-view@npm:^1.27.0":
   version: 1.34.3
   resolution: "prosemirror-view@npm:1.34.3"
   dependencies:
@@ -6390,7 +6416,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-reconciler@npm:^0.33.0":
+"react-reconciler@npm:0.33.0, react-reconciler@npm:^0.33.0":
   version: 0.33.0
   resolution: "react-reconciler@npm:0.33.0"
   dependencies:

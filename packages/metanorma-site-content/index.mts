@@ -1152,8 +1152,8 @@ function makeSectionContentGenerator(
                 ? 'table_header'
                 : 'table_cell',
               {
-                colspan: findValue(section, cellID, 'hasColspan'),
-                rowspan: findValue(section, cellID, 'hasRowspan'),
+                colspan: parseInt(findValue(section, cellID, 'hasColspan') ?? '1', 10),
+                rowspan: parseInt(findValue(section, cellID, 'hasRowspan') ?? '1', 10),
                 resourceID: cellID,
               },
               generateContent(cellID, pm.nodes.table_cell!, state),
