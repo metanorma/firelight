@@ -365,6 +365,7 @@ const mod: StoreAdapterModule = {
               'fmt-provision': 'bypass',
               recommendation: 'bypass',
 
+              // Table footer key container
               key: 'bypass',
 
               // These are covered by fmt-* equivalents in <term>.
@@ -372,9 +373,6 @@ const mod: StoreAdapterModule = {
               'admitted': 'ignore',
               'deprecates': 'ignore',
               'definition': 'ignore',
-
-              // Table footer key container
-              'key': 'bypass',
 
               'fmt-definition': 'bypass',
               'fmt-preferred': 'bypass',
