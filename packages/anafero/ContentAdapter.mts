@@ -1,7 +1,7 @@
 import * as S from '@effect/schema/Schema';
 //import { Node as ProseMirrorNode } from 'prosemirror-model';
-import { Schema as ProseMirrorDocumentSchema } from 'prosemirror-model';
 import { type NodeViewComponentProps } from '@nytimes/react-prosemirror';
+import { type Schema as ProseMirrorDocumentSchema } from 'prosemirror-model';
 
 import { type ResourceRelation } from './StoreAdapter.mjs';
 import { type RelationTriple, type RelationGraphAsList } from './relations.mjs';
