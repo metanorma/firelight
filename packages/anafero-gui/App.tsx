@@ -929,6 +929,7 @@ export const VersionWorkspace: React.FC<{
     dispatch({ type: 'activated_resource_by_scrolling', uri });
   }, 100, { trailing: true });
 
+  // XXX: Shouldn’t this reference active resource locale
   const locale = useMemo((
     // Empty string in resource map refers to site’s root resource.
     () => resourceMap && resourceMap['']
