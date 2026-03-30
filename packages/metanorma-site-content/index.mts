@@ -575,9 +575,13 @@ const generateCoverPage:
     ? `${introTitle.content} — ${mainTitle.content}`
     : mainTitle.content
 
-  const extraTitleContents = titlesInOtherLanguages.map(({ content: title, language: lang }) => {
-    const intro = introsInOtherLanguages.find(({ language: introLang }) => introLang === lang);
-    return (intro && intro.content !== '') ? `${intro.content} — ${title}` : title;
+  const extraTitleContents = titlesInOtherLanguages.
+  map(({ content: title, language: lang }) => {
+    const intro = introsInOtherLanguages.
+    find(({ language: introLang }) => introLang === lang);
+    return (intro && intro.content !== '')
+      ? `${intro.content} — ${title}`
+      : title;
   });
 
   return {
