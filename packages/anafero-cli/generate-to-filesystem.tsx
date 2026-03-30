@@ -33,7 +33,8 @@ import { JSDOM } from 'jsdom';
 import xpath from 'xpath';
 
 
-// Anafero relies on intercept-link-clicks which relies on window.location.host to be a string…
+// GUI relies on interception which relies on window.location.host to be a string…
+// Some parts also rely on `window` being defined
 (global as any).window = { location: { host: '' } };
 
 
