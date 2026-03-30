@@ -476,7 +476,11 @@ const generateCoverPage:
   const {
     mainTitle,
     titlesInOtherLanguages,
-  } = getDocumentTitle(null, bibdata, currentLanguage) ?? {
+  } = getDocumentTitle(
+    null,
+    bibdata,
+    currentLanguage,
+  ) ?? {
     mainTitle: null,
     titlesInOtherLanguages: [],
   };
