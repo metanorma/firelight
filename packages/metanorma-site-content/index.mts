@@ -480,6 +480,7 @@ const generateCoverPage:
     null,
     bibdata,
     currentLanguage,
+    ['title-part', 'title-main'],
   ) ?? {
     mainTitle: null,
     titlesInOtherLanguages: [],
