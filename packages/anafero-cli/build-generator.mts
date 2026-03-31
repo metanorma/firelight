@@ -226,7 +226,7 @@ async function buildSiteBuilder(opts: ReportingOptions) {
         // built-in "binary" loader instead of manually embedding the
         // binary data inside JavaScript code ourselves.
         build.onLoad({ filter: /.*/, namespace: 'wasm-binary' }, async (args) => ({
-          contents: await readFile(args.path),
+          contents: (await readFile(args.path)) as Uint8Array,
           loader: 'binary',
         }))
       },

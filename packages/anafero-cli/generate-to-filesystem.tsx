@@ -496,7 +496,7 @@ async function * generateSite(
       reactStrictMode?: boolean;
     };
   },
-) {
+): AsyncGenerator<Record<string, Uint8Array>> {
   if (revisionsToBuild !== undefined) {
 
     const [versionProgress, ] = onProgress('determine versions to build', {});
@@ -536,7 +536,7 @@ async function * generateSite(
         join(PACKAGE_ROOT, './bootstrap.js')),
       '/bootstrap.css': await readFile(
         join(PACKAGE_ROOT, './bootstrap.css')),
-    };
+    } as Record<string, Uint8Array>;
 
     if (opts?.debug) {
       yield {
@@ -544,7 +544,7 @@ async function * generateSite(
           join(PACKAGE_ROOT, './bootstrap.js.map')),
         '/bootstrap.css.map': await readFile(
           join(PACKAGE_ROOT, './bootstrap.css.map')),
-      };
+      } as Record<string, Uint8Array>;
     }
 
     yield * generateStaticSiteAssets(

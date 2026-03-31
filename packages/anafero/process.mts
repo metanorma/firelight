@@ -193,7 +193,7 @@ export function * generateResourceAssets(
         ${inject.head}
       </head>
       <body>
-        <div id="app">${browseBarHTML}<main id="resources">${resourceHTML}</main></div>
+        <div id="app" class="appwrapper">${browseBarHTML}<main id="resources">${resourceHTML}</main></div>
         ${inject.tail}
       </body>
     </html>

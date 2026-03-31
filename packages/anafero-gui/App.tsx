@@ -1,5 +1,5 @@
 import * as S from '@effect/schema/Schema';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { defaultTheme, ProgressBar, Flex, Provider } from '@adobe/react-spectrum';
 import { useInView, InView } from 'react-intersection-observer';
 import { useThrottledCallback, useDebouncedCallback } from 'use-debounce';
@@ -44,7 +44,7 @@ const VERSION_DEPS = [
 type VersionDeps = Record<typeof VERSION_DEPS[number], any>;
 
 
-export const AppLoader: React.FC<Record<never, never>> = function () {
+export const AppLoader: React.FC<{ onDone: () => void }> = function ({ onDone }) {
 
   const workspaceTitle =
     useMemo(() => document.documentElement.dataset.workspaceTitle, []);
@@ -405,6 +405,7 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
         resourceMap={resourceMap}
         storedState={restoredState}
         onStoreState={handleStoreState}
+        onLoaded={onDone}
       />
       // Try not to overwrite SSR’d DOM except for browser bar’s loader
     : <>
@@ -414,10 +415,6 @@ export const AppLoader: React.FC<Record<never, never>> = function () {
           loadProgress={totalDepLoadProgress}
         />
         <main id="resources">
-          <div
-            dangerouslySetInnerHTML={{ __html: '' }}
-            suppressHydrationWarning={true}
-          />
         </main>
       </>
   return mainView;
@@ -448,6 +445,7 @@ export const VersionWorkspace: React.FC<{
   resourceMap: Record<string, string>;
   storedState?: StoredAppState | undefined;
   onStoreState?: (newState: StoredAppState) => void;
+  onLoaded?: () => void;
 }> = function ({
   workspaceTitle,
   primaryLanguage,
@@ -465,6 +463,7 @@ export const VersionWorkspace: React.FC<{
   resourceMap,
   storedState,
   onStoreState,
+  onLoaded,
 }) {
 
   const getContainingPageResourceURI = useCallback((uri: string) => {
@@ -474,7 +473,7 @@ export const VersionWorkspace: React.FC<{
 
   const initialPage = getContainingPageResourceURI(initialResource);
 
-  const [state, dispatch] = useReducer<typeof reducer, InitializerInput>(
+  const [state, dispatch] = useReducer(
     reducer,
     { initialResource, initialPage, stored: storedState } as InitializerInput,
     createInitialState);
@@ -955,7 +954,8 @@ export const VersionWorkspace: React.FC<{
 
   useEffect(() => {
     document.documentElement.setAttribute('data-react-is-hydrated', 'yes');
-  }, []);
+    onLoaded?.();
+  }, [onLoaded]);
 
   return (
     <>

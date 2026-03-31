@@ -7,7 +7,7 @@ import {
   ProseMirror,
   ProseMirrorDoc,
   reactKeys,
-} from '@nytimes/react-prosemirror';
+} from '@handlewithcare/react-prosemirror';
 
 import { type SyncDependencyGetter } from 'anafero/Config.mjs';
 import {
