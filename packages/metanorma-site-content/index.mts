@@ -576,8 +576,20 @@ const generateCoverPage:
     );
   }
 
+  if (introTitle.content === mainTitle.content) {
+    console.warn(
+      "Identical intro title and main title contents",
+      introTitle.type,
+      introTitle.language,
+      mainTitle.type,
+      mainTitle.language,
+    );
+  }
+
   const mainTitleContent = (introTitle && introTitle.content !== '')
-    ? `${introTitle.content} — ${mainTitle.content}`
+    ? introTitle.content !== mainTitle.content
+      ? `${introTitle.content} — ${mainTitle.content}`
+      : mainTitle.content
     : mainTitle.content
 
   const extraTitleContents = titlesInOtherLanguages.
