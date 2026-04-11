@@ -243,10 +243,7 @@ const clauseSchemaBase = new Schema({
       content: '(text | flow)*',
       group: 'block',
       toDOM(node) {
-        // FIXME: Find a way to do this without createElement
-        const el = document.createElement('pre');
-        el.innerHTML = node.attrs.formattedSource;
-        return el;
+        return ['pre', ['code', { innerHTML: node.attrs.formattedSource }]];
       },
     },
 
@@ -465,9 +462,7 @@ const clauseSchemaBase = new Schema({
       inline: true,
       group: 'flow title_flow',
       toDOM(node) {
-        const el = document.createElement('span');
-        el.innerHTML = node.attrs.mathML;
-        return el;
+        return ['span', { innerHTML: node.attrs.mathML }];
       },
     },
 
