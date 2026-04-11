@@ -499,7 +499,7 @@ const generateCoverPage:
     currentLanguage,
     [mainTitle.type === 'title-part' ? 'title-main' : 'title-intro'],
   ) ?? {
-    hopefullyASuitableTitle: ['', '', ''],
+    mainTitle: undefined,
     titlesInOtherLanguages: [],
   };
   
@@ -576,7 +576,7 @@ const generateCoverPage:
     );
   }
 
-  if (introTitle.content === mainTitle.content) {
+  if (introTitle && introTitle.content === mainTitle.content) {
     console.warn(
       "Identical intro title and main title contents",
       introTitle.type,
