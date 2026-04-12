@@ -62,7 +62,7 @@ export const AppLoader: React.FC<{ onDone: () => void }> = function ({ onDone })
     ? ((slashPrependedPath: string) => slashPrependedPath)
     : ((slashPrependedPath: string) => {
         const unprefixed = slashPrependedPath.startsWith(pathPrefix)
-          ? slashPrependedPath.replace(pathPrefix, '')
+          ? slashPrependedPath.replace(pathPrefix, '') || '/'
           : slashPrependedPath;
         if (!unprefixed.startsWith('/')) {
           console.error("Non-slash-prepended path after getSiteRootRelativePath!", unprefixed, slashPrependedPath);
