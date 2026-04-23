@@ -189,6 +189,8 @@ export function * generateResourceAssets(
         data-workspace-title="${workspaceTitle}">
       <head>
         <meta charset="utf-8">
+        <meta name="color-scheme" content="light dark">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>${generatedContent.content?.labelInPlainText ?? "Untitled"}</title>
         ${inject.head}
       </head>
