@@ -579,10 +579,8 @@ const generateCoverPage:
   if (introTitle?.content === mainTitle.content) {
     console.warn(
       "Identical intro title and main title contents",
-      introTitle.type,
-      introTitle.language,
-      mainTitle.type,
-      mainTitle.language,
+      JSON.stringify({ introTitle, mainTitle }),
+      "Possibly titles are missing type?",
     );
   }
 
