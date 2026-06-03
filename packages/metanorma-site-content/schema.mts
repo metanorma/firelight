@@ -146,10 +146,19 @@ const clauseSchemaBase = new Schema({
 
     // Case with flat subclauses
     section: {
+      attrs: {
+        resourceID: {
+          default: '',
+        },
+      },
       content: 'block+ footnotes?',
       group: 'block',
-      toDOM() {
-        return ['section', { class: classNames.flatSubclause }, 0];
+      toDOM(node) {
+        const attrs: Record<string, string> = node.attrs.resourceID
+          ? { about: node.attrs.resourceID }
+          : {};
+        attrs.class = classNames.flatSubclause;
+        return ['section', attrs, 0];
       },
     },
     subheader: {
