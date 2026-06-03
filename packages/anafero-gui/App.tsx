@@ -255,7 +255,7 @@ export const AppLoader: React.FC<{ onDone: () => void }> = function ({ onDone })
   const locateResource = useMemo((() =>
     (!reverseResourceMap || !getAbsolutePath)
       ? undefined
-      : (uri: string) => {
+      : function locateResource(uri: string) {
           if (reverseResourceMap[uri] !== undefined) {
             return getAbsolutePath(`/${reverseResourceMap[uri]}`);
           } else {
