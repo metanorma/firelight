@@ -9,15 +9,23 @@ while also being customizable and extensible.
 Anafero build system implements the orchestration
 of Firelight’s MN XML parsing & site content rendering extensions.
 
-`Example repository <https://github.com/metanorma/mn-samples-plateau/>`_
-built with this system;
-`deployed version <https://metanorma.github.io/mn-samples-plateau/plateaudocument/>`_.
-(But note that the example does not follow best practices
-for source data & config versioning, and instead initializes an empty
-repository and generates the config in Github Action logic. That means
-it would be unable to make use of versioning-related functionality.
-The reason for this is that that particular document’s source files
-are particularly large and run into some Git infrastructure limitations.)
+Example projects:
+
++--------------------------------------------------+-----------------------------------------------------------------+
+| Repository                                       | Published                                                       |
++==================================================+=================================================================+
+| https://github.com/metanorma/mn-samples-plateau/ | https://metanorma.github.io/mn-samples-plateau/plateaudocument/ |
++--------------------------------------------------+-----------------------------------------------------------------+
+| https://github.com/metanorma/mn-samples-oiml/    | https://metanorma.github.io/mn-samples-oiml/ (under “Firelight”)|
++--------------------------------------------------+-----------------------------------------------------------------+
+
+Note that examples don’t quite follow best practices
+for source data & config versioning, and instead initialize an empty
+repository and generate build config in Github Action logic on the fly,
+which makes these examples unable to make use of some
+versioning-related features.
+This is because 1) source XML files are themselves generated from AsciiDoc & other data and
+2) additionally in case of PLATEAU they are large enough to run into Github limits.
 
 Serving artifacts
 -----------------
