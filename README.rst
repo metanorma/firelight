@@ -19,8 +19,30 @@ it would be unable to make use of versioning-related functionality.
 The reason for this is that that particular document’s source files
 are particularly large and run into some Git infrastructure limitations.)
 
-Usage
------
+Serving artifacts
+-----------------
+
+Result can be served from any static server. Search function uses
+client-side index, which increases initial download time but makes search fast
+and not requiring a server-side component.
+
+Caveats:
+
+- If you serve the site from under a path prefix
+  (e.g., the starting point is at ``https://example.com/foobar/``
+  instead of ``https://example.com/``),
+  then that path prefix needs to be the same as the one specified
+  at build stage with ``--path-prefix`` (see below).
+
+- The site must be served from canonical URL that is a slash-prepended path
+  without the trailing ``index.html``. I.e., the server needs to serve
+  a request to ``https://example.com/some/path/here/``
+  from ``/some/path/here/index.html``. If someone mistakenly
+  links to the ``/index.html`` version, ideally it should be redirected,
+  otherwise the site may fail to load.
+
+Building artifacts
+------------------
 
 The current official way of running the build command is via NPX.
 
