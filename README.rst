@@ -1,8 +1,8 @@
 Firelight monorepo
 ==================
 
-Firelight renders Metanorma XML
-(usually produced from Metanorma-flavoured AsciiDoc)
+Firelight renders Metanorma document or collection presentation XML
+(usually produced from Metanorma-flavoured AsciiDoc sources)
 in a way that is readable and easy to navigate by default
 while also being customizable and extensible.
 
