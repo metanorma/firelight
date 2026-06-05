@@ -113,6 +113,14 @@ function getSectionPlainTitle(section: Readonly<RelationGraphAsList>): string | 
     filter(([, type]) => type === 'title').
     map(([pID]) => pID);
 
+  if (plainTitleIDs.length < 1) {
+    plainTitleIDs.push(
+      ...parts.
+        filter(([, type]) => type === 'fmt-title').
+        map(([pID]) => pID)
+    );
+  }
+
   return getDocumentTitle(
     plainTitleIDs.length > 0 ? plainTitleIDs : null,
     section,
