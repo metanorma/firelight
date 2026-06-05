@@ -2,11 +2,10 @@ import {
   type RelationGraphAsList,
   ROOT_SUBJECT,
   resolveChain,
-  getTextContent,
   findValue,
 } from 'anafero/index.mjs';
 
-export { resolveChain, getTextContent, findValue };
+export { resolveChain, findValue };
 
 //function findAtRoot(relations: Readonly<RelationGraphAsList>, predicate: string): string | null {
 //  return findValue(relations, '_:root', predicate);

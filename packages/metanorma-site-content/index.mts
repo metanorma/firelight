@@ -11,6 +11,7 @@ import {
   ROOT_SUBJECT,
   isURIString,
   dedupeGraph,
+  getTextContent,
 } from 'anafero/index.mjs';
 
 import nodeViews from './nodeViews.jsx';
@@ -26,7 +27,6 @@ import {
   findPartsOfType,
   relativeGraph,
   hasSubject,
-  getTextContent,
 } from './graph-query-util.mjs';
 
 import getDocumentTitle from './getDocumentTitle.mjs';

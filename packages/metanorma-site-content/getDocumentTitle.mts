@@ -1,8 +1,7 @@
-import { type RelationGraphAsList } from 'anafero/index.mjs';
+import { type RelationGraphAsList, getTextContent } from 'anafero/index.mjs';
 
 import {
   resolveChain,
-  getTextContent,
   findValue,
 } from './graph-query-util.mjs';
 
