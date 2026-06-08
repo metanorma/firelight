@@ -63,7 +63,8 @@ export function getTextContent(
    * If provided, only include parts for which this returns true.
    * Recursively passed down.
    */
-  partPredicate?: (partValue: string, partType?: string) => boolean,
+  partPredicate?: (partValue: string, partID: string) => boolean,
+  //partPredicate?: (partValue: string, partID: string) => (string | 0)[] | boolean,
 ): string[] {
   const allSubparts: string[] =
   // TODO: subject is really only used to resolve relations,
@@ -71,17 +72,29 @@ export function getTextContent(
   resolveChain(graph, ['hasPart'], subject).
   flatMap(([partID, partValue]) => {
     // TODO: Don’t rely on urn: prefix when determining subjectness
+    const predicateResult: boolean | undefined = partPredicate
+      ? partPredicate(partValue, partID)
+      : undefined;
     if (!isURIString(partValue)) {
       // Part itself is not a subject, so treat as text.
 
       if (partValue.startsWith('data:')) {
         return [''];
-      } else if (partPredicate && !partPredicate(partValue)) {
+      } else if (predicateResult === false) {
         return [''];
       } else if (partValue.trim() === '') {
         return [''];
       } else {
         return [partValue];
+        //if (Array.isArray(predicateResult)) {
+        //  return predicateResult.flatMap(p =>
+        //    p === 0
+        //      ? getTextContent(graph, partValue, partPredicate)
+        //      : p
+        //  );
+        //} else {
+        //  return [partValue];
+        //}
       }
     } else {
       return getTextContent(graph, partValue, partPredicate);
