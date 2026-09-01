@@ -671,6 +671,13 @@ function getClauseContents(
     //// Footnote nodes mapped to resource IDs
     //const footnotes: Record<string, FootnoteNode> = {};
     function makeFootnote(resourceID: string, footnote: Footnote): ProseMirrorNode {
+
+      // XXX
+      if (footnote.content.length < 1) {
+        console.error("ERROR: no footnote content");
+        footnote.content = [pm.node('paragraph', [pm.text('no footnote content (ERROR)')])];
+      }
+
       return pm.node(
         'footnote',
         { resourceID, cue: footnote.cue },
